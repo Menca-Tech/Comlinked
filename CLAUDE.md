@@ -6,6 +6,26 @@ How Claude works in this repo. Stack and architecture rules live in
 [`docs/adr/`](docs/adr). Project agent config (commands, agents, skills) is in
 [`.claude/`](.claude/README.md).
 
+## Product vision
+
+The [**ComLinked MVP Build Plan**](docs/specs/2026-10-11-mvp-build-plan.md) is
+our vision and guide. Read it before planning any feature. In short:
+
+- **One job:** get a new company its first real lead within 24 hours, then give
+  it a reason to come back every day.
+- **Scope test:** a feature must help companies sign up, get leads, return
+  daily, talk to other companies or share wins. Anything else waits; check
+  Section 6 of the plan before adding something new.
+- **Non-negotiables:** free for everyone, with no payments or blurred names. AI
+  drafts and a person decides, and every flow works with AI off. Connections
+  belong to the company. Mobile first.
+- **Pilot:** PCCI–Quezon City, then ECCP and the Toronto Region Board of Trade.
+- **Build by ID and in order:** name features by their plan ID (A1–S3) in plans
+  and handoffs, and follow the build order in Section 7.2. Test each one on a
+  phone as a new company owner.
+- **Open questions:** check the plan's Adoption notes before building a feature
+  they name.
+
 ## Two sessions: planning → executer
 
 Work flows through two Claude sessions:

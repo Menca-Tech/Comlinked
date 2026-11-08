@@ -40,4 +40,5 @@ to `main` directly. PRs should pass CI (lint, typecheck, unit, e2e, build).
 ## Decisions
 
 Big, hard-to-reverse choices are in `docs/adr/`. If you make one, add an ADR.
-Domain vocabulary is in `CONTEXT.md`.
+Domain vocabulary is in `CONTEXT.md`. Product scope, feature IDs and build order
+are in `docs/specs/2026-10-11-mvp-build-plan.md`.

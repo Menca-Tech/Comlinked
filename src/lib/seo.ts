@@ -4,7 +4,14 @@ import type { MetadataRoute } from "next";
  * Public, indexable routes listed in the sitemap. The dashboard and other
  * authenticated areas are intentionally excluded (and disallowed in robots).
  */
-export const SITEMAP_ROUTES = ["/", "/auth/sign-in", "/auth/sign-up"] as const;
+export const SITEMAP_ROUTES = [
+  "/",
+  "/how-it-works",
+  "/comdash",
+  "/for-chambers",
+  "/auth/sign-in",
+  "/auth/sign-up",
+] as const;
 
 /**
  * Pure: build sitemap entries as absolute URLs against `baseUrl`. `lastModified`

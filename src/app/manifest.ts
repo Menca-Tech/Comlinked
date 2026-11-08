@@ -10,7 +10,7 @@ export default function manifest(): MetadataRoute.Manifest {
     start_url: "/",
     display: "standalone",
     background_color: "#ffffff",
-    theme_color: "#0a0a0a",
+    theme_color: "#286fa3",
     // Served by app/icon.tsx (generated via next/og).
     icons: [{ src: "/icon", sizes: "512x512", type: "image/png", purpose: "any" }],
   };

@@ -1,5 +1,15 @@
 export const paths = {
   home: "/",
+  marketing: {
+    howItWorks: "/how-it-works",
+    comDash: "/comdash",
+    forChambers: "/for-chambers",
+    join: "/#join",
+    free: "/#free",
+    chamberPilot: "/for-chambers#pilot",
+    chamberHow: "/for-chambers#how",
+    chamberFaq: "/for-chambers#faq",
+  },
   auth: {
     signIn: "/auth/sign-in",
     signUp: "/auth/sign-up",

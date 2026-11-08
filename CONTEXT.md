@@ -60,3 +60,106 @@ else — no implementation details, no decisions. Decisions live in `docs/adr/`.
 
 - **Marketing Landing** — the public, unauthenticated entry page shown to
   visitors who are not signed in.
+
+## Product language
+
+Terms from the [ComLinked MVP Build Plan](docs/specs/2026-10-11-mvp-build-plan.md).
+
+- **ComLinked** — the product: a network where Companies find leads, talk to each
+  other and share their wins. The repository is named Comlinked; the product is
+  spelled ComLinked.
+
+### Participants
+
+- **Company** — a business listed on ComLinked, and the party that owns its
+  Connections and reputation. Avoid "member" for this, since that is also an Org
+  Role.
+
+- **Authorized Representative** — a person allowed to act on a Company's behalf.
+
+- **Chamber** — a business association whose members join ComLinked together.
+
+- **Community Manager** — a person who supports a Chamber's Companies with Intros
+  and Asks, and reviews unusual spikes in points.
+
+- **Pilot** — the first 90-day launch, at PCCI–Quezon City.
+
+### Getting listed
+
+- **Pre-built Profile** — a draft Company profile built by AI from public sources
+  before the Company joins.
+
+- **Claim** — a Company taking over its Pre-built Profile through a personal link.
+
+- **Profile Strength** — a 0–100% measure of how complete a Company's profile is.
+
+- **Partner Invite** — a Company's invitation to an existing customer or supplier
+  to join ComLinked.
+
+### Leads
+
+- **Lead** — a Company surfaced to another as a potential business contact,
+  through a Match, an Interest Signal, an Ask or an Intro.
+
+- **Match** — a Company recommended to another as relevant, with a Match Reason.
+
+- **Match Reason** — the one-line "why you should meet" attached to a Match.
+
+- **Interest Signal** — a named record that another Company found this one in
+  search, viewed its profile, messaged it or was recommended it.
+
+- **ComDash** — a Company's home screen for its Interest Signals, Activity Score,
+  rank and next best action.
+
+- **Ask** — a business need posted by a Company for others to respond to. Asks
+  appear on the **Asks Board**.
+
+- **Intro** — an introduction between two Companies made by a Community Manager.
+
+### Daily habit
+
+- **Daily Lead Loop** — the five-step cycle every MVP feature supports: Morning
+  Digest, act on Leads, talk and close, share the win, rank rises.
+
+- **Morning Digest** — the 8:00 a.m. summary of new Leads, profile views and rank
+  change.
+
+- **Daily Lead List** — the five new Matches a Company gets each day, each to
+  Connect, Message or Skip.
+
+- **Activity Score** — the points a Company has earned from qualifying actions in
+  the last 30 days.
+
+- **Search Rank** — a Company's position in search results: relevance first,
+  raised by its Activity Score.
+
+- **New Member Boost** — the equal 30-day visibility boost every new Company gets.
+
+- **Freshness Nudge** — a prompt to update a profile that has gone unchanged.
+
+- **Monthly Top Companies** — a Chamber's leaderboard of its 10 most active
+  Companies, for recognition only.
+
+### Talking and closing
+
+- **Connection** — an accepted link between two Companies, owned by the Companies
+  rather than the people who made it.
+
+- **ComMail** — company-to-company messaging.
+
+- **AI Assistant** — the single per-Company on/off feature that writes AI Drafts
+  for four jobs: intro, reply, follow-up and polish.
+
+- **AI Draft** — text written by the AI Assistant, labelled as AI until a person
+  edits or sends it.
+
+- **Outcome** — a result confirmed by both Companies: "We met" or "We did
+  business."
+
+### Sharing wins
+
+- **Testimonial** — a Company's short account of a confirmed deal: what it needed
+  and what happened.
+
+- **Success Wall** — the display of recent Testimonials and deals on the home feed
+  and on both Companies' profiles.
