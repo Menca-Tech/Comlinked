@@ -1,0 +1,194 @@
+# ComLinked MVP feature status
+
+Created 2026-11-08 · Last updated 2026-11-09 · Scope: [MVP Build Plan](2026-10-11-mvp-build-plan.md) ·
+Repo state: branch `feat/comlinked-brand-and-website` at commit `294593c`
+
+Full requirements are in the [ComLinked SRS](2026-11-09-comlinked-srs.md), version
+0.1, a draft for Richard's review. This file tracks progress against them.
+
+**All 21 MVP features are now simulated in the local mockup.** No launch is
+planned for now. The mockup is a demo for Richard and pilot chambers, presented
+from a laptop.
+
+The mockup's leads, Connection Requests and overnight activity are calculated by
+a simulated engine, modeled on how LinkedIn works but built around companies.
+There is still no real server.
+
+The mockup also has labeled previews of two things planned for after the MVP:
+the [AI Lead Agent](#ai-lead-agent-preview) and a
+[ComLinked Team Dashboard](#comlinked-team-dashboard-preview).
+
+**No MVP feature is complete in the real app.** Only easy sign-in (A3) has real
+code, and it is partial.
+
+The mockup is at [`docs/mockup/index.html`](../mockup/index.html), with a copy at
+`~/Documents/ComLinked-mockup/index.html`. Its code is throwaway: only its flows
+and layouts carry over to a real build.
+
+## How to read the tables
+
+| Status    | Meaning                                                                 |
+| --------- | ----------------------------------------------------------------------- |
+| Simulated | Usable in the mockup, with example data. Nothing real is sent or saved. |
+| Partly    | Part of the feature exists; the notes say what is missing.              |
+| Done      | Complete for what this item covers.                                     |
+| No        | Not built.                                                              |
+
+## The 21 MVP features
+
+| ID  | Feature                        | Mockup    | Real app | What was done                                                                                                                                                                        |
+| --- | ------------------------------ | --------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| A1  | Pre-built company profiles     | Simulated | No       | Member import shows each profile building from its source, and every finished draft opens. No AI actually runs.                                                                      |
+| A2  | Claim your profile             | Simulated | No       | Text message preview, one-tap claim, profile check and authorization checkbox.                                                                                                       |
+| A3  | Easy sign-in                   | Simulated | Partly   | Mockup has all four methods. The repo's sign-in form has code and unit tests for Google, Facebook and email link. Mobile one-time code is missing, and it needs Supabase configured. |
+| A4  | Profile strength meter         | Simulated | No       | 0–100% bar with the next step; products, project and photo raise it.                                                                                                                 |
+| A5  | Invite business partners       | Simulated | No       | Invite by link, email or chat. The inviter gets 10 points; the partner gets the New Member Boost and appears in search.                                                              |
+| L1  | Day-one matches                | Simulated | No       | The 3 highest Fit Scores right after claiming, each with a fit number, "why meet" line and any mutual connections.                                                                   |
+| L2  | ComDash interest signals       | Simulated | No       | Named list of who searched, viewed, messaged or was recommended. Overnight views and searches grow with rank and activity. The repo's ComDash page is a static marketing page.       |
+| L3  | Asks board                     | Simulated | No       | Asks reach the companies that offer what they name, responses follow Fit Score, and new asks arrive overnight. Answers go through ComMail.                                           |
+| L4  | Community manager intros       | Simulated | No       | A manager picks two companies, and the intro appears on ComDash.                                                                                                                     |
+| D1  | Morning digest                 | Simulated | No       | "Next morning" builds the 8:00 a.m. banner and digest from that night's calculated activity. No real push or email.                                                                  |
+| D2  | Daily lead list                | Simulated | No       | The 5 highest Fit Scores each day, with Connect, Message or Skip; skips lower the fit of that category.                                                                              |
+| D3  | Activity Score and search rank | Simulated | No       | All 9 point rules, their limits, the 30-day window and the rank formula. Rank is calculated against 11 example food suppliers with fixed scores.                                     |
+| D4  | Freshness nudges               | Simulated | No       | Prompt appears after 14 days without a profile update.                                                                                                                               |
+| D5  | Monthly top companies          | Simulated | No       | Top 10 list, recognition only, which resets when the simulated month changes.                                                                                                        |
+| C1  | Company connections            | Simulated | No       | Connection Requests resolve by fit, can be withdrawn, and arrive from others to accept or ignore. Connections stay with the company when the rep changes.                            |
+| C2  | ComMail                        | Simulated | No       | Conversations, 3 templates, sending and pre-written replies.                                                                                                                         |
+| C3  | AI Assistant switch            | Simulated | No       | On/off switch, change log, "AI draft" label, nothing sent without a tap, 30-a-day counter. Polish covers descriptions, asks and testimonials. Text is pre-written.                   |
+| C4  | Outcome buttons                | Simulated | No       | "We met" and "We did business"; the other company auto-confirms and points are awarded.                                                                                              |
+| S1  | Testimonial prompt             | Simulated | No       | 2 questions after a confirmed deal, with optional Polish.                                                                                                                            |
+| S2  | Success wall                   | Simulated | No       | Recent wins on ComDash; the full wall is on the Wins tab and company profiles.                                                                                                       |
+| S3  | One-tap share                  | Simulated | No       | Share card and a post preview for Facebook, LinkedIn or Viber, with a placeholder sign-up link. Nothing is posted.                                                                   |
+
+## Chamber tools and supporting features
+
+| Feature                          | Mockup    | Real app | What was done                                                                                                  |
+| -------------------------------- | --------- | -------- | -------------------------------------------------------------------------------------------------------------- |
+| Member import                    | Simulated | No       | Upload screen and preview of 12 rows, always using the sample list so no real company gets invented details.   |
+| Activity view                    | Simulated | No       | Claimed, active and needs-an-intro counts, plus a member list.                                                 |
+| Intros and broadcasts            | Simulated | No       | Both work in the mockup, and announcements appear on ComDash.                                                  |
+| Admin back office                | No        | No       | Left out by design: the plan has staff use the database dashboard.                                             |
+| Search and company profile pages | Simulated | No       | Example search ranked by relevance × boost, plus profile pages. Degree and mutual connections are labels only. |
+| Anti-gaming rules                | Simulated | No       | Limits are enforced, deals need both sides, and there is one example points spike to review.                   |
+| New member boost                 | Simulated | No       | 30 days at 10%. The 10% is an assumption; the plan gives no size.                                              |
+| Visible-views notice at sign-up  | Simulated | No       | Shown in the mockup's claim flow. The repo's join form has the text but is not connected.                      |
+| Mobile-first and web layouts     | Simulated | Partly   | Mockup has phone and web layouts. The repo's marketing pages exist; the product screens do not.                |
+| Website pages                    | Done      | Partly   | All 5 pages are in the mockup and the repo. In the repo, the join and chamber pilot forms are not connected.   |
+
+## Agreed for the demo
+
+| Topic              | Decision                                                                                                             |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| Audience           | Richard and pilot chambers, presented from a laptop. The mockup stays on the Mac.                                    |
+| Scope              | The 21 MVP features and chamber basics, plus a read-only "What's next" page.                                         |
+| "What's next" page | Customer-facing postponed items only, with no paid items or staff tools. Reached from the presenter guide only.      |
+| Website claims     | Chamber quote, pilot block and About link removed. Unknown answers say they will be confirmed during pilot planning. |
+| Contact            | "Contact us" goes to the chamber pilot form.                                                                         |
+| Demo start         | The presenter guide offers a new company, or an active company two weeks in at rank #4 of 12 with a pending deal.    |
+| Presenter controls | The G key opens the guide. Phone widths keep a Guide button because they have no keyboard.                           |
+| Honesty markers    | The "Working mockup" ribbon and "Example data" labels stay, so example companies are not mistaken for real activity. |
+
+## Simulated engine
+
+Runs entirely inside the mockup, and every demo runs the same way.
+
+| Part                | How it works                                                                                                                                                                        |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Network             | 40 example companies with fixed connections, in one Chamber Network. 12 are food suppliers.                                                                                         |
+| Connection Degree   | 1st, 2nd or 3rd degree and mutual connections on every company, updating as connections change.                                                                                     |
+| Fit Score           | Starts at 12. Adds points for seeking what you offer, offering what you seek, mutual connections and location. Past skips and offering the same as you subtract.                    |
+| Connection Requests | 80 or more accepted in seconds, 50 to 79 by the next morning, below 50 pending until withdrawn. Others also send them.                                                              |
+| Asks                | An ask's keywords are matched to what companies offer. Those companies are notified: 80 or more respond in seconds, 50 to 79 by the next morning. One new ask arrives each morning. |
+| Overnight activity  | Attention = 1 + 1 per 15 points in the last 7 days + 1 per 3 places above last. It sets views, searches and requests.                                                               |
+| Notifications       | Every event creates one. Views and search appearances on the same day are grouped.                                                                                                  |
+| Engine page         | Opened from the presenter guide: network map, log of what happened and why, and each lead's fit breakdown.                                                                          |
+
+Deliberately unlike LinkedIn:
+
+- Connections belong to companies, not people.
+- Any company can message any other, free. There is no connection gate or paid
+  messaging.
+- Connection Degree does not change search order, so rank is the same for every
+  viewer.
+- Other companies see only the connection count and mutual connections, which
+  keeps customers and suppliers private.
+- Each Chamber Network is separate, rather than one global network.
+
+## AI Lead Agent preview
+
+Not an MVP feature, and not built in the real app. It is simulated in the mockup
+and labeled "Preview: after the MVP". Source:
+[task document](2026-10-21-ai-lead-agent.pdf) and original
+[simulator](2026-10-21-ai-lead-agent-simulator.html).
+
+| Part                       | In the mockup                                                                                                                                                         |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| How to open it             | From the presenter guide, or the AI Lead Agent card on What's next.                                                                                                   |
+| Mandate                    | Choose customer, vendor, supplier or partner, then edit a pre-filled need.                                                                                            |
+| Candidates                 | Found and scored from the 40-company network, so different needs give different results.                                                                              |
+| Match Score                | 7 categories, 90 before contact and 10 after. Book at 75 or more, Nurture at 60 to 74, Drop below 60. It is separate from the Fit Score on leads.                     |
+| Gate A and Gate B          | The presenter approves or declines for Kalayaan Foods, and the decision changes the outcome. The other company's approver is simulated.                               |
+| Companies without an agent | A fixed few are opted out (knocked out) or unclaimed (claim email sent).                                                                                              |
+| Agent conversation         | Generated from templates and company profiles, with the spec's message types and disclosure tiers. No live AI runs.                                                   |
+| Handoff package            | Selection report with runners-up, meeting agenda and transcript.                                                                                                      |
+| Link to the MVP            | A booking creates a Notification and a ComMail conversation with the handoff package. "We met" and "We did business" then earn points as usual; the agent earns none. |
+| Left out                   | Prices, chamber revenue share, cross-chamber search, and real calendar booking. The preview notes that pricing has not been decided.                                  |
+
+## ComLinked Team Dashboard preview
+
+Not an MVP feature, and not built in the real app. The plan has ComLinked Staff
+use the database dashboard and postpones a custom console to Phase 2, so this is
+simulated in the mockup and labeled "Preview: after the MVP".
+
+| Part                   | In the mockup                                                                                                                       |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| How to open it         | From the presenter guide only, with its own "ComLinked team" header and no company navigation.                                      |
+| Pilot health           | The 10 targets from Section 8.1 with current value and an on track or behind status, plus a weekly active companies trend.          |
+| Companies needing help | A queue of companies that haven't claimed, have no lead yet, or have gone quiet.                                                    |
+| Network safety         | Unusual points to clear or flag, flagged accounts and opt-outs.                                                                     |
+| AI and agent           | AI Assistant use, and the 6 KPIs from the AI Lead Agent specification.                                                              |
+| Data                   | A fixed activity record for the 39 other example companies that advances with simulated days, plus Kalayaan Foods' live actions.    |
+| Chambers               | One example chamber, with no real chamber names.                                                                                    |
+| Privacy                | Staff see counts, statuses and company names, never conversations or confidential items.                                            |
+| Staff actions          | Send a claim reminder, make an intro, and clear or flag unusual points. Each is recorded in an activity log and affects the mockup. |
+| Community Managers     | They work for the chamber and use the chamber tools. ComLinked Staff step in when a company is waiting.                             |
+
+## Still needed before any launch
+
+No launch is planned for now. These remain for when it is.
+
+| Item                                       | Status      | Where it stands                                                                                                                    |
+| ------------------------------------------ | ----------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Project setup                              | Partly      | GitHub repo exists. This checkout has no `.env` or `.vercel` link, so the Supabase and Vercel connections are unconfirmed.         |
+| `CLAUDE.md` written from the plan          | Done        | Vision section committed in `294593c`.                                                                                             |
+| Database with real data                    | Not started | Only the template's tables exist: organizations, memberships, invitations and customers. Shared company data needs a design first. |
+| Real sign-in                               | Partly      | See A3.                                                                                                                            |
+| Real AI (`draft()` with the Anthropic API) | Not started |                                                                                                                                    |
+| Email, web push and SMS                    | Not started | The plan names no SMS provider.                                                                                                    |
+| Privacy and security review                | Not started | Needs a qualified person before real members join.                                                                                 |
+| Member import and soft launch              | Not started | Last step in the build order.                                                                                                      |
+
+## Open items for Richard
+
+These are in the mockup but not settled by the plan. They are also listed in the
+plan's [Adoption notes](2026-10-11-mvp-build-plan.md#adoption-notes).
+
+- Scoring: 200 points reach the full 30% boost, the New Member Boost is 10%
+  inside that ceiling, and Skip earns no daily lead list points.
+- The Verified badge and the copy of every ComMail sent to the company's
+  registered email come from the website, not the plan.
+- Engine settings: the Fit Score weights, the 80 and 50 request thresholds and
+  the overnight attention formula are placeholders.
+- AI Lead Agent: the spec names a different pilot from the plan (PCCC in Canada
+  against PCCI–Quezon City), is a paid upgrade, and messages other agents on its
+  own, which conflicts with "AI drafts, a person decides".
+- ComLinked Team Dashboard: the glossary defines a Superadmin as having
+  unrestricted access, but the dashboard promises staff never see private
+  content. The on track and behind labels also rely on pilot targets the plan
+  calls starting points.
+
+## Next decision for a real build
+
+Decide whether a Company and a Chamber are each an Organization in the data
+model. Feature A1 depends on it. See item 1 of the plan's
+[Adoption notes](2026-10-11-mvp-build-plan.md#adoption-notes).

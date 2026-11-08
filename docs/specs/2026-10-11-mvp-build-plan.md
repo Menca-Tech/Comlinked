@@ -340,3 +340,27 @@ once it is resolved, and record any hard-to-reverse answer as an ADR.
 10. **Privacy review scope.** Section 8.3 names visible profile views. It should
     also cover building profiles from public sources (A1) and contacting
     companies before they have opted in (A2).
+11. **Website promises outside this plan.** The website offers a Verified badge
+    when a company claims its profile, and a copy of every ComMail sent to the
+    company's registered email. Neither is in Section 3. The mockup keeps both;
+    Richard to confirm before a real build.
+12. **Scoring numbers used in the mockup.** For item 6, the mockup assumes 200
+    points reach the full 30% boost and the New Member Boost is 10% inside that
+    ceiling. It also assumes Skip earns no daily lead list points. For item 7,
+    the inviter gets 10 points and the partner gets the New Member Boost.
+    Richard to confirm before a real build.
+13. **Engine settings used in the mockup.** The Fit Score weights, the 80 and 50
+    Connection Request thresholds and the overnight attention formula are
+    placeholders. Richard to confirm before a real build.
+14. **The AI Lead Agent spec differs from this plan.** The
+    [task document](2026-10-21-ai-lead-agent.pdf), dated Oct 21, 2026, describes
+    what Section 6 postpones to Phase 2. It names a different pilot (PCCC in
+    Canada from Jan 1, 2027, against PCCI–Quezon City), is a paid upgrade, and
+    has the agent message other agents on its own, against "AI drafts, a person
+    decides". The mockup shows it only as a labeled preview. Richard to settle
+    these before a real build.
+15. **Staff access to private content.** The mockup previews a ComLinked Team
+    Dashboard, where staff see counts, statuses and company names but never
+    conversations or confidential items. The glossary and ADR 0005 give a
+    Superadmin unrestricted access, so the two must be reconciled before a real
+    build. Section 3.6's "no custom admin console" still applies to the MVP.

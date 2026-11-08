@@ -72,15 +72,25 @@ Terms from the [ComLinked MVP Build Plan](docs/specs/2026-10-11-mvp-build-plan.m
 ### Participants
 
 - **Company** — a business listed on ComLinked, and the party that owns its
-  Connections and reputation. Avoid "member" for this, since that is also an Org
-  Role.
+  Connections and reputation. Its profile is shared across its Chamber Network, and
+  claiming it links the Company to one Organization, which holds its private data.
+  Avoid "member" for this, since that is also an Org Role.
 
 - **Authorized Representative** — a person allowed to act on a Company's behalf.
 
 - **Chamber** — a business association whose members join ComLinked together.
 
-- **Community Manager** — a person who supports a Chamber's Companies with Intros
-  and Asks, and reviews unusual spikes in points.
+- **Chamber Network** — the Companies of one Chamber, within which they can find
+  and connect with each other. Each Chamber Network is kept apart from the others.
+
+- **Community Manager** — a person working for a Chamber who supports its
+  Companies with Intros and Asks, and reviews unusual spikes in points.
+
+- **ComLinked Staff** — people working for ComLinked itself, who can step in when a
+  Company is waiting. Avoid "team" alone: that means an Organization's members.
+
+- **Team Dashboard** — ComLinked Staff's view across a Chamber's Companies, showing
+  activity and status but never private conversations or confidential items.
 
 - **Pilot** — the first 90-day launch, at PCCI–Quezon City.
 
@@ -104,6 +114,11 @@ Terms from the [ComLinked MVP Build Plan](docs/specs/2026-10-11-mvp-build-plan.m
 - **Match** — a Company recommended to another as relevant, with a Match Reason.
 
 - **Match Reason** — the one-line "why you should meet" attached to a Match.
+
+- **Fit Score** — a 0–100 measure of how well a Match suits a Company.
+
+- **Match Score** — the AI Lead Agent's seven-category assessment of a candidate
+  out of 100. Avoid using it for the quick Fit Score shown on Leads.
 
 - **Interest Signal** — a named record that another Company found this one in
   search, viewed its profile, messaged it or was recommended it.
@@ -137,6 +152,9 @@ Terms from the [ComLinked MVP Build Plan](docs/specs/2026-10-11-mvp-build-plan.m
 
 - **Freshness Nudge** — a prompt to update a profile that has gone unchanged.
 
+- **Notification** — an alert about one event, or a group of similar events, kept
+  in a Company's notification center.
+
 - **Monthly Top Companies** — a Chamber's leaderboard of its 10 most active
   Companies, for recognition only.
 
@@ -144,6 +162,15 @@ Terms from the [ComLinked MVP Build Plan](docs/specs/2026-10-11-mvp-build-plan.m
 
 - **Connection** — an accepted link between two Companies, owned by the Companies
   rather than the people who made it.
+
+- **Connection Request** — one Company's pending ask to form a Connection, which
+  the other Company accepts or ignores. Avoid "invitation": that is a Partner Invite
+  or a Membership invitation.
+
+- **Connection Degree** — how many Connections separate two Companies: 1st is
+  connected, 2nd shares a Connection, 3rd is one step further.
+
+- **Mutual Connection** — a Company connected to both of two other Companies.
 
 - **ComMail** — company-to-company messaging.
 
@@ -153,6 +180,13 @@ Terms from the [ComLinked MVP Build Plan](docs/specs/2026-10-11-mvp-build-plan.m
 - **AI Draft** — text written by the AI Assistant, labelled as AI until a person
   edits or sends it.
 
+- **AI Lead Agent** — a post-MVP agent that finds, qualifies and books meetings with
+  other Companies on one Company's behalf. Distinct from the AI Assistant, which
+  only drafts for a person.
+
+- **Mandate** — a Company's written instructions to its AI Lead Agent: what to look
+  for, who approves, and its limits.
+
 - **Outcome** — a result confirmed by both Companies: "We met" or "We did
   business."
 
@@ -161,5 +195,6 @@ Terms from the [ComLinked MVP Build Plan](docs/specs/2026-10-11-mvp-build-plan.m
 - **Testimonial** — a Company's short account of a confirmed deal: what it needed
   and what happened.
 
-- **Success Wall** — the display of recent Testimonials and deals on the home feed
-  and on both Companies' profiles.
+- **Success Wall** — the display of recent Testimonials and deals on the Wins tab
+  and on both Companies' profiles, with the latest shown as Recent Wins on ComDash.
+  Avoid "home feed": ComDash is the home screen, and a news feed is postponed.
