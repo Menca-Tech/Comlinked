@@ -86,6 +86,9 @@ Terms from the [ComLinked MVP Build Plan](docs/specs/2026-10-11-mvp-build-plan.m
 - **Community Manager** — a person working for a Chamber who supports its
   Companies with Intros and Asks, and reviews unusual spikes in points.
 
+- **Chamber Leader** — the person who decides whether a Chamber joins ComLinked.
+  Distinct from a Community Manager, who supports its Companies day to day.
+
 - **ComLinked Staff** — people working for ComLinked itself, who can step in when a
   Company is waiting. Avoid "team" alone: that means an Organization's members.
 
@@ -207,6 +210,6 @@ Terms from the [ComLinked MVP Build Plan](docs/specs/2026-10-11-mvp-build-plan.m
 - **ComLinked Design System** — the one set of brand rules, drawn from the logo,
   shared by the public website and the app. It has two modes.
 
-- **Site Mode** — the expressive form of the Design System, used on public pages.
+- **Site Mode** — the spacious form of the Design System, used on public pages.
 
 - **App Mode** — the compact form of the Design System, used on signed-in screens.
