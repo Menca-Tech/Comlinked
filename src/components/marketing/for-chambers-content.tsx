@@ -8,15 +8,15 @@ export function ForChambersContent() {
       <section className="cl-dark cl-rings-top-right text-cl-paper">
         <div className="cl-hero-pad mx-auto my-0 flex max-w-[1200px] flex-wrap items-start gap-16 px-5 pt-22 pb-26">
           <div className="min-w-0 flex-[1.1_1_460px]">
-            <h1 className="cl-h1 cl-load mx-0 mt-6 mb-7 font-normal tracking-[-0.025em] text-balance text-cl-paper [animation-delay:0.15s]">
+            <h1 className="cl-h1 mx-0 mt-6 mb-7 font-normal tracking-[-0.025em] text-balance text-cl-paper">
               Run your chamber’s network{" "}
               <span className="text-cl-sky not-italic">on ComLinked</span>
             </h1>
-            <p className="cl-load mx-0 mt-0 mb-9 max-w-[32em] text-[19px] leading-[30px] text-cl-on-night-80 [animation-delay:0.28s]">
+            <p className="mx-0 mt-0 mb-9 max-w-[32em] text-[19px] leading-[30px] text-cl-on-night-80">
               Bring your members onto a company-to-company network that finds them leads from their
               first day. Pilot chambers and their members join free.
             </p>
-            <ul className="cl-load m-0 list-none border-t border-t-cl-on-night-14 p-0 [animation-delay:0.4s]">
+            <ul className="m-0 list-none border-t border-t-cl-on-night-14 p-0">
               <li className="flex gap-3.5 border-b border-b-cl-on-night-14 px-0 py-3.5 text-cl-on-night-88">
                 <span
                   className="cl-ring-sky mr-2 inline-block h-[11px] w-[11px] flex-none rounded-full align-[-1px]"
@@ -41,7 +41,7 @@ export function ForChambersContent() {
             </ul>
           </div>
           <div
-            className="cl-pad cl-load min-w-0 flex-[0.9_1_360px] scroll-mt-22 border border-cl-rule bg-cl-surface p-9 text-cl-ink-2 [animation-delay:0.3s]"
+            className="cl-pad min-w-0 flex-[0.9_1_360px] scroll-mt-22 border border-cl-rule bg-cl-surface p-9 text-cl-ink-2"
             id="pilot"
           >
             <div>
@@ -150,7 +150,7 @@ export function ForChambersContent() {
       </section>
       <section className="border-b border-b-cl-rule px-0 py-14">
         <div className="cl-in mx-auto my-0 flex max-w-[1200px] flex-wrap items-center justify-between gap-x-14 gap-y-7 px-5 py-0">
-          <div className="cl-rv min-w-0 flex-[1_1_320px]">
+          <div className="min-w-0 flex-[1_1_320px]">
             <div className="mb-3.5 font-sans text-[14px] leading-[16px] font-bold tracking-normal text-cl-muted">
               <span
                 className="cl-ring-accent mr-2 inline-block h-[11px] w-[11px] flex-none rounded-full align-[-1px]"
@@ -163,7 +163,7 @@ export function ForChambersContent() {
               2027
             </div>
           </div>
-          <figure className="cl-rv m-0 min-w-0 flex-[1.4_1_420px] border-l border-l-cl-rule pl-7">
+          <figure className="m-0 min-w-0 flex-[1.4_1_420px] border-l border-l-cl-rule pl-7">
             <blockquote className="mx-0 mt-0 mb-3 text-[22px] leading-[30px] text-cl-ink-2 not-italic">
               “
               <span className="bg-cl-slot px-1 py-0 text-cl-slot-ink">
@@ -181,7 +181,7 @@ export function ForChambersContent() {
       </section>
       <section className="cl-sec" id="how">
         <div className="cl-in mx-auto my-0 flex max-w-[1200px] flex-wrap gap-x-14 gap-y-6 px-5 py-0">
-          <div className="cl-rv min-w-0 flex-[0.7_1_300px]">
+          <div className="min-w-0 flex-[0.7_1_300px]">
             <h2 className="cl-h2 mx-0 mt-0 mb-4 font-normal tracking-[-0.025em] text-balance text-cl-ink">
               How it works <span className="not-italic">for your chamber</span>
             </h2>
@@ -191,7 +191,7 @@ export function ForChambersContent() {
             </p>
           </div>
           <ol className="m-0 min-w-0 flex-[1.3_1_480px] list-none border-b border-b-cl-rule p-0">
-            <li className="cl-rv grid grid-cols-[64px_minmax(0,1fr)] gap-4 border-t border-t-cl-rule px-0 py-6.5">
+            <li className="grid grid-cols-[64px_minmax(0,1fr)] gap-4 border-t border-t-cl-rule px-0 py-6.5">
               <span className="cl-pop0 font-sans text-[22px] leading-[28px] font-bold text-cl-accent-strong">
                 01
               </span>
@@ -205,7 +205,7 @@ export function ForChambersContent() {
                 </span>
               </span>
             </li>
-            <li className="cl-rv grid grid-cols-[64px_minmax(0,1fr)] gap-4 border-t border-t-cl-rule px-0 py-6.5">
+            <li className="grid grid-cols-[64px_minmax(0,1fr)] gap-4 border-t border-t-cl-rule px-0 py-6.5">
               <span className="cl-pop0 font-sans text-[22px] leading-[28px] font-bold text-cl-accent-strong">
                 02
               </span>
@@ -219,7 +219,7 @@ export function ForChambersContent() {
                 </span>
               </span>
             </li>
-            <li className="cl-rv grid grid-cols-[64px_minmax(0,1fr)] gap-4 border-t border-t-cl-rule px-0 py-6.5">
+            <li className="grid grid-cols-[64px_minmax(0,1fr)] gap-4 border-t border-t-cl-rule px-0 py-6.5">
               <span className="cl-pop0 font-sans text-[22px] leading-[28px] font-bold text-cl-accent-strong">
                 03
               </span>
@@ -232,7 +232,7 @@ export function ForChambersContent() {
                 </span>
               </span>
             </li>
-            <li className="cl-rv grid grid-cols-[64px_minmax(0,1fr)] gap-4 border-t border-t-cl-rule px-0 py-6.5">
+            <li className="grid grid-cols-[64px_minmax(0,1fr)] gap-4 border-t border-t-cl-rule px-0 py-6.5">
               <span className="cl-pop0 font-sans text-[22px] leading-[28px] font-bold text-cl-accent-strong">
                 04
               </span>
@@ -246,7 +246,7 @@ export function ForChambersContent() {
                 </span>
               </span>
             </li>
-            <li className="cl-rv grid grid-cols-[64px_minmax(0,1fr)] gap-4 border-t border-t-cl-rule px-0 py-6.5">
+            <li className="grid grid-cols-[64px_minmax(0,1fr)] gap-4 border-t border-t-cl-rule px-0 py-6.5">
               <span className="cl-pop0 font-sans text-[22px] leading-[28px] font-bold text-cl-accent-strong">
                 05
               </span>
@@ -264,7 +264,7 @@ export function ForChambersContent() {
       </section>
       <section className="cl-sec pt-0">
         <div className="cl-in mx-auto my-0 flex max-w-[1200px] flex-wrap items-center gap-x-18 gap-y-8 px-5 py-0">
-          <div className="cl-rv min-w-0 flex-[1_1_360px]">
+          <div className="min-w-0 flex-[1_1_360px]">
             <h2 className="cl-h2 mx-0 mt-0 mb-4 font-normal tracking-[-0.025em] text-balance text-cl-ink">
               Free for pilot chambers.
             </h2>
@@ -279,7 +279,7 @@ export function ForChambersContent() {
               Request a pilot
             </a>
           </div>
-          <div className="cl-rv min-w-0 flex-[1_1_360px]">
+          <div className="min-w-0 flex-[1_1_360px]">
             <ul className="m-0 list-none border-b border-b-cl-rule p-0">
               <li className="flex items-baseline gap-3 border-t border-t-cl-rule px-0 py-3.5 text-[16px] leading-[25px] text-cl-ink-2">
                 <span
@@ -322,11 +322,11 @@ export function ForChambersContent() {
       </section>
       <section className="px-0 pt-0 pb-28" id="faq">
         <div className="cl-in mx-auto my-0 flex max-w-[1200px] flex-wrap gap-x-14 gap-y-6 px-5 py-0">
-          <h2 className="cl-h2 cl-rv mx-0 mt-0 mb-4 flex-[0.6_1_280px] font-normal tracking-[-0.025em] text-balance text-cl-ink">
+          <h2 className="cl-h2 mx-0 mt-0 mb-4 flex-[0.6_1_280px] font-normal tracking-[-0.025em] text-balance text-cl-ink">
             Questions from <span className="not-italic">chambers</span>
           </h2>
           <div className="min-w-0 flex-[1.4_1_480px] border-b border-b-cl-rule">
-            <details className="cl-faq cl-rv border-t border-t-cl-rule">
+            <details className="cl-faq border-t border-t-cl-rule">
               <summary className="flex cursor-pointer list-none justify-between gap-4 px-0 py-5.5 text-[20px] leading-[27px] tracking-[-0.01em] text-cl-ink">
                 How long does a pilot take?
                 <span
@@ -342,7 +342,7 @@ export function ForChambersContent() {
                 </span>
               </p>
             </details>
-            <details className="cl-faq cl-rv border-t border-t-cl-rule">
+            <details className="cl-faq border-t border-t-cl-rule">
               <summary className="flex cursor-pointer list-none justify-between gap-4 px-0 py-5.5 text-[20px] leading-[27px] tracking-[-0.01em] text-cl-ink">
                 Do our members pay?
                 <span
@@ -356,7 +356,7 @@ export function ForChambersContent() {
                 No. Every feature is open to every member company, free, with no paywall.
               </p>
             </details>
-            <details className="cl-faq cl-rv border-t border-t-cl-rule">
+            <details className="cl-faq border-t border-t-cl-rule">
               <summary className="flex cursor-pointer list-none justify-between gap-4 px-0 py-5.5 text-[20px] leading-[27px] tracking-[-0.01em] text-cl-ink">
                 What do you need from us?
                 <span
@@ -373,7 +373,7 @@ export function ForChambersContent() {
                 </span>
               </p>
             </details>
-            <details className="cl-faq cl-rv border-t border-t-cl-rule">
+            <details className="cl-faq border-t border-t-cl-rule">
               <summary className="flex cursor-pointer list-none justify-between gap-4 px-0 py-5.5 text-[20px] leading-[27px] tracking-[-0.01em] text-cl-ink">
                 Can members see each other’s names?
                 <span
@@ -388,7 +388,7 @@ export function ForChambersContent() {
                 tells every company that profile views are visible to others.
               </p>
             </details>
-            <details className="cl-faq cl-rv border-t border-t-cl-rule">
+            <details className="cl-faq border-t border-t-cl-rule">
               <summary className="flex cursor-pointer list-none justify-between gap-4 px-0 py-5.5 text-[20px] leading-[27px] tracking-[-0.01em] text-cl-ink">
                 How is member data protected?
                 <span
@@ -409,10 +409,10 @@ export function ForChambersContent() {
       </section>
       <section className="cl-dark cl-rings-bottom-8 px-0 pt-32 pb-28 text-cl-paper">
         <div className="cl-in cl-cta-pad mx-auto my-0 max-w-[1200px] px-5 py-0">
-          <h2 className="cl-hxl cl-rv mx-0 mt-0 mb-18 max-w-[16em] font-normal tracking-[-0.035em] text-balance text-cl-paper">
+          <h2 className="cl-hxl mx-0 mt-0 mb-18 max-w-[16em] font-normal tracking-[-0.035em] text-balance text-cl-paper">
             Build connections <span className="not-italic">your members keep.</span>
           </h2>
-          <div className="cl-rv flex flex-wrap items-end justify-between gap-x-16 gap-y-8 border-t border-t-cl-on-night-24 pt-8">
+          <div className="flex flex-wrap items-end justify-between gap-x-16 gap-y-8 border-t border-t-cl-on-night-24 pt-8">
             <ul className="m-0 max-w-[560px] flex-[1_1_360px] list-none border-b border-b-cl-on-night-14 p-0 font-sans text-[12px] leading-[18px] font-bold tracking-normal text-cl-on-night-82">
               <li className="flex gap-3 border-t border-t-cl-on-night-14 px-0 py-3">
                 <span

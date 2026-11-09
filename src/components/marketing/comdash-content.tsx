@@ -8,14 +8,14 @@ export function ComDashContent() {
       <section className="cl-dark cl-rings-top-right text-cl-paper">
         <div className="cl-in cl-hero-pad mx-auto my-0 flex max-w-[1200px] flex-wrap items-center gap-14 px-5 pt-24 pb-26">
           <div className="min-w-0 flex-[0.9_1_360px]">
-            <h1 className="cl-h1 cl-load mx-0 mt-6 mb-7 font-normal tracking-[-0.025em] text-balance text-cl-paper [animation-delay:0.15s]">
+            <h1 className="cl-h1 mx-0 mt-6 mb-7 font-normal tracking-[-0.025em] text-balance text-cl-paper">
               See who’s finding you <span className="text-cl-sky not-italic">on ComDash</span>
             </h1>
-            <p className="cl-load mx-0 mt-0 mb-8 text-[19px] leading-[30px] text-cl-on-night-80 [animation-delay:0.28s]">
+            <p className="mx-0 mt-0 mb-8 text-[19px] leading-[30px] text-cl-on-night-80">
               Your company dashboard shows who is looking at you, by name, and where you rank in
               search.
             </p>
-            <div className="cl-load [animation-delay:0.4s]">
+            <div>
               <Link
                 className="cl-btn inline-flex h-13 items-center justify-center border border-cl-sky-strong bg-cl-sky-strong px-6 py-0 font-sans text-[13px] font-bold tracking-normal text-cl-ink no-underline"
                 href={paths.marketing.join}
@@ -25,7 +25,7 @@ export function ComDashContent() {
             </div>
           </div>
           <div
-            className="cl-rv cl-d1 min-w-0 flex-[1.1_1_440px] border border-cl-on-night-14 bg-cl-night-raised"
+            className="min-w-0 flex-[1.1_1_440px] border border-cl-on-night-14 bg-cl-night-raised"
             aria-label="Example ComDash"
           >
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-b-cl-on-night-14 px-5 py-4 font-sans text-[14px] leading-[16px] font-bold tracking-normal">
@@ -141,7 +141,7 @@ export function ComDashContent() {
       </section>
       <section className="cl-sec">
         <div className="cl-in mx-auto my-0 flex max-w-[1200px] flex-wrap items-start gap-x-18 gap-y-10 px-5 py-0">
-          <div className="cl-rv min-w-0 flex-[1_1_360px]">
+          <div className="min-w-0 flex-[1_1_360px]">
             <h2 className="cl-h2 mx-0 mt-0 mb-4 font-normal tracking-[-0.025em] text-balance text-cl-ink">
               Who’s interested, by name.
             </h2>
@@ -181,7 +181,7 @@ export function ComDashContent() {
               </li>
             </ul>
           </div>
-          <div className="cl-card cl-rv cl-d1 min-w-0 flex-[1_1_380px] border border-cl-rule bg-cl-surface p-7">
+          <div className="cl-card min-w-0 flex-[1_1_380px] border border-cl-rule bg-cl-surface p-7">
             <div className="mb-2 font-sans text-[14px] leading-[16px] font-bold tracking-normal text-cl-muted">
               <span
                 className="cl-ring-accent mr-2 inline-block h-[11px] w-[11px] flex-none rounded-full align-[-1px]"
@@ -236,7 +236,7 @@ export function ComDashContent() {
       </section>
       <section className="cl-sec pt-0">
         <div className="cl-in mx-auto my-0 max-w-[1200px] px-5 py-0">
-          <div className="cl-rv mb-10 max-w-[700px]">
+          <div className="mb-10 max-w-[700px]">
             <h2 className="cl-h2 mx-0 mt-0 mb-4 font-normal tracking-[-0.025em] text-balance text-cl-ink">
               Climb by being active.
             </h2>
@@ -246,7 +246,7 @@ export function ComDashContent() {
             </p>
           </div>
           <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,320px),1fr))] gap-4">
-            <div className="cl-card cl-rv min-w-0 border border-cl-rule bg-cl-surface p-7">
+            <div className="cl-card min-w-0 border border-cl-rule bg-cl-surface p-7">
               <h3 className="mx-0 mt-0 mb-3 text-[22px] leading-[28px] font-normal text-cl-ink">
                 What raises your rank
               </h3>
@@ -302,7 +302,7 @@ export function ComDashContent() {
                 </li>
               </ul>
             </div>
-            <div className="cl-card cl-rv min-w-0 border border-cl-accent-strong bg-cl-accent-tint p-7">
+            <div className="cl-card min-w-0 border border-cl-accent-strong bg-cl-accent-tint p-7">
               <h3 className="mx-0 mt-0 mb-3 text-[22px] leading-[28px] font-normal text-cl-ink">
                 Fair for everyone
               </h3>
@@ -358,10 +358,10 @@ export function ComDashContent() {
       </section>
       <section className="cl-dark cl-rings-bottom-8 px-0 pt-32 pb-28 text-cl-paper">
         <div className="cl-in cl-cta-pad mx-auto my-0 max-w-[1200px] px-5 py-0">
-          <h2 className="cl-hxl cl-rv mx-0 mt-0 mb-18 max-w-[16em] font-normal tracking-[-0.035em] text-balance text-cl-paper">
+          <h2 className="cl-hxl mx-0 mt-0 mb-18 max-w-[16em] font-normal tracking-[-0.035em] text-balance text-cl-paper">
             See who’s <span className="not-italic">finding your company.</span>
           </h2>
-          <div className="cl-rv flex flex-wrap items-end justify-between gap-x-16 gap-y-8 border-t border-t-cl-on-night-24 pt-8">
+          <div className="flex flex-wrap items-end justify-between gap-x-16 gap-y-8 border-t border-t-cl-on-night-24 pt-8">
             <ul className="m-0 max-w-[560px] flex-[1_1_360px] list-none border-b border-b-cl-on-night-14 p-0 font-sans text-[12px] leading-[18px] font-bold tracking-normal text-cl-on-night-82">
               <li className="flex gap-3 border-t border-t-cl-on-night-14 px-0 py-3">
                 <span

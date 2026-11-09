@@ -20,23 +20,9 @@ export function Footer() {
                   loading="lazy"
                 />
               </Link>
-              <p className="mx-0 mt-4.5 mb-6 text-[18px] leading-[27px] tracking-[-0.01em] text-cl-ink">
+              <p className="mx-0 mt-4.5 mb-0 text-[18px] leading-[27px] tracking-[-0.01em] text-cl-ink">
                 ComLinked connects companies, not individuals.
               </p>
-              <div className="flex flex-wrap gap-2.5">
-                <Link
-                  className="cl-btn inline-flex h-11.5 items-center justify-center border border-cl-accent-strong bg-cl-accent-strong px-4.5 py-0 font-sans text-[12px] font-bold tracking-normal text-cl-surface no-underline"
-                  href={paths.marketing.join}
-                >
-                  Join free
-                </Link>{" "}
-                <Link
-                  className="cl-btn cl-btn-o inline-flex h-11.5 items-center justify-center border border-cl-ink bg-transparent px-4.5 py-0 font-sans text-[12px] font-bold tracking-normal text-cl-ink no-underline"
-                  href={paths.marketing.chamberPilot}
-                >
-                  Chamber pilot
-                </Link>
-              </div>
             </div>
             <nav
               className="grid min-w-0 flex-[2_1_520px] grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-x-6 gap-y-8"

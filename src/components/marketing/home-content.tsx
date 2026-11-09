@@ -8,15 +8,15 @@ export function HomeContent() {
       <section className="cl-dark cl-rings-top-right text-cl-paper">
         <div className="cl-hero-pad mx-auto my-0 flex max-w-[1200px] flex-wrap items-center gap-16 px-5 pt-22 pb-26">
           <div className="min-w-0 flex-[1.15_1_460px]">
-            <h1 className="cl-h1 cl-load mx-0 mt-6 mb-7 font-normal tracking-[-0.025em] text-balance text-cl-paper [animation-delay:0.15s]">
+            <h1 className="cl-h1 mx-0 mt-6 mb-7 font-normal tracking-[-0.025em] text-balance text-cl-paper">
               Your first business leads{" "}
               <span className="text-cl-sky not-italic">within 24 hours.</span>
             </h1>
-            <p className="cl-load mx-0 mt-0 mb-8 max-w-[32em] text-[19px] leading-[30px] text-cl-on-night-78 [animation-delay:0.28s]">
+            <p className="mx-0 mt-0 mb-8 max-w-[32em] text-[19px] leading-[30px] text-cl-on-night-78">
               Claim your company’s free profile and meet 3 matched companies on your first day, each
               with a reason to talk.
             </p>
-            <ul className="cl-load m-0 flex list-none flex-wrap gap-x-7 gap-y-2.5 p-0 font-sans text-[12px] leading-[18px] font-bold tracking-normal text-cl-on-night-80 [animation-delay:0.4s]">
+            <ul className="m-0 flex list-none flex-wrap gap-x-7 gap-y-2.5 p-0 font-sans text-[12px] leading-[18px] font-bold tracking-normal text-cl-on-night-80">
               <li>
                 <span
                   className="cl-ring-sky mr-2 inline-block h-[11px] w-[11px] flex-none rounded-full align-[-1px]"
@@ -39,7 +39,7 @@ export function HomeContent() {
                 Connections stay with your company
               </li>
             </ul>
-            <div className="cl-load mt-9 flex flex-wrap gap-3 [animation-delay:0.5s]">
+            <div className="mt-9 flex flex-wrap gap-3">
               <a
                 className="cl-btn inline-flex h-13 items-center justify-center border border-cl-sky-strong bg-cl-sky-strong px-6.5 py-0 font-sans text-[15px] font-bold text-cl-ink no-underline"
                 href="#join"
@@ -56,7 +56,7 @@ export function HomeContent() {
           </div>
           <div className="min-w-0 flex-[0.85_1_380px]">
             <div
-              className="cl-load ml-auto max-w-[560px] rounded-[16px] border border-cl-on-night-14 bg-cl-night-raised px-6 pt-5.5 pb-2 [animation-delay:0.45s]"
+              className="ml-auto max-w-[560px] rounded-[16px] border border-cl-on-night-14 bg-cl-night-raised px-6 pt-5.5 pb-2"
               role="group"
               aria-label="Example of your first day on ComLinked"
             >
@@ -66,7 +66,7 @@ export function HomeContent() {
                 </span>
                 <span className="text-[13px] text-cl-on-night-72">Example</span>
               </div>
-              <div className="cl-load mb-2 flex items-center gap-2.5 rounded-[10px] bg-cl-ring-20 px-3.5 py-3 text-[14px] leading-[20px] text-cl-paper [animation-delay:0.5s]">
+              <div className="mb-2 flex items-center gap-2.5 rounded-[10px] bg-cl-ring-20 px-3.5 py-3 text-[14px] leading-[20px] text-cl-paper">
                 <span
                   className="cl-ring-sky-strong inline-block h-[11px] w-[11px] flex-none rounded-full"
                   aria-hidden="true"
@@ -79,7 +79,7 @@ export function HomeContent() {
                 3 matched companies
               </div>
               <ul className="m-0 list-none p-0">
-                <li className="cl-load flex gap-3.5 border-t border-t-cl-on-night-14 px-0 py-4 [animation-delay:0.55s]">
+                <li className="flex gap-3.5 border-t border-t-cl-on-night-14 px-0 py-4">
                   <span
                     className="grid h-10 w-10 flex-none place-items-center rounded-[10px] border border-cl-on-night-14 bg-cl-night-chip text-[13px] font-extrabold text-cl-paper"
                     aria-hidden="true"
@@ -111,7 +111,7 @@ export function HomeContent() {
                     </div>
                   </div>
                 </li>
-                <li className="cl-load flex gap-3.5 border-t border-t-cl-on-night-14 px-0 py-4 [animation-delay:0.67s]">
+                <li className="flex gap-3.5 border-t border-t-cl-on-night-14 px-0 py-4">
                   <span
                     className="grid h-10 w-10 flex-none place-items-center rounded-[10px] border border-cl-on-night-14 bg-cl-night-chip text-[13px] font-extrabold text-cl-paper"
                     aria-hidden="true"
@@ -143,7 +143,7 @@ export function HomeContent() {
                     </div>
                   </div>
                 </li>
-                <li className="cl-load flex gap-3.5 border-t border-t-cl-on-night-14 px-0 py-4 [animation-delay:0.79s]">
+                <li className="flex gap-3.5 border-t border-t-cl-on-night-14 px-0 py-4">
                   <span
                     className="grid h-10 w-10 flex-none place-items-center rounded-[10px] border border-cl-on-night-14 bg-cl-night-chip text-[13px] font-extrabold text-cl-paper"
                     aria-hidden="true"
@@ -182,7 +182,7 @@ export function HomeContent() {
       </section>
       <section className="cl-sec">
         <div className="cl-in mx-auto my-0 max-w-[1200px] px-5 py-0">
-          <div className="cl-rv mb-11 max-w-[700px]">
+          <div className="mb-11 max-w-[700px]">
             <h2 className="cl-h2 mx-0 mt-0 mb-4 font-normal tracking-[-0.025em] text-balance text-cl-ink">
               When people leave, <span className="not-italic">relationships shouldn’t.</span>
             </h2>
@@ -192,7 +192,7 @@ export function HomeContent() {
             </p>
           </div>
           <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,340px),1fr))] gap-5">
-            <div className="cl-card cl-pad cl-rv min-w-0 border border-cl-rule bg-cl-surface p-8">
+            <div className="cl-card cl-pad min-w-0 border border-cl-rule bg-cl-surface p-8">
               <span className="mb-4.5 inline-block rounded-full border border-cl-rule px-3 py-[5px] font-sans text-[13px] leading-[14px] font-bold tracking-normal text-cl-muted">
                 Personal networks
               </span>
@@ -250,7 +250,7 @@ export function HomeContent() {
                 />
               </svg>
             </div>
-            <div className="cl-card cl-pad cl-rv min-w-0 border border-cl-rule bg-cl-surface p-8">
+            <div className="cl-card cl-pad min-w-0 border border-cl-rule bg-cl-surface p-8">
               <span className="mb-4.5 inline-block rounded-full border border-cl-accent px-3 py-[5px] font-sans text-[13px] leading-[14px] font-bold tracking-normal text-cl-accent-strong">
                 ComLinked
               </span>
@@ -320,11 +320,11 @@ export function HomeContent() {
       </section>
       <section className="cl-sec cl-dark cl-rings-bottom-left text-cl-paper">
         <div className="cl-in mx-auto my-0 max-w-[1200px] px-5 py-0">
-          <h2 className="cl-h2 cl-rv mx-0 mt-0 mb-12 max-w-[14em] font-normal tracking-[-0.025em] text-balance text-cl-paper">
+          <h2 className="cl-h2 mx-0 mt-0 mb-12 max-w-[14em] font-normal tracking-[-0.025em] text-balance text-cl-paper">
             One network, <span className="not-italic">three ways in.</span>
           </h2>
           <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,300px),1fr))] gap-x-10 gap-y-0">
-            <div className="cl-rv flex min-w-0 flex-col border-t border-t-cl-on-night-24 px-0 pt-8 pb-2">
+            <div className="flex min-w-0 flex-col border-t border-t-cl-on-night-24 px-0 pt-8 pb-2">
               <h3 className="mx-0 mt-4.5 mb-3.5 text-[34px] leading-[36px] font-normal tracking-[-0.02em] text-cl-paper">
                 Leads today, and every morning.
               </h3>
@@ -339,7 +339,7 @@ export function HomeContent() {
                 See how it works
               </Link>
             </div>
-            <div className="cl-rv flex min-w-0 flex-col border-t border-t-cl-on-night-24 px-0 pt-8 pb-2">
+            <div className="flex min-w-0 flex-col border-t border-t-cl-on-night-24 px-0 pt-8 pb-2">
               <h3 className="mx-0 mt-4.5 mb-3.5 text-[34px] leading-[36px] font-normal tracking-[-0.02em] text-cl-paper">
                 See who’s interested, by name.
               </h3>
@@ -363,7 +363,7 @@ export function HomeContent() {
                 Explore ComDash
               </Link>
             </div>
-            <div className="cl-rv flex min-w-0 flex-col border-t border-t-cl-on-night-24 px-0 pt-8 pb-2">
+            <div className="flex min-w-0 flex-col border-t border-t-cl-on-night-24 px-0 pt-8 pb-2">
               <h3 className="mx-0 mt-4.5 mb-3.5 text-[34px] leading-[36px] font-normal tracking-[-0.02em] text-cl-paper">
                 A network for your members.
               </h3>
@@ -383,7 +383,7 @@ export function HomeContent() {
       </section>
       <section className="cl-sec">
         <div className="cl-in mx-auto my-0 flex max-w-[1200px] flex-wrap items-start gap-14 px-5 py-0">
-          <div className="cl-rv min-w-0 flex-[0.85_1_340px]">
+          <div className="min-w-0 flex-[0.85_1_340px]">
             <h2 className="cl-h2 mx-0 mt-0 mb-4 font-normal tracking-[-0.025em] text-balance text-cl-ink">
               What your company profile <span className="not-italic">shows</span>
             </h2>
@@ -401,7 +401,7 @@ export function HomeContent() {
             </p>
           </div>
           <div
-            className="cl-card cl-rv cl-d1 min-w-0 flex-[1.15_1_440px] border border-cl-rule bg-cl-surface"
+            className="cl-card min-w-0 flex-[1.15_1_440px] border border-cl-rule bg-cl-surface"
             aria-label="Example company profile"
           >
             <div className="flex flex-wrap items-center gap-4 border-b border-b-cl-rule p-6">
@@ -483,7 +483,7 @@ export function HomeContent() {
       </section>
       <section className="cl-sec pt-0">
         <div className="cl-in mx-auto my-0 max-w-[1200px] px-5 py-0">
-          <div className="cl-rv mb-9 max-w-[700px]">
+          <div className="mb-9 max-w-[700px]">
             <h2 className="cl-h2 mx-0 mt-0 mb-4 font-normal tracking-[-0.025em] text-balance text-cl-ink">
               Real companies <span className="not-italic">only.</span>
             </h2>
@@ -493,7 +493,7 @@ export function HomeContent() {
             </p>
           </div>
           <ul className="m-0 grid list-none grid-cols-[repeat(auto-fit,minmax(min(100%,320px),1fr))] gap-x-10 p-0">
-            <li className="cl-rv grid grid-cols-[32px_minmax(0,1fr)] gap-3 border-t border-t-cl-rule px-0 py-6">
+            <li className="grid grid-cols-[32px_minmax(0,1fr)] gap-3 border-t border-t-cl-rule px-0 py-6">
               <span
                 className="cl-ring-accent mr-2 inline-block h-[11px] w-[11px] flex-none rounded-full align-[-1px]"
                 aria-hidden="true"
@@ -507,7 +507,7 @@ export function HomeContent() {
                 </span>
               </span>
             </li>
-            <li className="cl-rv grid grid-cols-[32px_minmax(0,1fr)] gap-3 border-t border-t-cl-rule px-0 py-6">
+            <li className="grid grid-cols-[32px_minmax(0,1fr)] gap-3 border-t border-t-cl-rule px-0 py-6">
               <span
                 className="cl-ring-accent mr-2 inline-block h-[11px] w-[11px] flex-none rounded-full align-[-1px]"
                 aria-hidden="true"
@@ -524,7 +524,7 @@ export function HomeContent() {
                 </span>
               </span>
             </li>
-            <li className="cl-rv grid grid-cols-[32px_minmax(0,1fr)] gap-3 border-t border-t-cl-rule px-0 py-6">
+            <li className="grid grid-cols-[32px_minmax(0,1fr)] gap-3 border-t border-t-cl-rule px-0 py-6">
               <span
                 className="cl-ring-accent mr-2 inline-block h-[11px] w-[11px] flex-none rounded-full align-[-1px]"
                 aria-hidden="true"
@@ -538,7 +538,7 @@ export function HomeContent() {
                 </span>
               </span>
             </li>
-            <li className="cl-rv grid grid-cols-[32px_minmax(0,1fr)] gap-3 border-t border-t-cl-rule px-0 py-6">
+            <li className="grid grid-cols-[32px_minmax(0,1fr)] gap-3 border-t border-t-cl-rule px-0 py-6">
               <span
                 className="cl-ring-accent mr-2 inline-block h-[11px] w-[11px] flex-none rounded-full align-[-1px]"
                 aria-hidden="true"
@@ -552,7 +552,7 @@ export function HomeContent() {
                 </span>
               </span>
             </li>
-            <li className="cl-rv grid grid-cols-[32px_minmax(0,1fr)] gap-3 border-t border-t-cl-rule px-0 py-6">
+            <li className="grid grid-cols-[32px_minmax(0,1fr)] gap-3 border-t border-t-cl-rule px-0 py-6">
               <span
                 className="font-sans text-[18px] leading-[26px] font-bold text-cl-accent-strong"
                 aria-hidden="true"
@@ -575,7 +575,7 @@ export function HomeContent() {
       </section>
       <section className="cl-sec pt-0" id="free">
         <div className="cl-in mx-auto my-0 flex max-w-[1200px] flex-wrap items-start gap-x-18 gap-y-8 px-5 py-0">
-          <div className="cl-rv min-w-0 flex-[0.8_1_320px]">
+          <div className="min-w-0 flex-[0.8_1_320px]">
             <h2 className="cl-h2 mx-0 mt-0 mb-4 font-normal tracking-[-0.025em] text-balance text-cl-ink">
               Free for every company.
             </h2>
@@ -594,7 +594,7 @@ export function HomeContent() {
               <Link href={paths.marketing.chamberPilot}>See the chamber pilot</Link>.
             </p>
           </div>
-          <div className="cl-rv min-w-0 flex-[1.2_1_420px]">
+          <div className="min-w-0 flex-[1.2_1_420px]">
             <ul className="m-0 list-none border-b border-b-cl-rule p-0">
               <li className="flex items-baseline gap-3 border-t border-t-cl-rule px-0 py-3.5 text-[16px] leading-[25px] text-cl-ink-2">
                 <span
@@ -644,7 +644,7 @@ export function HomeContent() {
       </section>
       <section className="cl-sec pt-0">
         <div className="cl-in mx-auto my-0 flex max-w-[1200px] flex-wrap items-start gap-x-18 gap-y-10 px-5 py-0">
-          <div className="cl-rv min-w-0 flex-[1_1_360px]">
+          <div className="min-w-0 flex-[1_1_360px]">
             <h2 className="cl-h2 mx-0 mt-0 mb-4 font-normal tracking-[-0.025em] text-balance text-cl-ink">
               Claim your free profile.
             </h2>
@@ -817,11 +817,11 @@ export function HomeContent() {
       </section>
       <section className="cl-sec pt-0">
         <div className="cl-in mx-auto my-0 flex max-w-[1200px] flex-wrap gap-x-14 gap-y-6 px-5 py-0">
-          <h2 className="cl-h2 cl-rv mx-0 mt-0 mb-4 flex-[0.6_1_280px] font-normal tracking-[-0.025em] text-balance text-cl-ink">
+          <h2 className="cl-h2 mx-0 mt-0 mb-4 flex-[0.6_1_280px] font-normal tracking-[-0.025em] text-balance text-cl-ink">
             Questions from <span className="not-italic">companies</span>
           </h2>
           <div className="min-w-0 flex-[1.4_1_480px] border-b border-b-cl-rule">
-            <details className="cl-faq cl-rv border-t border-t-cl-rule">
+            <details className="cl-faq border-t border-t-cl-rule">
               <summary className="flex cursor-pointer list-none justify-between gap-4 px-0 py-5.5 text-[20px] leading-[27px] tracking-[-0.01em] text-cl-ink">
                 Who can join?
                 <span
@@ -836,7 +836,7 @@ export function HomeContent() {
                 multi-level marketing or one-person sellers.
               </p>
             </details>
-            <details className="cl-faq cl-rv border-t border-t-cl-rule">
+            <details className="cl-faq border-t border-t-cl-rule">
               <summary className="flex cursor-pointer list-none justify-between gap-4 px-0 py-5.5 text-[20px] leading-[27px] tracking-[-0.01em] text-cl-ink">
                 Is it really free?
                 <span
@@ -851,7 +851,7 @@ export function HomeContent() {
                 interested in you are shown, not blurred.
               </p>
             </details>
-            <details className="cl-faq cl-rv border-t border-t-cl-rule">
+            <details className="cl-faq border-t border-t-cl-rule">
               <summary className="flex cursor-pointer list-none justify-between gap-4 px-0 py-5.5 text-[20px] leading-[27px] tracking-[-0.01em] text-cl-ink">
                 What happens on my first day?
                 <span
@@ -866,7 +866,7 @@ export function HomeContent() {
                 no one has found you yet, a community manager makes an introduction.
               </p>
             </details>
-            <details className="cl-faq cl-rv border-t border-t-cl-rule">
+            <details className="cl-faq border-t border-t-cl-rule">
               <summary className="flex cursor-pointer list-none justify-between gap-4 px-0 py-5.5 text-[20px] leading-[27px] tracking-[-0.01em] text-cl-ink">
                 Does the AI send messages for me?
                 <span
@@ -881,7 +881,7 @@ export function HomeContent() {
                 sent until you tap Send. Turn it off at any time.
               </p>
             </details>
-            <details className="cl-faq cl-rv border-t border-t-cl-rule">
+            <details className="cl-faq border-t border-t-cl-rule">
               <summary className="flex cursor-pointer list-none justify-between gap-4 px-0 py-5.5 text-[20px] leading-[27px] tracking-[-0.01em] text-cl-ink">
                 What happens when our rep leaves?
                 <span
@@ -896,7 +896,7 @@ export function HomeContent() {
                 keep selling.
               </p>
             </details>
-            <details className="cl-faq cl-rv border-t border-t-cl-rule">
+            <details className="cl-faq border-t border-t-cl-rule">
               <summary className="flex cursor-pointer list-none justify-between gap-4 px-0 py-5.5 text-[20px] leading-[27px] tracking-[-0.01em] text-cl-ink">
                 How is this different from LinkedIn?
                 <span
@@ -916,10 +916,10 @@ export function HomeContent() {
       </section>
       <section className="cl-dark cl-rings-bottom-8 px-0 pt-32 pb-28 text-cl-paper">
         <div className="cl-in cl-cta-pad mx-auto my-0 max-w-[1200px] px-5 py-0">
-          <h2 className="cl-hxl cl-rv mx-0 mt-0 mb-18 max-w-[16em] font-normal tracking-[-0.035em] text-balance text-cl-paper">
+          <h2 className="cl-hxl mx-0 mt-0 mb-18 max-w-[16em] font-normal tracking-[-0.035em] text-balance text-cl-paper">
             Build connections <span className="not-italic">your company keeps.</span>
           </h2>
-          <div className="cl-rv flex flex-wrap items-end justify-between gap-x-16 gap-y-8 border-t border-t-cl-on-night-24 pt-8">
+          <div className="flex flex-wrap items-end justify-between gap-x-16 gap-y-8 border-t border-t-cl-on-night-24 pt-8">
             <ul className="m-0 max-w-[560px] flex-[1_1_360px] list-none border-b border-b-cl-on-night-14 p-0 font-sans text-[12px] leading-[18px] font-bold tracking-normal text-cl-on-night-82">
               <li className="flex gap-3 border-t border-t-cl-on-night-14 px-0 py-3">
                 <span

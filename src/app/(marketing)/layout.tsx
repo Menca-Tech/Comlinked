@@ -1,3 +1,4 @@
+import { DemoRibbon } from "@/components/marketing/demo-ribbon";
 import { Footer } from "@/components/marketing/footer";
 import { MarketingNav } from "@/components/marketing/marketing-nav";
 
@@ -7,6 +8,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
       <a className="cl-skip" href="#top">
         Skip to content
       </a>
+      <DemoRibbon />
       <MarketingNav />
       <main id="top">{children}</main>
       <Footer />

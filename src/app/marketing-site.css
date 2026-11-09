@@ -21,7 +21,12 @@
   --duration-slow: 400ms;
   --cl-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --font-text: var(--font-nunito-sans), "Helvetica Neue", Arial, sans-serif;
-  --font-display: var(--font-text);
+  --font-display: var(--font-source-serif), Georgia, "Times New Roman", serif;
+
+  /* The public site's dark ground is the product's navy. */
+  --color-cl-night: var(--color-cl-navy);
+  --color-cl-night-raised: #1a4c70;
+  --color-cl-night-chip: #235a82;
 
   color-scheme: light;
   overflow-x: clip;
@@ -134,6 +139,9 @@
   .cl-dark :focus-visible {
     outline-color: var(--color-cl-sky);
   }
+  .cl-dark .cl-pad :focus-visible {
+    outline-color: var(--color-cl-accent);
+  }
   .cl-h1 {
     font-size: clamp(2.375rem, 1.5rem + 2.8vw, 3.75rem);
     line-height: 1.07;
@@ -169,8 +177,12 @@
   h3,
   .cl-hxl {
     font-family: var(--font-display) !important;
-    font-weight: 800 !important;
+    font-weight: 500 !important;
     letter-spacing: -0.015em !important;
+  }
+  :is(h1, h2, h3).font-sans {
+    font-family: var(--font-text) !important;
+    font-weight: 800 !important;
   }
   .cl-card,
   .cl-pad {
@@ -239,9 +251,7 @@
     position: sticky;
     top: 0;
     z-index: 30;
-    background: color-mix(in srgb, var(--color-cl-paper) 92%, transparent);
-    backdrop-filter: saturate(1.4) blur(12px);
-    -webkit-backdrop-filter: saturate(1.4) blur(12px);
+    background: var(--color-cl-surface);
     border-bottom: 1px solid var(--color-cl-rule);
   }
   .cl-nav-in {
@@ -317,15 +327,11 @@
     height: 44px;
     padding: 0 var(--space-6);
     border-radius: 999px;
-    background: var(--color-cl-accent-strong);
+    background: var(--color-cl-navy);
     color: var(--color-cl-accent-ink) !important;
     font: 700 15px/1 var(--font-text);
     text-decoration: none;
     white-space: nowrap;
-  }
-  .cl-nav-cta:hover {
-    background: var(--color-cl-accent-hover);
-    filter: none;
   }
   .cl-nav-mob {
     display: none;
@@ -379,7 +385,7 @@
     left: 0;
     right: 0;
     top: 100%;
-    background: var(--color-cl-paper);
+    background: var(--color-cl-surface);
     border-bottom: 1px solid var(--color-cl-rule);
     padding: var(--space-2) var(--space-5) var(--space-6);
     box-shadow: 0 24px 40px -24px var(--color-cl-shadow);
@@ -465,48 +471,8 @@
   .cl-card:hover {
     border-color: var(--color-cl-accent) !important;
   }
-  .cl-load {
-    opacity: 0;
-    animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  }
-  .cl-card.cl-rv {
-    transition:
-      opacity 0.6s ease-out,
-      transform 0.7s cubic-bezier(0.22, 1, 0.36, 1),
-      border-color var(--duration-normal) var(--cl-ease-out);
-  }
-  .cl-btn.cl-rv {
-    transition:
-      opacity 0.6s ease-out,
-      transform 0.7s cubic-bezier(0.22, 1, 0.36, 1),
-      background-color var(--duration-fast) ease-out;
-  }
-  .cl-in .cl-rv:nth-child(2) {
-    transition-delay: 0.1s;
-  }
-  .cl-in .cl-rv:nth-child(3) {
-    transition-delay: 0.2s;
-  }
-  .cl-in .cl-rv:nth-child(4) {
-    transition-delay: 0.3s;
-  }
-  .cl-in .cl-rv.cl-d1 {
-    transition-delay: 0.15s;
-  }
   .cl-pop0 {
     display: inline-block;
-  }
-  .cl-in .cl-rv:nth-child(1) .cl-pop0 {
-    transition-delay: 0.1s;
-  }
-  .cl-in .cl-rv:nth-child(2) .cl-pop0 {
-    transition-delay: 0.2s;
-  }
-  .cl-in .cl-rv:nth-child(3) .cl-pop0 {
-    transition-delay: 0.3s;
-  }
-  .cl-in .cl-rv:nth-child(4) .cl-pop0 {
-    transition-delay: 0.4s;
   }
   .cl-brk {
     transition: opacity 1s ease-out 0.6s;
@@ -553,14 +519,17 @@
     }
     .nd,
     .fade,
-    .cl-load,
-    .cl-rv,
     .cl-pop0,
     .cl-mrow {
       opacity: 1;
       transform: none;
     }
   }
+}
+
+/* Section links land clear of the sticky navigation. */
+html:has(.cl-site) {
+  scroll-padding-top: 88px;
 }
 
 @keyframes pop {
@@ -576,15 +545,5 @@
 @keyframes fade {
   to {
     opacity: 1;
-  }
-}
-@keyframes rise {
-  from {
-    opacity: 0;
-    transform: translateY(18px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
   }
 }

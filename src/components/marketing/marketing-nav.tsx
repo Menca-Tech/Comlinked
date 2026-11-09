@@ -8,9 +8,9 @@ import { usePathname } from "next/navigation";
 import { paths } from "@/paths";
 
 const mainLinks = [
+  { href: paths.marketing.forChambers, label: "For chambers" },
   { href: paths.marketing.howItWorks, label: "How it works" },
   { href: paths.marketing.comDash, label: "ComDash" },
-  { href: paths.marketing.forChambers, label: "For chambers" },
 ];
 
 export function MarketingNav() {
