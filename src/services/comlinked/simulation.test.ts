@@ -23,6 +23,7 @@ import {
   mutualText,
   nextAction,
   networkLayout,
+  networkRing,
   noteGroups,
   openDefaultThread,
   POOL,
@@ -105,6 +106,27 @@ describe("connections", () => {
     expect(getState().conn.agos).toBe("pending");
     act.withdraw("agos");
     expect(getState().conn.agos).toBeUndefined();
+  });
+
+  it("puts today's Leads on the ring and pulls a new Connection inward", () => {
+    const tierOf = (id: string) => networkRing().nodes.find((n) => n.company.id === id)?.tier;
+    expect(networkRing().nodes.every((n) => n.tier === 3)).toBe(true);
+    act.connect("maple");
+    expect(networkRing().nodes.find((n) => n.company.id === "maple")?.status).toBe("pending");
+    vi.advanceTimersByTime(1500);
+    expect(tierOf("maple")).toBe(1);
+    expect(tierOf("pack")).toBe(2);
+    act.skip("palengke");
+    expect(tierOf("palengke")).toBeUndefined();
+  });
+
+  it("shows at most 6 Connections and counts the rest", () => {
+    ["maple", "pack", "north", "luntian", "tala", "bayan", "sari", "hapag"].forEach((id) => {
+      getState().conn[id] = "connected";
+    });
+    const ring = networkRing();
+    expect(ring.nodes.filter((n) => n.tier === 1)).toHaveLength(6);
+    expect(ring.more).toBe(2);
   });
 
   it("selects the next open lead after one is finished", () => {

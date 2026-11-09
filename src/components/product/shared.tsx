@@ -243,11 +243,11 @@ export function LeadActions({ c }: { c: Company }) {
 }
 
 /** The selected Lead in full: inside the list on a phone and on ComDash. */
-export function LeadCard({ c }: { c: Company }) {
+export function LeadCard({ c, markCls }: { c: Company; markCls?: string }) {
   return (
     <article className="a-lead active a-lead-open" data-lead={c.id}>
       <div className="a-between">
-        <CoBtn c={c} />
+        <CoBtn c={c} cls={markCls} />
         <FitMark score={fit(c).score} />
       </div>
       <WhyMeet c={c} />

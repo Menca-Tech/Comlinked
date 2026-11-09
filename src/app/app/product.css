@@ -2203,3 +2203,243 @@
   min-height: 44px;
   border-radius: 10px !important;
 }
+
+/* ComDash with the Network Ring. Scoped to this screen until the direction is approved. */
+.cl-product .a-body-full {
+  padding: 0;
+  gap: 0;
+  max-width: none;
+  margin: 0;
+  background: var(--color-surface);
+}
+.cl-product .dv2 {
+  --ring-deep: #286fa3;
+  --ring-bright: #55a2d4;
+  --ink-button: #15181b;
+  --ink-button-hover: #2c3238;
+  overflow-x: clip;
+}
+.cl-product .dv2 .a-btn:not(.o):not(.g) {
+  background: var(--ink-button);
+  border-color: var(--ink-button);
+}
+.cl-product .dv2 .a-btn:not(.o):not(.g):hover {
+  background: var(--ink-button-hover);
+  border-color: var(--ink-button-hover);
+}
+.cl-product .dv2 .a-mono.deg1 {
+  outline: 2px solid var(--ring-deep);
+  outline-offset: 2px;
+}
+.cl-product .dv2 .a-mono.deg2 {
+  outline: 1.5px dashed var(--ring-bright);
+  outline-offset: 2px;
+}
+.cl-product .dv2 .a-mono.deg3 {
+  outline: 1.5px dashed var(--color-grey);
+  outline-offset: 2px;
+}
+.cl-product .dv2-hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.cl-product .dv2-ring {
+  position: relative;
+  height: 372px;
+  overflow: hidden;
+}
+.cl-product .dv2-ring svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.cl-product .dv2-orbit {
+  fill: none;
+  stroke: var(--ring-bright);
+  stroke-width: 1;
+  opacity: 0.55;
+}
+.cl-product .dv2-orbit.t1 {
+  stroke: var(--ring-deep);
+  stroke-width: 1.5;
+  opacity: 1;
+}
+.cl-product .dv2-orbit.t3 {
+  stroke-dasharray: 3 6;
+}
+.cl-product .dv2-disc {
+  fill: var(--color-accent-tint);
+}
+.cl-product .dv2-spoke {
+  stroke: var(--ring-deep);
+  stroke-width: 1.5;
+}
+.cl-product .dv2-center {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 64px;
+  height: 64px;
+  margin: -32px 0 0 -32px;
+  background: var(--ring-deep);
+  color: var(--color-accent-ink);
+  border-radius: 12px;
+  font-size: 18px;
+}
+.cl-product .dv2-node {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 72px;
+  margin: -22px 0 0 -36px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--color-ink);
+}
+.cl-product .dv2-node .a-mono {
+  width: 44px;
+  height: 44px;
+  background: var(--color-surface);
+}
+.cl-product .dv2-node.is-open .a-mono,
+.cl-product .dv2-node.is-connected .a-mono {
+  background: var(--color-sunken);
+}
+.cl-product .dv2-node[aria-current="true"] .a-mono {
+  background: var(--color-accent-tint);
+  color: var(--ring-deep);
+  outline: 2px solid var(--ring-deep);
+}
+.cl-product .dv2-node[aria-current="true"] .dv2-name {
+  color: var(--ring-deep);
+}
+.cl-product .dv2 .a-lead.active:has(.a-task) {
+  gap: 14px;
+}
+.cl-product .dv2 .a-task {
+  font-size: 18px;
+  line-height: 26px;
+}
+.cl-product .dv2-name {
+  font: 600 12px/14px var(--font-text);
+  text-align: center;
+}
+.cl-product .dv2-name span {
+  padding: 0 3px;
+  background: var(--color-surface);
+  border-radius: 3px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.cl-product .dv2-more {
+  position: absolute;
+  left: 0;
+  top: 0;
+  min-height: 44px;
+  padding: 0 8px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font: 600 14px/20px var(--font-text);
+  color: var(--color-ink-2);
+  white-space: nowrap;
+}
+.cl-product .dv2-more:hover {
+  color: var(--ring-deep);
+}
+.cl-product .dv2-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px 16px 8px;
+}
+.cl-product .dv2-title .a-h1 {
+  font-size: 30px;
+  line-height: 36px;
+}
+.cl-product .dv2 .a-lead.active {
+  padding: 0;
+  margin: 0;
+  background: none;
+  border-radius: 0;
+}
+.cl-product .dv2-body {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  padding: 28px 16px 96px;
+}
+.cl-product .dv2-col {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  min-width: 0;
+}
+.cl-product .dv2-quiet .a-h2 {
+  font-size: 16px;
+  line-height: 22px;
+}
+.cl-product .dv2 .a-win .a-why {
+  font: 500 18px/26px var(--font-title);
+  color: var(--color-ink);
+}
+.cl-product .dv2 .a-win .a-why b {
+  font-weight: 500;
+}
+@media (min-width: 900px) {
+  .cl-product .dv2-hero {
+    min-height: 640px;
+    justify-content: center;
+    border-bottom: 1px solid var(--hair);
+  }
+  .cl-product .dv2-ring {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 38%;
+    height: auto;
+  }
+  .cl-product .dv2-node {
+    width: 124px;
+    margin-left: -62px;
+  }
+  .cl-product .dv2-name {
+    font: 600 14px/18px var(--font-text);
+  }
+  .cl-product .dv2-copy {
+    position: relative;
+    z-index: 1;
+    width: min(500px, 38vw);
+    box-sizing: content-box;
+    padding: 48px 0 48px max(20px, calc((100vw - 1200px) / 2 + 20px));
+    gap: 28px;
+  }
+  .cl-product .dv2-title .a-h1 {
+    font-size: 44px;
+    line-height: 52px;
+  }
+  .cl-product .dv2-body {
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 80px;
+    padding: 56px 20px 96px;
+  }
+  .cl-product .dv2-col {
+    gap: 48px;
+  }
+}

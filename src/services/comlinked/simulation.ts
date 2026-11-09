@@ -2770,4 +2770,45 @@ export function networkLayout() {
   };
 }
 
+/* ---------- Network Ring ---------- */
+export interface RingNode {
+  company: Company;
+  tier: 1 | 2 | 3;
+  status: "connected" | "open" | "pending" | "message";
+}
+
+function lastActive(id: string) {
+  const days = [
+    ...S.signals.filter((s) => s.co === id).map((s) => s.day),
+    ...S.ledger.filter((l) => l.co === id).map((l) => l.day),
+    ...(threadFor(id)?.msgs ?? []).map((m) => m.day),
+  ];
+  return days.length ? Math.max(...days) : 0;
+}
+
+/** 1 for a Connection, 2 for a company sharing a Mutual Connection, otherwise 3. */
+export function ringTier(c: Pick<Company, "id" | "joinedDay">): 1 | 2 | 3 {
+  if (S.conn[c.id] === "connected") return 1;
+  return degreeLabel(c) === "2nd" ? 2 : 3;
+}
+
+/** What matters today: up to 6 recently active Connections, then today's Leads. */
+export function networkRing() {
+  const all = connected();
+  const inner = all
+    .map((id, order) => ({ id, order, active: lastActive(id) }))
+    .sort((a, b) => b.active - a.active || b.order - a.order)
+    .slice(0, 6);
+  const nodes: RingNode[] = inner.map((x) => ({ company: co(x.id), tier: 1, status: "connected" }));
+  (S.lists[S.day] ?? [])
+    .filter((id) => S.leadAct[id] !== "skip" && S.conn[id] !== "connected")
+    .forEach((id) => {
+      const company = co(id);
+      const status =
+        S.conn[id] === "pending" ? "pending" : S.leadAct[id] === "message" ? "message" : "open";
+      nodes.push({ company, tier: ringTier(company), status });
+    });
+  return { nodes, more: all.length - inner.length };
+}
+
 S = fresh();

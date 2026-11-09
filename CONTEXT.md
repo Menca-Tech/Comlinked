@@ -170,6 +170,9 @@ Terms from the [ComLinked MVP Build Plan](docs/specs/2026-10-11-mvp-build-plan.m
 - **Connection Degree** — how many Connections separate two Companies: 1st is
   connected, 2nd shares a Connection, 3rd is one step further.
 
+- **Network Ring** — a view with one Company at the centre, its Connections and today's
+  Leads around it by Connection Degree. Distinct from the logo ring, a brand mark only.
+
 - **Mutual Connection** — a Company connected to both of two other Companies.
 
 - **ComMail** — company-to-company messaging.

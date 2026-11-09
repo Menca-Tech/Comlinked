@@ -192,7 +192,15 @@ export function ProductShell({ children }: { children: ReactNode }) {
   return productRoot(
     <>
       {top}
-      <main className={route === "claim" ? "a-body a-body-welcome" : "a-body"}>
+      <main
+        className={
+          route === "claim"
+            ? "a-body a-body-welcome"
+            : route === "dash" && !showCompany
+              ? "a-body a-body-full"
+              : "a-body"
+        }
+      >
         {showCompany ? <CompanyView /> : children}
       </main>
       {noTabs ? null : (
