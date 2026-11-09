@@ -192,3 +192,15 @@ plan's [Adoption notes](2026-10-11-mvp-build-plan.md#adoption-notes).
 Decide whether a Company and a Chamber are each an Organization in the data
 model. Feature A1 depends on it. See item 1 of the plan's
 [Adoption notes](2026-10-11-mvp-build-plan.md#adoption-notes).
+
+## Next.js port (mock data)
+
+As of 2026-11-09, the app screens from the HTML mockup also exist in the Next.js app under
+`/app/*`, running on a browser-held simulation behind `src/services/comlinked`
+(see `docs/adr/0010-client-side-product-simulation.md`). Open `/app/claim` to start.
+
+Ported: claim (A2, A3), matches (L1), ComDash (L2, D3, A4, D4, S2), Leads (D2), ComMail
+(C2, C3, C4), Asks (L3), Wins (S1, S2, S3, D5), company profile (A4, A5, C1, C3), search
+(L2), digest (D1), chamber tools (A1, L4), notifications (C1, L2), What's next, and the
+Engine, AI Lead Agent and Team Dashboard previews. Data and sign-in are still simulated.
+The public website is unchanged by this port.

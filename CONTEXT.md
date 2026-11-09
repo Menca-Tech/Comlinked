@@ -55,8 +55,8 @@ else — no implementation details, no decisions. Decisions live in `docs/adr/`.
   unrestricted, cross-Organization access, including system-management screens
   ordinary Users never see.
 
-- **Dashboard Shell** — the authenticated application frame (sidebar, top bar,
-  theme toggle, user menu) that hosts feature screens.
+- **Dashboard Shell** — the authenticated application frame that hosts a Company's
+  feature screens: a top bar on desktop, bottom tabs on a phone, and a user menu.
 
 - **Marketing Landing** — the public, unauthenticated entry page shown to
   visitors who are not signed in.
@@ -198,3 +198,12 @@ Terms from the [ComLinked MVP Build Plan](docs/specs/2026-10-11-mvp-build-plan.m
 - **Success Wall** — the display of recent Testimonials and deals on the Wins tab
   and on both Companies' profiles, with the latest shown as Recent Wins on ComDash.
   Avoid "home feed": ComDash is the home screen, and a news feed is postponed.
+
+### Design
+
+- **ComLinked Design System** — the one set of brand rules, drawn from the logo,
+  shared by the public website and the app. It has two modes.
+
+- **Site Mode** — the expressive form of the Design System, used on public pages.
+
+- **App Mode** — the compact form of the Design System, used on signed-in screens.

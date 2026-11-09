@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
-import { Nunito_Sans } from "next/font/google";
+import { Nunito_Sans, Source_Serif_4 } from "next/font/google";
 
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -9,6 +9,11 @@ import { config } from "@/config";
 import "./globals.css";
 
 const nunitoSans = Nunito_Sans({ subsets: ["latin"], variable: "--font-nunito-sans" });
+const sourceSerif = Source_Serif_4({
+  subsets: ["latin"],
+  weight: "500",
+  variable: "--font-source-serif",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(config.site.url),
@@ -40,7 +45,11 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   await headers();
 
   return (
-    <html lang="en" className={nunitoSans.variable} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${nunitoSans.variable} ${sourceSerif.variable}`}
+      suppressHydrationWarning
+    >
       <body className="font-sans antialiased">
         <ThemeProvider
           attribute="class"
