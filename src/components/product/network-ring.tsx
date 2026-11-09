@@ -41,7 +41,7 @@ function geometry(w: number, h: number, desktop: boolean): Geometry {
       cy: h / 2,
       radii: { 1: 150 * scale, 2: 255 * scale, 3: 360 * scale },
       center: 180,
-      spreads: { 1: 360, 2: 110, 3: 90 },
+      spreads: { 1: 360, 2: 110, 3: 78 },
     };
   }
   const scale = Math.min(1, w / 390);
@@ -103,6 +103,7 @@ export function NetworkRing({
   const leads = nodes.filter((n) => n.tier !== 1).length;
   const g = geometry(w, h, desktop);
   const placed = w ? positions(nodes, g) : [];
+  const transition = reduce ? { duration: 0 } : { duration: 0.2, ease: "easeOut" as const };
   return (
     <div
       className="dv2-ring"
@@ -117,10 +118,10 @@ export function NetworkRing({
             <circle className="dv2-orbit t1" cx={g.cx} cy={g.cy} r={g.radii[1]} />
             <circle className="dv2-orbit t2" cx={g.cx} cy={g.cy} r={g.radii[2]} />
             <circle className="dv2-orbit t3" cx={g.cx} cy={g.cy} r={g.radii[3]} />
-            <AnimatePresence>
+            <AnimatePresence initial={false}>
               {placed
                 .filter((p) => p.node.tier === 1)
-                .map((p, i) => (
+                .map((p) => (
                   <motion.line
                     key={p.node.company.id}
                     className="dv2-spoke"
@@ -129,9 +130,7 @@ export function NetworkRing({
                     initial={reduce ? false : { x2: g.cx, y2: g.cy, opacity: 0 }}
                     animate={{ x2: p.x, y2: p.y, opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={
-                      reduce ? { duration: 0 } : { duration: 0.6, delay: 0.25 + i * 0.03 }
-                    }
+                    transition={transition}
                   />
                 ))}
             </AnimatePresence>
@@ -153,8 +152,8 @@ export function NetworkRing({
               +{more} connections
             </button>
           ) : null}
-          <AnimatePresence>
-            {placed.map(({ node, x, y, fromX, fromY }, i) => {
+          <AnimatePresence initial={false}>
+            {placed.map(({ node, x, y, fromX, fromY }) => {
               const c = node.company;
               const label = desktop ? c.name : c.name.split(" ")[0];
               return (
@@ -167,11 +166,7 @@ export function NetworkRing({
                   initial={reduce ? false : { x: fromX, y: fromY, opacity: 0, scale: 0.85 }}
                   animate={{ x, y, opacity: 1, scale: 1 }}
                   exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.8 }}
-                  transition={
-                    reduce
-                      ? { duration: 0 }
-                      : { type: "spring", stiffness: 90, damping: 16, delay: i * 0.05 }
-                  }
+                  transition={transition}
                   onClick={() => onSelect(node)}
                 >
                   <span className={`a-mono deg${node.tier}`} aria-hidden="true">

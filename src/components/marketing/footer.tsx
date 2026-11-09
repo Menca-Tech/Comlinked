@@ -60,7 +60,7 @@ export function Footer() {
                   <li>
                     <Link
                       className="cl-navl inline-block px-0 py-1.5 text-[15px] leading-[22px] text-cl-ink-2 no-underline"
-                      href={paths.auth.signIn}
+                      href={paths.product.dash}
                     >
                       Sign in
                     </Link>
@@ -104,19 +104,12 @@ export function Footer() {
                 </h2>
                 <ul className="m-0 list-none p-0">
                   <li>
-                    <a
+                    <Link
                       className="cl-navl inline-block px-0 py-1.5 text-[15px] leading-[22px] text-cl-ink-2 no-underline"
-                      href="#"
+                      href={paths.marketing.chamberPilot}
                     >
-                      About{" "}
-                      <span className="bg-cl-slot px-1 py-0 text-cl-slot-ink">[CONFIRM page]</span>
-                    </a>
-                  </li>
-                  <li className="px-0 py-1.5 text-[15px] leading-[22px] text-cl-ink-2">
-                    Contact:{" "}
-                    <a href="mailto:[CONTACT EMAIL]">
-                      <span className="bg-cl-slot px-1 py-0 text-cl-slot-ink">[CONTACT EMAIL]</span>
-                    </a>
+                      Contact us
+                    </Link>
                   </li>
                 </ul>
               </div>

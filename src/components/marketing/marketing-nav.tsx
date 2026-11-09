@@ -66,8 +66,8 @@ export function MarketingNav() {
         <div className="cl-nav-act cl-nav-desk">
           <Link
             className="cl-nav-link"
-            href={paths.auth.signIn}
-            aria-current={current(paths.auth.signIn)}
+            href={paths.product.dash}
+            aria-current={current(paths.product.dash)}
           >
             Sign in
           </Link>
@@ -86,7 +86,7 @@ export function MarketingNav() {
           </summary>
           <div className="cl-mnav-panel">
             <nav aria-label="Main menu">
-              {[...mainLinks, { href: paths.auth.signIn, label: "Sign in" }].map((link) => (
+              {[...mainLinks, { href: paths.product.dash, label: "Sign in" }].map((link) => (
                 <Link
                   key={link.href}
                   className="cl-mnav-link"

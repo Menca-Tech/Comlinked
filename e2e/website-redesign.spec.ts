@@ -2,6 +2,9 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
 const PUBLIC_PAGES = ["/", "/how-it-works", "/comdash", "/for-chambers", "/auth/sign-in"];
+const WIDTHS = [360, 390, 1280, 1440];
+const PHONE = { width: 390, height: 844 };
+const LAPTOP = { width: 1440, height: 900 };
 const NAVY = "rgb(19, 62, 94)";
 const WHITE = "rgb(255, 255, 255)";
 const BLOCKING_IMPACTS = new Set(["serious", "critical"]);
@@ -9,9 +12,17 @@ const BLOCKING_IMPACTS = new Set(["serious", "critical"]);
 const ribbonText = (page: Page) => page.getByText("Working mockup.", { exact: false });
 const mainNav = (page: Page) => page.getByRole("navigation", { name: "Main", exact: true });
 
+/** Counts animations outside the homepage ring, the one thing allowed to move. */
 function runningAnimations(page: Page) {
   return page.evaluate(
-    () => document.querySelector("main")?.getAnimations({ subtree: true }).length ?? 0,
+    () =>
+      document
+        .querySelector("main")
+        ?.getAnimations({ subtree: true })
+        .filter((animation) => {
+          const target = animation.effect instanceof KeyframeEffect && animation.effect.target;
+          return !(target && target.closest("[data-network-ring]"));
+        }).length ?? 0,
   );
 }
 
@@ -79,7 +90,7 @@ for (const path of PUBLIC_PAGES) {
       await expect(footer.getByRole("heading", { level: 2 })).toHaveCount(4);
     });
 
-    for (const width of [360, 390, 1280, 1440]) {
+    for (const width of WIDTHS) {
       test(`no sideways scrolling at ${width} pixels`, async ({ page }) => {
         await page.setViewportSize({ width, height: 800 });
         await page.goto(path);
@@ -226,5 +237,432 @@ test.describe("sad paths", () => {
       await expect(page.getByRole("heading", { level: 1 })).toHaveCSS("opacity", "1");
       expect(await runningAnimations(page)).toBe(0);
     });
+  });
+});
+
+const ring = (page: Page) => page.locator("[data-network-ring]");
+const match = (page: Page) => page.locator('[data-ring-part="match"]').first();
+
+async function expectFinishedRing(page: Page) {
+  const parts = page.locator("[data-ring-part]");
+  for (const part of await parts.all()) {
+    if (await part.isVisible()) await expect(part).toHaveCSS("opacity", "1");
+  }
+  for (const part of await page.locator('[data-ring-part="line"]').all()) {
+    await expect(part).toHaveCSS("stroke-dashoffset", "0px");
+  }
+  await expect(ring(page)).not.toHaveAttribute("data-ring", "armed");
+}
+
+async function presenterGuide(page: Page, name: string) {
+  await page.locator(".demo-guide").click();
+  await page.getByRole("dialog").getByRole("button", { name, exact: true }).click();
+  await expect(page.getByRole("dialog")).toBeHidden();
+}
+
+test.describe("website links into the product", () => {
+  test("Try the product reaches the claim flow", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("link", { name: "Try the product" }).click();
+
+    await expect(page).toHaveURL(/\/app\/claim$/);
+  });
+
+  test("Sign in reaches ComDash", async ({ page }) => {
+    await page.setViewportSize(LAPTOP);
+    await page.goto("/");
+    await page.getByRole("banner").getByRole("link", { name: "Sign in" }).click();
+
+    await expect(page).toHaveURL(/\/app\/dash$/);
+    await expect(page.locator(".a-rank")).toBeVisible();
+  });
+
+  test("the presenter guide's Website button keeps the simulation", async ({ page }) => {
+    await page.setViewportSize(LAPTOP);
+    await page.goto("/app/claim");
+    await presenterGuide(page, "Two weeks in");
+    await expect(page.locator(".a-rank")).toHaveText("#4");
+    await presenterGuide(page, "Website");
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("within 24 hours");
+    await page.getByRole("banner").getByRole("link", { name: "Sign in" }).click();
+
+    await expect(page.locator(".a-rank")).toHaveText("#4");
+  });
+
+  test("the auth sign-in route still renders", async ({ page }) => {
+    await page.goto("/auth/sign-in");
+
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  });
+});
+
+test.describe("homepage hero", () => {
+  test("offers both paths and marks the ring as one example image", async ({ page }) => {
+    await page.setViewportSize(LAPTOP);
+    await page.goto("/");
+
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+      "Your first business leads within 24 hours.",
+    );
+    await expect(ring(page)).toHaveRole("img");
+    await expect(ring(page)).toHaveAccessibleName(/Kalayaan Foods at the centre/);
+    await expect(ring(page)).toBeInViewport({ ratio: 1 });
+    await expect(page.locator("main section").first().getByText("Example")).toBeVisible();
+  });
+
+  test("Join ComLinked free reaches the form", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("link", { name: "Join ComLinked free" }).click();
+
+    await expect(page).toHaveURL(/#join$/);
+    await expect(page.getByLabel("Company name")).toBeInViewport();
+  });
+
+  test("Bring ComLinked to your chamber reaches For chambers", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("link", { name: "Bring ComLinked to your chamber" }).click();
+
+    await expect(page).toHaveURL(/\/for-chambers$/);
+  });
+
+  test("the blue accent appears only in the headline", async ({ page }) => {
+    await page.goto("/");
+
+    await expect(page.locator("main .text-cl-sky")).toHaveCount(1);
+    await expect(page.locator("main h1 .text-cl-sky")).toHaveCount(1);
+  });
+
+  test.describe("on a phone", () => {
+    test.use({ viewport: PHONE });
+
+    test("headline and stacked buttons fit the first screen, ring below", async ({ page }) => {
+      await page.goto("/");
+
+      const join = page.getByRole("link", { name: "Join ComLinked free" });
+      const chamber = page.getByRole("link", { name: "Bring ComLinked to your chamber" });
+      await expect(join).toBeInViewport({ ratio: 1 });
+      await expect(chamber).toBeInViewport({ ratio: 1 });
+      const [joinBox, chamberBox] = [await join.boundingBox(), await chamber.boundingBox()];
+      expect(joinBox?.y).toBeLessThan(chamberBox?.y ?? 0);
+    });
+
+    test("shows short names and only the Matches", async ({ page }) => {
+      await page.goto("/");
+
+      await expect(ring(page).getByText("Pacific Pack", { exact: true })).toBeVisible();
+      await expect(ring(page).getByText("Pacific Pack Solutions")).toBeHidden();
+      await expect(ring(page).getByText("Luntian Foods")).toBeHidden();
+    });
+  });
+
+  test("labels do not collide at 360 pixels or at 200% zoom", async ({ page }) => {
+    for (const width of [360, 640]) {
+      await page.setViewportSize({ width, height: 800 });
+      await page.goto("/");
+
+      const collisions = await ring(page).evaluate((root) => {
+        const names = [...root.querySelectorAll<HTMLElement>(".cl-nr-name")]
+          .filter((el) => el.offsetParent !== null && getComputedStyle(el).visibility === "visible")
+          .map((el) => el.getBoundingClientRect());
+        return names.filter((a, i) =>
+          names
+            .slice(i + 1)
+            .some(
+              (b) => a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom,
+            ),
+        ).length;
+      });
+      expect(collisions).toBe(0);
+      const overflow = await page.evaluate(
+        () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      );
+      expect(overflow).toBe(0);
+    }
+  });
+});
+
+test.describe("ring sequence", () => {
+  test("plays on a laptop without moving the headline or breaking CSP", async ({ page }) => {
+    const violations: string[] = [];
+    page.on("console", (message) => {
+      if (/Content Security Policy/i.test(message.text())) violations.push(message.text());
+    });
+    // The theme script already logs a violation on every page. Only a new one is a failure.
+    await page.goto("/how-it-works");
+    const baseline = violations.length;
+    violations.length = 0;
+    await page.setViewportSize(LAPTOP);
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+    const headline = page.getByRole("heading", { level: 1 });
+    await expect(headline).toBeVisible();
+    const before = await headline.boundingBox();
+
+    await expect(ring(page)).toHaveAttribute("data-ring", "playing");
+    await expect(page.locator('[data-ring-part="line"]').last()).toHaveCSS(
+      "stroke-dashoffset",
+      "0px",
+      { timeout: 2000 },
+    );
+    await expectFinishedRing(page);
+
+    expect(await headline.boundingBox()).toEqual(before);
+    expect(violations).toHaveLength(baseline);
+  });
+
+  test.describe("on a phone", () => {
+    test.use({ viewport: PHONE });
+
+    test("waits until the ring is in view, then does not replay", async ({ page }) => {
+      await page.goto("/");
+      await expect(ring(page)).toHaveAttribute("data-ring", "armed");
+      await expect(match(page)).toHaveCSS("opacity", "0");
+
+      await ring(page).scrollIntoViewIfNeeded();
+      await expect(match(page)).toHaveCSS("opacity", "1", { timeout: 2000 });
+
+      await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
+      await ring(page).scrollIntoViewIfNeeded();
+      await expect(match(page)).toHaveCSS("opacity", "1");
+      await expect(ring(page)).toHaveAttribute("data-ring", "playing");
+    });
+  });
+
+  test.describe("reduced motion", () => {
+    test.use({ contextOptions: { reducedMotion: "reduce" } });
+
+    test("shows the finished ring", async ({ page }) => {
+      await page.goto("/");
+
+      await expectFinishedRing(page);
+    });
+  });
+
+  test.describe("JavaScript off", () => {
+    test.use({ javaScriptEnabled: false });
+
+    test("shows the finished ring and the headline", async ({ page }) => {
+      await page.goto("/");
+
+      await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+      await expect(match(page)).toBeVisible();
+      await expect(match(page)).toHaveCSS("opacity", "1");
+    });
+
+    test("disables the join button and keeps the address clean", async ({ page }) => {
+      await page.goto("/");
+
+      await expect(page.getByRole("button", { name: "Agree & join" })).toBeDisabled();
+      await page.getByLabel("Company name").fill("Secret Company");
+      await page.getByLabel("Company name").press("Enter");
+      expect(page.url()).not.toContain("Secret");
+    });
+  });
+
+  test("shows the finished ring when IntersectionObserver is missing", async ({ page }) => {
+    await page.addInitScript(() => {
+      Reflect.deleteProperty(window, "IntersectionObserver");
+    });
+    await page.goto("/");
+
+    await expectFinishedRing(page);
+  });
+
+  test("shows the finished ring on returning without a full load", async ({ page }) => {
+    await page.setViewportSize(LAPTOP);
+    await page.goto("/how-it-works");
+    await page.getByRole("banner").getByRole("link", { name: "ComLinked home" }).click();
+
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("within 24 hours");
+    await expectFinishedRing(page);
+  });
+});
+
+test.describe("homepage sections", () => {
+  test("appear in the agreed order", async ({ page }) => {
+    await page.goto("/");
+
+    await expect(page.locator("main").getByRole("heading", { level: 2 })).toHaveText([
+      "Your first day",
+      "A network for your members.",
+      "When people leave, relationships shouldn’t.",
+      "What we commit to",
+      "Questions from companies",
+      "Claim your free profile.",
+    ]);
+  });
+
+  test("every section after the hero is on paper or white", async ({ page }) => {
+    await page.goto("/");
+
+    const backgrounds = await page
+      .locator("main section")
+      .evaluateAll((sections) =>
+        sections.slice(1).map((section) => getComputedStyle(section).backgroundColor),
+      );
+    expect(new Set(backgrounds)).toEqual(new Set(["rgb(243, 245, 247)", WHITE]));
+  });
+
+  test("removed content and placeholders are gone", async ({ page }) => {
+    await page.goto("/");
+    const main = page.locator("main");
+
+    for (const text of [
+      "312",
+      "400",
+      "One network",
+      "Build connections your company keeps",
+      "Verified",
+    ]) {
+      await expect(main.getByText(text)).toHaveCount(0);
+    }
+    await expect(page.locator("body")).not.toContainText("[CONFIRM");
+    await expect(page.locator("body")).not.toContainText("[PILOT CHAMBER");
+  });
+
+  test("the old free link lands on What we commit to", async ({ page }) => {
+    await page.goto("/#free");
+
+    await expect(page.locator("#free").getByRole("heading", { level: 2 })).toHaveText(
+      "What we commit to",
+    );
+  });
+
+  test("the chamber section leads to For chambers", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("link", { name: "See the chamber pilot" }).click();
+
+    await expect(page).toHaveURL(/\/for-chambers$/);
+  });
+});
+
+test.describe("join form", () => {
+  const submit = (page: Page) => page.getByRole("button", { name: "Agree & join" });
+
+  async function fillValid(page: Page) {
+    await page.getByLabel("Company name").fill("Kalayaan Foods Inc.");
+    await page.getByLabel("Your name").fill("Maria Santos");
+    await page.getByLabel("Work email").fill("maria@kalayaanfoods.com");
+  }
+
+  async function openForm(page: Page) {
+    await page.goto("/#join");
+    await expect(submit(page)).toBeEnabled();
+  }
+
+  test("a valid form opens the claim flow with nothing in the address", async ({ page }) => {
+    await openForm(page);
+    await fillValid(page);
+    await submit(page).click();
+
+    await expect(page).toHaveURL(/\/app\/claim$/);
+    expect(page.url()).not.toContain("maria");
+  });
+
+  test("blank fields show messages and focus the first", async ({ page }) => {
+    await openForm(page);
+    await submit(page).click();
+
+    await expect(page.getByText("Enter your company name.")).toBeVisible();
+    await expect(page.getByText("Enter your name.")).toBeVisible();
+    await expect(page.getByText("Enter your work email.")).toBeVisible();
+    await expect(page.getByLabel("Company name")).toBeFocused();
+    await expect(page.getByLabel("Company name")).toHaveAttribute("aria-invalid", "true");
+    await expect(page).toHaveURL(/\/#join$/);
+  });
+
+  test("spaces count as blank", async ({ page }) => {
+    await openForm(page);
+    await fillValid(page);
+    await page.getByLabel("Company name").fill("    ");
+    await submit(page).click();
+
+    await expect(page.getByText("Enter your company name.")).toBeVisible();
+    await expect(page).toHaveURL(/\/#join$/);
+  });
+
+  test("a badly formed email is explained, and the message clears when fixed", async ({ page }) => {
+    await openForm(page);
+    await fillValid(page);
+    await page.getByLabel("Work email").fill("maria@");
+    await submit(page).click();
+    const message = page.getByText("Enter a valid email, like you@yourcompany.com.");
+    await expect(message).toBeVisible();
+    await expect(page.getByLabel("Work email")).toBeFocused();
+
+    await page.getByLabel("Work email").fill("maria@kalayaanfoods.com");
+    await expect(message).toBeHidden();
+    await submit(page).click();
+
+    await expect(page).toHaveURL(/\/app\/claim$/);
+  });
+
+  test("over-long input is rejected and stays inside the field", async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 800 });
+    await openForm(page);
+    await fillValid(page);
+    await page.getByLabel("Company name").fill("a".repeat(201));
+    await submit(page).click();
+
+    await expect(page.getByText("Use 200 characters or fewer.")).toBeVisible();
+    await expect(page).toHaveURL(/\/#join$/);
+    const box = await page.getByLabel("Company name").boundingBox();
+    expect((box?.x ?? 0) + (box?.width ?? 0)).toBeLessThanOrEqual(360);
+  });
+
+  test("keeps what a visitor typed before the script loaded", async ({ page }) => {
+    await page.route("**/_next/static/**", async (route) => {
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await route.continue();
+    });
+    await page.goto("/#join", { waitUntil: "domcontentloaded" });
+    await page.getByLabel("Company name").fill("Kalayaan Foods Inc.");
+
+    await expect(submit(page)).toBeEnabled({ timeout: 30_000 });
+    await expect(page.getByLabel("Company name")).toHaveValue("Kalayaan Foods Inc.");
+  });
+
+  test("pressing submit twice navigates once", async ({ page }) => {
+    await openForm(page);
+    await fillValid(page);
+    await page.evaluate(() => {
+      const pushState = history.pushState.bind(history);
+      Object.assign(window, { claimPushes: 0 });
+      history.pushState = (data, unused, url) => {
+        if (String(url).includes("/app/claim")) {
+          Reflect.set(window, "claimPushes", Number(Reflect.get(window, "claimPushes")) + 1);
+        }
+        pushState(data, unused, url);
+      };
+    });
+    await submit(page).dblclick();
+
+    await expect(page).toHaveURL(/\/app\/claim$/);
+    expect(await page.evaluate(() => Reflect.get(window, "claimPushes"))).toBe(1);
+  });
+
+  test("a visitor who has already claimed opens ComDash", async ({ page }) => {
+    await page.setViewportSize(LAPTOP);
+    await page.goto("/app/claim");
+    await presenterGuide(page, "Two weeks in");
+    await expect(page.locator(".a-rank")).toHaveText("#4");
+    await presenterGuide(page, "Website");
+    await page.getByRole("banner").getByRole("link", { name: "Join free" }).click();
+    await fillValid(page);
+    await submit(page).click();
+
+    await expect(page.locator(".a-rank")).toBeVisible();
+    await expect(page).toHaveURL(/\/app\/dash$/);
+  });
+
+  test("the claim link and sign in link lead into the product", async ({ page }) => {
+    await page.goto("/#join");
+
+    await expect(
+      page.getByRole("link", { name: "Claim an existing company profile" }),
+    ).toHaveAttribute("href", "/app/claim");
+    await expect(page.locator("#join").getByRole("link", { name: "Sign in" })).toHaveAttribute(
+      "href",
+      "/app/dash",
+    );
   });
 });

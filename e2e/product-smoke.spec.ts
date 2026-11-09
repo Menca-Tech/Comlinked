@@ -123,6 +123,8 @@ test.describe("on a laptop", () => {
     await expectAccessible(page);
     await guide(page, "Two weeks in");
     await expect(page.locator(".a-rank")).toHaveText("#4");
+    await expect(page.locator(".dv2-ring")).toBeVisible();
+    await expect(page.locator(".dv2-node").first()).toBeVisible();
     await expectAccessible(page);
 
     await page.locator(".a-web-nav .nav-link", { hasText: "Leads" }).click();

@@ -56,3 +56,17 @@ export function SectionIntro({ title, children }: { title: ReactNode; children: 
     </div>
   );
 }
+
+/** Marks a visual as example data. Takes its colour from the className. */
+export function ExampleTag({ className }: { className?: string }) {
+  return (
+    <span
+      className={cn(
+        "inline-block rounded-full border border-current px-3 py-[5px] font-sans text-[13px] leading-[14px] font-bold tracking-normal",
+        className,
+      )}
+    >
+      Example
+    </span>
+  );
+}

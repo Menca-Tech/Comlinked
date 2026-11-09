@@ -128,7 +128,8 @@ private bank than a consumer app.
 
 **Theme.** Light only for the MVP. Navy bands belong to public pages, with one
 exception: the claim steps are the doorway into the app, so they use a navy panel
-with the rings.
+with the decorative logo rings. Those decorative rings stay off every other signed-in
+screen; the Network Ring below is a working part of ComDash, not decoration.
 
 **Navigation.** Five places, in this order: ComDash, Leads, ComMail, Asks, Wins.
 Words in a top bar from 900px; bottom tabs with Lucide icons on phones. The active
@@ -187,6 +188,9 @@ and stay as small tinted pills, so shape shows what is clickable.
   the right of the list on a laptop, opened in place on a phone.
 - **Fit Score**: a number with a small "Fit" label, in ink. Point values appear only on
   the Engine screen.
+- **Network Ring**: your Company at the centre, with Connections and today's Leads
+  around it by Connection Degree. Nothing animates on first render; later changes take
+  200ms with no per-item delay.
 - **Company mark**: pale square with navy initials.
 - **Tally**: one mark per item in a short daily task, such as 2 of 5 done.
 - **Section**: an 18px title, then its list or content, with no container.
