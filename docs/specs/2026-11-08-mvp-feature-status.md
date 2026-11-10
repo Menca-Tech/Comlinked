@@ -1,7 +1,7 @@
 # ComLinked MVP feature status
 
-Created 2026-11-08 · Last updated 2026-11-09 · Scope: [MVP Build Plan](2026-10-11-mvp-build-plan.md) ·
-Repo state: branch `feat/website-redesign-pages`, built on commit `61345ac`
+Created 2026-11-08 · Last updated 2026-11-10 · Scope: [MVP Build Plan](2026-10-11-mvp-build-plan.md) ·
+Repo state: branch `feat/website-redesign-pages` at commit `a0e150c`
 
 Full requirements are in the [ComLinked SRS](2026-11-09-comlinked-srs.md), version
 0.1, a draft for Richard's review. This file tracks progress against them.
@@ -22,8 +22,9 @@ the [AI Lead Agent](#ai-lead-agent-preview) and a
 code, and it is partial.
 
 The mockup is at [`docs/mockup/index.html`](../mockup/index.html), with a copy at
-`~/Documents/ComLinked-mockup/index.html`. Its code is throwaway: only its flows
-and layouts carry over to a real build.
+`~/Documents/ComLinked-mockup/index.html`. It is the main version of the design and
+the one used for the demo. Its code is throwaway: only its flows, layouts and design
+carry over to a real build.
 
 ## How to read the tables
 
@@ -62,24 +63,24 @@ and layouts carry over to a real build.
 
 ## Chamber tools and supporting features
 
-| Feature                          | Mockup    | Real app | What was done                                                                                                                                                        |
-| -------------------------------- | --------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Member import                    | Simulated | No       | Upload screen and preview of 12 rows, always using the sample list so no real company gets invented details.                                                         |
-| Activity view                    | Simulated | No       | Claimed, active and needs-an-intro counts, plus a member list.                                                                                                       |
-| Intros and broadcasts            | Simulated | No       | Both work in the mockup, and announcements appear on ComDash.                                                                                                        |
-| Admin back office                | No        | No       | Left out by design: the plan has staff use the database dashboard.                                                                                                   |
-| Search and company profile pages | Simulated | No       | Example search ranked by relevance × boost, plus profile pages. Degree and mutual connections are labels only.                                                       |
-| Anti-gaming rules                | Simulated | No       | Limits are enforced, deals need both sides, and there is one example points spike to review.                                                                         |
-| New member boost                 | Simulated | No       | 30 days at 10%. The 10% is an assumption; the plan gives no size.                                                                                                    |
-| Visible-views notice at sign-up  | Simulated | No       | Shown in the mockup's claim flow. The repo's join form has the text but is not connected.                                                                            |
-| Mobile-first and web layouts     | Simulated | Partly   | The mockup, the five public pages and the simulated product at `/app` all have phone and web layouts.                                                                |
-| Website pages                    | Done      | Partly   | All 5 pages are in the mockup and the repo. In the repo, the join and pilot forms check their fields and lead into the simulated product; nothing is stored or sent. |
+| Feature                          | Mockup    | Real app | What was done                                                                                                                                                                                                                                                                       |
+| -------------------------------- | --------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Member import                    | Simulated | No       | Upload screen and preview of 12 rows, always using the sample list so no real company gets invented details.                                                                                                                                                                        |
+| Activity view                    | Simulated | No       | Claimed, active and needs-an-intro counts, plus a member list.                                                                                                                                                                                                                      |
+| Intros and broadcasts            | Simulated | No       | Both work in the mockup, and announcements appear on ComDash.                                                                                                                                                                                                                       |
+| Admin back office                | No        | No       | Left out by design: the plan has staff use the database dashboard.                                                                                                                                                                                                                  |
+| Search and company profile pages | Simulated | No       | Example search ranked by relevance × boost, plus profile pages. Degree and mutual connections are labels only.                                                                                                                                                                      |
+| Anti-gaming rules                | Simulated | No       | Limits are enforced, deals need both sides, and there is one example points spike to review.                                                                                                                                                                                        |
+| New member boost                 | Simulated | No       | 30 days at 10%. The 10% is an assumption; the plan gives no size.                                                                                                                                                                                                                   |
+| Visible-views notice at sign-up  | Simulated | No       | Shown in the mockup's claim flow. The repo's join form has the text but is not connected.                                                                                                                                                                                           |
+| Mobile-first and web layouts     | Simulated | Partly   | The mockup, the five public pages and the simulated product at `/app` all have phone and web layouts.                                                                                                                                                                               |
+| Website pages                    | Done      | Partly   | All 5 pages are in the mockup and the repo. In the repo, the join and pilot forms check their fields and lead into the simulated product; nothing is stored or sent. The repo's pages have since been redesigned, so they no longer match the mockup, which has the current design. |
 
 ## Agreed for the demo
 
 | Topic              | Decision                                                                                                             |
 | ------------------ | -------------------------------------------------------------------------------------------------------------------- |
-| Demo surface       | The demo runs on the Next.js app at `/app`, with the HTML mockup as backup.                                          |
+| Demo surface       | The demo runs on the HTML mockup. The Next.js app at `/app` is not used for the demo.                                |
 | Audience           | Richard and pilot chambers, presented from a laptop. The mockup stays on the Mac.                                    |
 | Scope              | The 21 MVP features and chamber basics, plus a read-only "What's next" page.                                         |
 | "What's next" page | Customer-facing postponed items only, with no paid items or staff tools. Reached from the presenter guide only.      |
@@ -204,4 +205,8 @@ Ported: claim (A2, A3), matches (L1), ComDash (L2, D3, A4, D4, S2), Leads (D2), 
 (C2, C3, C4), Asks (L3), Wins (S1, S2, S3, D5), company profile (A4, A5, C1, C3), search
 (L2), digest (D1), chamber tools (A1, L4), notifications (C1, L2), What's next, and the
 Engine, AI Lead Agent and Team Dashboard previews. Data and sign-in are still simulated.
-The public website is unchanged by this port.
+
+Since the port, the Next.js app has gained two things the mockup does not have: a
+Network Ring ComDash and a redesigned public website
+([spec](2026-11-09-website-redesign.md)). On 2026-11-10 the HTML mockup was confirmed
+as the main version of the design, so neither is part of the current design.

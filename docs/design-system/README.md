@@ -6,11 +6,11 @@ connections belong to the company, not the person.
 This system started as a recolour of the Arcbound Design System and has since
 been **re-derived from the ComLinked logo** so the two brands stay distinct: the
 type echoes the rounded "comlinked" wordmark, the ring from the logo mark is the
-motif, and shapes are rounded like the mark, while serif headlines set a calmer, more established tone. Every colour comes from the logo's
+motif, and shapes are rounded like the mark. Every colour comes from the logo's
 blue and grey. Sample copy comes from the ComLinked site.
 
-> **The tone in one line:** quiet authority. Serif headlines, deep navy, plenty
-> of space, and the logo blue kept for the moments that matter.
+> **The tone in one line:** friendly, confident, clear. Bold rounded headlines,
+> the logo blue for accents, and the ring from the ComLinked mark.
 
 **One system, two modes.** The brand, colours, font and voice below apply
 everywhere. **Site Mode** is the expressive form for public pages. **App Mode** is
@@ -43,12 +43,12 @@ through its authorized representative.
 - Contrast pairs carry the message: "When people leave, relationships
   shouldn't." · "ComLinked connects companies, not individuals."
 - **Casing:** sentence case everywhere: headlines, labels, buttons, tags.
-- In Site Mode, only the **homepage hero headline** carries a key phrase, set
-  **upright in logo blue**: "Your business connections should **stay with your
-  business.**" Every other heading is one colour. App Mode titles carry no key
-  phrase.
+- In Site Mode, only each page's **main headline** carries a key phrase, set
+  **upright in heavy logo blue**: "Your first business leads **within 24
+  hours.**" Every other heading is one colour. App Mode titles carry no
+  key phrase.
 - **No emoji. No exclamation.** Numbers are specific (`312`, `87`, `120+`).
-  Example figures appear only inside visuals marked **Example**.
+  Example figures are labelled **Example data**.
 - **No labels above headings.** The heading says what the section is; links
   name where they go.
 
@@ -56,53 +56,49 @@ through its authorized representative.
 
 ## Visual foundations
 
-**Two grounds, one accent.** The dark ground is **deep navy** (`cl-navy` #133E5E),
-the same navy as the product's main buttons, and the light ground is a **cool
-off-white paper** (`cl-paper` #F3F5F7). In Site Mode **each page has one navy
-band, its hero**; every other section is flat paper or white, and closing calls to
-action sit on paper with one navy button. One blue does the accent work: headline
-key phrases, statistics, the ring, borders, the recommended tier.
+**Two grounds, one accent.** The system alternates between a **cool near-black**
+field (`cl-black` #1A1D20) and a **cool off-white paper** (`cl-paper` #F3F5F7).
+One blue does the accent work: headline key phrases, statistics, the ring, borders,
+the recommended tier.
 
 - On paper and white the accent is **`cl-blue` #286FA3**, the logo blue deepened
   so it reads as text (4.9:1 on paper).
-- On navy the accent is the pure logo blue **`cl-sky` #55A2D4** for large text
-  only (4.0:1). Small text on navy uses **`cl-sky-strong` #86BEE3** (5.6:1).
-  `Headline onDark` and anything inside `.cl-field-dark` switch
+- On the dark field the accent is the pure logo blue **`cl-sky` #55A2D4**
+  (6.1:1). `Headline onDark` and anything inside `.cl-field-dark` switch
   automatically through `--accent-current`.
 - The logo grey **`cl-grey` #838587** is the neutral mark colour (rules you want
   visible, the cover bar). It is too light for text on paper; text uses
   `text-muted` (`cl-n-500`).
 
-**Type.** Two families. In Site Mode, **Source Serif 4 at 500** sets every h1 to
-h3, with Georgia as the fallback. **Nunito Sans** sets everything else: text,
-labels, buttons and figures, regular to ExtraBold. No monospace.
+**Type.** One family: Nunito Sans. ExtraBold for headlines and big figures,
+regular to bold for text, labels and buttons. Its warmth sits with the rounded
+logo, while firmer headlines keep the logo the only rounded type on the page.
+No monospace.
 
 **Layout.** Generous space; content left-aligned. Sections open with the heading
 itself, never a label above it.
 
-**Backgrounds.** No photography and no decorative rings. Navy and paper grounds are
-flat. The homepage hero's Network Ring is the one exception and the only ring that
-moves. It is a light server-rendered drawing, separate from the product's interactive
-Network Ring on ComDash; the two share a meaning, not code.
+**Backgrounds.** No photography. Dark grounds carry the **logo rings**: faint
+concentric rings from the ComLinked mark bleeding off one corner (`--rings-top-right`,
+`--rings-bottom-left`). Paper grounds are flat.
 
 **Cards.** Rounded corners (`radius-card` 16px), a 1px hairline border and no drop
 shadow. Inputs use `radius-control` (8px); buttons, tags and chips are pills
 (`radius-pill`), round like the logo. Three card grounds: white-on-paper, dark
 surface, and the **recommended** tier (`cl-blue-tint` + `cl-blue` border).
 
-**Data.** In Site Mode, the proof is **specific commitments**, not figures. Each page
-has one built-in visual: Network Ring (home), activity view (For chambers), Daily Lead
-Loop (How it works) and "Who's interested" (ComDash). Any example figure stays inside
-one of those marked visuals, and each has a text alternative. App Mode figures are small
+**Data.** In Site Mode, the proof device is an **oversized blue figure** with a
+short caption and an optional superscript unit (`/mo`). App Mode figures are small
 and plain.
 
 **The ring.** The logo's concentric mark, small (`.cl-ring`), leads Site Mode list
 rows and marks "live" or "new" items (never a label above a heading). It replaces
 dashes, dots and plus signs on public pages. It does not mark tabs or statuses.
 
-**Motion.** Restrained. In Site Mode content appears at once, with no page-load
-fades or scroll reveals; only the homepage ring moves. Hover = slight darken
-(`brightness(0.92)`); press = `scale(0.985)`. Reduced motion turns all of it off.
+**Motion.** Restrained, with no bounce. Each page's hero content rises into place once
+on load (about 0.7s on `--ease-out`, slightly staggered); controls respond in about
+150ms. Hover = slight darken (`brightness(0.92)`); press = `scale(0.985)`. Reduced
+motion turns all of it off.
 
 ---
 
@@ -129,10 +125,9 @@ make the next action obvious, so one thing leads and the rest stays quiet.
 **The feeling.** "This is serious, and I was invited." Calm and precise, closer to a
 private bank than a consumer app.
 
-**Theme.** Light only for the MVP. Navy bands belong to public pages, with one
-exception: the claim steps are the doorway into the app, so they use a navy panel
-with the decorative logo rings. Those decorative rings stay off every other signed-in
-screen; the Network Ring below is a working part of ComDash, not decoration.
+**Theme.** Light only for the MVP. Dark sections and rings stay on public pages, with
+one exception: the claim steps are the doorway into the app, so they use a navy panel
+with the rings.
 
 **Navigation.** Five places, in this order: ComDash, Leads, ComMail, Asks, Wins.
 Words in a top bar from 900px; bottom tabs with Lucide icons on phones. The active
@@ -191,9 +186,6 @@ and stay as small tinted pills, so shape shows what is clickable.
   the right of the list on a laptop, opened in place on a phone.
 - **Fit Score**: a number with a small "Fit" label, in ink. Point values appear only on
   the Engine screen.
-- **Network Ring**: your Company at the centre, with Connections and today's Leads
-  around it by Connection Degree. Nothing animates on first render; later changes take
-  200ms with no per-item delay.
 - **Company mark**: pale square with navy initials.
 - **Tally**: one mark per item in a short daily task, such as 2 of 5 done.
 - **Section**: an 18px title, then its list or content, with no container.
@@ -217,8 +209,9 @@ reason to stay.
 
 From Google Fonts (loaded by `components/bundle.css`):
 
-- **Text:** `Nunito Sans`: 400–800 for text, labels, buttons and figures.
-- **Site Mode headlines:** `Source Serif 4` at 500, for every h1 to h3.
+- **Everything:** `Nunito Sans`: 800 for headlines and figures, 400–700 for
+  text, labels and buttons. (Rounded Nunito was tried for headlines and dropped:
+  it read too soft at display sizes for a B2B audience.)
 - **App Mode titles:** `Source Serif 4` at 500, for page titles and the rank figure
   only.
 
@@ -233,7 +226,7 @@ Reusable React primitives on `window.ComLinkedDesignSystem_55a2d4`. All read the
 custom properties; none carry their own colours.
 
 - **Label** / **RailLabel**: sentence-case kicker led by the logo ring, and its vertical rail variant.
-- **Headline** / **Accent**: Source Serif 4 headline at 500 + upright logo-blue key phrase.
+- **Headline** / **Accent**: Nunito Sans ExtraBold headline + upright logo-blue key phrase.
 - **Tag**: pill status tag (outline / accent / ghost): Free, Premium, Verified.
 - **Card**: rounded hairline panel (paper / dark / recommended).
 - **Stat**: oversized blue figure with a caption + optional superscript unit.

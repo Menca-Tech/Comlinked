@@ -13,10 +13,9 @@
   --color-sunken: #e7ebef;
   --color-paper: #f3f5f7;
   --color-surface: #ffffff;
-  --color-navy: #133e5e;
-  --color-night: var(--color-navy);
-  --color-night-raised: #1a4c70;
-  --color-night-chip: #235a82;
+  --color-night: #1a1d20;
+  --color-night-raised: #212529;
+  --color-night-chip: #2c3238;
   --color-error: #b3261e;
   --color-error-tint: #fceeee;
   --color-error-line: #f3c9c6;
@@ -60,6 +59,6 @@
   --duration-slow: 400ms;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --color-shadow: rgba(21, 24, 27, 0.35);
-  --font-display: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-display: "Nunito Sans", "Helvetica Neue", Arial, sans-serif;
   --font-text: "Nunito Sans", "Helvetica Neue", Arial, sans-serif;
 }
