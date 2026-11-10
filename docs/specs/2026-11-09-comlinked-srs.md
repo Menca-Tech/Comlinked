@@ -1,20 +1,21 @@
 # ComLinked Software Requirements Specification
 
-Version 0.1, Draft for review · 2026-11-09
+Version 0.2, Draft for review · 2026-11-10
 
 ## Document control
 
 | Field       | Value                                                                         |
 | ----------- | ----------------------------------------------------------------------------- |
 | Document    | ComLinked Software Requirements Specification                                 |
-| Version     | 0.1, Draft                                                                    |
-| Date        | 2026-11-09                                                                    |
+| Version     | 0.2, Draft                                                                    |
+| Date        | 2026-11-10                                                                    |
 | Status      | For review by Richard. Not yet approved.                                      |
 | Master copy | `docs/specs/2026-11-09-comlinked-srs.md`. The Word copy is generated from it. |
 
-| Version | Date       | Change                                                                                                    |
-| ------- | ---------- | --------------------------------------------------------------------------------------------------------- |
-| 0.1     | 2026-11-09 | First draft, from the MVP Build Plan, AI Lead Agent specification, mockup decisions and repository rules. |
+| Version | Date       | Change                                                                                                                 |
+| ------- | ---------- | ---------------------------------------------------------------------------------------------------------------------- |
+| 0.1     | 2026-11-09 | First draft, from the MVP Build Plan, AI Lead Agent specification, mockup decisions and repository rules.              |
+| 0.2     | 2026-11-10 | ECCP replaces PCCI–Quezon City as the first pilot (section 1.4). OD-01 now asks only about the agent's Canadian pilot. |
 
 ### How to read this document
 
@@ -66,7 +67,7 @@ Every MVP feature must help companies sign up, get leads, return daily, talk to 
 
 ### 1.4 Pilot
 
-The MVP pilot is PCCI–Quezon City in the Philippines, followed by ECCP and the Toronto Region Board of Trade. The soft launch covers 30 to 50 companies and opens to all members after two weeks of fixes. The AI Lead Agent specification names a different pilot; see OD-01 in section 14.
+The MVP pilot is ECCP, the European Chamber of Commerce of the Philippines, decided on 2026-11-10. It replaces PCCI–Quezon City, which the plan named first. Which chambers follow, and in what order, is not yet set; the plan's other candidates are PCCI–Quezon City and the Toronto Region Board of Trade. The soft launch covers 30 to 50 companies and opens to all members after two weeks of fixes. The AI Lead Agent specification names its own pilot in Canada; see OD-01 in section 14.
 
 ### 1.5 References
 
@@ -909,20 +910,20 @@ The most recent automated checks covered 36 Team Dashboard, 34 AI Lead Agent, 48
 
 ## 14. Open decisions
 
-| ID    | Decision                                                                                                                         | Owner          | Blocks                             |
-| ----- | -------------------------------------------------------------------------------------------------------------------------------- | -------------- | ---------------------------------- |
-| OD-01 | Which pilot comes first: PCCI–Quezon City (plan) or PCCC in Canada from Jan 1, 2027 (agent spec)?                                | Richard        | Region, legal review, agent timing |
-| OD-02 | Which SMS and email providers?                                                                                                   | Technical lead | A2, A3, D1                         |
-| OD-03 | Confirm scoring settings: CFG-02 to CFG-04 and BR-15.                                                                            | Richard        | D3, Fit Score tuning               |
-| OD-04 | Should BR-09 invite points stay uncapped? Throwaway companies could earn unlimited points.                                       | Richard        | A5                                 |
-| OD-05 | Reconcile Superadmin's unrestricted access (glossary, ADR 0005) with TD-10's rule that staff never see private content.          | Richard        | Team Dashboard, privacy notice     |
-| OD-06 | The agent messages other agents on its own, which conflicts with "AI drafts, a person decides". How should the rule be reworded? | Richard        | Part 2                             |
-| OD-07 | Final agent prices and chamber revenue share.                                                                                    | Richard        | Part 2                             |
-| OD-08 | How are claims verified for the Verified badge, and is the badge kept?                                                           | Richard        | FR-A2-09                           |
-| OD-09 | Keep the copy of each ComMail to the registered email?                                                                           | Richard        | FR-C2-05                           |
-| OD-10 | Confirm that `owner` and `admin` are Authorized Representatives (ASM-05).                                                        | Richard        | C1, C2                             |
-| OD-11 | Legal review items: Philippine Data Privacy Act now, and CASL and PIPEDA before Canada.                                          | Legal counsel  | Launch                             |
-| OD-12 | Should counterparties see the initiator's Match Score, and can Gate A be pre-approved for repeat items?                          | Richard        | Part 2                             |
+| ID    | Decision                                                                                                                         | Owner          | Blocks                              |
+| ----- | -------------------------------------------------------------------------------------------------------------------------------- | -------------- | ----------------------------------- |
+| OD-01 | The MVP pilot is ECCP (decided 2026-11-10). When does the agent spec's PCCC pilot in Canada, from Jan 1, 2027, fit in?           | Richard        | Agent timing, Canadian legal review |
+| OD-02 | Which SMS and email providers?                                                                                                   | Technical lead | A2, A3, D1                          |
+| OD-03 | Confirm scoring settings: CFG-02 to CFG-04 and BR-15.                                                                            | Richard        | D3, Fit Score tuning                |
+| OD-04 | Should BR-09 invite points stay uncapped? Throwaway companies could earn unlimited points.                                       | Richard        | A5                                  |
+| OD-05 | Reconcile Superadmin's unrestricted access (glossary, ADR 0005) with TD-10's rule that staff never see private content.          | Richard        | Team Dashboard, privacy notice      |
+| OD-06 | The agent messages other agents on its own, which conflicts with "AI drafts, a person decides". How should the rule be reworded? | Richard        | Part 2                              |
+| OD-07 | Final agent prices and chamber revenue share.                                                                                    | Richard        | Part 2                              |
+| OD-08 | How are claims verified for the Verified badge, and is the badge kept?                                                           | Richard        | FR-A2-09                            |
+| OD-09 | Keep the copy of each ComMail to the registered email?                                                                           | Richard        | FR-C2-05                            |
+| OD-10 | Confirm that `owner` and `admin` are Authorized Representatives (ASM-05).                                                        | Richard        | C1, C2                              |
+| OD-11 | Legal review items: Philippine Data Privacy Act now, and CASL and PIPEDA before Canada.                                          | Legal counsel  | Launch                              |
+| OD-12 | Should counterparties see the initiator's Match Score, and can Gate A be pre-approved for repeat items?                          | Richard        | Part 2                              |
 
 ## 15. Out of scope for the MVP
 

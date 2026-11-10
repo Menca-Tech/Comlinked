@@ -95,7 +95,8 @@ Terms from the [ComLinked MVP Build Plan](docs/specs/2026-10-11-mvp-build-plan.m
 - **Team Dashboard** — ComLinked Staff's view across a Chamber's Companies, showing
   activity and status but never private conversations or confidential items.
 
-- **Pilot** — the first 90-day launch, at PCCI–Quezon City.
+- **Pilot** — the first 90-day launch, at ECCP (the European Chamber of Commerce
+  of the Philippines).
 
 ### Getting listed
 

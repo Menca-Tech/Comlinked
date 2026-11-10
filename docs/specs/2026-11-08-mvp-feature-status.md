@@ -4,7 +4,10 @@ Created 2026-11-08 · Last updated 2026-11-10 · Scope: [MVP Build Plan](2026-10
 Repo state: branch `feat/website-redesign-pages` at commit `a0e150c`
 
 Full requirements are in the [ComLinked SRS](2026-11-09-comlinked-srs.md), version
-0.1, a draft for Richard's review. This file tracks progress against them.
+0.2, a draft for Richard's review. This file tracks progress against them.
+
+The pilot is ECCP, the European Chamber of Commerce of the Philippines, decided on
+2026-11-10. It replaces PCCI–Quezon City, which the plan named first.
 
 **All 21 MVP features are now simulated in the local mockup.** No launch is
 planned for now. The mockup is a demo for Richard and pilot chambers, presented
@@ -181,9 +184,9 @@ plan's [Adoption notes](2026-10-11-mvp-build-plan.md#adoption-notes).
   registered email come from the website, not the plan.
 - Engine settings: the Fit Score weights, the 80 and 50 request thresholds and
   the overnight attention formula are placeholders.
-- AI Lead Agent: the spec names a different pilot from the plan (PCCC in Canada
-  against PCCI–Quezon City), is a paid upgrade, and messages other agents on its
-  own, which conflicts with "AI drafts, a person decides".
+- AI Lead Agent: the spec names its own pilot (PCCC in Canada from Jan 1, 2027)
+  beside the MVP pilot at ECCP, is a paid upgrade, and messages other agents on
+  its own, which conflicts with "AI drafts, a person decides".
 - ComLinked Team Dashboard: the glossary defines a Superadmin as having
   unrestricted access, but the dashboard promises staff never see private
   content. The on track and behind labels also rely on pilot targets the plan

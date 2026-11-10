@@ -355,7 +355,8 @@ once it is resolved, and record any hard-to-reverse answer as an ADR.
 14. **The AI Lead Agent spec differs from this plan.** The
     [task document](2026-10-21-ai-lead-agent.pdf), dated Oct 21, 2026, describes
     what Section 6 postpones to Phase 2. It names a different pilot (PCCC in
-    Canada from Jan 1, 2027, against PCCI–Quezon City), is a paid upgrade, and
+    Canada from Jan 1, 2027, while the MVP pilot is ECCP; see item 16), is a
+    paid upgrade, and
     has the agent message other agents on its own, against "AI drafts, a person
     decides". The mockup shows it only as a labeled preview. Richard to settle
     these before a real build.
@@ -364,3 +365,12 @@ once it is resolved, and record any hard-to-reverse answer as an ADR.
     conversations or confidential items. The glossary and ADR 0005 give a
     Superadmin unrestricted access, so the two must be reconciled before a real
     build. Section 3.6's "no custom admin console" still applies to the MVP.
+
+### Decided since adoption
+
+16. **ECCP is the first pilot.** On 2026-11-10 the European Chamber of Commerce
+    of the Philippines (ECCP) replaced PCCI–Quezon City as the first pilot for
+    the whole MVP. The opening summary and Sections 7, 7.2, 8.1 and 8.2 still
+    name PCCI–Quezon City; read them as ECCP. Which chambers follow, and in what
+    order, is not yet set. The Section 8.1 targets were written for PCCI–Quezon
+    City, so check that they still fit.

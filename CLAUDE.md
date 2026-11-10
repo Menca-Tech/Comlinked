@@ -19,7 +19,10 @@ our vision and guide. Read it before planning any feature. In short:
 - **Non-negotiables:** free for everyone, with no payments or blurred names. AI
   drafts and a person decides, and every flow works with AI off. Connections
   belong to the company. Mobile first.
-- **Pilot:** PCCI–Quezon City, then ECCP and the Toronto Region Board of Trade.
+- **Pilot:** ECCP, the European Chamber of Commerce of the Philippines, comes
+  first (decided 2026-11-10; the plan named PCCI–Quezon City). Which chambers
+  follow, and in what order, isn't set; the plan's other candidates are
+  PCCI–Quezon City and the Toronto Region Board of Trade.
 - **Build by ID and in order:** name features by their plan ID (A1–S3) in plans
   and handoffs, and follow the build order in Section 7.2. Test each one on a
   phone as a new company owner.
