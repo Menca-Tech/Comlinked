@@ -1,7 +1,7 @@
 # ComLinked MVP feature status
 
 Created 2026-11-08 · Last updated 2026-11-09 · Scope: [MVP Build Plan](2026-10-11-mvp-build-plan.md) ·
-Repo state: branch `feat/comlinked-brand-and-website` at commit `294593c`
+Repo state: branch `feat/website-redesign-pages`, built on commit `61345ac`
 
 Full requirements are in the [ComLinked SRS](2026-11-09-comlinked-srs.md), version
 0.1, a draft for Richard's review. This file tracks progress against them.
@@ -62,23 +62,24 @@ and layouts carry over to a real build.
 
 ## Chamber tools and supporting features
 
-| Feature                          | Mockup    | Real app | What was done                                                                                                  |
-| -------------------------------- | --------- | -------- | -------------------------------------------------------------------------------------------------------------- |
-| Member import                    | Simulated | No       | Upload screen and preview of 12 rows, always using the sample list so no real company gets invented details.   |
-| Activity view                    | Simulated | No       | Claimed, active and needs-an-intro counts, plus a member list.                                                 |
-| Intros and broadcasts            | Simulated | No       | Both work in the mockup, and announcements appear on ComDash.                                                  |
-| Admin back office                | No        | No       | Left out by design: the plan has staff use the database dashboard.                                             |
-| Search and company profile pages | Simulated | No       | Example search ranked by relevance × boost, plus profile pages. Degree and mutual connections are labels only. |
-| Anti-gaming rules                | Simulated | No       | Limits are enforced, deals need both sides, and there is one example points spike to review.                   |
-| New member boost                 | Simulated | No       | 30 days at 10%. The 10% is an assumption; the plan gives no size.                                              |
-| Visible-views notice at sign-up  | Simulated | No       | Shown in the mockup's claim flow. The repo's join form has the text but is not connected.                      |
-| Mobile-first and web layouts     | Simulated | Partly   | Mockup has phone and web layouts. The repo's marketing pages exist; the product screens do not.                |
-| Website pages                    | Done      | Partly   | All 5 pages are in the mockup and the repo. In the repo, the join and chamber pilot forms are not connected.   |
+| Feature                          | Mockup    | Real app | What was done                                                                                                                                                        |
+| -------------------------------- | --------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Member import                    | Simulated | No       | Upload screen and preview of 12 rows, always using the sample list so no real company gets invented details.                                                         |
+| Activity view                    | Simulated | No       | Claimed, active and needs-an-intro counts, plus a member list.                                                                                                       |
+| Intros and broadcasts            | Simulated | No       | Both work in the mockup, and announcements appear on ComDash.                                                                                                        |
+| Admin back office                | No        | No       | Left out by design: the plan has staff use the database dashboard.                                                                                                   |
+| Search and company profile pages | Simulated | No       | Example search ranked by relevance × boost, plus profile pages. Degree and mutual connections are labels only.                                                       |
+| Anti-gaming rules                | Simulated | No       | Limits are enforced, deals need both sides, and there is one example points spike to review.                                                                         |
+| New member boost                 | Simulated | No       | 30 days at 10%. The 10% is an assumption; the plan gives no size.                                                                                                    |
+| Visible-views notice at sign-up  | Simulated | No       | Shown in the mockup's claim flow. The repo's join form has the text but is not connected.                                                                            |
+| Mobile-first and web layouts     | Simulated | Partly   | The mockup, the five public pages and the simulated product at `/app` all have phone and web layouts.                                                                |
+| Website pages                    | Done      | Partly   | All 5 pages are in the mockup and the repo. In the repo, the join and pilot forms check their fields and lead into the simulated product; nothing is stored or sent. |
 
 ## Agreed for the demo
 
 | Topic              | Decision                                                                                                             |
 | ------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| Demo surface       | The demo runs on the Next.js app at `/app`, with the HTML mockup as backup.                                          |
 | Audience           | Richard and pilot chambers, presented from a laptop. The mockup stays on the Mac.                                    |
 | Scope              | The 21 MVP features and chamber basics, plus a read-only "What's next" page.                                         |
 | "What's next" page | Customer-facing postponed items only, with no paid items or staff tools. Reached from the presenter guide only.      |

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { joinFormSchema, TEXT_LIMIT } from "./join-form.schema";
+import { TEXT_LIMIT } from "./form-rules";
+import { joinFormSchema } from "./join-form.schema";
 
 const valid = {
   company: "Kalayaan Foods Inc.",

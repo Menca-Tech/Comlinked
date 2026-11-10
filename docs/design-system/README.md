@@ -48,7 +48,7 @@ through its authorized representative.
   business.**" Every other heading is one colour. App Mode titles carry no key
   phrase.
 - **No emoji. No exclamation.** Numbers are specific (`312`, `87`, `120+`).
-  Example figures are labelled **Example data**.
+  Example figures appear only inside visuals marked **Example**.
 - **No labels above headings.** The heading says what the section is; links
   name where they go.
 
@@ -82,15 +82,18 @@ itself, never a label above it.
 
 **Backgrounds.** No photography and no decorative rings. Navy and paper grounds are
 flat. The homepage hero's Network Ring is the one exception and the only ring that
-moves.
+moves. It is a light server-rendered drawing, separate from the product's interactive
+Network Ring on ComDash; the two share a meaning, not code.
 
 **Cards.** Rounded corners (`radius-card` 16px), a 1px hairline border and no drop
 shadow. Inputs use `radius-control` (8px); buttons, tags and chips are pills
 (`radius-pill`), round like the logo. Three card grounds: white-on-paper, dark
 surface, and the **recommended** tier (`cl-blue-tint` + `cl-blue` border).
 
-**Data.** In Site Mode, the proof device is an **oversized blue figure** with a
-short caption and an optional superscript unit (`/mo`). App Mode figures are small
+**Data.** In Site Mode, the proof is **specific commitments**, not figures. Each page
+has one built-in visual: Network Ring (home), activity view (For chambers), Daily Lead
+Loop (How it works) and "Who's interested" (ComDash). Any example figure stays inside
+one of those marked visuals, and each has a text alternative. App Mode figures are small
 and plain.
 
 **The ring.** The logo's concentric mark, small (`.cl-ring`), leads Site Mode list

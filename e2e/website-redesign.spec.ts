@@ -666,3 +666,261 @@ test.describe("join form", () => {
     );
   });
 });
+
+const expectHeadings = (page: Page, headings: string[]) =>
+  expect(page.locator("main").getByRole("heading", { level: 2 })).toHaveText(headings);
+
+const closingButtonReachesJoin = async (page: Page, path: string) => {
+  await page.goto(path);
+  await page.locator("main").getByRole("link", { name: "Join ComLinked free" }).click();
+
+  await expect(page).toHaveURL(/\/#join$/);
+};
+
+test.describe("for chambers page", () => {
+  const submit = (page: Page) => page.getByRole("button", { name: "Request a pilot" });
+  const confirmation = "This is a demo, so nothing was sent. Opening the chamber tools.";
+
+  async function openForm(page: Page) {
+    await page.goto("/for-chambers#pilot");
+    await expect(submit(page)).toBeEnabled();
+  }
+
+  async function fillValid(page: Page) {
+    await page.getByLabel("Chamber or association").fill("Example Chamber");
+    await page.getByLabel("Your name").fill("Ana Reyes");
+    await page.getByLabel("Your role").fill("Executive Director");
+    await page.getByLabel("Work email").fill("ana@examplechamber.org");
+  }
+
+  test("sections appear in the agreed order", async ({ page }) => {
+    await page.goto("/for-chambers");
+
+    await expectHeadings(page, [
+      "What your members get",
+      "How it works for your chamber",
+      "What a pilot asks of you",
+      "What we commit to",
+      "Questions from chambers",
+      "Request a pilot",
+    ]);
+  });
+
+  test("the panel is one marked example image and is not a Network Ring", async ({ page }) => {
+    await page.goto("/for-chambers");
+    const hero = page.locator("main section").first();
+
+    await expect(hero.getByRole("img")).toHaveCount(1);
+    await expect(hero.getByRole("img")).toHaveAccessibleName(/Example activity view/);
+    await expect(hero.getByText("Example", { exact: true })).toBeVisible();
+    await expect(page.locator("[data-network-ring]")).toHaveCount(0);
+  });
+
+  test("the hero button reaches the form", async ({ page }) => {
+    await page.goto("/for-chambers");
+    await page
+      .locator("main section")
+      .first()
+      .getByRole("link", { name: "Request a pilot" })
+      .click();
+
+    await expect(page).toHaveURL(/#pilot$/);
+    await expect(page.getByLabel("Chamber or association")).toBeInViewport();
+  });
+
+  test("unconfirmed answers use the agreed wording", async ({ page }) => {
+    await page.goto("/for-chambers");
+    await page.getByText("How long does a pilot take?").click();
+
+    await expect(
+      page.getByText("We’ll confirm this with your chamber during pilot planning.").first(),
+    ).toBeVisible();
+    await expect(
+      page.getByText("We’ll confirm anything else with your chamber during pilot planning."),
+    ).toBeVisible();
+  });
+
+  test("a valid form confirms honestly and opens the chamber tools", async ({ page }) => {
+    await openForm(page);
+    await fillValid(page);
+    await submit(page).click();
+
+    await expect(page.getByText(confirmation)).toBeVisible();
+    await expect(page).toHaveURL(/\/app\/chamber$/);
+    expect(page.url()).not.toContain("ana");
+  });
+
+  test("blank fields show messages and focus the first", async ({ page }) => {
+    await openForm(page);
+    await submit(page).click();
+
+    for (const message of [
+      "Enter your chamber or association.",
+      "Enter your name.",
+      "Enter your role.",
+      "Enter your work email.",
+    ]) {
+      await expect(page.getByText(message)).toBeVisible();
+    }
+    await expect(page.getByLabel("Chamber or association")).toBeFocused();
+    await expect(page).toHaveURL(/\/for-chambers#pilot$/);
+  });
+
+  test("spaces count as blank", async ({ page }) => {
+    await openForm(page);
+    await fillValid(page);
+    await page.getByLabel("Your role").fill("   ");
+    await submit(page).click();
+
+    await expect(page.getByText("Enter your role.")).toBeVisible();
+    await expect(page).toHaveURL(/\/for-chambers#pilot$/);
+  });
+
+  test("a bad email and a non-numeric count are explained", async ({ page }) => {
+    await openForm(page);
+    await fillValid(page);
+    await page.getByLabel("Member companies").fill("many");
+    await page.getByLabel("Work email").fill("ana@");
+    await submit(page).click();
+
+    await expect(page.getByText("Enter a number, like 150.")).toBeVisible();
+    await expect(page.getByText(/Enter a valid email/)).toBeVisible();
+    await expect(page.getByLabel("Member companies")).toBeFocused();
+    await expect(page).toHaveURL(/\/for-chambers#pilot$/);
+  });
+
+  test("pressing submit twice gives one confirmation", async ({ page }) => {
+    await openForm(page);
+    await fillValid(page);
+    await submit(page).dblclick();
+
+    await expect(page).toHaveURL(/\/app\/chamber$/);
+    await expect(page.getByText(confirmation)).toHaveCount(1);
+  });
+
+  test.describe("JavaScript off", () => {
+    test.use({ javaScriptEnabled: false });
+
+    test("the button is disabled and the address stays clean", async ({ page }) => {
+      await page.goto("/for-chambers");
+      await expect(submit(page)).toBeDisabled();
+      await page.getByLabel("Chamber or association").fill("Secret Chamber");
+      await page.getByLabel("Chamber or association").press("Enter");
+
+      expect(page.url()).not.toContain("Secret");
+    });
+  });
+});
+
+test.describe("how it works page", () => {
+  test("sections appear in the agreed order", async ({ page }) => {
+    await page.goto("/how-it-works");
+
+    await expectHeadings(page, [
+      "Claim your profile",
+      "Your first day",
+      "Every day after",
+      "AI drafts. You decide.",
+      "Your first leads are a day away.",
+    ]);
+  });
+
+  test("the five steps are an ordered list that leads back to the first", async ({ page }) => {
+    await page.goto("/how-it-works");
+
+    await expect(page.locator("ol.cl-loop-steps > li h3")).toHaveText([
+      "Your morning digest",
+      "Act on today’s leads",
+      "Talk and close",
+      "Share the win",
+      "Your rank rises",
+    ]);
+    await expect(page.getByText("lead back to step 1")).toBeVisible();
+  });
+
+  test("states that everything works with the AI Assistant off", async ({ page }) => {
+    await page.goto("/how-it-works");
+
+    await expect(page.getByText("Nothing is sent until you tap Send.")).toBeVisible();
+    await expect(page.getByText("With it off, everything works the same")).toBeVisible();
+  });
+
+  test("the profile example is marked and omits the Verified badge", async ({ page }) => {
+    await page.goto("/how-it-works");
+    const profile = page.getByRole("group", { name: "Example company profile" });
+
+    await expect(profile.getByText("Example", { exact: true })).toBeVisible();
+    await expect(page.locator("main").getByText("Verified")).toHaveCount(0);
+  });
+
+  test("the closing button reaches the Join form", async ({ page }) => {
+    await closingButtonReachesJoin(page, "/how-it-works");
+  });
+
+  test.describe("on a phone", () => {
+    test.use({ viewport: { width: 360, height: 760 } });
+
+    test("the steps stack in order", async ({ page }) => {
+      await page.goto("/how-it-works");
+      const steps = page.locator("ol.cl-loop-steps > li");
+
+      const tops = await steps.evaluateAll((items) =>
+        items.map((item) => item.getBoundingClientRect().top),
+      );
+      expect(tops).toEqual([...tops].sort((a, b) => a - b));
+      expect(new Set(tops).size).toBe(5);
+    });
+  });
+});
+
+test.describe("comdash page", () => {
+  test("sections appear in the agreed order", async ({ page }) => {
+    await page.goto("/comdash");
+
+    await expectHeadings(page, [
+      "Who’s interested, by name.",
+      "Climb by being active.",
+      "See who’s finding your company.",
+    ]);
+  });
+
+  test("the panel is one marked example image", async ({ page }) => {
+    await page.goto("/comdash");
+    const hero = page.locator("main section").first();
+
+    await expect(hero.getByRole("img")).toHaveCount(1);
+    await expect(hero.getByRole("img")).toHaveAccessibleName(/Maple Bay Grocers/);
+    await expect(hero.getByText("Example", { exact: true })).toBeVisible();
+  });
+
+  test("all four signals are explained and names are never hidden", async ({ page }) => {
+    await page.goto("/comdash");
+
+    for (const signal of [
+      "Companies that found you in search",
+      "Companies that viewed your profile",
+      "Companies that messaged you in ComMail",
+      "Companies that were recommended your company",
+    ]) {
+      await expect(page.getByText(signal)).toBeVisible();
+    }
+    await expect(page.getByText("Names are never hidden")).toBeVisible();
+  });
+
+  test("relevance comes first and rank figures stay in the panel", async ({ page }) => {
+    await page.goto("/comdash");
+    const sections = page.locator("main section");
+
+    await expect(sections.first()).toContainText("#4 of 12");
+    await expect(sections.nth(2)).toContainText("most relevant companies first");
+    expect(
+      await sections.evaluateAll(
+        (all) => all.slice(1).filter((section) => /#\d/.test(section.textContent ?? "")).length,
+      ),
+    ).toBe(0);
+  });
+
+  test("the closing button reaches the Join form", async ({ page }) => {
+    await closingButtonReachesJoin(page, "/comdash");
+  });
+});

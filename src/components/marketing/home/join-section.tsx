@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { JoinForm } from "@/components/marketing/join-form";
-import { Section } from "@/components/marketing/section";
+import { RingList, Section } from "@/components/marketing/section";
 import { paths } from "@/paths";
 
 const REASONS = [
@@ -22,20 +22,7 @@ export function JoinSection() {
             Your company may already have a profile waiting, built from its website and public
             listings. Claim it, or create one in about two minutes.
           </p>
-          <ul className="m-0 list-none border-b border-b-cl-rule p-0">
-            {REASONS.map((reason) => (
-              <li
-                className="flex items-baseline gap-3 border-t border-t-cl-rule px-0 py-3.5 text-[16px] leading-[25px] text-cl-ink-2"
-                key={reason}
-              >
-                <span
-                  className="cl-ring-accent mr-2 inline-block h-[11px] w-[11px] flex-none rounded-full align-[-1px]"
-                  aria-hidden="true"
-                />
-                <span>{reason}</span>
-              </li>
-            ))}
-          </ul>
+          <RingList items={REASONS} />
         </div>
         <div className="cl-pad max-w-[520px] min-w-0 flex-[1_1_380px] border border-cl-rule bg-cl-surface p-9 text-cl-ink-2">
           <h3 className="mx-0 mt-0 mb-2 text-[30px] leading-[32px] text-cl-ink">
