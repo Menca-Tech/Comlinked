@@ -1,7 +1,8 @@
 # ComLinked MVP feature status
 
-Created 2026-11-08 · Last updated 2026-11-10 · Scope: [MVP Build Plan](2026-10-11-mvp-build-plan.md) ·
-Repo state: branch `feat/website-redesign-pages` at commit `a0e150c`
+Created 2026-11-08 · Last updated 2026-11-11 · Scope: [MVP Build Plan](2026-10-11-mvp-build-plan.md) ·
+Repo state: branch `feat/website-redesign-pages` at commit `a9ab837`, plus the
+uncommitted ComDash session 2 work
 
 Full requirements are in the [ComLinked SRS](2026-11-09-comlinked-srs.md), version
 0.2, a draft for Richard's review. This file tracks progress against them.
@@ -25,9 +26,10 @@ the [AI Lead Agent](#ai-lead-agent-preview) and a
 code, and it is partial.
 
 The mockup is at [`docs/mockup/index.html`](../mockup/index.html), with a copy at
-`~/Documents/ComLinked-mockup/index.html`. It is the main version of the design and
-the one used for the demo. Its code is throwaway: only its flows, layouts and design
-carry over to a real build.
+`~/Documents/ComLinked-mockup/index.html`. Since the ComDash redesign of 2026-11-11, the
+Next.js app at `/app` is the main version again, and the mockup is frozen as the
+backup. The mockup's ComDash is the older design and says so. Its code is throwaway:
+only its flows, layouts and design carry over to a real build.
 
 ## How to read the tables
 
@@ -40,29 +42,29 @@ carry over to a real build.
 
 ## The 21 MVP features
 
-| ID  | Feature                        | Mockup    | Real app | What was done                                                                                                                                                                        |
-| --- | ------------------------------ | --------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| A1  | Pre-built company profiles     | Simulated | No       | Member import shows each profile building from its source, and every finished draft opens. No AI actually runs.                                                                      |
-| A2  | Claim your profile             | Simulated | No       | Text message preview, one-tap claim, profile check and authorization checkbox.                                                                                                       |
-| A3  | Easy sign-in                   | Simulated | Partly   | Mockup has all four methods. The repo's sign-in form has code and unit tests for Google, Facebook and email link. Mobile one-time code is missing, and it needs Supabase configured. |
-| A4  | Profile strength meter         | Simulated | No       | 0–100% bar with the next step; products, project and photo raise it.                                                                                                                 |
-| A5  | Invite business partners       | Simulated | No       | Invite by link, email or chat. The inviter gets 10 points; the partner gets the New Member Boost and appears in search.                                                              |
-| L1  | Day-one matches                | Simulated | No       | The 3 highest Fit Scores right after claiming, each with a fit number, "why meet" line and any mutual connections.                                                                   |
-| L2  | ComDash interest signals       | Simulated | No       | Named list of who searched, viewed, messaged or was recommended. Overnight views and searches grow with rank and activity. The repo's ComDash page is a static marketing page.       |
-| L3  | Asks board                     | Simulated | No       | Asks reach the companies that offer what they name, responses follow Fit Score, and new asks arrive overnight. Answers go through ComMail.                                           |
-| L4  | Community manager intros       | Simulated | No       | A manager picks two companies, and the intro appears on ComDash.                                                                                                                     |
-| D1  | Morning digest                 | Simulated | No       | "Next morning" builds the 8:00 a.m. banner and digest from that night's calculated activity. No real push or email.                                                                  |
-| D2  | Daily lead list                | Simulated | No       | The 5 highest Fit Scores each day, with Connect, Message or Skip; skips lower the fit of that category.                                                                              |
-| D3  | Activity Score and search rank | Simulated | No       | All 9 point rules, their limits, the 30-day window and the rank formula. Rank is calculated against 11 example food suppliers with fixed scores.                                     |
-| D4  | Freshness nudges               | Simulated | No       | Prompt appears after 14 days without a profile update.                                                                                                                               |
-| D5  | Monthly top companies          | Simulated | No       | Top 10 list, recognition only, which resets when the simulated month changes.                                                                                                        |
-| C1  | Company connections            | Simulated | No       | Connection Requests resolve by fit, can be withdrawn, and arrive from others to accept or ignore. Connections stay with the company when the rep changes.                            |
-| C2  | ComMail                        | Simulated | No       | Conversations, 3 templates, sending and pre-written replies.                                                                                                                         |
-| C3  | AI Assistant switch            | Simulated | No       | On/off switch, change log, "AI draft" label, nothing sent without a tap, 30-a-day counter. Polish covers descriptions, asks and testimonials. Text is pre-written.                   |
-| C4  | Outcome buttons                | Simulated | No       | "We met" and "We did business"; the other company auto-confirms and points are awarded.                                                                                              |
-| S1  | Testimonial prompt             | Simulated | No       | 2 questions after a confirmed deal, with optional Polish.                                                                                                                            |
-| S2  | Success wall                   | Simulated | No       | Recent wins on ComDash; the full wall is on the Wins tab and company profiles.                                                                                                       |
-| S3  | One-tap share                  | Simulated | No       | Share card and a post preview for Facebook, LinkedIn or Viber, with a placeholder sign-up link. Nothing is posted.                                                                   |
+| ID  | Feature                        | Mockup    | Real app | What was done                                                                                                                                                                                                                                                                                                                                          |
+| --- | ------------------------------ | --------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| A1  | Pre-built company profiles     | Simulated | No       | Member import shows each profile building from its source, and every finished draft opens. No AI actually runs.                                                                                                                                                                                                                                        |
+| A2  | Claim your profile             | Simulated | No       | Text message preview, one-tap claim, profile check and authorization checkbox.                                                                                                                                                                                                                                                                         |
+| A3  | Easy sign-in                   | Simulated | Partly   | Mockup has all four methods. The repo's sign-in form has code and unit tests for Google, Facebook and email link. Mobile one-time code is missing, and it needs Supabase configured.                                                                                                                                                                   |
+| A4  | Profile strength meter         | Simulated | No       | 0–100% bar with the next step; products, project and photo raise it.                                                                                                                                                                                                                                                                                   |
+| A5  | Invite business partners       | Simulated | No       | Invite by link, email or chat. The inviter gets 10 points; the partner gets the New Member Boost and appears in search.                                                                                                                                                                                                                                |
+| L1  | Day-one matches                | Simulated | No       | The 3 highest Fit Scores right after claiming, each with a fit number, "why meet" line and any mutual connections.                                                                                                                                                                                                                                     |
+| L2  | ComDash interest signals       | Simulated | No       | Every interested company is named, with its Interest Level (Hot, Warm or New), a summary and a dated timeline. Signals: found you in search, viewed, saved, messaged and recommended. Next.js ComDash (redesigned 2026-11-11) adds top numbers, a visibility chart, an interest funnel, alerts and search terms with profile gaps.                     |
+| L3  | Asks board                     | Simulated | No       | Asks reach the companies that offer what they name, responses follow Fit Score, and new asks arrive overnight. Answers go through ComMail.                                                                                                                                                                                                             |
+| L4  | Community manager intros       | Simulated | No       | A manager picks two companies, and the intro appears on ComDash.                                                                                                                                                                                                                                                                                       |
+| D1  | Morning digest                 | Simulated | No       | "Next morning" builds the 8:00 a.m. banner and digest from that night's calculated activity. No real push or email.                                                                                                                                                                                                                                    |
+| D2  | Daily lead list                | Simulated | No       | The 5 highest Fit Scores each day, with Connect, Message or Skip; skips lower the fit of that category.                                                                                                                                                                                                                                                |
+| D3  | Activity Score and search rank | Simulated | No       | All 9 point rules, their limits, the 30-day window and the rank formula. Rank is calculated against 11 example food suppliers with fixed scores.                                                                                                                                                                                                       |
+| D4  | Freshness nudges               | Simulated | No       | Prompt appears after 14 days without a profile update.                                                                                                                                                                                                                                                                                                 |
+| D5  | Monthly top companies          | Simulated | No       | Top 10 list, recognition only, which resets when the simulated month changes.                                                                                                                                                                                                                                                                          |
+| C1  | Company connections            | Simulated | No       | Connection Requests resolve by fit, can be withdrawn, and arrive from others to accept or ignore. Connections stay with the company when the rep changes. Next.js ComDash has a Connections tab: Manage connections, Invitations, Companies in your chamber, Buyers of what you sell, and "From your connections" with replies that send only on Send. |
+| C2  | ComMail                        | Simulated | No       | Conversations, 3 templates, sending and pre-written replies.                                                                                                                                                                                                                                                                                           |
+| C3  | AI Assistant switch            | Simulated | No       | On/off switch, change log, "AI draft" label, nothing sent without a tap, 30-a-day counter. Polish covers descriptions, asks and testimonials. Text is pre-written.                                                                                                                                                                                     |
+| C4  | Outcome buttons                | Simulated | No       | "We met" and "We did business"; the other company auto-confirms and points are awarded.                                                                                                                                                                                                                                                                |
+| S1  | Testimonial prompt             | Simulated | No       | 2 questions after a confirmed deal, with optional Polish.                                                                                                                                                                                                                                                                                              |
+| S2  | Success wall                   | Simulated | No       | The full wall is on the Wins tab and company profiles. The mockup shows recent wins on ComDash. In Next.js, Connections' wins appear under "From your connections" instead.                                                                                                                                                                            |
+| S3  | One-tap share                  | Simulated | No       | Share card and a post preview for Facebook, LinkedIn or Viber, with a placeholder sign-up link. Nothing is posted.                                                                                                                                                                                                                                     |
 
 ## Chamber tools and supporting features
 
@@ -83,7 +85,7 @@ carry over to a real build.
 
 | Topic              | Decision                                                                                                             |
 | ------------------ | -------------------------------------------------------------------------------------------------------------------- |
-| Demo surface       | The demo runs on the HTML mockup. The Next.js app at `/app` is not used for the demo.                                |
+| Demo surface       | Since 2026-11-11 the demo runs on the Next.js app at `/app`. The HTML mockup is the frozen backup.                   |
 | Audience           | Richard and pilot chambers, presented from a laptop. The mockup stays on the Mac.                                    |
 | Scope              | The 21 MVP features and chamber basics, plus a read-only "What's next" page.                                         |
 | "What's next" page | Customer-facing postponed items only, with no paid items or staff tools. Reached from the presenter guide only.      |
@@ -210,7 +212,10 @@ Ported: claim (A2, A3), matches (L1), ComDash (L2, D3, A4, D4, S2), Leads (D2), 
 (L2), digest (D1), chamber tools (A1, L4), notifications (C1, L2), What's next, and the
 Engine, AI Lead Agent and Team Dashboard previews. Data and sign-in are still simulated.
 
-Since the port, the Next.js app has gained two things the mockup does not have: a
-Network Ring ComDash and a redesigned public website
-([spec](2026-11-09-website-redesign.md)). On 2026-11-10 the HTML mockup was confirmed
-as the main version of the design, so neither is part of the current design.
+Since the port, the Next.js app has gained things the mockup does not have: a
+redesigned public website ([spec](2026-11-09-website-redesign.md)) and, on 2026-11-11,
+the redesigned ComDash ([spec](2026-11-11-comdash-redesign.md)). ComDash has five tabs
+(Overview, Interest Signals, AI Lead Agent, Connections, Profile) and a labelled "View
+as" switcher, whose Growth and Pro views are a demo of possible future pricing only.
+The Network Ring, the rank card and Recent wins left ComDash. With this redesign the
+Next.js app became the main version again; the HTML mockup is frozen as the backup.

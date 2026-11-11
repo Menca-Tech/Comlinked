@@ -4,18 +4,11 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { PlanSwitcher } from "@/components/product/comdash/plan-switcher";
+import { COMDASH_TABS } from "@/components/product/comdash/tabs";
 import { useSimulation } from "@/components/product/use-simulation";
-import { paths } from "@/paths";
 
-const TABS = [
-  { label: "Overview", href: paths.dashTabs.overview },
-  { label: "Interest Signals", href: paths.dashTabs.signals },
-  { label: "AI Lead Agent", href: paths.dashTabs.agent },
-  { label: "Connections", href: paths.dashTabs.connections },
-  { label: "Profile", href: paths.dashTabs.profile },
-];
-
-/** ComDash's header and tab row, shared by every tab. */
+/** ComDash's header, plan switcher and tab row, shared by every tab. */
 export function ComDashFrame({ children }: { children: ReactNode }) {
   const S = useSimulation();
   const pathname = usePathname();
@@ -28,9 +21,10 @@ export function ComDashFrame({ children }: { children: ReactNode }) {
         <p className="a-small">
           {m.ind} · {m.city} · {m.chamber} member
         </p>
+        <PlanSwitcher />
       </header>
       <nav className="cd-tabs" aria-label="ComDash sections">
-        {TABS.map((tab) => (
+        {COMDASH_TABS.map((tab) => (
           <Link
             key={tab.href}
             href={tab.href}

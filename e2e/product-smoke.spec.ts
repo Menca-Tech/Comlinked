@@ -21,9 +21,9 @@ const WIDTHS = [360, 390, 1280, 1440];
 const TWO_WEEKS_HEADING = "12 interested companies";
 const TABS = [
   { name: "Overview", path: "/app/dash", shows: "Next action" },
-  { name: "Interest Signals", path: "/app/dash/signals", shows: "Coming in the next update." },
+  { name: "Interest Signals", path: "/app/dash/signals", shows: "last 14 days, Hot first" },
   { name: "AI Lead Agent", path: "/app/dash/agent", shows: "Preview: after the MVP" },
-  { name: "Connections", path: "/app/dash/connections", shows: "Coming in the next update." },
+  { name: "Connections", path: "/app/dash/connections", shows: "Manage connections" },
   { name: "Profile", path: "/app/dash/profile", shows: "Company description" },
 ];
 
@@ -31,6 +31,17 @@ const tabRow = (page: Page) => page.getByRole("navigation", { name: "ComDash sec
 const panel = (page: Page, title: string | RegExp) =>
   page.locator(".cd-panel").filter({ has: page.getByRole("heading", { name: title }) });
 const companyRow = (page: Page, id: string) => page.locator(`tr[data-company="${id}"]`);
+const signalCard = (page: Page, id: string) => page.locator(`li.cd-signal[data-company="${id}"]`);
+const viewButton = (page: Page, name: string) =>
+  page.getByRole("group", { name: "View as" }).getByRole("button", { name, exact: true });
+
+async function openTab(page: Page, name: string) {
+  await tabRow(page).getByRole("link", { name, exact: true }).click();
+  await expect(tabRow(page).getByRole("link", { name, exact: true })).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
+}
 
 async function claimNewCompany(page: Page) {
   await page.goto("/app/claim");
@@ -245,7 +256,7 @@ test.describe("ComDash", () => {
   test("a deep link before claiming completes the claim, then opens the tab", async ({ page }) => {
     await page.goto("/app/dash/connections");
     await expect(page.getByRole("heading", { name: "Kalayaan Foods Inc." })).toBeVisible();
-    await expect(page.getByText("Coming in the next update.")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Manage connections" })).toBeVisible();
   });
 
   test("a message sent from Leads updates Interest Level and the funnel", async ({ page }) => {
@@ -324,11 +335,197 @@ test.describe("ComDash", () => {
 
   test("reduced motion removes transitions", async ({ page }) => {
     await twoWeeksIn(page);
-    const durations = await page
-      .locator(".cd .a-btn, .cd .cd-tab")
-      .evaluateAll((els) => els.map((el) => getComputedStyle(el).transitionDuration));
-    expect(durations.length).toBeGreaterThan(0);
-    expect(durations.every((d) => d.split(",").every((x) => parseFloat(x) === 0))).toBe(true);
+    for (const tab of ["Overview", "Interest Signals", "Connections"]) {
+      await openTab(page, tab);
+      const durations = await page
+        .locator(".cd .a-btn, .cd .cd-tab, .cd .cd-chip")
+        .evaluateAll((els) => els.map((el) => getComputedStyle(el).transitionDuration));
+      expect(durations.length).toBeGreaterThan(0);
+      expect(durations.every((d) => d.split(",").every((x) => parseFloat(x) === 0))).toBe(true);
+    }
+  });
+
+  test("a Hot company's timeline opens from Interest Signals, and Message works there", async ({
+    page,
+  }) => {
+    await twoWeeksIn(page);
+    await openTab(page, "Interest Signals");
+    const hapag = signalCard(page, "hapag");
+    await expect(hapag).toContainText("Hot");
+    await expect(hapag).toContainText("Interest on 3 separate days");
+    await expect(hapag).toContainText("Viewed your profile twice and saved it");
+    await hapag.getByText(/Timeline of Hapag Kitchen Group/).click();
+    await expect(hapag.locator(".cd-tl li")).toHaveCount(3);
+    await expect(hapag.locator(".cd-tl li").last()).toContainText("Viewed your profile");
+    await expect(
+      hapag.getByRole("button", { name: "Connect with Hapag Kitchen Group" }),
+    ).toBeVisible();
+    await expectAccessible(page);
+    await hapag.getByRole("button", { name: "Message Hapag Kitchen Group" }).click();
+    await expect(page).toHaveURL(/\/app\/mail$/);
+    await expect(page.locator("textarea[data-draft]")).toBeVisible();
+  });
+
+  test("a company with one signal has a one-entry timeline labelled New", async ({ page }) => {
+    await claimNewCompany(page);
+    await openTab(page, "Interest Signals");
+    const maple = signalCard(page, "maple");
+    await expect(maple).toContainText("New");
+    await expect(maple).toContainText("Timeline of Maple Bay Grocers, 1 entry");
+    await expect(maple.locator(".cd-repeat")).toHaveCount(0);
+  });
+
+  test("accepting an invitation removes it and raises the Connection count", async ({ page }) => {
+    await twoWeeksIn(page);
+    await openTab(page, "Connections");
+    const invites = panel(page, /^Invitations/);
+    await expect(invites).toContainText("Lakbay Hotels");
+    await expect(panel(page, "Manage connections")).toContainText("3 Connections");
+    await invites.getByRole("button", { name: "Accept Lakbay Hotels" }).click();
+    await expect(page.getByRole("heading", { name: "Invitations (0)" })).toBeVisible();
+    await expect(invites).toContainText("No pending invitations.");
+    await expect(panel(page, "Manage connections")).toContainText("4 Connections");
+    await expect(panel(page, "Manage connections")).toContainText("Lakbay Hotels");
+  });
+
+  test("ignoring an invitation says the sender won't be notified", async ({ page }) => {
+    await twoWeeksIn(page);
+    await openTab(page, "Connections");
+    await panel(page, /^Invitations/)
+      .getByRole("button", { name: "Ignore Lakbay Hotels" })
+      .click();
+    await expect(page.getByText("Request ignored. They won’t be notified.")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Invitations (0)" })).toBeVisible();
+    await expect(panel(page, "Manage connections")).toContainText("3 Connections");
+  });
+
+  test("an AI-drafted reply to a connection's ask is editable and sends only on Send", async ({
+    page,
+  }) => {
+    await twoWeeksIn(page);
+    await openTab(page, "Connections");
+    await expect(panel(page, "Companies in your chamber")).toContainText("mutual connection");
+    await expect(
+      panel(page, "Buyers of what you sell")
+        .getByRole("button", { name: /^Connect with/ })
+        .first(),
+    ).toBeVisible();
+    const ask = page.locator('.cd-moment[data-item="ask"]').first();
+    await ask.getByRole("button", { name: /^Reply to/ }).click();
+    const box = ask.getByRole("textbox");
+    await expect(box).toHaveValue(/We saw your ask/);
+    await expect(ask.getByText("AI draft")).toBeVisible();
+    await expect(ask.getByText("Nothing is sent until you tap Send.")).toBeVisible();
+    await expect(ask.getByText("Answered.")).toHaveCount(0);
+    await box.fill("Hello, we make compostable-ready snacks and would like to talk.");
+    await expect(ask.getByText("AI draft")).toHaveCount(0);
+    await expectAccessible(page);
+    await ask.getByRole("button", { name: "Send", exact: true }).click();
+    await expect(ask).toContainText("Answered. Your reply is in ComMail.");
+    await page.locator(".a-web-nav .nav-link", { hasText: "ComMail" }).click();
+    await expect(page.getByText("compostable-ready snacks").first()).toBeVisible();
+  });
+
+  test("with the AI Assistant off, a connection reply starts empty and still sends", async ({
+    page,
+  }) => {
+    await twoWeeksIn(page);
+    await openTab(page, "Profile");
+    await page.getByRole("switch", { name: "AI Assistant" }).click();
+    await openTab(page, "Connections");
+    const update = page.locator('.cd-moment[data-item="update"]').first();
+    await update.getByRole("button", { name: /^Reply to/ }).click();
+    await expect(update.getByText("The AI Assistant is off. Write your reply.")).toBeVisible();
+    const box = update.getByRole("textbox");
+    await expect(box).toHaveValue("");
+    await box.fill("Congratulations on the update.");
+    await update.getByRole("button", { name: "Send", exact: true }).click();
+    await expect(update).toContainText("Answered.");
+  });
+
+  test("a new company sees calm empty states on Connections", async ({ page }) => {
+    await claimNewCompany(page);
+    await openTab(page, "Connections");
+    await expect(page.getByText("No Connections yet.")).toBeVisible();
+    await expect(page.getByText("No pending invitations.")).toBeVisible();
+    await expect(page.getByText("Nothing from your connections yet.")).toBeVisible();
+  });
+
+  test("Free shows everything; Pro adds other chambers and intent scores", async ({ page }) => {
+    await twoWeeksIn(page);
+    await expect(page.getByText("Possible future pricing. Not in the MVP.")).toBeVisible();
+    await expect(viewButton(page, "Free")).toHaveAttribute("aria-pressed", "true");
+    await expect(page.getByText(/Intent score/)).toHaveCount(0);
+    await expect(page.getByText(/upgrade|unlock|hidden/i)).toHaveCount(0);
+    await expect(companyRow(page, "hapag")).toContainText("Hapag Kitchen Group");
+    await expect(companyRow(page, "hapag")).toContainText("Hot");
+    await expect(
+      panel(page, "Search terms that found you")
+        .getByRole("link", { name: "Add to profile" })
+        .first(),
+    ).toBeVisible();
+    await viewButton(page, "Pro").click();
+    await expect(viewButton(page, "Pro")).toHaveAttribute("aria-pressed", "true");
+    await expect(companyRow(page, "hapag")).toContainText("Intent score");
+    await expect(companyRow(page, "hapag")).toContainText("Hot");
+    await expect(companyRow(page, "oc-bagwis")).toContainText("PCCI–Quezon City");
+    await openTab(page, "Interest Signals");
+    await expect(viewButton(page, "Pro")).toHaveAttribute("aria-pressed", "true");
+    await expect(signalCard(page, "oc-harbour")).toContainText("Toronto Region Board of Trade");
+    await openTab(page, "Connections");
+    await expect(viewButton(page, "Pro")).toHaveAttribute("aria-pressed", "true");
+    await viewButton(page, "Growth").click();
+    await openTab(page, "Interest Signals");
+    await expect(signalCard(page, "hapag")).toContainText("Intent score");
+    await expect(signalCard(page, "oc-harbour")).toHaveCount(0);
+  });
+
+  test("a full page load resets the selected view to Free", async ({ page }) => {
+    await twoWeeksIn(page);
+    await viewButton(page, "Pro").click();
+    await page.reload();
+    await expect(viewButton(page, "Free")).toHaveAttribute("aria-pressed", "true");
+  });
+
+  test("the presenter guide jumps straight to each ComDash tab", async ({ page }) => {
+    await twoWeeksIn(page);
+    for (const tab of [...TABS].reverse()) {
+      await page.locator(".demo-guide").click();
+      await page
+        .getByRole("navigation", { name: "Jump to a ComDash tab" })
+        .getByRole("link", { name: tab.name, exact: true })
+        .click();
+      await expect(page.getByRole("dialog")).toBeHidden();
+      await expect(page).toHaveURL(new RegExp(`${tab.path}$`));
+    }
+    await expect(page.getByRole("heading", { name: TWO_WEEKS_HEADING })).toBeVisible();
+  });
+
+  test("the switcher and replies work from the keyboard", async ({ page }) => {
+    await twoWeeksIn(page);
+    await viewButton(page, "Growth").focus();
+    await page.keyboard.press("Enter");
+    await expect(viewButton(page, "Growth")).toHaveAttribute("aria-pressed", "true");
+    await openTab(page, "Connections");
+    const reply = page
+      .locator(".cd-moment")
+      .first()
+      .getByRole("button", { name: /^Reply to/ });
+    await reply.focus();
+    await page.keyboard.press("Enter");
+    const box = page.locator(".cd-moment").first().getByRole("textbox");
+    await expect(box).toBeVisible();
+    await box.focus();
+    await page.keyboard.press("Tab");
+    await expect(
+      page.locator(".cd-moment").first().getByRole("button", { name: "Cancel" }),
+    ).toBeFocused();
+    await page.keyboard.press("Tab");
+    await expect(
+      page.locator(".cd-moment").first().getByRole("button", { name: "Send" }),
+    ).toBeFocused();
+    await page.keyboard.press("Enter");
+    await expect(page.locator(".cd-moment").first()).toContainText("Answered.");
   });
 
   test("the AI Lead Agent and Profile tabs pass axe", async ({ page }) => {

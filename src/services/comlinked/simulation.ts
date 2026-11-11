@@ -16,7 +16,10 @@ import {
   NEIGHBORS,
   NETWORK,
   NEW_BOOST,
+  OTHER_CHAMBER_COMPANIES,
+  PLAN_VIEWS,
   POOL,
+  PROFILE_UPDATES,
   REPLIES,
   RIVAL_PTS,
   RULES,
@@ -33,26 +36,33 @@ import type {
   AiField,
   Ask,
   Company,
+  ConnectionItem,
+  ConnectionItemKind,
+  ConnectionRow,
   CountRow,
   DashAlert,
   Funnel,
   InterestedCompany,
   InterestLevel,
+  InterestRow,
   Message,
   NextAction,
   NoteGroup,
+  PlanView,
   ProfileField,
   RuleKey,
   SearchTerm,
   Signal,
   SignalKind,
   SimState,
+  Suggestion,
   TeamData,
   TeamQueueItem,
   TeamRecord,
   TeamRow,
   TextField,
   Thread,
+  TimelineEntry,
   ToastAction,
   TopNumber,
   VisibilityDay,
@@ -264,6 +274,11 @@ function fresh(): SimState {
     flags: {},
     dismissedTerms: [],
     profileFocus: null,
+    view: "free",
+    otherSignals: [],
+    updates: [],
+    replyDrafts: {},
+    replied: [],
   };
 }
 export function score() {
@@ -738,6 +753,17 @@ export function seedTwoWeeks() {
   sig("kainan", "search", 8, "frozen lumpia");
   sig("bukas", "recommended", 6);
   sig("paaralan", "search", 6, "banana chips");
+  S.otherSignals = [
+    { co: "oc-bagwis", type: "viewed", detail: "", day: 14 },
+    { co: "oc-harbour", type: "saved", detail: "", day: 13 },
+    { co: "oc-bagwis", type: "search", detail: "banana chips", day: 11 },
+    { co: "oc-handaan", type: "search", detail: "frozen lumpia", day: 10 },
+    { co: "oc-bagwis", type: "viewed", detail: "", day: 8 },
+  ];
+  S.updates = [
+    { co: "pack", day: 13, text: PROFILE_UPDATES.pack ?? "" },
+    { co: "maple", day: 8, text: PROFILE_UPDATES.maple ?? "" },
+  ];
   S.threads = [
     {
       id: "t-luntian",
@@ -1015,6 +1041,8 @@ export function nextMorning(n: number) {
       requests++;
     }
   }
+  otherChamberMorning();
+  connectionUpdateMorning();
   engineLog(
     "Overnight attention: " + a.total,
     "1 base, plus " +
@@ -1831,6 +1859,32 @@ export function spikeState(id: string) {
   return id === "tala" ? S.cm.spike : S.team.spikes[id];
 }
 
+/** Sends a message the person wrote or approved: points, ask answers and the reply that follows. */
+function deliver(t: Thread, text: string, ai: boolean) {
+  const last = t.msgs[t.msgs.length - 1],
+    isReply = last && last.from === "them" && S.day - last.day <= 1;
+  t.msgs.push({ from: "me", text: text, day: S.day, ai: ai });
+  S.flags.sent = true;
+  if (isReply) award("reply", t.co);
+  if (t.askId && !t.askDone) {
+    t.askDone = true;
+    S.flags.asked = true;
+    award("ask", t.co);
+    const a = S.asks.find(function (x) {
+      return x.id === t.askId;
+    });
+    if (a) {
+      a.resp++;
+      a.answered = true;
+    }
+  }
+  emit();
+  if (!co(t.co).silent)
+    later(1700, function () {
+      incoming(t);
+    });
+}
+
 const ACT = {
   nav: function (a: string) {
     S.viewCo = null;
@@ -1965,7 +2019,7 @@ const ACT = {
       "Ignored a request from " + co(id).name,
       "Ignoring removes the request. The other company is not told.",
     );
-    toast("Request ignored. " + co(id).name + " isn’t told.");
+    toast("Request ignored. They won’t be notified.");
     emit();
   },
   teamTab: function (t: string) {
@@ -2130,29 +2184,8 @@ const ACT = {
       toast("Write a message first.");
       return;
     }
-    const last = t.msgs[t.msgs.length - 1],
-      isReply = last && last.from === "them" && S.day - last.day <= 1;
-    t.msgs.push({ from: "me", text: text, day: S.day, ai: !!(d && d.ai) });
     delete S.drafts[id];
-    S.flags.sent = true;
-    if (isReply) award("reply", t.co);
-    if (t.askId && !t.askDone) {
-      t.askDone = true;
-      S.flags.asked = true;
-      award("ask", t.co);
-      const a = S.asks.find(function (x) {
-        return x.id === t.askId;
-      });
-      if (a) {
-        a.resp++;
-        a.answered = true;
-      }
-    }
-    emit();
-    if (!co(t.co).silent)
-      later(1700, function () {
-        incoming(t);
-      });
+    deliver(t, text, !!(d && d.ai));
   },
   outcome: function (a: string) {
     const p = a.split("|"),
@@ -2194,10 +2227,14 @@ const ACT = {
       on: S.ai,
       note: "Switched " + (S.ai ? "on" : "off") + " by " + S.me.rep,
     });
-    if (!S.ai)
+    if (!S.ai) {
       Object.keys(S.drafts).forEach(function (k) {
         if (S.drafts[k]!.ai) delete S.drafts[k];
       });
+      Object.entries(S.replyDrafts).forEach(function ([k, d]) {
+        if (d.ai) delete S.replyDrafts[k];
+      });
+    }
     S.threads.forEach(function (t) {
       t.draftedFor = null;
     });
@@ -2499,6 +2536,43 @@ const ACT = {
     if (!S.dismissedTerms.includes(term)) S.dismissedTerms.push(term);
     toast("Got it. This term won’t be flagged again.");
   },
+  setView: function (view: string) {
+    if (isPlanView(view)) S.view = view;
+  },
+  startReply: function (itemId: string) {
+    const item = connectionItems().find(function (i) {
+      return i.id === itemId;
+    });
+    if (!item || S.replyDrafts[itemId]) return;
+    if (S.ai && aiAvailable()) {
+      S.replyDrafts[itemId] = { text: ITEM_KINDS[item.kind].draft(item), ai: true };
+      spendAi();
+    } else S.replyDrafts[itemId] = { text: "", ai: false };
+  },
+  cancelReply: function (itemId: string) {
+    delete S.replyDrafts[itemId];
+  },
+  sendReply: function (itemId: string) {
+    const item = connectionItems().find(function (i) {
+        return i.id === itemId;
+      }),
+      d = S.replyDrafts[itemId],
+      text = (d?.text ?? "").trim();
+    if (!item) return;
+    if (!text) {
+      toast("Write a reply first.");
+      return;
+    }
+    const t = ensureThread(item.company.id);
+    if (item.askId && t.askId !== item.askId) {
+      t.askId = item.askId;
+      t.askDone = false;
+    }
+    delete S.replyDrafts[itemId];
+    S.replied.push(itemId);
+    toast("Reply sent to " + item.company.name + " in ComMail.");
+    deliver(t, text, !!d?.ai);
+  },
   focusProfile: function (field: string) {
     const known = PROFILE_FIELDS.find(function (f) {
       return f === field;
@@ -2554,6 +2628,10 @@ export function setForm(field: TextField, value: string) {
 }
 export function setDraft(threadId: string, text: string) {
   S.drafts[threadId] = { text: text, ai: false };
+  emit();
+}
+export function setReplyDraft(itemId: string, text: string) {
+  S.replyDrafts[itemId] = { text: text, ai: false };
   emit();
 }
 
@@ -2814,8 +2892,8 @@ const SIGNAL_TEXT: Record<SignalKind, string> = {
 };
 
 /** Interest Signals from other Companies on days after `from`, up to and including `to`. */
-function interestBetween(from: number, to: number, coId?: string) {
-  return S.signals.filter(function (s) {
+function interestBetween(from: number, to: number, coId?: string, signals = S.signals) {
+  return signals.filter(function (s) {
     return (
       INTEREST_KINDS.includes(s.type) &&
       s.day > from &&
@@ -2895,9 +2973,37 @@ function interestSummary(signals: Signal[]) {
   return cap(parts.length ? parts.join(", ") + " and " + last : last);
 }
 
-/** Companies showing interest in the last 14 days: Hot, then Warm, then New, latest first. */
-export function interestedCompanies(): InterestedCompany[] {
-  const recent = interestBetween(S.day - LEVEL_DAYS, S.day);
+/** One dated line per day and kind, oldest first; searches also split by term. */
+function timelineOf(signals: Signal[]): TimelineEntry[] {
+  const groups: { day: number; text: string; n: number }[] = [];
+  signals
+    .slice()
+    .sort(function (a, b) {
+      return a.day - b.day || KIND_WEIGHT[a.type] - KIND_WEIGHT[b.type];
+    })
+    .forEach(function (s) {
+      const text = signalText(s);
+      const same = groups.find(function (g) {
+        return g.day === s.day && g.text === text;
+      });
+      if (same) same.n++;
+      else groups.push({ day: s.day, text: text, n: 1 });
+    });
+  return groups.map(function (g) {
+    return { day: g.day, text: g.n > 1 ? g.text + " " + timesText(g.n) : g.text };
+  });
+}
+
+function separateDays(signals: Signal[]) {
+  return new Set(
+    signals.map(function (s) {
+      return s.day;
+    }),
+  ).size;
+}
+
+/** Hot, then Warm, then New, latest first, from the given recent Interest Signals. */
+function interestRows(recent: Signal[], lookup: (id: string) => Company): InterestedCompany[] {
   return companiesIn(recent)
     .map(function (id) {
       const mine = recent.filter(function (s) {
@@ -2909,16 +3015,107 @@ export function interestedCompanies(): InterestedCompany[] {
           ? s
           : best;
       });
+      const days = separateDays(mine);
       return {
-        company: co(id),
+        company: lookup(id),
         level: levelOf(mine),
         latest: latest,
         summary: interestSummary(mine),
+        timeline: timelineOf(mine),
+        repeat: days > 1 ? "Interest on " + days + " separate days" : null,
       };
     })
     .sort(function (a, b) {
       return LEVEL_ORDER[a.level] - LEVEL_ORDER[b.level] || b.latest.day - a.latest.day;
     });
+}
+
+/** Companies in the user's chamber showing interest in the last 14 days. */
+export function interestedCompanies(): InterestedCompany[] {
+  return interestRows(interestBetween(S.day - LEVEL_DAYS, S.day), co);
+}
+
+/** Intent score points per kind, counted once per kind per day. Growth and Pro only. */
+const INTENT_POINTS: Partial<Record<SignalKind, number>> = {
+  search: 1,
+  recommended: 2,
+  viewed: 3,
+  saved: 5,
+  messaged: 10,
+};
+const INTENT_CAP = 100;
+
+function scoreOf(signals: Signal[]) {
+  const counted = new Set<string>();
+  const total = signals.reduce(function (sum, s) {
+    const key = s.type + ":" + s.day;
+    if (counted.has(key)) return sum;
+    counted.add(key);
+    return sum + (INTENT_POINTS[s.type] ?? 0);
+  }, 0);
+  return Math.min(INTENT_CAP, total);
+}
+
+/** A Company's intent score over the last 14 days. */
+export function intentScore(coId: string) {
+  return scoreOf(interestBetween(S.day - LEVEL_DAYS, S.day, coId));
+}
+
+function isPlanView(view: string): view is PlanView {
+  return view in PLAN_VIEWS;
+}
+
+/** Interested Companies as a view shows them. Free is every own-chamber Company with nothing
+ * hidden; Growth adds intent scores; Pro adds interest from other chambers. */
+export function interestForView(view: PlanView): InterestRow[] {
+  const rules = PLAN_VIEWS[view];
+  const own: InterestRow[] = interestedCompanies().map(function (x) {
+    return {
+      ...x,
+      score: rules.intentScore ? intentScore(x.company.id) : null,
+      chamber: null,
+      actionable: true,
+    };
+  });
+  if (!rules.otherChambers) return own;
+  const recent = interestBetween(S.day - LEVEL_DAYS, S.day, undefined, S.otherSignals);
+  const others = interestRows(recent, otherCompany).map(function (x) {
+    return {
+      ...x,
+      score: scoreOf(
+        recent.filter(function (s) {
+          return s.co === x.company.id;
+        }),
+      ),
+      chamber: x.company.chamber ?? null,
+      actionable: false,
+    };
+  });
+  return own.concat(others);
+}
+
+function otherCompany(id: string): Company {
+  const found = OTHER_CHAMBER_COMPANIES.find(function (c) {
+    return c.id === id;
+  });
+  if (!found) throw new Error("Unknown company in another chamber: " + id);
+  return found;
+}
+
+/** Each morning one Company in another chamber views or searches, on the Pro view only. */
+function otherChamberMorning() {
+  const c = OTHER_CHAMBER_COMPANIES[S.day % OTHER_CHAMBER_COMPANIES.length];
+  if (!c) return;
+  S.otherSignals.unshift(
+    S.day % 2
+      ? { co: c.id, type: "viewed", detail: "", day: S.day }
+      : {
+          co: c.id,
+          type: "search",
+          detail: (SEARCH_TERMS[S.day % SEARCH_TERMS.length] ?? "").toLowerCase(),
+          day: S.day,
+        },
+  );
 }
 
 /** Whether the 7 days before the last 7 all fall after the claim. */
@@ -3280,6 +3477,261 @@ export function nextAction(): NextAction {
     reason:
       "Shown because nothing needs you right now. Drafts, today’s leads, asks from your connections, Hot companies, connection requests, profile gaps and a profile check come first.",
   };
+}
+
+/* ---------- Connections tab ---------- */
+const SUGGESTIONS_SHOWN = 4;
+
+/** Connections first, then requests the Company sent, each in the order they were made. */
+export function connectionList(): ConnectionRow[] {
+  const rows = Object.keys(S.conn).flatMap(function (id): ConnectionRow[] {
+    const status = S.conn[id];
+    return status ? [{ company: co(id), status: status }] : [];
+  });
+  return rows
+    .filter(function (r) {
+      return r.status === "connected";
+    })
+    .concat(
+      rows.filter(function (r) {
+        return r.status === "pending";
+      }),
+    );
+}
+
+/** Connection Requests waiting for the Company's answer, newest first. */
+export function invitations() {
+  return S.incoming.map(function (r) {
+    return { company: co(r.co), day: r.day };
+  });
+}
+
+/** Companies that could still become Connections: not connected and not asking already. */
+function openCompanies() {
+  return POOL.filter(function (c) {
+    return (
+      S.conn[c.id] !== "connected" &&
+      !isUnclaimed(c.id) &&
+      !S.incoming.some(function (r) {
+        return r.co === c.id;
+      })
+    );
+  });
+}
+
+/** Where the Company stands with another: connected, request sent, or neither. */
+export function connectionStatus(id: string) {
+  return S.conn[id] ?? null;
+}
+
+function suggestion(c: Company, why: string): Suggestion {
+  return { company: c, why: why };
+}
+
+/** Chamber members who share Connections with the Company, most shared first. */
+export function chamberSuggestions(): Suggestion[] {
+  return byFit(
+    openCompanies().filter(function (c) {
+      return mutuals(c).length > 0;
+    }),
+  )
+    .sort(function (a, b) {
+      return mutuals(b).length - mutuals(a).length;
+    })
+    .slice(0, SUGGESTIONS_SHOWN)
+    .map(function (c) {
+      return suggestion(c, mutualText(c));
+    });
+}
+
+/** Companies that seek what the profile offers, by Fit Score, not already suggested above. */
+export function buyerSuggestions(): Suggestion[] {
+  const shown = chamberSuggestions().map(function (s) {
+    return s.company.id;
+  });
+  return byFit(
+    openCompanies().filter(function (c) {
+      return (
+        !shown.includes(c.id) &&
+        !c.rival &&
+        c.wants.some(function (w) {
+          return S.me.gives.includes(w);
+        })
+      );
+    }),
+  )
+    .slice(0, SUGGESTIONS_SHOWN)
+    .map(function (c) {
+      return suggestion(c, cap(c.why));
+    });
+}
+
+function poolIdByName(name: string) {
+  return POOL.find(function (c) {
+    return c.name === name;
+  })?.id;
+}
+
+interface ItemKind {
+  /** The items of this kind from the given Connections, before answered is known. */
+  collect: (mine: string[]) => Omit<ConnectionItem, "answered">[];
+  /** The AI Assistant's draft reply. The person edits it and taps Send. */
+  draft: (item: ConnectionItem) => string;
+}
+
+function offerText() {
+  return S.me.offer.join(", ").toLowerCase();
+}
+
+/** Every kind of item in "From your connections". Adding a kind means one entry here. */
+const ITEM_KINDS: Record<ConnectionItemKind, ItemKind> = {
+  ask: {
+    collect: function (mine) {
+      return S.asks
+        .filter(function (a) {
+          return mine.includes(a.co);
+        })
+        .map(function (a) {
+          return {
+            id: "ask:" + a.id,
+            kind: "ask",
+            label: "Ask",
+            company: co(a.co),
+            day: a.day ?? null,
+            title: "Posted an ask",
+            text: a.text,
+            askId: a.id,
+          };
+        });
+    },
+    draft: function (item) {
+      return (
+        "Hello " +
+        item.company.name +
+        " team,\n\nWe saw your ask: “" +
+        item.text +
+        "” " +
+        S.me.name +
+        " offers " +
+        offerText() +
+        ", and we would be glad to help.\n\nCould we send you our product list?"
+      );
+    },
+  },
+  win: {
+    collect: function (mine) {
+      return S.wall.flatMap(function (w) {
+        if (w.a === S.me.name || w.b === S.me.name) return [];
+        const ids = [w.a, w.b].map(poolIdByName);
+        const at = ids.findIndex(function (id) {
+          return id !== undefined && mine.includes(id);
+        });
+        const partner = ids[at];
+        if (!partner) return [];
+        return [
+          {
+            id: "win:" + w.a + "|" + w.b,
+            kind: "win" as const,
+            label: "Success Wall",
+            company: co(partner),
+            day: null,
+            title: "Shared a win with " + (at === 0 ? w.b : w.a),
+            text: w.got,
+            askId: null,
+          },
+        ];
+      });
+    },
+    draft: function (item) {
+      return (
+        "Congratulations to the " +
+        item.company.name +
+        " team. It is good to see your win on the Success Wall.\n\nIf you ever need " +
+        offerText() +
+        ", " +
+        S.me.name +
+        " would be glad to help."
+      );
+    },
+  },
+  update: {
+    collect: function (mine) {
+      return S.updates
+        .filter(function (u) {
+          return mine.includes(u.co);
+        })
+        .map(function (u) {
+          return {
+            id: "update:" + u.co + ":" + u.day,
+            kind: "update",
+            label: "Profile update",
+            company: co(u.co),
+            day: u.day,
+            title: "Updated its profile",
+            text: u.text,
+            askId: null,
+          };
+        });
+    },
+    draft: function (item) {
+      return (
+        "Hello " +
+        item.company.name +
+        " team,\n\nWe saw your update: " +
+        item.text +
+        " Congratulations. " +
+        S.me.name +
+        " would be glad to hear how we could work together."
+      );
+    },
+  },
+};
+
+/** Asks, Success Wall wins and profile updates by the Company's Connections, newest first.
+ * Not a news feed. */
+export function connectionItems(): ConnectionItem[] {
+  const mine = connected();
+  return Object.values(ITEM_KINDS)
+    .flatMap(function (kind) {
+      return kind.collect(mine);
+    })
+    .map(function (item) {
+      const answered =
+        S.replied.includes(item.id) ||
+        S.asks.some(function (a) {
+          return a.id === item.askId && a.answered;
+        });
+      return { ...item, answered: answered };
+    })
+    .sort(function (a, b) {
+      return (b.day ?? 0) - (a.day ?? 0);
+    });
+}
+
+/** Why a reply box starts empty: the AI Assistant is off, or today's AI drafts are used. */
+export function emptyReplyNote() {
+  return S.ai
+    ? "Today’s AI drafts are used up. Write your reply."
+    : "The AI Assistant is off. Write your reply.";
+}
+
+/** A Company's industry and city, as every ComDash list shows them. */
+export function companyLine(c: Pick<Company, "ind" | "city">) {
+  return c.ind + " · " + c.city;
+}
+
+/** Each morning one Connection with news posts its profile update. */
+function connectionUpdateMorning() {
+  const id = connected().find(function (c) {
+    return (
+      PROFILE_UPDATES[c] &&
+      !S.updates.some(function (u) {
+        return u.co === c;
+      })
+    );
+  });
+  const text = id ? PROFILE_UPDATES[id] : undefined;
+  if (id && text) S.updates.unshift({ co: id, day: S.day, text: text });
 }
 
 S = fresh();

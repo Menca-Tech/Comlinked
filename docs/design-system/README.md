@@ -153,6 +153,30 @@ screen. Nunito Sans for everything else, kept light: bold (700 and up) is rare.
 key screens: the claim steps are two panels (navy invitation, white action), and Leads
 and day-one matches are a ranked list beside the selected company in full.
 
+**ComDash.** The home screen follows the 2026-11-11 redesign
+([spec](../specs/2026-11-11-comdash-redesign.md)). It has a header with the company name,
+industry, city and chamber, a "View as" switcher, and five tabs with their own addresses:
+Overview, Interest Signals, AI Lead Agent, Connections and Profile. The tabs are links in
+one row that scrolls sideways on phones.
+
+- **Overview**: top numbers, visibility chart, interest funnel, the interested companies
+  table (Hot, then Warm, then New), alerts, "Found you as a…", interest by industry,
+  search terms with profile gaps, Next action and summary cards. On phones Next action
+  comes first, the table becomes stacked cards and the chart shows one series.
+- **Interest Signals**: each interested company with its Interest Level as a text tag,
+  a one-line summary, repeat interest on separate days in blue, a dated timeline that
+  opens in place, and Connect and Message.
+- **Connections**: Manage connections beside the main column on laptops, then
+  Invitations, Companies in your chamber, Buyers of what you sell, and "From your
+  connections" (asks, Success Wall wins and profile updates, each with a reply box that
+  sends only on Send).
+- **"View as"**: Free, Growth and Pro chips with the note "Possible future pricing. Not
+  in the MVP." Free is the default and hides nothing. Growth adds an intent score and
+  Pro adds interest from other chambers. There is never blur or an upgrade prompt.
+
+The Network Ring and the rank line no longer appear on ComDash. Every panel has a calm
+empty state that says what will appear.
+
 **Containers.** One raised white panel per column, with a very soft navy-tinted shadow
 on the cool off-white page. Lists sit inside it with hairline dividers. Never a card
 per row and never a card inside a card. On phones, panels run edge to edge with no

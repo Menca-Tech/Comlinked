@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { Check } from "lucide-react";
 
+import { COMDASH_TABS } from "@/components/product/comdash/tabs";
 import { Btn } from "@/components/product/shared";
 import { useIsDesktop, useSimulation } from "@/components/product/use-simulation";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -73,6 +75,21 @@ export function DemoGuide({ route }: { route: string }) {
                 Two weeks in
               </Btn>
             </div>
+          </div>
+          <div className="g-sec">
+            <h3>ComDash tabs</h3>
+            <nav aria-label="Jump to a ComDash tab">
+              {COMDASH_TABS.map((tab) => (
+                <Link
+                  key={tab.href}
+                  href={tab.href}
+                  className="g-step"
+                  onClick={() => setGuideOpen(false)}
+                >
+                  {tab.label}
+                </Link>
+              ))}
+            </nav>
           </div>
           <div className="g-sec">
             <h3>On this screen</h3>

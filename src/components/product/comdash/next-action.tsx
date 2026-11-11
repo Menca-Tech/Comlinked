@@ -1,30 +1,19 @@
 "use client";
 
-import type { ReactNode } from "react";
 import Link from "next/link";
 
 import { DashPanel } from "@/components/product/comdash/dash-panel";
 import { GapActions } from "@/components/product/comdash/gap-actions";
+import { InviteActions } from "@/components/product/comdash/invite-actions";
 import { LevelTag } from "@/components/product/comdash/level-tag";
+import { QueueRow } from "@/components/product/comdash/queue-row";
 import { Btn } from "@/components/product/shared";
 import { useSimulation } from "@/components/product/use-simulation";
 import { paths } from "@/paths";
-import { act, co, nextAction, th, type NextAction } from "@/services/comlinked";
+import { act, co, companyLine, nextAction, th, type NextAction } from "@/services/comlinked";
 
 function plural(n: number, one: string, many: string) {
   return n === 1 ? one : `${n} ${many}`;
-}
-
-function Row({ name, meta, children }: { name: string; meta?: ReactNode; children: ReactNode }) {
-  return (
-    <div className="cd-qrow">
-      <div className="cd-qrow-t">
-        <strong>{name}</strong>
-        {meta ? <span>{meta}</span> : null}
-      </div>
-      <div className="a-acts">{children}</div>
-    </div>
-  );
 }
 
 function Body({ n, company }: { n: NextAction; company: string }) {
@@ -39,11 +28,11 @@ function Body({ n, company }: { n: NextAction; company: string }) {
           {n.threads.map((id) => {
             const c = co(th(id).co);
             return (
-              <Row key={id} name={c.name} meta="Reply draft in ComMail">
+              <QueueRow key={id} name={c.name} meta="Reply draft in ComMail">
                 <Btn cls="sm" onClick={() => act.openCoThread(c.id)}>
                   Review draft
                 </Btn>
-              </Row>
+              </QueueRow>
             );
           })}
         </>
@@ -70,11 +59,11 @@ function Body({ n, company }: { n: NextAction; company: string }) {
           </p>
           <p className="cd-lead">They posted what they need. Reply before other suppliers do.</p>
           {n.asks.map((a) => (
-            <Row key={a.id} name={co(a.co).name} meta={a.text}>
+            <QueueRow key={a.id} name={co(a.co).name} meta={a.text}>
               <Btn cls="sm" onClick={() => act.respond(a.id)}>
                 Respond
               </Btn>
-            </Row>
+            </QueueRow>
           ))}
         </>
       );
@@ -109,14 +98,9 @@ function Body({ n, company }: { n: NextAction; company: string }) {
           {n.companies.map((id) => {
             const c = co(id);
             return (
-              <Row key={id} name={c.name} meta={`${c.ind} · ${c.city}`}>
-                <Btn cls="o sm" aria-label={`Ignore ${c.name}`} onClick={() => act.ignoreReq(id)}>
-                  Ignore
-                </Btn>
-                <Btn cls="sm" aria-label={`Accept ${c.name}`} onClick={() => act.acceptReq(id)}>
-                  Accept
-                </Btn>
-              </Row>
+              <QueueRow key={id} name={c.name} meta={companyLine(c)}>
+                <InviteActions company={c} />
+              </QueueRow>
             );
           })}
         </>

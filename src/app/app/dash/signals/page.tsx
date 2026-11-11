@@ -1,5 +1,5 @@
-import { ComingNext } from "@/components/product/comdash/coming-next";
+import { SignalsTab } from "@/components/product/comdash/signals-tab";
 
 export default function Page() {
-  return <ComingNext title="Interest Signals" />;
+  return <SignalsTab />;
 }

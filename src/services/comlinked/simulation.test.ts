@@ -3,6 +3,16 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   act,
   agentSteps,
+  buyerSuggestions,
+  chamberSuggestions,
+  connectionItems,
+  connectionList,
+  connectionStatus,
+  intentScore,
+  interestForView,
+  invitations,
+  setHandlers,
+  setReplyDraft,
   comDashAlerts,
   connectionSummary,
   industryGroups,
@@ -50,6 +60,7 @@ import {
   trendPoints,
   unreadCount,
 } from "@/services/comlinked";
+import type { ConnectionItem } from "@/services/comlinked";
 
 function newCompany() {
   act.demoNew();
@@ -658,5 +669,254 @@ describe("the daily simulation", () => {
     expect(
       new Set(S.signals.filter((s) => s.type === "search").map((s) => s.detail)).size,
     ).toBeGreaterThan(2);
+  });
+});
+
+describe("Interest Signals timeline", () => {
+  it("gives a Company with one signal a one-entry timeline labelled New", () => {
+    withSignals([["sari", "viewed", 20]]);
+    const [row] = interestedCompanies();
+    expect(row?.level).toBe("New");
+    expect(row?.timeline).toEqual([{ day: 20, text: "Viewed your profile" }]);
+    expect(row?.repeat).toBeNull();
+  });
+
+  it("dates each signal, counts same-day repeats together and calls out separate days", () => {
+    withSignals([
+      ["sari", "viewed", 15],
+      ["sari", "viewed", 15],
+      ["sari", "search", 18, "polvoron"],
+      ["sari", "saved", 20],
+    ]);
+    const [row] = interestedCompanies();
+    expect(row?.timeline).toEqual([
+      { day: 15, text: "Viewed your profile twice" },
+      { day: 18, text: "Found you in search: polvoron" },
+      { day: 20, text: "Saved your profile" },
+    ]);
+    expect(row?.repeat).toBe("Interest on 3 separate days");
+    expect(row?.summary).toBe("Found you in search once, viewed your profile twice and saved it");
+  });
+});
+
+describe("intent score", () => {
+  it("scores search 1, recommended 2, view 3, save 5 and message 10", () => {
+    withSignals([
+      ["sari", "search", 20, "snacks"],
+      ["sari", "recommended", 20],
+      ["sari", "viewed", 20],
+      ["sari", "saved", 20],
+      ["sari", "messaged", 20],
+    ]);
+    expect(intentScore("sari")).toBe(21);
+  });
+
+  it("counts each kind once a day", () => {
+    withSignals([
+      ["sari", "viewed", 19],
+      ["sari", "viewed", 20],
+      ["sari", "viewed", 20],
+      ["sari", "viewed", 20],
+    ]);
+    expect(intentScore("sari")).toBe(6);
+  });
+
+  it("caps at 100", () => {
+    withSignals(
+      Array.from({ length: 12 }, (_, i): [string, Kind, number] => ["sari", "messaged", 20 - i]),
+    );
+    expect(intentScore("sari")).toBe(100);
+  });
+});
+
+describe("plan views", () => {
+  beforeEach(() => act.demoActive());
+
+  it("opens on Free, which shows every interested Company with no extras", () => {
+    expect(getState().view).toBe("free");
+    const free = interestForView("free");
+    expect(free.map((r) => r.company.name)).toEqual(
+      interestedCompanies().map((r) => r.company.name),
+    );
+    expect(free.map((r) => r.level)).toEqual(interestedCompanies().map((r) => r.level));
+    expect(free.every((r) => r.score === null && r.chamber === null)).toBe(true);
+  });
+
+  it("adds only the intent score on Growth", () => {
+    const growth = interestForView("growth");
+    expect(growth.map((r) => r.company.id)).toEqual(
+      interestForView("free").map((r) => r.company.id),
+    );
+    expect(growth.every((r) => typeof r.score === "number" && r.chamber === null)).toBe(true);
+  });
+
+  it("adds interest from other chambers, labelled with the chamber, on Pro", () => {
+    const pro = interestForView("pro");
+    const free = interestForView("free");
+    expect(pro.slice(0, free.length).map((r) => r.company.id)).toEqual(
+      free.map((r) => r.company.id),
+    );
+    const others = pro.slice(free.length);
+    expect(others.length).toBeGreaterThan(0);
+    expect(others.every((r) => r.chamber && r.chamber !== "ECCP" && r.score !== null)).toBe(true);
+    expect(others.every((r) => !r.actionable)).toBe(true);
+    expect(free.every((r) => r.actionable)).toBe(true);
+  });
+
+  it("leaves Free content unchanged when another view is selected", () => {
+    const before = { rows: interestedCompanies(), numbers: topNumbers(), next: nextAction() };
+    act.setView("pro");
+    expect(getState().view).toBe("pro");
+    expect(interestedCompanies()).toEqual(before.rows);
+    expect(topNumbers()).toEqual(before.numbers);
+    expect(nextAction()).toEqual(before.next);
+    expect(profileGaps().length).toBeGreaterThan(0);
+  });
+
+  it("ignores an unknown view and resets to Free with the simulation", () => {
+    act.setView("growth");
+    act.setView("enterprise");
+    expect(getState().view).toBe("growth");
+    act.demoActive();
+    expect(getState().view).toBe("free");
+  });
+
+  it("gives a new Company no interest from other chambers", () => {
+    newCompany();
+    expect(interestForView("pro").every((r) => r.chamber === null)).toBe(true);
+  });
+});
+
+describe("Connections tab", () => {
+  it("accepting an invitation removes it and adds a Connection", () => {
+    act.demoActive();
+    expect(invitations().map((i) => i.company.id)).toEqual(["lakbay"]);
+    const before = connectionSummary().connections;
+    act.acceptReq("lakbay");
+    expect(invitations()).toEqual([]);
+    expect(connectionSummary().connections).toBe(before + 1);
+    expect(connectionList().find((r) => r.company.id === "lakbay")?.status).toBe("connected");
+  });
+
+  it("ignoring an invitation removes it and says the sender won't be notified", () => {
+    act.demoActive();
+    const toast = vi.fn();
+    setHandlers({ toast });
+    const before = connectionSummary().connections;
+    act.ignoreReq("lakbay");
+    expect(invitations()).toEqual([]);
+    expect(connectionSummary().connections).toBe(before);
+    expect(toast).toHaveBeenCalledWith(
+      "Request ignored. They won’t be notified.",
+      undefined,
+      undefined,
+    );
+  });
+
+  it("lists Connections first, then requests sent", () => {
+    act.demoActive();
+    const rows = connectionList();
+    expect(rows.filter((r) => r.status === "connected").map((r) => r.company.id)).toEqual([
+      "maple",
+      "pack",
+      "tala",
+    ]);
+    expect(rows.slice(-2).every((r) => r.status === "pending")).toBe(true);
+  });
+
+  it("suggests chamber members with shared Connections and buyers of what the profile sells", () => {
+    act.demoActive();
+    const chamber = chamberSuggestions();
+    expect(chamber.length).toBeGreaterThan(0);
+    expect(chamber.every((s) => getState().conn[s.company.id] !== "connected")).toBe(true);
+    expect(chamber.every((s) => /mutual/i.test(s.why))).toBe(true);
+    const buyers = buyerSuggestions();
+    expect(buyers.length).toBeGreaterThan(0);
+    expect(buyers.every((s) => s.company.wants.some((w) => getState().me.gives.includes(w)))).toBe(
+      true,
+    );
+    const ids = chamber.map((s) => s.company.id);
+    expect(buyers.some((s) => ids.includes(s.company.id))).toBe(false);
+  });
+
+  it("marks a suggestion pending after Connect", () => {
+    act.demoActive();
+    const first = buyerSuggestions()[0]?.company.id ?? "";
+    act.connect(first);
+    expect(connectionStatus(first)).toBe("pending");
+    expect(buyerSuggestions().some((s) => s.company.id === first)).toBe(true);
+  });
+
+  it("starts with no Connections, invitations or items", () => {
+    newCompany();
+    expect(connectionList()).toEqual([]);
+    expect(invitations()).toEqual([]);
+    expect(connectionItems()).toEqual([]);
+  });
+});
+
+function itemOf(kind: ConnectionItem["kind"]) {
+  const item = connectionItems().find((i) => i.kind === kind);
+  if (!item) throw new Error(`No ${kind} item`);
+  return item;
+}
+
+describe("From your connections", () => {
+  beforeEach(() => act.demoActive());
+
+  it("holds only Asks, Success Wall wins and profile updates by Connections", () => {
+    const items = connectionItems();
+    const kinds = new Set(items.map((i) => i.kind));
+    expect([...kinds].sort()).toEqual(["ask", "update", "win"]);
+    const mine = new Set(
+      Object.keys(getState().conn).filter((id) => getState().conn[id] === "connected"),
+    );
+    expect(items.every((i) => mine.has(i.company.id))).toBe(true);
+  });
+
+  it("drops a Company's items when it isn't a Connection", () => {
+    getState().conn = {};
+    expect(connectionItems()).toEqual([]);
+  });
+
+  it("drafts a reply with AI that sends only on Send, then shows as answered", () => {
+    const item = itemOf("ask");
+    const used = getState().aiUsed[getState().day] ?? 0;
+    act.startReply(item.id);
+    const draft = getState().replyDrafts[item.id];
+    expect(draft?.ai).toBe(true);
+    if (!draft) throw new Error("No reply draft");
+    expect(draft.text.length).toBeGreaterThan(20);
+    expect(getState().aiUsed[getState().day]).toBe(used + 1);
+    setReplyDraft(item.id, draft.text + " Edited.");
+    const thread = () => getState().threads.find((t) => t.co === item.company.id);
+    const sentBefore = thread()?.msgs.filter((m) => m.from === "me").length ?? 0;
+    expect(connectionItems().find((i) => i.id === item.id)?.answered).toBe(false);
+    act.sendReply(item.id);
+    const last = thread()?.msgs.filter((m) => m.from === "me") ?? [];
+    expect(last).toHaveLength(sentBefore + 1);
+    expect(last.at(-1)?.text).toMatch(/Edited\.$/);
+    expect(connectionItems().find((i) => i.id === item.id)?.answered).toBe(true);
+    expect(getState().replyDrafts[item.id]).toBeUndefined();
+  });
+
+  it("starts with an empty reply box when AI is off, and still sends", () => {
+    act.toggleAi();
+    expect(getState().ai).toBe(false);
+    const item = itemOf("update");
+    act.startReply(item.id);
+    expect(getState().replyDrafts[item.id]).toEqual({ text: "", ai: false });
+    act.sendReply(item.id);
+    expect(connectionItems().find((i) => i.id === item.id)?.answered).toBe(false);
+    setReplyDraft(item.id, "Congratulations on the update.");
+    act.sendReply(item.id);
+    expect(connectionItems().find((i) => i.id === item.id)?.answered).toBe(true);
+  });
+
+  it("starts with an empty reply box when the daily AI limit is spent", () => {
+    getState().aiUsed[getState().day] = 30;
+    const item = itemOf("win");
+    act.startReply(item.id);
+    expect(getState().replyDrafts[item.id]).toEqual({ text: "", ai: false });
   });
 });

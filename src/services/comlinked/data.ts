@@ -1,5 +1,13 @@
 // Example data for the ComLinked product simulation, copied from the HTML mockup.
-import type { Company, MyCompany, Rule, RuleKey, Win } from "@/services/comlinked/types";
+import type {
+  Company,
+  MyCompany,
+  PlanView,
+  PlanViewRules,
+  Rule,
+  RuleKey,
+  Win,
+} from "@/services/comlinked/types";
 
 export interface AgentType {
   label: string;
@@ -494,6 +502,81 @@ export const SEARCH_TERMS = [
   "private label",
   "coconut chips",
 ];
+/** What each "View as" option adds. Free is the MVP and hides nothing. */
+export const PLAN_VIEWS: Record<PlanView, PlanViewRules> = {
+  free: { label: "Free", intentScore: false, otherChambers: false },
+  growth: { label: "Growth", intentScore: true, otherChambers: false },
+  pro: { label: "Pro", intentScore: true, otherChambers: true },
+};
+/** Companies in other chambers, whose interest only the Pro demo view shows. */
+type OtherCompany = [
+  id: string,
+  name: string,
+  ini: string,
+  ind: string,
+  city: string,
+  cat: string,
+  chamber: string,
+];
+export const OTHER_CHAMBER_COMPANIES: Company[] = (
+  [
+    [
+      "oc-bagwis",
+      "Bagwis Grocers",
+      "BG",
+      "Grocery retail",
+      "Quezon City",
+      "retail",
+      "PCCI–Quezon City",
+    ],
+    [
+      "oc-handaan",
+      "Handaan Catering Co.",
+      "HC",
+      "Catering",
+      "Quezon City",
+      "hospitality",
+      "PCCI–Quezon City",
+    ],
+    [
+      "oc-harbour",
+      "Harbourfront Filipino Market",
+      "HF",
+      "Grocery retail",
+      "Toronto, ON",
+      "retail",
+      "Toronto Region Board of Trade",
+    ],
+  ] satisfies OtherCompany[]
+).map(function ([id, name, ini, ind, city, cat, chamber]): Company {
+  return {
+    id,
+    name,
+    ini,
+    ind,
+    city,
+    cat,
+    chamber,
+    why: "",
+    offer: [],
+    seek: [],
+    gives: [],
+    wants: [],
+    rival: false,
+    pts: 0,
+  };
+});
+/** Profile updates that Connections post, one each, in the daily simulation. */
+export const PROFILE_UPDATES: Record<string, string> = {
+  pack: "Added compostable stand-up pouches to its products.",
+  maple: "Opened a fourth store, in Marikina.",
+  tala: "Now prints nutrition labels in Filipino and English.",
+  lakbay: "Added two hotels in Tagaytay.",
+  sari: "Started next-day delivery to sari-sari stores in Quezon City.",
+  hapag: "Opened its 13th restaurant, in Makati.",
+  palengke: "Added a frozen foods aisle.",
+  luntian: "Now distributes to retailers in Rizal province.",
+};
 /* ---------- The fixed network: what each company gives and wants, and who is connected to whom ---------- */
 export const TAG: Record<string, string> = {
   maple: "grocery|snacks frozen privatelabel",

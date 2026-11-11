@@ -16,6 +16,8 @@ export interface Company {
   pts: number;
   silent?: boolean;
   joinedDay?: number;
+  /** Set only for Companies outside the user's chamber, shown on the Pro view. */
+  chamber?: string;
 }
 
 export interface MyCompany {
@@ -68,11 +70,75 @@ export interface Signal {
 /** See Interest Level in CONTEXT.md. */
 export type InterestLevel = "Hot" | "Warm" | "New";
 
+export interface TimelineEntry {
+  day: number;
+  text: string;
+}
+
 export interface InterestedCompany {
   company: Company;
   level: InterestLevel;
   latest: Signal;
   summary: string;
+  /** Oldest first, with same-day repeats of a kind counted together. */
+  timeline: TimelineEntry[];
+  /** Such as "Interest on 3 separate days"; null when all interest fell on one day. */
+  repeat: string | null;
+}
+
+/** Free is the MVP. Growth and Pro are a labelled demo of possible future pricing. */
+export type PlanView = "free" | "growth" | "pro";
+
+export interface PlanViewRules {
+  label: string;
+  intentScore: boolean;
+  otherChambers: boolean;
+}
+
+/** An interested Company as the selected view shows it. */
+export interface InterestRow extends InterestedCompany {
+  /** Only on Growth and Pro. */
+  score: number | null;
+  /** The other chamber's name, only on Pro; null for the user's own chamber. */
+  chamber: string | null;
+  /** Whether Message and Connect apply. Companies in other chambers are a demo view only. */
+  actionable: boolean;
+}
+
+export interface ProfileUpdate {
+  co: string;
+  day: number;
+  text: string;
+}
+
+export type ConnectionItemKind = "ask" | "win" | "update";
+
+/** One item in "From your connections". */
+export interface ConnectionItem {
+  id: string;
+  kind: ConnectionItemKind;
+  /** Such as "Ask" or "Profile update". */
+  label: string;
+  company: Company;
+  day: number | null;
+  title: string;
+  text: string;
+  /** The ask a reply answers; null for wins and profile updates. */
+  askId: string | null;
+  answered: boolean;
+}
+
+export interface Suggestion {
+  company: Company;
+  why: string;
+}
+
+/** A Connection, or a Connection Request the Company sent. */
+export type ConnStatus = "pending" | "connected";
+
+export interface ConnectionRow {
+  company: Company;
+  status: ConnStatus;
 }
 
 export interface TopNumber {
@@ -335,7 +401,7 @@ export interface SimState {
   ledger: LedgerEntry[];
   lists: Record<number, string[]>;
   leadAct: Record<string, string>;
-  conn: Record<string, "pending" | "connected">;
+  conn: Record<string, ConnStatus>;
   skipCats: Record<string, number>;
   signals: Signal[];
   threads: Thread[];
@@ -381,6 +447,12 @@ export interface SimState {
   flags: Flags;
   dismissedTerms: string[];
   profileFocus: ProfileField | null;
+  view: PlanView;
+  /** Interest from Companies in other chambers, shown only on the Pro view. */
+  otherSignals: Signal[];
+  updates: ProfileUpdate[];
+  replyDrafts: Record<string, Draft>;
+  replied: string[];
 }
 
 export interface ToastAction {
