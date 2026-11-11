@@ -37,6 +37,14 @@ export const paths = {
     agent: "/app/agent",
     team: "/app/team",
   },
+  /** ComDash tabs. The Overview is ComDash itself. */
+  dashTabs: {
+    overview: "/app/dash",
+    signals: "/app/dash/signals",
+    agent: "/app/dash/agent",
+    connections: "/app/dash/connections",
+    profile: "/app/dash/profile",
+  },
   dashboard: {
     overview: "/dashboard",
     blank: "/dashboard/blank",

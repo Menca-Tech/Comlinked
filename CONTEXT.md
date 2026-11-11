@@ -125,10 +125,18 @@ Terms from the [ComLinked MVP Build Plan](docs/specs/2026-10-11-mvp-build-plan.m
   out of 100. Avoid using it for the quick Fit Score shown on Leads.
 
 - **Interest Signal** — a named record that another Company found this one in
-  search, viewed its profile, messaged it or was recommended it.
+  search, viewed its profile, saved its profile, messaged it or was recommended
+  it.
 
-- **ComDash** — a Company's home screen for its Interest Signals, Activity Score,
-  rank and next best action.
+- **Interest Level** — how strongly another Company is showing interest, judged
+  over the last 14 days: **Hot** if it messaged or showed interest on 3 or more
+  separate days, **Warm** if it showed interest on 2 separate days or saved the
+  profile, **New** after one Interest Signal. Avoid "intent", which belongs to
+  the AI Lead Agent's scoring.
+
+- **ComDash** — a Company's home screen for its Interest Signals, interested
+  Companies, Connections and next best action. The Activity Score and rank are
+  shown elsewhere.
 
 - **Ask** — a business need posted by a Company for others to respond to. Asks
   appear on the **Asks Board**.

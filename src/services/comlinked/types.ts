@@ -35,6 +35,7 @@ export interface MyCompany {
   rep: string;
   altRep: string;
   lastUpdate: number;
+  chamber: string;
 }
 
 export type RuleKey =
@@ -54,12 +55,82 @@ export interface LedgerEntry {
   co: string | null;
 }
 
+/** The five Interest Signals, plus a community manager's intro. */
+export type SignalKind = "search" | "viewed" | "saved" | "messaged" | "recommended" | "intro";
+
 export interface Signal {
   co: string;
-  type: string;
+  type: SignalKind;
   detail: string;
   day: number;
 }
+
+/** See Interest Level in CONTEXT.md. */
+export type InterestLevel = "Hot" | "Warm" | "New";
+
+export interface InterestedCompany {
+  company: Company;
+  level: InterestLevel;
+  latest: Signal;
+  summary: string;
+}
+
+export interface TopNumber {
+  label: string;
+  value: number;
+  /** Null until there is a previous period to compare with. */
+  change: string | null;
+  trend: "up" | "down" | "same" | null;
+}
+
+export interface VisibilityDay {
+  day: number;
+  searches: number;
+  recommendations: number;
+}
+
+export interface FunnelStep {
+  label: string;
+  count: number;
+  /** Percent of the step before; null for the first step or after an empty one. */
+  ofPrevious: number | null;
+}
+
+export interface Funnel {
+  steps: FunnelStep[];
+  suggestion: string;
+}
+
+export interface DashAlert {
+  day: number;
+  text: string;
+}
+
+export interface CountRow {
+  label: string;
+  count: number;
+}
+
+export interface SearchTerm {
+  term: string;
+  count: number;
+  gap: boolean;
+}
+
+/** Profile editor fields that ComDash can open with focus. */
+export type ProfileField = "about" | "products" | "project";
+
+/** The single most useful thing to do, in the fixed 8-step order. */
+export type NextAction = { rank: number; reason: string } & (
+  | { kind: "drafts"; threads: string[] }
+  | { kind: "leads"; left: number; total: number }
+  | { kind: "ask"; asks: Ask[] }
+  | { kind: "hot"; lead: InterestedCompany }
+  | { kind: "requests"; companies: string[] }
+  | { kind: "gap"; gap: SearchTerm }
+  | { kind: "fresh"; days: number }
+  | { kind: "clear" }
+);
 
 export interface Note {
   type: string;
@@ -308,6 +379,8 @@ export interface SimState {
   };
   forms: Forms;
   flags: Flags;
+  dismissedTerms: string[];
+  profileFocus: ProfileField | null;
 }
 
 export interface ToastAction {

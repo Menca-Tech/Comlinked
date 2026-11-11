@@ -274,19 +274,19 @@ test.describe("website links into the product", () => {
     await page.getByRole("banner").getByRole("link", { name: "Sign in" }).click();
 
     await expect(page).toHaveURL(/\/app\/dash$/);
-    await expect(page.locator(".a-rank")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Next action" })).toBeVisible();
   });
 
   test("the presenter guide's Website button keeps the simulation", async ({ page }) => {
     await page.setViewportSize(LAPTOP);
     await page.goto("/app/claim");
     await presenterGuide(page, "Two weeks in");
-    await expect(page.locator(".a-rank")).toHaveText("#4");
+    await expect(page.getByRole("heading", { name: "12 interested companies" })).toBeVisible();
     await presenterGuide(page, "Website");
     await expect(page.getByRole("heading", { level: 1 })).toContainText("within 24 hours");
     await page.getByRole("banner").getByRole("link", { name: "Sign in" }).click();
 
-    await expect(page.locator(".a-rank")).toHaveText("#4");
+    await expect(page.getByRole("heading", { name: "12 interested companies" })).toBeVisible();
   });
 
   test("the auth sign-in route still renders", async ({ page }) => {
@@ -644,13 +644,13 @@ test.describe("join form", () => {
     await page.setViewportSize(LAPTOP);
     await page.goto("/app/claim");
     await presenterGuide(page, "Two weeks in");
-    await expect(page.locator(".a-rank")).toHaveText("#4");
+    await expect(page.getByRole("heading", { name: "12 interested companies" })).toBeVisible();
     await presenterGuide(page, "Website");
     await page.getByRole("banner").getByRole("link", { name: "Join free" }).click();
     await fillValid(page);
     await submit(page).click();
 
-    await expect(page.locator(".a-rank")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Next action" })).toBeVisible();
     await expect(page).toHaveURL(/\/app\/dash$/);
   });
 

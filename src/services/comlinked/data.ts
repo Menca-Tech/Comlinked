@@ -473,6 +473,27 @@ export const CAT: Record<string, string> = {
   export: "export",
   services: "services",
 };
+/** Industry names for ComDash's interest by industry. */
+export const INDUSTRY: Record<string, string> = {
+  retail: "Retail and wholesale",
+  packaging: "Packaging",
+  freight: "Freight and storage",
+  food: "Food and agriculture",
+  hospitality: "Food service and hospitality",
+  export: "Export",
+  services: "Business services",
+};
+/** Words companies search with in the daily simulation. Some aren't on the example profile. */
+export const SEARCH_TERMS = [
+  "banana chips",
+  "frozen lumpia",
+  "polvoron",
+  "ube spread",
+  "Filipino snacks",
+  "dried mango",
+  "private label",
+  "coconut chips",
+];
 /* ---------- The fixed network: what each company gives and wants, and who is connected to whom ---------- */
 export const TAG: Record<string, string> = {
   maple: "grocery|snacks frozen privatelabel",

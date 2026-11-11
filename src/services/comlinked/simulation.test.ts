@@ -3,6 +3,18 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   act,
   agentSteps,
+  comDashAlerts,
+  connectionSummary,
+  industryGroups,
+  interestFunnel,
+  interestLevel,
+  interestedCompanies,
+  profileCompleteness,
+  profileGaps,
+  searchTerms,
+  searcherRoles,
+  topNumbers,
+  visibilityByDay,
   allowed,
   award,
   byFit,
@@ -14,7 +26,6 @@ import {
   fit,
   getState,
   groupText,
-  interestGroups,
   markDashSeen,
   markDigestRead,
   markNotesRead,
@@ -148,10 +159,10 @@ describe("the two-weeks-in preset", () => {
     expect(score()).toBe(59);
   });
 
-  it("points at confirming the Pacific Pack deal", () => {
+  it("points at today's leads", () => {
     const next = nextAction();
-    expect(next?.t).toContain("Confirm your deal with Pacific Pack");
-    expect(next?.p).toBe(25);
+    expect(next.kind).toBe("leads");
+    expect(next.rank).toBe(2);
   });
 
   it("produces identical results on repeated runs", () => {
@@ -263,7 +274,7 @@ describe("a full demo", () => {
     noteGroups().forEach((g) => expect(groupText(g).length).toBeGreaterThan(0));
     markNotesRead();
     expect(unreadCount()).toBe(0);
-    expect(interestGroups().length).toBeGreaterThan(0);
+    expect(interestedCompanies().length).toBeGreaterThan(0);
     expect(monthlyTop().top).toHaveLength(10);
     expect(networkLayout().nodes).toHaveLength(POOL.length);
     S().openThread = null;
@@ -325,5 +336,327 @@ describe("a full demo", () => {
     newCompany();
     const scores = byFit(POOL).map((c) => fit(c).score);
     expect(scores).toEqual([...scores].sort((a, b) => b - a));
+  });
+});
+
+type Kind = "search" | "viewed" | "saved" | "messaged" | "recommended" | "intro";
+
+/** A claimed company on day 20 whose only signals are the ones given. */
+function withSignals(list: [string, Kind, number, string?][]) {
+  newCompany();
+  const S = getState();
+  S.day = 20;
+  S.signals = list.map(([co, type, day, detail]) => ({ co, type, day, detail: detail ?? "" }));
+}
+
+describe("Interest Level", () => {
+  it("is New after one signal", () => {
+    withSignals([["sari", "viewed", 20]]);
+    expect(interestLevel("sari")).toBe("New");
+  });
+
+  it("is Warm after interest on two separate days", () => {
+    withSignals([
+      ["sari", "viewed", 18],
+      ["sari", "search", 20, "snacks"],
+    ]);
+    expect(interestLevel("sari")).toBe("Warm");
+  });
+
+  it("is Hot after interest on three separate days", () => {
+    withSignals([
+      ["sari", "viewed", 15],
+      ["sari", "search", 18, "snacks"],
+      ["sari", "viewed", 20],
+    ]);
+    expect(interestLevel("sari")).toBe("Hot");
+  });
+
+  it("counts repeats on the same day once", () => {
+    withSignals(
+      Array.from({ length: 10 }, (): [string, Kind, number, string] => [
+        "sari",
+        "search",
+        20,
+        "snacks",
+      ]),
+    );
+    expect(interestLevel("sari")).toBe("New");
+  });
+
+  it("is Warm after a save", () => {
+    withSignals([["sari", "saved", 20]]);
+    expect(interestLevel("sari")).toBe("Warm");
+  });
+
+  it("is Hot after a message", () => {
+    withSignals([["sari", "messaged", 20]]);
+    expect(interestLevel("sari")).toBe("Hot");
+  });
+
+  it("ignores signals older than 14 days", () => {
+    withSignals([
+      ["sari", "viewed", 5],
+      ["sari", "viewed", 6],
+      ["sari", "messaged", 6],
+      ["hapag", "viewed", 5],
+      ["hapag", "viewed", 6],
+      ["hapag", "viewed", 20],
+    ]);
+    expect(interestLevel("sari")).toBeNull();
+    expect(interestLevel("hapag")).toBe("New");
+  });
+
+  it("does not treat a community manager intro as interest", () => {
+    withSignals([["sari", "intro", 20]]);
+    expect(interestLevel("sari")).toBeNull();
+    expect(interestedCompanies()).toEqual([]);
+  });
+
+  it("lists Hot, then Warm, then New, with a one-line summary", () => {
+    withSignals([
+      ["sari", "viewed", 20],
+      ["hapag", "viewed", 15],
+      ["hapag", "viewed", 16],
+      ["hapag", "viewed", 17],
+      ["hapag", "viewed", 18],
+      ["hapag", "saved", 18],
+      ["maple", "saved", 19],
+    ]);
+    const rows = interestedCompanies();
+    expect(rows.map((r) => [r.company.id, r.level])).toEqual([
+      ["hapag", "Hot"],
+      ["maple", "Warm"],
+      ["sari", "New"],
+    ]);
+    expect(rows[0]!.summary).toBe("Viewed your profile 4 times and saved it");
+    expect(rows[0]!.latest.type).toBe("saved");
+  });
+});
+
+describe("Overview figures", () => {
+  it("hides comparisons until there is a previous period", () => {
+    newCompany();
+    expect(topNumbers().map((n) => n.label)).toEqual([
+      "Search appearances",
+      "Profile views",
+      "Profile saves",
+      "Messages",
+      "Recommendations",
+      "Connections",
+    ]);
+    expect(topNumbers().every((n) => n.change === null)).toBe(true);
+    act.morning("1");
+    expect(topNumbers().every((n) => n.change === null)).toBe(true);
+  });
+
+  it("compares the last 7 days with the 7 before once two weeks have passed", () => {
+    act.demoActive();
+    const byLabel = Object.fromEntries(topNumbers().map((n) => [n.label, n]));
+    expect(byLabel["Search appearances"]).toMatchObject({
+      value: 3,
+      change: "50% more than last week",
+      trend: "up",
+    });
+    expect(byLabel["Profile views"]).toMatchObject({ value: 4, change: "4 more than last week" });
+    expect(byLabel["Recommendations"]).toMatchObject({
+      value: 1,
+      change: "Same as last week",
+      trend: "same",
+    });
+    expect(byLabel["Connections"]).toMatchObject({ value: 3 });
+  });
+
+  it("counts companies that reached each funnel step or a later one", () => {
+    act.demoActive();
+    const funnel = interestFunnel();
+    expect(funnel?.steps.map((s) => [s.label, s.count, s.ofPrevious])).toEqual([
+      ["Found you", 12, null],
+      ["Viewed your profile", 5, 42],
+      ["Saved your profile", 4, 80],
+      ["Messaged you", 3, 75],
+      ["Connected", 2, 67],
+    ]);
+    expect(funnel?.suggestion).toMatch(/\.$/);
+  });
+
+  it("charts search appearances and recommendations from the claim day", () => {
+    act.demoActive();
+    const days = visibilityByDay();
+    expect(days[0]!.day).toBe(1);
+    expect(days.at(-1)!.day).toBe(15);
+    expect(days.find((d) => d.day === 13)).toMatchObject({ searches: 1, recommendations: 1 });
+  });
+
+  it("only shows industries with 3 or more interested companies", () => {
+    withSignals([
+      ["sari", "viewed", 20],
+      ["maple", "viewed", 20],
+      ["hapag", "viewed", 20],
+      ["kainan", "viewed", 20],
+    ]);
+    expect(industryGroups()).toEqual([]);
+    getState().signals.push({ co: "lakbay", type: "viewed", day: 20, detail: "" });
+    expect(industryGroups()).toEqual([{ label: "Food service and hospitality", count: 3 }]);
+  });
+
+  it("groups searchers by what they found you as", () => {
+    act.demoActive();
+    expect(searcherRoles()[0]).toEqual({ label: "Supplier", count: 5 });
+  });
+
+  it("raises alerts for saves, messages, becoming Hot and intros", () => {
+    act.demoActive();
+    const texts = comDashAlerts().map((a) => a.text);
+    expect(texts).toContain("Hapag Kitchen Group is now Hot.");
+    expect(texts).toContain("Hapag Kitchen Group saved your profile.");
+    expect(texts).toContain("Luntian Foods Inc. messaged you.");
+    expect(texts).toContain("Your community manager introduced you to Malaya Export Traders.");
+  });
+
+  it("dates “is now Hot” by the day a company became Hot, not the window start", () => {
+    withSignals([
+      ["sari", "messaged", 3],
+      ["sari", "viewed", 9],
+      ["sari", "viewed", 10],
+      ["sari", "viewed", 11],
+      ["sari", "viewed", 20],
+    ]);
+    expect(
+      comDashAlerts().find((a) => a.text === "Sari Central Wholesale is now Hot."),
+    ).toBeUndefined();
+    getState().signals = getState().signals.filter((s) => s.day !== 3);
+    expect(comDashAlerts().find((a) => a.text === "Sari Central Wholesale is now Hot.")?.day).toBe(
+      11,
+    );
+  });
+
+  it("summarises Connections and profile completeness", () => {
+    act.demoActive();
+    expect(connectionSummary()).toEqual({ connections: 3, incoming: 1, outgoing: 2 });
+    expect(profileCompleteness()).toEqual({ percent: 90, missing: ["a photo of your work"] });
+  });
+});
+
+describe("search terms and profile gaps", () => {
+  it("flags a term the profile doesn't list, and clears it when dismissed", () => {
+    act.demoActive();
+    expect(searchTerms().find((t) => t.term === "polvoron")).toEqual({
+      term: "polvoron",
+      count: 1,
+      gap: true,
+    });
+    expect(searchTerms().find((t) => t.term === "snacks")?.gap).toBe(false);
+    act.dismissGap("polvoron");
+    expect(profileGaps()).toEqual([]);
+    expect(searchTerms().find((t) => t.term === "polvoron")?.gap).toBe(false);
+  });
+
+  it("clears a gap once the term is saved to the description", () => {
+    act.demoActive();
+    act.addGap("polvoron");
+    expect(getState().profileFocus).toBe("about");
+    expect(getState().forms.about).toContain("polvoron");
+    expect(profileGaps()).toHaveLength(1);
+    act.saveAbout();
+    expect(profileGaps()).toEqual([]);
+  });
+
+  it("adds the term to the draft only once", () => {
+    act.demoActive();
+    act.addGap("polvoron");
+    act.addGap("polvoron");
+    expect(getState().forms.about.match(/polvoron/g)).toHaveLength(1);
+    setForm("about", "");
+    act.addGap("polvoron");
+    expect(getState().forms.about).toBe("We also offer polvoron.");
+  });
+
+  it("uses the products field when the profile has no products yet", () => {
+    withSignals([["sari", "search", 20, "dried mango"]]);
+    act.addGap("dried mango");
+    expect(getState().profileFocus).toBe("products");
+    act.addProducts();
+    expect(profileGaps()).toEqual([]);
+  });
+});
+
+describe("Next action", () => {
+  beforeEach(newCompany);
+
+  it("follows the 8-step order, each with its reason", () => {
+    const S = getState();
+    const seen: [string, number][] = [];
+    const note = () => {
+      const n = nextAction();
+      expect(n.reason).toMatch(/^Shown because /);
+      seen.push([n.kind, n.rank]);
+      return n;
+    };
+
+    const luntian = S.threads.find((t) => t.co === "luntian")!;
+    prepareThread(luntian.id);
+    expect(note().kind).toBe("drafts");
+    delete S.drafts[luntian.id];
+
+    expect(note().kind).toBe("leads");
+    S.lists[1]!.forEach((id) => act.skip(id));
+
+    S.conn.pack = "connected";
+    expect(note().kind).toBe("ask");
+    delete S.conn.pack;
+
+    const hot = note();
+    expect(hot.kind === "hot" && hot.lead.company.id).toBe("luntian");
+    setDraft(luntian.id, "Thank you, we are open to it.");
+    act.send(luntian.id);
+
+    S.incoming.push({ co: "lakbay", day: 1 });
+    expect(note().kind).toBe("requests");
+    act.ignoreReq("lakbay");
+
+    S.signals.unshift({ co: "sari", type: "search", detail: "polvoron", day: 1 });
+    expect(note().kind).toBe("gap");
+    act.dismissGap("polvoron");
+
+    expect(note().kind).toBe("clear");
+    S.day += 14;
+    expect(note().kind).toBe("fresh");
+    act.addPhoto();
+    expect(note().kind).toBe("clear");
+
+    expect(seen.map(([, rank]) => rank)).toEqual([1, 2, 3, 4, 5, 6, 8, 7, 8]);
+  });
+});
+
+describe("a company that has just claimed with no signals", () => {
+  it("gets empty results everywhere", () => {
+    newCompany();
+    getState().signals = [];
+    expect(interestedCompanies()).toEqual([]);
+    expect(visibilityByDay()).toEqual([]);
+    expect(interestFunnel()).toBeNull();
+    expect(comDashAlerts()).toEqual([]);
+    expect(searcherRoles()).toEqual([]);
+    expect(industryGroups()).toEqual([]);
+    expect(searchTerms()).toEqual([]);
+    expect(
+      topNumbers()
+        .slice(0, 5)
+        .every((n) => n.value === 0 && n.change === null),
+    ).toBe(true);
+  });
+});
+
+describe("the daily simulation", () => {
+  it("adds saves from returning viewers and varied search terms", () => {
+    newCompany();
+    act.morning("14");
+    for (let i = 0; i < 6; i++) act.morning("1");
+    const S = getState();
+    expect(S.signals.some((s) => s.type === "saved")).toBe(true);
+    expect(
+      new Set(S.signals.filter((s) => s.type === "search").map((s) => s.detail)).size,
+    ).toBeGreaterThan(2);
   });
 });

@@ -9,6 +9,7 @@ import {
   CAT,
   EDGES,
   FULL_BOOST_AT,
+  INDUSTRY,
   MAX_BOOST,
   METRO,
   MODERATE_FIT,
@@ -19,6 +20,7 @@ import {
   REPLIES,
   RIVAL_PTS,
   RULES,
+  SEARCH_TERMS,
   STRONG_FIT,
   TEMPLATES,
   TOTAL,
@@ -31,9 +33,19 @@ import type {
   AiField,
   Ask,
   Company,
+  CountRow,
+  DashAlert,
+  Funnel,
+  InterestedCompany,
+  InterestLevel,
   Message,
+  NextAction,
   NoteGroup,
+  ProfileField,
   RuleKey,
+  SearchTerm,
+  Signal,
+  SignalKind,
   SimState,
   TeamData,
   TeamQueueItem,
@@ -42,14 +54,9 @@ import type {
   TextField,
   Thread,
   ToastAction,
+  TopNumber,
+  VisibilityDay,
 } from "@/services/comlinked/types";
-
-export interface NextAction {
-  t: string;
-  p: number;
-  go: string;
-  th?: string;
-}
 
 let gen = 0;
 let S: SimState;
@@ -168,6 +175,7 @@ function fresh(): SimState {
       rep: "Ana Reyes",
       altRep: "Marco Dizon",
       lastUpdate: 1,
+      chamber: "ECCP",
     },
     ai: true,
     aiLog: [{ day: 1, on: true, note: "On by default for new companies" }],
@@ -254,6 +262,8 @@ function fresh(): SimState {
       project: "",
     },
     flags: {},
+    dismissedTerms: [],
+    profileFocus: null,
   };
 }
 export function score() {
@@ -574,15 +584,18 @@ export function award(key: RuleKey, cid?: string | null, quiet?: boolean) {
   if (!quiet) toast(r.label + (cid && co(cid) ? ", " + co(cid).name : ""), "+" + r.pts + " points");
   return true;
 }
-export function signal(cid: string, type: string, detail?: string) {
+export function signal(cid: string, type: SignalKind, detail?: string) {
   S.signals.unshift({ co: cid, type: type, detail: detail || "", day: S.day });
-  const n = co(cid).name,
-    text = {
+  const n = co(cid).name;
+  // Messages notify where they arrive, so they have no line here.
+  const lines: Partial<Record<SignalKind, string>> = {
       viewed: n + " viewed your profile",
+      saved: n + " saved your profile",
       search: n + " found you in search" + (detail ? ": " + detail : ""),
       recommended: n + " was recommended your company",
       intro: "Your community manager introduced you to " + n,
-    }[type];
+    },
+    text = lines[type];
   if (text) notify(type === "viewed" ? "view" : type, cid, text);
 }
 export function buildList() {
@@ -667,7 +680,7 @@ export function seedTwoWeeks() {
       co: cid || null,
     });
   };
-  const sig = function (cid: string, type: string, day: number, detail?: string) {
+  const sig = function (cid: string, type: SignalKind, day: number, detail?: string) {
     S.signals.push({ co: cid, type: type, detail: detail || "", day: day });
   };
   const me = function (text: string, day: number): Message {
@@ -712,11 +725,19 @@ export function seedTwoWeeks() {
   sig("sari", "viewed", 15);
   sig("hapag", "viewed", 15);
   sig("luntian", "messaged", 15);
+  sig("hapag", "saved", 14);
   sig("malaya", "search", 14, "snacks");
   sig("lakbay", "recommended", 13);
+  sig("tindahan", "search", 13, "polvoron");
+  sig("malaya", "intro", 13);
   sig("pack", "messaged", 12);
+  sig("hapag", "viewed", 12);
+  sig("palengke", "search", 11, "frozen lumpia");
+  sig("maple", "saved", 10);
   sig("maple", "viewed", 9);
+  sig("kainan", "search", 8, "frozen lumpia");
   sig("bukas", "recommended", 6);
+  sig("paaralan", "search", 6, "banana chips");
   S.threads = [
     {
       id: "t-luntian",
@@ -971,12 +992,13 @@ export function nextMorning(n: number) {
   if (pool.length) {
     for (let i = 0; i < a.views; i++) {
       const c = pick(i);
+      if (returningViewer(c.id)) signal(c.id, "saved");
       signal(c.id, "viewed");
       viewers.push(c.name);
     }
     for (let i = 0; i < a.searches; i++) {
       const c = pick(a.views + i);
-      signal(c.id, "search", c.seek[0]!.toLowerCase());
+      signal(c.id, "search", (SEARCH_TERMS[(S.day + i) % SEARCH_TERMS.length] ?? "").toLowerCase());
       searches++;
     }
     for (let i = 0; i < pool.length && requests < a.requests; i++) {
@@ -1045,70 +1067,22 @@ export function digestLine() {
     m
   );
 }
-export function nextAction(): NextAction | null {
-  const c: NextAction[] = [];
-  if (S.pendingT.length)
-    c.push({ t: "Post your testimonial for " + co(S.pendingT[0]!.co).name, p: 15, go: "wins" });
-  S.threads.forEach(function (t) {
-    const them = t.msgs.some(function (m) {
-        return m.from === "them";
-      }),
-      mine = t.msgs.some(function (m) {
-        return m.from === "me";
-      });
-    if (them && mine && t.metDone > 0 && !t.deal && allowed("deal", t.co))
-      c.push({ t: "Confirm your deal with " + co(t.co).name, p: 25, go: "mail", th: t.id });
-    else if (them && mine && !t.metDone && !t.met && allowed("meet", t.co))
-      c.push({ t: "Confirm your meeting with " + co(t.co).name, p: 10, go: "mail", th: t.id });
-    const last = t.msgs[t.msgs.length - 1];
-    if (last && last.from === "them" && S.day - last.day <= 1 && allowed("reply"))
-      c.push({ t: "Reply to " + co(t.co).name + " today", p: 3, go: "mail", th: t.id });
-  });
-  if (connected().length && !S.invites.length)
-    c.push({ t: "Invite a business partner", p: 10, go: "company" });
-  if (S.incoming.length && allowed("conn"))
-    c.push({
-      t: "Accept the Connection Request from " + co(S.incoming[0]!.co).name,
-      p: 5,
-      go: "notifications",
-    });
-  const nextLead = (S.lists[S.day] || []).find(function (id) {
-    return !S.leadAct[id];
-  });
-  if (nextLead && allowed("conn"))
-    c.push({ t: "Connect with " + co(nextLead).name, p: 5, go: "leads" });
-  if (allowed("ask") && !S.flags.asked)
-    c.push({ t: "Post what your company needs", p: 5, go: "asks" });
-  if (strength() < 100 && allowed("profile"))
-    c.push({ t: "Complete your company profile", p: 5, go: "company" });
-  c.sort(function (a, b) {
-    return b.p - a.p;
-  });
-  return c[0] || null;
-}
-export function nextCta(n: NextAction) {
-  if (/testimonial/.test(n.t)) return "Write your testimonial";
-  if (/^Post what/.test(n.t)) return "Post an ask";
-  if (/^Complete/.test(n.t)) return "Complete my profile";
-  if (/^Accept/.test(n.t)) return "Review the request";
-  return n.t.split(" ")[0];
-}
-export function strengthNext() {
-  const m = S.me;
-  if (!m.products) return "Next step: add your top 3 products, +15%";
-  if (!m.projects.length) return "Next step: add a recent project, +10%";
-  return "Next step: add a photo of your work, +10%";
-}
 export function searchDegree(c: Company) {
   const d = degreeLabel(c),
     m = mutuals(c).length;
   return (d ? " · " + d : "") + (m ? " · " + m + " mutual" : "");
 }
+/** Notifications of these kinds are grouped per day, with the text that follows the names. */
+const GROUPED_NOTES: Record<string, string> = {
+  view: "viewed your profile",
+  search: "found you in search",
+  saved: "saved your profile",
+};
 export function noteGroups() {
   const groups: NoteGroup[] = [],
     at: Record<string, NoteGroup> = {};
   S.notes.forEach(function (n) {
-    const key = n.type === "view" || n.type === "search" ? n.type + n.day : null;
+    const key = GROUPED_NOTES[n.type] ? n.type + n.day : null;
     if (key && at[key]) {
       at[key].items.push(n);
       return;
@@ -1133,7 +1107,7 @@ export function groupText(g: NoteGroup) {
   });
   const who =
     names.slice(0, 2).join(", ") + (names.length > 2 ? " and " + (names.length - 2) + " more" : "");
-  return g.type === "view" ? who + " viewed your profile" : who + " found you in search";
+  return who + " " + (GROUPED_NOTES[g.type] ?? "");
 }
 export function members() {
   const list = POOL.slice(0, 11).map(function (c) {
@@ -2444,13 +2418,6 @@ const ACT = {
       emit();
     });
   },
-  nextGo: function () {
-    const n = nextAction();
-    if (!n) return;
-    S.viewCo = null;
-    S.openThread = n.th || null;
-    go(n.go);
-  },
   importPick: function () {
     S.cm.stage = "preview";
     emit();
@@ -2511,6 +2478,32 @@ const ACT = {
   spike: function (a: string) {
     S.cm.spike = a;
     emit();
+  },
+  addGap: function (term: string) {
+    const f = S.forms,
+      lists = function (text: string) {
+        return text.toLowerCase().includes(term.toLowerCase());
+      };
+    if (S.me.products) {
+      const base = f.about.trim().replace(/\.$/, "");
+      if (!lists(base)) f.about = (base ? base + ". " : "") + "We also offer " + term + ".";
+      f.aboutAi = false;
+      S.profileFocus = "about";
+    } else {
+      const base = f.products.trim();
+      if (!lists(base)) f.products = base ? base + ", " + term : term;
+      S.profileFocus = "products";
+    }
+  },
+  dismissGap: function (term: string) {
+    if (!S.dismissedTerms.includes(term)) S.dismissedTerms.push(term);
+    toast("Got it. This term won’t be flagged again.");
+  },
+  focusProfile: function (field: string) {
+    const known = PROFILE_FIELDS.find(function (f) {
+      return f === field;
+    });
+    if (known) S.profileFocus = known;
   },
 };
 
@@ -2648,25 +2641,6 @@ export function firstMatches() {
     }),
   ).slice(0, 3);
 }
-export function interestGroups() {
-  const label: Record<string, string> = {
-    search: "Search",
-    viewed: "Viewed profile",
-    messaged: "Messaged you",
-    recommended: "Recommended",
-    intro: "Introduced",
-  };
-  const groups: { co: string; day: number; texts: string[] }[] = [];
-  S.signals.forEach(function (s) {
-    const text = label[s.type] + (s.detail ? ": " + s.detail : "");
-    const g = groups.find(function (x) {
-      return x.co === s.co && x.day === s.day;
-    });
-    if (g) g.texts.push(text);
-    else groups.push({ co: s.co, day: s.day, texts: [text] });
-  });
-  return groups.slice(0, 7);
-}
 export function monthlyTop() {
   const month = monthOf(S.day);
   const mine = S.ledger
@@ -2787,7 +2761,7 @@ function lastActive(id: string) {
 }
 
 /** 1 for a Connection, 2 for a company sharing a Mutual Connection, otherwise 3. */
-export function ringTier(c: Pick<Company, "id" | "joinedDay">): 1 | 2 | 3 {
+function ringTier(c: Pick<Company, "id" | "joinedDay">): 1 | 2 | 3 {
   if (S.conn[c.id] === "connected") return 1;
   return degreeLabel(c) === "2nd" ? 2 : 3;
 }
@@ -2809,6 +2783,503 @@ export function networkRing() {
       nodes.push({ company, tier: ringTier(company), status });
     });
   return { nodes, more: all.length - inner.length };
+}
+
+/* ---------- ComDash ---------- */
+const PROFILE_FIELDS: ProfileField[] = ["about", "products", "project"];
+const INTEREST_KINDS: SignalKind[] = ["search", "viewed", "saved", "messaged", "recommended"];
+/** Interest Level looks at the last 14 simulated days. */
+const LEVEL_DAYS = 14;
+/** Top numbers compare the last 7 days with the 7 before. */
+const PERIOD_DAYS = 7;
+/** The funnel, roles, industries and search terms cover the last 30 days. */
+const INSIGHT_DAYS = 30;
+const LEVEL_ORDER: Record<InterestLevel, number> = { Hot: 0, Warm: 1, New: 2 };
+/** Which signal to show as the latest when several fall on the same day. */
+const KIND_WEIGHT: Record<SignalKind, number> = {
+  messaged: 5,
+  saved: 4,
+  viewed: 3,
+  search: 2,
+  recommended: 1,
+  intro: 0,
+};
+const SIGNAL_TEXT: Record<SignalKind, string> = {
+  search: "Found you in search",
+  viewed: "Viewed your profile",
+  saved: "Saved your profile",
+  messaged: "Messaged you",
+  recommended: "Was recommended your company",
+  intro: "Introduced by your community manager",
+};
+
+/** Interest Signals from other Companies on days after `from`, up to and including `to`. */
+function interestBetween(from: number, to: number, coId?: string) {
+  return S.signals.filter(function (s) {
+    return (
+      INTEREST_KINDS.includes(s.type) &&
+      s.day > from &&
+      s.day <= to &&
+      (coId === undefined || s.co === coId)
+    );
+  });
+}
+function companiesIn(signals: Signal[]) {
+  return Array.from(
+    new Set(
+      signals.map(function (s) {
+        return s.co;
+      }),
+    ),
+  );
+}
+function returningViewer(coId: string) {
+  const mine = S.signals.filter(function (s) {
+    return s.co === coId;
+  });
+  return (
+    mine.some(function (s) {
+      return s.type === "viewed" && s.day < S.day;
+    }) &&
+    !mine.some(function (s) {
+      return s.type === "saved";
+    })
+  );
+}
+
+/** Hot, Warm or New over the 14 days up to `day`; null when the Company showed no interest. */
+export function interestLevel(coId: string, day = S.day): InterestLevel | null {
+  const recent = interestBetween(day - LEVEL_DAYS, day, coId);
+  return recent.length ? levelOf(recent) : null;
+}
+
+/** The Interest Level rule from CONTEXT.md, for one Company's recent signals. */
+function levelOf(recent: Signal[]): InterestLevel {
+  const days = new Set(
+    recent.map(function (s) {
+      return s.day;
+    }),
+  ).size;
+  const did = function (kind: SignalKind) {
+    return recent.some(function (s) {
+      return s.type === kind;
+    });
+  };
+  if (days >= 3 || did("messaged")) return "Hot";
+  if (days >= 2 || did("saved")) return "Warm";
+  return "New";
+}
+
+export function signalText(s: Signal) {
+  return SIGNAL_TEXT[s.type] + (s.type === "search" && s.detail ? ": " + s.detail : "");
+}
+
+function timesText(n: number) {
+  return n === 1 ? "once" : n === 2 ? "twice" : n + " times";
+}
+
+/** One line, such as "Viewed your profile 4 times and saved it". */
+function interestSummary(signals: Signal[]) {
+  const count = function (kind: SignalKind) {
+    return signals.filter(function (s) {
+      return s.type === kind;
+    }).length;
+  };
+  const parts: string[] = [];
+  if (count("search")) parts.push("found you in search " + timesText(count("search")));
+  if (count("viewed")) parts.push("viewed your profile " + timesText(count("viewed")));
+  if (count("saved")) parts.push(count("viewed") ? "saved it" : "saved your profile");
+  if (count("messaged")) parts.push("messaged you");
+  if (count("recommended")) parts.push("was recommended your company");
+  const last = parts.pop() ?? "";
+  return cap(parts.length ? parts.join(", ") + " and " + last : last);
+}
+
+/** Companies showing interest in the last 14 days: Hot, then Warm, then New, latest first. */
+export function interestedCompanies(): InterestedCompany[] {
+  const recent = interestBetween(S.day - LEVEL_DAYS, S.day);
+  return companiesIn(recent)
+    .map(function (id) {
+      const mine = recent.filter(function (s) {
+        return s.co === id;
+      });
+      const latest = mine.reduce(function (best, s) {
+        return s.day > best.day ||
+          (s.day === best.day && KIND_WEIGHT[s.type] > KIND_WEIGHT[best.type])
+          ? s
+          : best;
+      });
+      return {
+        company: co(id),
+        level: levelOf(mine),
+        latest: latest,
+        summary: interestSummary(mine),
+      };
+    })
+    .sort(function (a, b) {
+      return LEVEL_ORDER[a.level] - LEVEL_ORDER[b.level] || b.latest.day - a.latest.day;
+    });
+}
+
+/** Whether the 7 days before the last 7 all fall after the claim. */
+function hasPreviousPeriod() {
+  return S.day - PERIOD_DAYS * 2 + 1 >= S.joined;
+}
+
+function compare(now: number, before: number): Pick<TopNumber, "change" | "trend"> {
+  if (!hasPreviousPeriod()) return { change: null, trend: null };
+  if (now === before) return { change: "Same as last week", trend: "same" };
+  if (before === 0) return { change: now + " more than last week", trend: "up" };
+  const pctChange = Math.round((Math.abs(now - before) / before) * 100) + "%";
+  return now > before
+    ? { change: pctChange + " more than last week", trend: "up" }
+    : { change: pctChange + " less than last week", trend: "down" };
+}
+
+/** The six top numbers for the last 7 days. Connections is the current total. */
+export function topNumbers(): TopNumber[] {
+  const count = function (kind: SignalKind, from: number) {
+    return interestBetween(from, from + PERIOD_DAYS).filter(function (s) {
+      return s.type === kind;
+    }).length;
+  };
+  const now = S.day - PERIOD_DAYS,
+    before = now - PERIOD_DAYS;
+  const rows: TopNumber[] = (
+    [
+      ["Search appearances", "search"],
+      ["Profile views", "viewed"],
+      ["Profile saves", "saved"],
+      ["Messages", "messaged"],
+      ["Recommendations", "recommended"],
+    ] as const
+  ).map(function ([label, kind]) {
+    const value = count(kind, now);
+    return { label: label, value: value, ...compare(value, count(kind, before)) };
+  });
+  const links = connected().length;
+  const gained = S.ledger.filter(function (l) {
+    return l.key === "conn" && l.day > now;
+  }).length;
+  rows.push({ label: "Connections", value: links, ...compare(links, links - gained) });
+  return rows;
+}
+
+/** Search appearances and recommendations for each day since the claim; empty with none. */
+export function visibilityByDay(): VisibilityDay[] {
+  const seen = interestBetween(S.joined - 1, S.day).filter(function (s) {
+    return s.type === "search" || s.type === "recommended";
+  });
+  if (!seen.length) return [];
+  const days: VisibilityDay[] = [];
+  for (let day = S.joined; day <= S.day; day++) {
+    const on = seen.filter(function (s) {
+      return s.day === day;
+    });
+    days.push({
+      day: day,
+      searches: on.filter(function (s) {
+        return s.type === "search";
+      }).length,
+      recommendations: on.filter(function (s) {
+        return s.type === "recommended";
+      }).length,
+    });
+  }
+  return days;
+}
+
+/** One tip per step of the funnel after the first, shown for the step that loses the most. */
+const FUNNEL_TIPS = [
+  "Most companies that find you stop there. A fuller profile gives them a reason to look closer.",
+  "Companies view your profile but few save it. Add your top products and a recent project.",
+  "Companies save your profile but few message you. Message the Hot companies first.",
+  "Companies message you but few connect. Send a Connection Request after a good conversation.",
+];
+
+const FUNNEL_STAGES = [
+  "Found you",
+  "Viewed your profile",
+  "Saved your profile",
+  "Messaged you",
+  "Connected",
+];
+const STAGE_OF: Partial<Record<SignalKind, number>> = { viewed: 1, saved: 2, messaged: 3 };
+
+/** How many Companies reached each stage, or a later one, in the last 30 days; null with none. */
+export function interestFunnel(): Funnel | null {
+  const recent = interestBetween(S.day - INSIGHT_DAYS, S.day);
+  const found = companiesIn(recent);
+  if (!found.length) return null;
+  const furthest = found.map(function (id) {
+    if (S.conn[id] === "connected") return FUNNEL_STAGES.length - 1;
+    return recent.reduce(function (best, s) {
+      return s.co === id ? Math.max(best, STAGE_OF[s.type] ?? 0) : best;
+    }, 0);
+  });
+  const counts = FUNNEL_STAGES.map(function (_, stage) {
+    return furthest.filter(function (f) {
+      return f >= stage;
+    }).length;
+  });
+  const steps = FUNNEL_STAGES.map(function (label, i) {
+    const before = counts[i - 1];
+    const count = counts[i] ?? 0;
+    return {
+      label: label,
+      count: count,
+      ofPrevious: before ? Math.round((count / before) * 100) : null,
+    };
+  });
+  const weakest = steps.slice(1).reduce(
+    function (worst, step, i) {
+      const ratio = step.ofPrevious ?? 100;
+      return ratio < worst.ratio ? { ratio: ratio, tip: FUNNEL_TIPS[i] ?? worst.tip } : worst;
+    },
+    { ratio: Infinity, tip: FUNNEL_TIPS[0] ?? "" },
+  );
+  return { steps: steps, suggestion: weakest.tip };
+}
+
+/** Saves, messages, intros and Companies becoming Hot in the last 14 days, newest first. */
+export function comDashAlerts(): DashAlert[] {
+  const from = S.day - LEVEL_DAYS;
+  const alerts: DashAlert[] = [];
+  S.signals.forEach(function (s) {
+    if (s.day <= from) return;
+    const n = co(s.co).name;
+    if (s.type === "saved") alerts.push({ day: s.day, text: n + " saved your profile." });
+    if (s.type === "messaged") alerts.push({ day: s.day, text: n + " messaged you." });
+    if (s.type === "intro")
+      alerts.push({ day: s.day, text: "Your community manager introduced you to " + n + "." });
+  });
+  interestedCompanies().forEach(function (x) {
+    if (x.level !== "Hot") return;
+    let day = S.day;
+    while (day > S.joined && interestLevel(x.company.id, day - 1) === "Hot") day--;
+    if (day > from) alerts.push({ day: day, text: x.company.name + " is now Hot." });
+  });
+  const unique = alerts.filter(function (a, i) {
+    return (
+      alerts.findIndex(function (b) {
+        return b.text === a.text;
+      }) === i
+    );
+  });
+  return unique
+    .sort(function (a, b) {
+      return b.day - a.day;
+    })
+    .slice(0, 6);
+}
+
+function countRows(labels: string[]): CountRow[] {
+  const counts: Record<string, number> = {};
+  labels.forEach(function (l) {
+    counts[l] = (counts[l] || 0) + 1;
+  });
+  return Object.entries(counts)
+    .map(function ([label, count]) {
+      return { label: label, count: count };
+    })
+    .sort(function (a, b) {
+      return b.count - a.count || a.label.localeCompare(b.label);
+    });
+}
+
+/** What searchers in the last 30 days were looking for you as. */
+export function searcherRoles(): CountRow[] {
+  const searches = interestBetween(S.day - INSIGHT_DAYS, S.day).filter(function (s) {
+    return s.type === "search";
+  });
+  return countRows(
+    searches.map(function (s) {
+      const c = co(s.co);
+      if (
+        c.wants.some(function (w) {
+          return S.me.gives.includes(w);
+        })
+      )
+        return "Supplier";
+      if (
+        c.gives.some(function (g) {
+          return S.me.wants.includes(g);
+        })
+      )
+        return "Customer";
+      return "Partner";
+    }),
+  );
+}
+
+/** Industries with 3 or more interested Companies in the last 30 days. */
+export function industryGroups(): CountRow[] {
+  const ids = companiesIn(interestBetween(S.day - INSIGHT_DAYS, S.day));
+  return countRows(
+    ids.map(function (id) {
+      return INDUSTRY[co(id).cat] ?? cap(co(id).cat);
+    }),
+  ).filter(function (row) {
+    return row.count >= 3;
+  });
+}
+
+function profileLists(term: string) {
+  const m = S.me;
+  const text = [m.offer.join(" "), m.products, m.about, m.projects.join(" ")]
+    .join(" ")
+    .toLowerCase()
+    .replace(/-/g, " ");
+  return text.includes(term.toLowerCase());
+}
+
+/** Search terms from the last 30 days, flagging those the profile doesn't list. */
+export function searchTerms(): SearchTerm[] {
+  const searches = interestBetween(S.day - INSIGHT_DAYS, S.day).filter(function (s) {
+    return s.type === "search" && s.detail;
+  });
+  return countRows(
+    searches.map(function (s) {
+      return s.detail;
+    }),
+  ).map(function (row) {
+    return {
+      term: row.label,
+      count: row.count,
+      gap: !profileLists(row.label) && !S.dismissedTerms.includes(row.label),
+    };
+  });
+}
+
+export function profileGaps() {
+  return searchTerms().filter(function (t) {
+    return t.gap;
+  });
+}
+
+export function clearProfileFocus() {
+  if (S.profileFocus) {
+    S.profileFocus = null;
+    emit();
+  }
+}
+
+export function profileCompleteness() {
+  const m = S.me,
+    missing: string[] = [];
+  if (!m.products) missing.push("your top 3 products");
+  if (!m.projects.length) missing.push("a recent project");
+  if (!m.photo) missing.push("a photo of your work");
+  return { percent: strength(), missing: missing };
+}
+
+export function interestTotals() {
+  const all = interestedCompanies();
+  return {
+    interested: all.length,
+    hot: all.filter(function (x) {
+      return x.level === "Hot";
+    }).length,
+  };
+}
+
+export function connectionSummary() {
+  return {
+    connections: connected().length,
+    incoming: S.incoming.length,
+    outgoing: Object.keys(S.conn).filter(function (k) {
+      return S.conn[k] === "pending";
+    }).length,
+  };
+}
+
+const FRESH_DAYS = 14;
+
+/** The single most useful thing to do, in the fixed 8-step order, with why it was chosen. */
+export function nextAction(): NextAction {
+  const drafts = Object.entries(S.drafts)
+    .filter(function ([, d]) {
+      return d.ai && d.text.trim();
+    })
+    .map(function ([id]) {
+      return id;
+    });
+  if (drafts.length)
+    return {
+      kind: "drafts",
+      threads: drafts,
+      rank: 1,
+      reason: "Shown because drafts are waiting for your approval, and they always come first.",
+    };
+  const list = S.lists[S.day] || [];
+  const left = list.filter(function (id) {
+    return !S.leadAct[id] && !S.conn[id];
+  }).length;
+  if (left)
+    return {
+      kind: "leads",
+      left: left,
+      total: list.length,
+      rank: 2,
+      reason: "Shown because no drafts are waiting and today’s leads aren’t finished.",
+    };
+  const asks = S.asks.filter(function (a) {
+    return S.conn[a.co] === "connected" && !a.answered && offersMe(a);
+  });
+  if (asks.length)
+    return {
+      kind: "ask",
+      asks: asks,
+      rank: 3,
+      reason: "Shown because today’s leads are done and a connection is asking for what you sell.",
+    };
+  const hot = interestedCompanies().find(function (x) {
+    return (
+      x.level === "Hot" &&
+      !(threadFor(x.company.id)?.msgs ?? []).some(function (m) {
+        return m.from === "me";
+      })
+    );
+  });
+  if (hot)
+    return {
+      kind: "hot",
+      lead: hot,
+      rank: 4,
+      reason: "Shown because nothing above needs you and a Hot company hasn’t heard from you.",
+    };
+  if (S.incoming.length)
+    return {
+      kind: "requests",
+      companies: S.incoming.map(function (r) {
+        return r.co;
+      }),
+      rank: 5,
+      reason: "Shown because no Hot company is waiting, and companies are waiting on your reply.",
+    };
+  const gap = profileGaps()[0];
+  if (gap)
+    return {
+      kind: "gap",
+      gap: gap,
+      rank: 6,
+      reason:
+        "Shown because nothing above needs you, and companies searched for something your profile doesn’t list.",
+    };
+  const days = S.day - S.me.lastUpdate;
+  if (days >= FRESH_DAYS)
+    return {
+      kind: "fresh",
+      days: days,
+      rank: 7,
+      reason: "Shown because nothing above needs you and your profile hasn’t changed in 14 days.",
+    };
+  return {
+    kind: "clear",
+    rank: 8,
+    reason:
+      "Shown because nothing needs you right now. Drafts, today’s leads, asks from your connections, Hot companies, connection requests, profile gaps and a profile check come first.",
+  };
 }
 
 S = fresh();

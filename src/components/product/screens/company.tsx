@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { Check } from "lucide-react";
 
 import { AiChip, Btn, Mono, ProfileHead, St } from "@/components/product/shared";
@@ -7,6 +8,7 @@ import { useSimulation } from "@/components/product/use-simulation";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import type { ProfileField } from "@/services/comlinked";
 import {
   act,
   AI_LIMIT,
@@ -48,9 +50,12 @@ function PendingRows() {
   );
 }
 
-// A4 A5 C1 C3: your own Company's profile.
-export function CompanyProfile() {
+// A4 A5 C1 C3: your own Company's profile. `focus` names a field to focus on arrival.
+export function CompanyProfile({ focus }: { focus?: ProfileField }) {
   const S = useSimulation();
+  useEffect(() => {
+    if (focus) document.getElementById(`f-${focus}`)?.focus();
+  }, [focus]);
   const m = S.me;
   const f = S.forms;
   const todo = !m.products
