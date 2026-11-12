@@ -77,9 +77,9 @@ function Body({ n, company }: { n: NextAction; company: string }) {
           </p>
           <p className="a-why">{n.lead.summary}.</p>
           <div className="a-acts">
-            <Btn cls="o sm" onClick={() => act.viewCo(c.id)}>
-              See company
-            </Btn>
+            <Link href={paths.dashTabs.signalsFor(c.id)} className="a-btn o sm">
+              See signals
+            </Link>
             <Btn cls="sm" onClick={() => act.message(c.id)}>
               Message
             </Btn>

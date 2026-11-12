@@ -2872,7 +2872,8 @@ const LEVEL_DAYS = 14;
 const PERIOD_DAYS = 7;
 /** The funnel, roles, industries and search terms cover the last 30 days. */
 const INSIGHT_DAYS = 30;
-const LEVEL_ORDER: Record<InterestLevel, number> = { Hot: 0, Warm: 1, New: 2 };
+/** The Interest Levels, strongest first: the order of lists and of ComDash's level filter. */
+export const INTEREST_LEVELS: readonly InterestLevel[] = ["Hot", "Warm", "New"];
 /** Which signal to show as the latest when several fall on the same day. */
 const KIND_WEIGHT: Record<SignalKind, number> = {
   messaged: 5,
@@ -2973,9 +2974,10 @@ function interestSummary(signals: Signal[]) {
   return cap(parts.length ? parts.join(", ") + " and " + last : last);
 }
 
-/** One dated line per day and kind, oldest first; searches also split by term. */
+/** One dated line per day and kind, oldest first; searches also split by term. A kind earns
+ * its intent points once a day, on its first line that day. */
 function timelineOf(signals: Signal[]): TimelineEntry[] {
-  const groups: { day: number; text: string; n: number }[] = [];
+  const groups: { day: number; kind: SignalKind; text: string; n: number }[] = [];
   signals
     .slice()
     .sort(function (a, b) {
@@ -2987,10 +2989,17 @@ function timelineOf(signals: Signal[]): TimelineEntry[] {
         return g.day === s.day && g.text === text;
       });
       if (same) same.n++;
-      else groups.push({ day: s.day, text: text, n: 1 });
+      else groups.push({ day: s.day, kind: s.type, text: text, n: 1 });
     });
-  return groups.map(function (g) {
-    return { day: g.day, text: g.n > 1 ? g.text + " " + timesText(g.n) : g.text };
+  return groups.map(function (g, i) {
+    const first = !groups.slice(0, i).some(function (o) {
+      return o.day === g.day && o.kind === g.kind;
+    });
+    return {
+      day: g.day,
+      text: g.n > 1 ? g.text + " " + timesText(g.n) : g.text,
+      points: first ? (INTENT_POINTS[g.kind] ?? 0) : 0,
+    };
   });
 }
 
@@ -3026,7 +3035,10 @@ function interestRows(recent: Signal[], lookup: (id: string) => Company): Intere
       };
     })
     .sort(function (a, b) {
-      return LEVEL_ORDER[a.level] - LEVEL_ORDER[b.level] || b.latest.day - a.latest.day;
+      return (
+        INTEREST_LEVELS.indexOf(a.level) - INTEREST_LEVELS.indexOf(b.level) ||
+        b.latest.day - a.latest.day
+      );
     });
 }
 
@@ -3045,13 +3057,10 @@ const INTENT_POINTS: Partial<Record<SignalKind, number>> = {
 };
 const INTENT_CAP = 100;
 
+/** The timeline's points added up, capped at 100. The timeline holds the once-a-day rule. */
 function scoreOf(signals: Signal[]) {
-  const counted = new Set<string>();
-  const total = signals.reduce(function (sum, s) {
-    const key = s.type + ":" + s.day;
-    if (counted.has(key)) return sum;
-    counted.add(key);
-    return sum + (INTENT_POINTS[s.type] ?? 0);
+  const total = timelineOf(signals).reduce(function (sum, e) {
+    return sum + (e.points ?? 0);
   }, 0);
   return Math.min(INTENT_CAP, total);
 }
@@ -3069,9 +3078,17 @@ function isPlanView(view: string): view is PlanView {
  * hidden; Growth adds intent scores; Pro adds interest from other chambers. */
 export function interestForView(view: PlanView): InterestRow[] {
   const rules = PLAN_VIEWS[view];
+  const timeline = function (entries: TimelineEntry[]) {
+    return rules.intentScore
+      ? entries
+      : entries.map(function (e) {
+          return { ...e, points: null };
+        });
+  };
   const own: InterestRow[] = interestedCompanies().map(function (x) {
     return {
       ...x,
+      timeline: timeline(x.timeline),
       score: rules.intentScore ? intentScore(x.company.id) : null,
       chamber: null,
       actionable: true,
@@ -3152,13 +3169,18 @@ export function topNumbers(): TopNumber[] {
     ] as const
   ).map(function ([label, kind]) {
     const value = count(kind, now);
-    return { label: label, value: value, ...compare(value, count(kind, before)) };
+    return { key: kind, label: label, value: value, ...compare(value, count(kind, before)) };
   });
   const links = connected().length;
   const gained = S.ledger.filter(function (l) {
     return l.key === "conn" && l.day > now;
   }).length;
-  rows.push({ label: "Connections", value: links, ...compare(links, links - gained) });
+  rows.push({
+    key: "connections",
+    label: "Connections",
+    value: links,
+    ...compare(links, links - gained),
+  });
   return rows;
 }
 
@@ -3715,9 +3737,9 @@ export function emptyReplyNote() {
     : "The AI Assistant is off. Write your reply.";
 }
 
-/** A Company's industry and city, as every ComDash list shows them. */
-export function companyLine(c: Pick<Company, "ind" | "city">) {
-  return c.ind + " · " + c.city;
+/** A Company's industry and city, and its chamber when that isn't the user's own. */
+export function companyLine(c: Pick<Company, "ind" | "city">, chamber?: string | null) {
+  return c.ind + " · " + c.city + (chamber ? " · " + chamber : "");
 }
 
 /** Each morning one Connection with news posts its profile update. */

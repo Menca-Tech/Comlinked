@@ -44,6 +44,8 @@ export const paths = {
     agent: "/app/dash/agent",
     connections: "/app/dash/connections",
     profile: "/app/dash/profile",
+    /** Interest Signals with one Company's timeline drawer open. */
+    signalsFor: (companyId: string) => `/app/dash/signals?company=${encodeURIComponent(companyId)}`,
   },
   dashboard: {
     overview: "/dashboard",

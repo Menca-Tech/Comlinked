@@ -281,12 +281,16 @@ test.describe("website links into the product", () => {
     await page.setViewportSize(LAPTOP);
     await page.goto("/app/claim");
     await presenterGuide(page, "Two weeks in");
-    await expect(page.getByRole("heading", { name: "12 interested companies" })).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "Hapag Kitchen Group", exact: true }),
+    ).toBeVisible();
     await presenterGuide(page, "Website");
     await expect(page.getByRole("heading", { level: 1 })).toContainText("within 24 hours");
     await page.getByRole("banner").getByRole("link", { name: "Sign in" }).click();
 
-    await expect(page.getByRole("heading", { name: "12 interested companies" })).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "Hapag Kitchen Group", exact: true }),
+    ).toBeVisible();
   });
 
   test("the auth sign-in route still renders", async ({ page }) => {
@@ -644,7 +648,9 @@ test.describe("join form", () => {
     await page.setViewportSize(LAPTOP);
     await page.goto("/app/claim");
     await presenterGuide(page, "Two weeks in");
-    await expect(page.getByRole("heading", { name: "12 interested companies" })).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "Hapag Kitchen Group", exact: true }),
+    ).toBeVisible();
     await presenterGuide(page, "Website");
     await page.getByRole("banner").getByRole("link", { name: "Join free" }).click();
     await fillValid(page);

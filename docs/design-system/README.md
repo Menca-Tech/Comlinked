@@ -159,13 +159,18 @@ industry, city and chamber, a "View as" switcher, and five tabs with their own a
 Overview, Interest Signals, AI Lead Agent, Connections and Profile. The tabs are links in
 one row that scrolls sideways on phones.
 
-- **Overview**: top numbers, visibility chart, interest funnel, the interested companies
-  table (Hot, then Warm, then New), alerts, "Found you as a…", interest by industry,
-  search terms with profile gaps, Next action and summary cards. On phones Next action
-  comes first, the table becomes stacked cards and the chart shows one series.
-- **Interest Signals**: each interested company with its Interest Level as a text tag,
-  a one-line summary, repeat interest on separate days in blue, a dated timeline that
-  opens in place, and Connect and Message.
+- **Overview**: Next action, then four summary cards two by two (one column on phones):
+  Interest Signals with three stats, a small visibility line and the Hot companies, each
+  opening its timeline; AI Lead Agent, labelled "Preview: after the MVP", with no agent
+  figures; Connections; and Profile.
+- **Interest Signals**: the six top numbers, the visibility chart beside the interest
+  funnel, then the interested companies table (Hot, then Warm, then New, with All, Hot,
+  Warm and New filter chips showing counts) beside a rail of alerts, "Found you as a…",
+  interest by industry and search terms with profile gaps. A row opens a side drawer
+  with the company's dated timeline, "You see the company, not the person.", and Connect
+  and Message. On Growth and Pro the drawer adds each entry's intent points. On phones
+  the table becomes stacked cards, the chart shows one series and the drawer is full
+  width.
 - **Connections**: Manage connections beside the main column on laptops, then
   Invitations, Companies in your chamber, Buyers of what you sell, and "From your
   connections" (asks, Success Wall wins and profile updates, each with a reply box that

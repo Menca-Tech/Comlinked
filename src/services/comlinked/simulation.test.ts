@@ -8,6 +8,7 @@ import {
   connectionItems,
   connectionList,
   connectionStatus,
+  INTEREST_LEVELS,
   intentScore,
   interestForView,
   invitations,
@@ -677,7 +678,7 @@ describe("Interest Signals timeline", () => {
     withSignals([["sari", "viewed", 20]]);
     const [row] = interestedCompanies();
     expect(row?.level).toBe("New");
-    expect(row?.timeline).toEqual([{ day: 20, text: "Viewed your profile" }]);
+    expect(row?.timeline).toEqual([{ day: 20, text: "Viewed your profile", points: 3 }]);
     expect(row?.repeat).toBeNull();
   });
 
@@ -690,12 +691,39 @@ describe("Interest Signals timeline", () => {
     ]);
     const [row] = interestedCompanies();
     expect(row?.timeline).toEqual([
-      { day: 15, text: "Viewed your profile twice" },
-      { day: 18, text: "Found you in search: polvoron" },
-      { day: 20, text: "Saved your profile" },
+      { day: 15, text: "Viewed your profile twice", points: 3 },
+      { day: 18, text: "Found you in search: polvoron", points: 1 },
+      { day: 20, text: "Saved your profile", points: 5 },
     ]);
     expect(row?.repeat).toBe("Interest on 3 separate days");
     expect(row?.summary).toBe("Found you in search once, viewed your profile twice and saved it");
+  });
+});
+
+describe("intent points on the timeline", () => {
+  it("gives a kind its points once a day, even across search terms", () => {
+    withSignals([
+      ["sari", "search", 20, "polvoron"],
+      ["sari", "search", 20, "ube spread"],
+    ]);
+    expect(interestedCompanies()[0]?.timeline.map((e) => e.points)).toEqual([1, 0]);
+  });
+
+  it("hides points on Free and shows entries that add up to the score on Growth and Pro", () => {
+    act.demoActive();
+    const row = (view: "free" | "growth" | "pro") =>
+      interestForView(view).find((r) => r.company.id === "hapag");
+    expect(row("free")?.timeline.every((e) => e.points === null)).toBe(true);
+    for (const view of ["growth", "pro"] as const) {
+      const entries = row(view)?.timeline ?? [];
+      const total = entries.reduce((sum, e) => sum + (e.points ?? 0), 0);
+      expect(total).toBe(row(view)?.score);
+      expect(total).toBe(11);
+    }
+  });
+
+  it("lists the Interest Levels in filter order", () => {
+    expect(INTEREST_LEVELS).toEqual(["Hot", "Warm", "New"]);
   });
 });
 

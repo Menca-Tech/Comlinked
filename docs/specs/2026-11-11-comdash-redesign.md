@@ -15,8 +15,11 @@ The Next.js app also stopped being the main version on 2026-11-10, when the HTML
 
 ComDash takes the prototype's structure exactly: a company header, a "View as" plan switcher, and five tabs (Overview, Interest Signals, AI Lead Agent, Connections, Profile). Each tab has its own web address under the ComDash route.
 
-- **Overview** shows the prototype's top numbers, a visibility chart, an interest funnel, the table of interested Companies, alerts, "Found you as a…", interest by industry, search terms that found you, Next action and summary cards for Interest Signals, Connections and Profile.
-- **Interest Signals** lists every interested Company with its Interest Level and a timeline of its signals.
+- **Overview** shows Next action, then four summary cards: Interest Signals (interested Companies, messages, search appearances, a small visibility line and the Hot Companies), AI Lead Agent (labelled "Preview: after the MVP"), Connections and Profile.
+- **Interest Signals** shows the prototype's analytics in its order: the six top numbers, the visibility chart beside the interest funnel, then the table of interested Companies (with All, Hot, Warm and New filters) beside a rail of alerts, "Found you as a…", interest by industry and search terms that found you. Opening a Company shows its dated timeline in a side drawer, addressed as `?company=<id>`.
+
+Placement changed on 2026-11-11 (ticket 03): sessions 1 and 2 put the analytics on the Overview, which the prototype puts on Interest Signals. Stories 16–32 below now describe the Interest Signals tab. On 2026-11-12 the user asked for the prototype's Interest Signals page to be copied exactly, with MVP data; see "Interest Signals detail" under Implementation Decisions (ticket 04).
+
 - **AI Lead Agent** shows the existing AI Lead Agent preview, still labelled "Preview: after the MVP".
 - **Connections** shows Manage connections, Invitations, Companies in your chamber, Buyers of what you sell, and "From your connections".
 - **Profile** holds the existing company profile editor.
@@ -52,9 +55,9 @@ The Network Ring, the rank and Activity Score card, and Recent wins come off Com
 14. As a presenter, I want Growth and Pro to add only interest from other chambers and a numeric intent score, so that Free never looks stripped down.
 15. As a presenter, I want the selected view to persist while I move between tabs, so that the demo stays consistent.
 
-### Overview: numbers, chart and funnel
+### Interest Signals: numbers, chart and funnel
 
-16. As a company owner, I want top numbers for search appearances, profile views, profile saves, messages, recommendations and Connections, so that I can see my visibility at a glance.
+16. As a company owner, I want six top numbers, in this order: search appearances, recommendations, messages (highlighted as the strongest signal), introductions, profile views and profile saves, so that I can see my visibility at a glance.
 17. As a company owner, I want each number compared with the previous period, so that I know whether things are improving.
 18. As a company owner with no previous period yet, I want the comparison left out rather than shown as a false change, so that the numbers stay honest.
 19. As a company owner, I want a visibility chart counted from the day I claimed, so that it shows my real history and nothing invented.
@@ -63,7 +66,7 @@ The Network Ring, the rank and Activity Score card, and Recent wins come off Com
 22. As a company owner, I want one plain line under the funnel suggesting what would move more Companies to the next stage, so that the funnel leads to action.
 23. As a company owner, I want the headline count of interested Companies, so that I know how many are paying attention.
 
-### Overview: interested Companies, alerts and insights
+### Interest Signals: interested Companies, alerts and insights
 
 24. As a company owner, I want a table of interested Companies with name, Interest Level, latest signal and one action, so that I can decide whom to contact.
 25. As a company owner, I want Hot Companies listed first, then Warm, then New, so that the most promising appear at the top.
@@ -142,7 +145,7 @@ The Network Ring, the rank and Activity Score card, and Recent wins come off Com
 | Path                                                            | Expected                                                                          |
 | --------------------------------------------------------------- | --------------------------------------------------------------------------------- |
 | A presenter claims Kalayaan Foods at `/app/claim`               | ComDash opens on Overview with calm empty states and today's leads as Next action |
-| The presenter picks "Two weeks in" in the guide                 | Every Overview panel fills from the simulation's signals                          |
+| The presenter picks "Two weeks in" in the guide                 | Every Interest Signals panel fills; the Overview shows Next action and four cards |
 | A company owner sends a message from Leads, then returns        | That Company's Interest Level and the funnel's "messaged" step update             |
 | A company owner opens a Hot Company in Interest Signals         | Its timeline and summary show, with Message and Connect                           |
 | A company owner clicks "Add to profile" on a search-term gap    | The Profile tab opens at the right field; after saving, the gap clears            |
@@ -205,10 +208,19 @@ The Network Ring, the rank and Activity Score card, and Recent wins come off Com
 
 - **"From your connections."** Built only from Asks, Success Wall wins and profile updates by the Company's Connections. Each item offers an AI-drafted reply through the existing draft and AI-limit rules. Nothing sends until the person taps Send, and with AI off the reply box starts empty. It is not a general news feed.
 - **Connections lists.** Invitations come from the simulation's existing invites. "Companies in your chamber" uses existing Mutual Connections. "Buyers of what you sell" matches Companies whose needs match the products on the profile, using the existing fit logic.
-- **Visual design.** The prototype's layout, panel order and wording are copied, mapped onto the App Mode design system tokens and existing product styles rather than the prototype's own CSS. Example figures come from the simulation, never from the prototype.
+- **Visual design.** The prototype's layout, panel order, panel titles and interactions are copied. Its sizes, spacing, radii, grid, borders, font weights and number treatment (tabular figures) are copied exactly, using App Mode colours and fonts rather than the prototype's palette or Open Sans and IBM Plex. Example figures come from the simulation, never from the prototype.
+- **Interest Signals detail (decided 2026-11-12).** Where a prototype label names something outside the MVP, its MVP equivalent takes the same spot.
+  - Tiles: Search appearances, Recommendations, Messages (the highlighted tile, in the prototype's Top 3 shortlist spot), Introductions, Profile views, Profile saves. Each has the prototype's change line, hidden when there is no previous period. Connections is not a tile.
+  - Chart: "Visibility by day". Search appearances is the main line, with an area fill; Recommendations is the second line. Axis grid, end-of-line values, point hover labels and legend, with ticks every other day and no launch marker. The note is built from the data: "Since you claimed your profile on Day N", plus "Search appearances are rising" when the latest day beats the first-week average.
+  - Funnel: Found you in search, Viewed your profile, Saved your profile, Messaged you, Connected, counting distinct Companies, with the note "last 14 days". "x% of previous" is a whole number, with one decimal under 10%, and never a percentage of zero. The suggestion line is picked by a fixed rule from the biggest drop, with no AI.
+  - Table: "N interested companies", with chips All, Hot, Warm and New and their counts. The columns are Company, Interest Level (the level only on Free; score plus level on Growth and Pro), Latest signal ("Saved your profile · Day 12") and Action. The action is a status ("✓ Messaged", "✓ Connected"), otherwise a Message button. Rows open the drawer. New Companies with only search signals fold under "+ N more New companies with light activity (search appearances only)", a button that reveals them. On Pro, other-chamber rows say "· other chamber". There is no upsell.
+  - Rail: Alerts (note "last 14 days"), Found you as a… (note "searches"), Who's interested by industry (groups of 3+), Search terms that found you. A gap shows the prototype's amber line, with small text links "Add to profile" and "We don't offer this"; once added, the green "Added to your profile." shows.
+  - Drawer: the prototype's 420px panel, full width on a phone. One timeline row per signal kind per day, with ×N for repeats, and a "Repeat interest: signals on 3 separate days" row when the rule counts it. Free: heading "Signal timeline", the level only, no points. Growth and Pro: heading "How the intent score was built", level and score, points on each row, and "N points, capped at 100." There is no decay. It ends with "You see the company, not the person." and the status or Message, plus Connect. The drawer is non-modal: focus moves to Close, Escape closes it and returns focus to the row, and the open Company is kept as `?company=`.
+  - Overview Interest Signals card: Interested companies (with the Hot count), Messages and Search appearances, a sparkline, and Hot Company names that open the drawer.
 - **Phone layout.**
-  - Next action moves to the top.
+  - Next action moves to the top, and the four Overview cards stack in one column.
   - Tabs scroll horizontally in one row.
+  - The timeline drawer fills the screen width.
   - Top numbers form a 2×3 grid.
   - The interested-companies table becomes stacked cards.
   - The chart shows one series with a toggle.

@@ -73,6 +73,8 @@ export type InterestLevel = "Hot" | "Warm" | "New";
 export interface TimelineEntry {
   day: number;
   text: string;
+  /** Intent points this entry adds; null where the view shows no intent score. */
+  points: number | null;
 }
 
 export interface InterestedCompany {
@@ -142,6 +144,8 @@ export interface ConnectionRow {
 }
 
 export interface TopNumber {
+  /** The signal kind counted, or "connections" for the Connection total. */
+  key: SignalKind | "connections";
   label: string;
   value: number;
   /** Null until there is a previous period to compare with. */
