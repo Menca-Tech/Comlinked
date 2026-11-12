@@ -17,12 +17,12 @@ export function LevelFilter({
 }) {
   const choices: LevelChoice[] = ["All", ...INTEREST_LEVELS];
   return (
-    <div className="cd-seg" role="group" aria-label="Filter by Interest Level">
+    <div className="cd-bands" role="group" aria-label="Filter by Interest Level">
       {choices.map((choice) => (
         <button
           key={choice}
           type="button"
-          className="cd-chip"
+          className="cd-band"
           aria-pressed={value === choice}
           onClick={() => onChange(choice)}
         >

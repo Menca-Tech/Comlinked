@@ -4,11 +4,17 @@ import { useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { ConnectAction } from "@/components/product/comdash/connect-action";
+import { InterestAction } from "@/components/product/comdash/interest-action";
 import { LevelTag } from "@/components/product/comdash/level-tag";
-import { Btn } from "@/components/product/shared";
 import { useSimulation } from "@/components/product/use-simulation";
 import { paths } from "@/paths";
-import { act, companyLine, dayName, interestForView, type InterestRow } from "@/services/comlinked";
+import {
+  companyLine,
+  dayLabel,
+  interestForView,
+  pointsTotal,
+  type InterestRow,
+} from "@/services/comlinked";
 
 /** Shuts the drawer and moves focus back to the Company's table row, or to the level filter
  * when the row is filtered out or the drawer was opened from another tab. */
@@ -27,49 +33,39 @@ function DrawerBody({ row, onClose }: { row: InterestRow; onClose: () => void })
   const c = row.company;
   const close = useRef<HTMLButtonElement>(null);
   useEffect(() => close.current?.focus(), [c.id]);
+  const scored = row.score !== null;
   return (
     <div className="cd-drawer" role="dialog" aria-modal="false" aria-labelledby="cd-drawer-title">
-      <button ref={close} type="button" className="a-btn o sm cd-close" onClick={onClose}>
+      <button ref={close} type="button" className="cd-close" onClick={onClose}>
         Close
       </button>
       <div className="cd-drawer-head">
-        <span className="cd-tags">
-          <LevelTag level={row.level} />
-          {row.score === null ? null : <span className="cd-score">Intent score {row.score}</span>}
-        </span>
-        <h2 id="cd-drawer-title" className="a-h2">
-          {c.name}
-        </h2>
+        <LevelTag level={row.level} score={row.score} />
+        <h2 id="cd-drawer-title">{c.name}</h2>
         <span className="cd-when">{companyLine(c, row.chamber)}</span>
       </div>
-      <p className="cd-lead">{row.summary}.</p>
-      {row.repeat ? <p className="cd-repeat">{row.repeat}</p> : null}
-      <section>
-        <h3 className="cd-mini">
-          {row.score === null ? "Timeline" : "How the intent score was built"}
+      <section aria-labelledby="cd-tl-title">
+        <h3 id="cd-tl-title" className="cd-mini">
+          {scored ? "How the intent score was built" : "Signal timeline"}
         </h3>
         <ol className="cd-tl">
           {row.timeline.map((entry) => (
             <li key={`${entry.day}-${entry.text}`}>
-              <time>{dayName(entry.day)}</time>
+              <span className="cd-day">{dayLabel(entry.day)}</span>
               <span>{entry.text}</span>
-              {entry.points === null ? null : <b className="cd-pts">+{entry.points}</b>}
+              <b>{entry.points === null ? null : `+${entry.points}`}</b>
             </li>
           ))}
         </ol>
-        {row.score === null ? null : (
-          <p className="cd-note">
-            Total: {row.score}. Each kind of signal counts once a day, and the score stops at 100.
-          </p>
-        )}
+        {scored ? (
+          <p className="cd-note cd-total">{pointsTotal(row.timeline)} points, capped at 100.</p>
+        ) : null}
       </section>
       <p className="cd-note">You see the company, not the person.</p>
       {row.actionable ? (
         <div className="a-acts">
-          <ConnectAction company={c} />
-          <Btn cls="sm" aria-label={`Message ${c.name}`} onClick={() => act.message(c.id)}>
-            Message
-          </Btn>
+          <InterestAction row={row} />
+          {row.status === "Connected" ? null : <ConnectAction company={c} />}
         </div>
       ) : null}
     </div>

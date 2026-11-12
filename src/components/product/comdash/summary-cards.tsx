@@ -37,7 +37,7 @@ function CardLink({ href, children }: { href: string; children: ReactNode }) {
   );
 }
 
-/** Interested Companies, saves and search appearances, the visibility trend and Hot names. */
+/** Interested Companies, messages and search appearances, the visibility trend and Hot names. */
 export function InterestSignalsCard() {
   useSimulation();
   const interested = interestedCompanies();
@@ -51,7 +51,7 @@ export function InterestSignalsCard() {
     >
       <div className="cd-stats">
         <Stat label="Interested companies" value={interested.length} note={`${hot.length} Hot`} />
-        <Stat label="Profile saves" value={week("saved")} note="last 7 days" />
+        <Stat label="Messages" value={week("messaged")} note="last 7 days" />
         <Stat label="Search appearances" value={week("search")} note="last 7 days" />
       </div>
       <Sparkline days={visibilityByDay()} />

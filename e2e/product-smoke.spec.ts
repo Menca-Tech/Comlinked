@@ -40,6 +40,8 @@ const levelButton = (page: Page, level: string) =>
   page
     .getByRole("group", { name: LEVEL_FILTER })
     .getByRole("button", { name: new RegExp(`^${level}`) });
+const lightFold = (page: Page) =>
+  page.getByRole("button", { name: /New compan(y|ies) with light activity/ });
 const viewButton = (page: Page, name: string) =>
   page.getByRole("group", { name: "View as" }).getByRole("button", { name, exact: true });
 
@@ -203,12 +205,15 @@ test.describe("ComDash", () => {
     await claimNewCompany(page);
     await expect(panel(page, "Next action")).toContainText("Finish today’s leads");
     await expect(panel(page, "Next action")).toContainText("Shown because");
-    await expect(panel(page, "Interest Signals")).toContainText("Profile saves");
+    await expect(panel(page, "Interest Signals")).toContainText("Messages");
     await expect(page.locator(".a-rank")).toHaveCount(0);
     await expect(page.locator(".dv2-ring")).toHaveCount(0);
     await openTab(page, "Interest Signals");
     await expect(page.getByText("Comparisons start after your first two weeks.")).toBeVisible();
     await expect(page.locator(".cd-tile .cd-d")).toHaveCount(0);
+    await expect(panel(page, "Visibility by day").locator(".cd-ph")).toHaveText(
+      /Since you claimed your profile on Day 1$/,
+    );
     await expect(
       page.getByText("An industry shows here once 3 or more of its companies are interested."),
     ).toBeVisible();
@@ -233,10 +238,34 @@ test.describe("ComDash", () => {
 
     await openTab(page, "Interest Signals");
     await expect(page.locator(".cd-empty")).toHaveCount(0);
-    await expect(page.locator(".cd-tile")).toHaveCount(6);
-    await expect(page.locator(".cd-tile .cd-d").first()).toBeVisible();
-    await expect(page.locator(".cd-chart")).toBeVisible();
+    await expect(page.locator(".cd-tile .cd-k")).toHaveText([
+      "Search appearances",
+      "Recommendations",
+      "Messages",
+      "Introductions",
+      "Profile views",
+      "Profile saves",
+    ]);
+    await expect(page.locator(".cd-tile.star")).toHaveCount(1);
+    await expect(page.locator(".cd-tile.star .cd-k")).toHaveText("Messages");
+    await expect(page.locator(".cd-tile .cd-d")).toHaveCount(6);
+    const messages = page.locator(".cd-tile", { hasText: "Messages" }).locator(".cd-d");
+    await expect(messages).toContainText("▲");
+    await expect(messages).toContainText("2 more than before");
+    const chart = panel(page, "Visibility by day");
+    await expect(chart.locator(".cd-chart")).toBeVisible();
+    await expect(chart.locator(".cd-area")).toHaveCount(1);
+    await expect(chart.locator(".cd-series polyline")).toHaveCount(2);
+    await expect(chart.locator(".cd-end")).toHaveCount(2);
+    await expect(chart.locator(".cd-legend li")).toHaveText([
+      "Search appearances",
+      "Recommendations",
+    ]);
+    await expect(chart.locator(".cd-ph")).toContainText("Since you claimed your profile on Day 1");
     await expect(page.locator(".cd-fstep")).toHaveCount(5);
+    await expect(page.locator(".cd-fstep").first()).toContainText("Found you in search");
+    await expect(page.locator(".cd-fstep").nth(1)).toContainText("42% of previous");
+    await expect(panel(page, "Interest funnel").locator(".cd-tip")).toHaveCount(1);
     await expect(page.getByRole("heading", { name: TWO_WEEKS_HEADING })).toBeVisible();
     await expect(companyRow(page, "hapag")).toContainText("Hot");
     await expect(companyRow(page, "maple")).toContainText("Warm");
@@ -256,9 +285,11 @@ test.describe("ComDash", () => {
     await twoWeeksIn(page);
     await openTab(page, "Interest Signals");
     await expect(levelButton(page, "All")).toHaveAttribute("aria-pressed", "true");
+    await expect(page.locator("tr[data-company]")).toHaveCount(7);
     for (const level of ["Hot", "Warm", "New"]) {
       await levelButton(page, level).click();
       await expect(levelButton(page, level)).toHaveAttribute("aria-pressed", "true");
+      if (await lightFold(page).isVisible()) await lightFold(page).click();
       const count = Number((await levelButton(page, level).innerText()).replace(/\D/g, ""));
       await expect(page.locator("tr[data-company]")).toHaveCount(count);
       for (const row of await page.locator("tr[data-company]").all()) {
@@ -267,6 +298,22 @@ test.describe("ComDash", () => {
     }
     await levelButton(page, "All").click();
     await expect(page.locator("tr[data-company]")).toHaveCount(12);
+  });
+
+  test("light activity folds search-only New companies under a button", async ({ page }) => {
+    await twoWeeksIn(page);
+    await openTab(page, "Interest Signals");
+    await expect(lightFold(page)).toHaveText(
+      "+ 5 more New companies with light activity (search appearances only)",
+    );
+    await expect(lightFold(page)).toHaveAttribute("aria-expanded", "false");
+    await expect(companyRow(page, "malaya")).toHaveCount(0);
+    await lightFold(page).focus();
+    await page.keyboard.press("Enter");
+    await expect(lightFold(page)).toHaveAttribute("aria-expanded", "true");
+    await expect(companyRow(page, "malaya")).toContainText("Found you in search: snacks · Day 14");
+    await levelButton(page, "Warm").click();
+    await expect(lightFold(page)).toHaveCount(0);
   });
 
   test("a level with no companies says so", async ({ page }) => {
@@ -290,8 +337,15 @@ test.describe("ComDash", () => {
     await expect(hapag).toContainText("Hot");
     await expect(hapag).toContainText("Restaurant group");
     await expect(hapag).toContainText("You see the company, not the person.");
-    await expect(hapag.locator(".cd-tl li")).toHaveCount(3);
+    await expect(hapag.locator(".cd-tl li")).toHaveCount(4);
+    await expect(hapag.locator(".cd-tl li").last()).toContainText(
+      "Repeat interest: signals on 3 separate days",
+    );
+    await expect(hapag.getByRole("heading", { name: "Signal timeline" })).toBeVisible();
     await expect(hapag.getByText("How the intent score was built")).toHaveCount(0);
+    await expect(hapag.locator(".cd-tl b")).toHaveText(["", "", "", ""]);
+    await expect(hapag.locator(".cd-level")).toHaveText("Hot");
+    await expect(hapag.getByText(/points, capped/)).toHaveCount(0);
     await expect(
       hapag.getByRole("button", { name: "Connect with Hapag Kitchen Group" }),
     ).toBeVisible();
@@ -418,6 +472,73 @@ test.describe("ComDash", () => {
     await openTab(page, "Interest Signals");
     await expect(terms).toContainText("polvoron");
     await expect(terms.getByRole("link", { name: "Add to profile" })).toHaveCount(0);
+    await expect(terms.getByText("Added to your profile.")).toBeVisible();
+  });
+
+  test("We don’t offer this removes the gap line and keeps the term", async ({ page }) => {
+    await twoWeeksIn(page);
+    await openTab(page, "Interest Signals");
+    const terms = panel(page, "Search terms that found you");
+    await expect(
+      terms.getByText("Your profile doesn’t list this.", { exact: false }),
+    ).toBeVisible();
+    await terms.getByRole("button", { name: "We don’t offer this" }).click();
+    await expect(terms.getByText("Your profile doesn’t list this.", { exact: false })).toHaveCount(
+      0,
+    );
+    await expect(terms).toContainText("polvoron");
+    await expect(terms.getByText("Added to your profile.")).toHaveCount(0);
+  });
+
+  test("a message sent from the drawer turns the row's action into Messaged", async ({ page }) => {
+    await twoWeeksIn(page);
+    await openTab(page, "Interest Signals");
+    await expect(companyRow(page, "pack")).toContainText("✓ Connected");
+    await rowButton(page, "hapag").click();
+    await drawer(page, "Hapag Kitchen Group")
+      .getByRole("button", { name: "Message Hapag Kitchen Group" })
+      .click();
+    await expect(page).toHaveURL(/\/app\/mail$/);
+    const draft = page.locator("textarea[data-draft]");
+    await draft.fill("Thank you for saving our profile. Could we send samples?");
+    await tap(page, "Send");
+    await backToComDash(page);
+    await openTab(page, "Interest Signals");
+    await expect(companyRow(page, "hapag")).toContainText("✓ Messaged");
+    await expect(
+      companyRow(page, "hapag").getByRole("button", { name: "Message Hapag Kitchen Group" }),
+    ).toHaveCount(0);
+  });
+
+  test("chips, rows, the fold, gap links and the drawer work from the keyboard", async ({
+    page,
+  }) => {
+    await twoWeeksIn(page);
+    await openTab(page, "Interest Signals");
+    const focusable = [
+      levelButton(page, "Warm"),
+      rowButton(page, "hapag"),
+      lightFold(page),
+      panel(page, "Search terms that found you").getByRole("link", { name: "Add to profile" }),
+      panel(page, "Search terms that found you").getByRole("button", {
+        name: "We don’t offer this",
+      }),
+    ];
+    // A key press first, so a scripted focus shows the keyboard focus ring.
+    await page.keyboard.press("Shift");
+    for (const target of focusable) {
+      await target.focus();
+      await expect(target).toBeFocused();
+      const outline = await target.evaluate((el) => getComputedStyle(el).outlineStyle);
+      expect(outline).not.toBe("none");
+    }
+    await rowButton(page, "hapag").focus();
+    await page.keyboard.press("Enter");
+    await expect(
+      drawer(page, "Hapag Kitchen Group").getByRole("button", { name: "Close" }),
+    ).toBeFocused();
+    await page.keyboard.press("Escape");
+    await expect(rowButton(page, "hapag")).toBeFocused();
   });
 
   test("with the AI Assistant off, replying still works", async ({ page }) => {
@@ -474,7 +595,7 @@ test.describe("ComDash", () => {
     for (const tab of ["Overview", "Interest Signals", "Connections"]) {
       await openTab(page, tab);
       const durations = await page
-        .locator(".cd .a-btn, .cd .cd-tab, .cd .cd-chip")
+        .locator(".cd .a-btn, .cd .cd-tab, .cd .cd-chip, .cd .cd-band")
         .evaluateAll((els) => els.map((el) => getComputedStyle(el).transitionDuration));
       expect(durations.length).toBeGreaterThan(0);
       expect(durations.every((d) => d.split(",").every((x) => parseFloat(x) === 0))).toBe(true);
@@ -572,19 +693,24 @@ test.describe("ComDash", () => {
         .first(),
     ).toBeVisible();
     await rowButton(page, "hapag").click();
-    await expect(drawer(page, "Hapag Kitchen Group").locator(".cd-pts")).toHaveCount(0);
+    await expect(
+      drawer(page, "Hapag Kitchen Group").locator(".cd-tl b", { hasText: "+" }),
+    ).toHaveCount(0);
     await page.keyboard.press("Escape");
 
     await viewButton(page, "Pro").click();
     await expect(viewButton(page, "Pro")).toHaveAttribute("aria-pressed", "true");
     await expect(companyRow(page, "hapag")).toContainText("Intent score");
     await expect(companyRow(page, "hapag")).toContainText("Hot");
-    await expect(companyRow(page, "oc-bagwis")).toContainText("PCCI–Quezon City");
+    await expect(companyRow(page, "oc-bagwis")).toContainText("other chamber (PCCI–Quezon City)");
+    await expect(companyRow(page, "hapag").locator(".cd-sc b")).toContainText("11");
     await rowButton(page, "hapag").click();
     const hapag = drawer(page, "Hapag Kitchen Group");
     await expect(hapag.getByText("How the intent score was built")).toBeVisible();
-    await expect(hapag.locator(".cd-pts").first()).toContainText("+3");
-    await expect(hapag).toContainText("Intent score 11");
+    await expect(hapag.locator(".cd-tl b")).toHaveText(["+3", "+5", "+3", ""]);
+    await expect(hapag.locator(".cd-level")).toContainText("11");
+    await expect(hapag.getByText("11 points, capped at 100.")).toBeVisible();
+    await expectAccessible(page);
     await page.keyboard.press("Escape");
     await rowButton(page, "oc-harbour").click();
     await expect(drawer(page, "Harbourfront Filipino Market")).toContainText(
@@ -672,6 +798,25 @@ test.describe("ComDash", () => {
       await noSidewaysScroll(page);
     });
   }
+
+  test("at 360 pixels the tiles form 2 by 3 and the drawer fills the width", async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 800 });
+    await twoWeeksIn(page);
+    await openTab(page, "Interest Signals");
+    const columns = await page
+      .locator(".cd-tiles")
+      .evaluate((el) => getComputedStyle(el).gridTemplateColumns.split(" ").length);
+    expect(columns).toBe(2);
+    await expect(page.getByRole("group", { name: "Chart series" })).toBeVisible();
+    await expect(page.locator(".cd-table thead")).toHaveCSS("position", "absolute");
+    await rowButton(page, "hapag").click();
+    const width = await drawer(page, "Hapag Kitchen Group").evaluate(
+      (el) => el.getBoundingClientRect().width,
+    );
+    expect(width).toBe(360);
+    await noSidewaysScroll(page);
+    await expectAccessible(page);
+  });
 
   test("on a phone, Next action comes first and the table becomes cards", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });

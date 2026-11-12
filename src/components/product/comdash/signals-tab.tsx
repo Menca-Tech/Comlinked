@@ -13,7 +13,7 @@ import { VisibilityChart } from "@/components/product/comdash/visibility-chart";
 /** The Interest Signals tab, in the prototype's order: numbers, trends, companies and insights. */
 export function SignalsTab() {
   return (
-    <>
+    <div className="cd-signals">
       <TopNumbers />
       <div className="cd-row2">
         <VisibilityChart />
@@ -31,6 +31,6 @@ export function SignalsTab() {
       <Suspense>
         <SignalDrawer />
       </Suspense>
-    </>
+    </div>
   );
 }

@@ -1,17 +1,30 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { useSimulation } from "@/components/product/use-simulation";
-import { topNumbers } from "@/services/comlinked";
+import { topNumbers, type TopNumber } from "@/services/comlinked";
 
-const ARROW = { up: "▲", down: "▼", same: "" } as const;
+const ARROW = { up: "▲ ", down: "▼ ", same: "" } as const;
+const SPOKEN = { up: "Up ", down: "Down ", same: "" } as const;
 
-/** The six top numbers, compared with the week before once there is one. */
+function Change({ change, trend }: Pick<TopNumber, "change" | "trend">) {
+  if (!change || !trend) return null;
+  return (
+    <span className={`cd-d ${trend}`}>
+      <span aria-hidden="true">{ARROW[trend]}</span>
+      <span className="sr-only">{SPOKEN[trend]}</span>
+      {change}
+    </span>
+  );
+}
+
+/** The six tiles for the last 7 days, with Messages highlighted. */
 export function TopNumbers() {
   useSimulation();
   const rows = topNumbers();
   const compared = rows.some((r) => r.change !== null);
   return (
-    <section aria-label="Top numbers">
+    <section aria-label="Signal summary">
       <p className="cd-sub">
         {compared
           ? "Last 7 days, compared with the 7 days before."
@@ -19,15 +32,10 @@ export function TopNumbers() {
       </p>
       <ul className="cd-tiles">
         {rows.map((r) => (
-          <li key={r.label} className="cd-tile">
+          <li key={r.key} className={cn("cd-tile", r.star && "star")}>
             <span className="cd-k">{r.label}</span>
             <span className="cd-v">{r.value}</span>
-            {r.change && r.trend ? (
-              <span className={`cd-d ${r.trend}`}>
-                {ARROW[r.trend] ? <span aria-hidden="true">{ARROW[r.trend]} </span> : null}
-                {r.change}
-              </span>
-            ) : null}
+            <Change change={r.change} trend={r.trend} />
           </li>
         ))}
       </ul>

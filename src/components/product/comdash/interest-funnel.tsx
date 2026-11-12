@@ -4,13 +4,13 @@ import { DashPanel, EmptyNote } from "@/components/product/comdash/dash-panel";
 import { useSimulation } from "@/components/product/use-simulation";
 import { interestFunnel } from "@/services/comlinked";
 
-/** How far interested Companies got, from finding you to connecting. */
+/** How many Companies got from finding you to connecting, with one suggestion. */
 export function InterestFunnel() {
   useSimulation();
   const funnel = interestFunnel();
   if (!funnel) {
     return (
-      <DashPanel title="Interest funnel" note="30 days">
+      <DashPanel title="Interest funnel" note="last 14 days">
         <EmptyNote>
           The funnel fills as companies find you, view your profile and get in touch.
         </EmptyNote>
@@ -19,24 +19,24 @@ export function InterestFunnel() {
   }
   const first = funnel.steps[0]?.count || 1;
   return (
-    <DashPanel title="Interest funnel" note="30 days">
+    <DashPanel title="Interest funnel" note="last 14 days">
       <ol className="cd-funnel">
         {funnel.steps.map((step) => (
           <li key={step.label} className="cd-fstep">
-            <span className="cd-fhead">
-              <span>{step.label}</span>
+            <span>{step.label}</span>
+            <span className="cd-fbar">
+              <i
+                aria-hidden="true"
+                style={{ width: `${Math.max((step.count / first) * 100, 1)}%` }}
+              />
               <b>{step.count}</b>
+              <span className="sr-only">{step.count === 1 ? " company" : " companies"}</span>
+              {step.ofPrevious ? <small>{step.ofPrevious} of previous</small> : null}
             </span>
-            <span className="cd-ftrack" aria-hidden="true">
-              <i style={{ width: `${Math.max((step.count / first) * 100, 1)}%` }} />
-            </span>
-            {step.ofPrevious !== null ? <small>{step.ofPrevious}% of previous</small> : null}
           </li>
         ))}
       </ol>
-      <p className="cd-tip">
-        Each step counts companies that reached it or a later step. {funnel.suggestion}
-      </p>
+      {funnel.suggestion ? <p className="cd-tip">{funnel.suggestion}</p> : null}
     </DashPanel>
   );
 }

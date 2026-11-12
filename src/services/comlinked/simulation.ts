@@ -151,6 +151,10 @@ export const initials = function (n: string) {
     .split(/\s+/);
   return ((p[0] || "C")[0]! + (p[1] ? p[1][0] : "")).toUpperCase();
 };
+/** A simulation day as a date, such as "Day 12". */
+export function dayLabel(d: number) {
+  return "Day " + d;
+}
 export const dayName = function (d: number) {
   const n = S.day - d;
   return n <= 0 ? "Today" : n === 1 ? "Yesterday" : n + " days ago";
@@ -273,6 +277,7 @@ function fresh(): SimState {
     },
     flags: {},
     dismissedTerms: [],
+    addedTerms: [],
     profileFocus: null,
     view: "free",
     otherSignals: [],
@@ -2517,6 +2522,7 @@ const ACT = {
     emit();
   },
   addGap: function (term: string) {
+    if (!S.addedTerms.includes(term)) S.addedTerms.push(term);
     const f = S.forms,
       lists = function (text: string) {
         return text.toLowerCase().includes(term.toLowerCase());
@@ -2866,11 +2872,11 @@ export function networkRing() {
 /* ---------- ComDash ---------- */
 const PROFILE_FIELDS: ProfileField[] = ["about", "products", "project"];
 const INTEREST_KINDS: SignalKind[] = ["search", "viewed", "saved", "messaged", "recommended"];
-/** Interest Level looks at the last 14 simulated days. */
+/** Interest Level and the funnel look at the last 14 simulated days. */
 const LEVEL_DAYS = 14;
 /** Top numbers compare the last 7 days with the 7 before. */
 const PERIOD_DAYS = 7;
-/** The funnel, roles, industries and search terms cover the last 30 days. */
+/** Roles, industries and search terms cover the last 30 days. */
 const INSIGHT_DAYS = 30;
 /** The Interest Levels, strongest first: the order of lists and of ComDash's level filter. */
 export const INTEREST_LEVELS: readonly InterestLevel[] = ["Hot", "Warm", "New"];
@@ -2932,6 +2938,9 @@ export function interestLevel(coId: string, day = S.day): InterestLevel | null {
   return recent.length ? levelOf(recent) : null;
 }
 
+/** Separate days of interest that make a Company Hot, and earn the timeline's repeat row. */
+const HOT_DAYS = 3;
+
 /** The Interest Level rule from CONTEXT.md, for one Company's recent signals. */
 function levelOf(recent: Signal[]): InterestLevel {
   const days = new Set(
@@ -2944,7 +2953,7 @@ function levelOf(recent: Signal[]): InterestLevel {
       return s.type === kind;
     });
   };
-  if (days >= 3 || did("messaged")) return "Hot";
+  if (days >= HOT_DAYS || did("messaged")) return "Hot";
   if (days >= 2 || did("saved")) return "Warm";
   return "New";
 }
@@ -2974,33 +2983,65 @@ function interestSummary(signals: Signal[]) {
   return cap(parts.length ? parts.join(", ") + " and " + last : last);
 }
 
-/** One dated line per day and kind, oldest first; searches also split by term. A kind earns
- * its intent points once a day, on its first line that day. */
+/** One row per signal kind per day, oldest first, with ×N for repeats; searches list their
+ * terms. Each row earns its kind's intent points, so a kind counts once a day. A repeat-interest
+ * row closes the timeline once the Interest Level rule counts enough separate days. */
 function timelineOf(signals: Signal[]): TimelineEntry[] {
-  const groups: { day: number; kind: SignalKind; text: string; n: number }[] = [];
+  const groups: { day: number; kind: SignalKind; terms: string[]; n: number }[] = [];
   signals
     .slice()
     .sort(function (a, b) {
       return a.day - b.day || KIND_WEIGHT[a.type] - KIND_WEIGHT[b.type];
     })
     .forEach(function (s) {
-      const text = signalText(s);
-      const same = groups.find(function (g) {
-        return g.day === s.day && g.text === text;
+      let group = groups.find(function (g) {
+        return g.day === s.day && g.kind === s.type;
       });
-      if (same) same.n++;
-      else groups.push({ day: s.day, kind: s.type, text: text, n: 1 });
+      if (!group) {
+        group = { day: s.day, kind: s.type, terms: [], n: 0 };
+        groups.push(group);
+      }
+      group.n++;
+      if (s.type === "search" && s.detail && !group.terms.includes(s.detail))
+        group.terms.push(s.detail);
     });
-  return groups.map(function (g, i) {
-    const first = !groups.slice(0, i).some(function (o) {
-      return o.day === g.day && o.kind === g.kind;
-    });
+  const rows: TimelineEntry[] = groups.map(function (g) {
     return {
       day: g.day,
-      text: g.n > 1 ? g.text + " " + timesText(g.n) : g.text,
-      points: first ? (INTENT_POINTS[g.kind] ?? 0) : 0,
+      text:
+        SIGNAL_TEXT[g.kind] +
+        (g.n > 1 ? " ×" + g.n : "") +
+        (g.terms.length ? ": " + g.terms.join(", ") : ""),
+      points: INTENT_POINTS[g.kind] ?? 0,
     };
   });
+  const days = separateDays(signals);
+  const last = rows[rows.length - 1];
+  if (last && days >= HOT_DAYS)
+    rows.push({
+      day: last.day,
+      text: "Repeat interest: signals on " + days + " separate days",
+      points: null,
+    });
+  return rows;
+}
+
+/** A timeline's intent points added up, before the cap. */
+export function pointsTotal(timeline: TimelineEntry[]) {
+  return timeline.reduce(function (sum, e) {
+    return sum + (e.points ?? 0);
+  }, 0);
+}
+
+/** Where the user's Company stands with an interested one: connected, messaged, or neither. */
+function statusOf(coId: string): InterestedCompany["status"] {
+  if (S.conn[coId] === "connected") return "Connected";
+  const thread = threadFor(coId);
+  return thread?.msgs.some(function (m) {
+    return m.from === "me";
+  })
+    ? "Messaged"
+    : null;
 }
 
 function separateDays(signals: Signal[]) {
@@ -3024,14 +3065,19 @@ function interestRows(recent: Signal[], lookup: (id: string) => Company): Intere
           ? s
           : best;
       });
-      const days = separateDays(mine);
+      const level = levelOf(mine);
       return {
         company: lookup(id),
-        level: levelOf(mine),
+        level: level,
         latest: latest,
         summary: interestSummary(mine),
         timeline: timelineOf(mine),
-        repeat: days > 1 ? "Interest on " + days + " separate days" : null,
+        status: statusOf(id),
+        light:
+          level === "New" &&
+          mine.every(function (s) {
+            return s.type === "search";
+          }),
       };
     })
     .sort(function (a, b) {
@@ -3059,10 +3105,7 @@ const INTENT_CAP = 100;
 
 /** The timeline's points added up, capped at 100. The timeline holds the once-a-day rule. */
 function scoreOf(signals: Signal[]) {
-  const total = timelineOf(signals).reduce(function (sum, e) {
-    return sum + (e.points ?? 0);
-  }, 0);
-  return Math.min(INTENT_CAP, total);
+  return Math.min(INTENT_CAP, pointsTotal(timelineOf(signals)));
 }
 
 /** A Company's intent score over the last 14 days. */
@@ -3140,48 +3183,50 @@ function hasPreviousPeriod() {
   return S.day - PERIOD_DAYS * 2 + 1 >= S.joined;
 }
 
+/** A change of at least this many shows as a percentage; smaller ones as a count. */
+const PERCENT_FROM = 5;
+
 function compare(now: number, before: number): Pick<TopNumber, "change" | "trend"> {
   if (!hasPreviousPeriod()) return { change: null, trend: null };
-  if (now === before) return { change: "Same as last week", trend: "same" };
-  if (before === 0) return { change: now + " more than last week", trend: "up" };
-  const pctChange = Math.round((Math.abs(now - before) / before) * 100) + "%";
-  return now > before
-    ? { change: pctChange + " more than last week", trend: "up" }
-    : { change: pctChange + " less than last week", trend: "down" };
+  if (now === before) return { change: "Same as before", trend: "same" };
+  const diff = Math.abs(now - before);
+  const trend = now > before ? "up" : "down";
+  if (before === 0 || diff < PERCENT_FROM)
+    return { change: diff + (trend === "up" ? " more" : " fewer") + " than before", trend: trend };
+  return { change: Math.round((diff / before) * 100) + "%", trend: trend };
 }
 
-/** The six top numbers for the last 7 days. Connections is the current total. */
+/** The six tiles, in the prototype's order. Adding a tile means one entry here. */
+const TILES: { key: SignalKind; label: string }[] = [
+  { key: "search", label: "Search appearances" },
+  { key: "recommended", label: "Recommendations" },
+  { key: "messaged", label: "Messages" },
+  { key: "intro", label: "Introductions" },
+  { key: "viewed", label: "Profile views" },
+  { key: "saved", label: "Profile saves" },
+];
+/** The highlighted tile, in the spot the prototype gives its top shortlist placements. */
+const STAR_TILE: SignalKind = "messaged";
+
+/** The six tiles for the last 7 days, each compared with the 7 days before once there are. */
 export function topNumbers(): TopNumber[] {
   const count = function (kind: SignalKind, from: number) {
-    return interestBetween(from, from + PERIOD_DAYS).filter(function (s) {
-      return s.type === kind;
+    return S.signals.filter(function (s) {
+      return s.type === kind && s.day > from && s.day <= from + PERIOD_DAYS;
     }).length;
   };
   const now = S.day - PERIOD_DAYS,
     before = now - PERIOD_DAYS;
-  const rows: TopNumber[] = (
-    [
-      ["Search appearances", "search"],
-      ["Profile views", "viewed"],
-      ["Profile saves", "saved"],
-      ["Messages", "messaged"],
-      ["Recommendations", "recommended"],
-    ] as const
-  ).map(function ([label, kind]) {
-    const value = count(kind, now);
-    return { key: kind, label: label, value: value, ...compare(value, count(kind, before)) };
+  return TILES.map(function (tile) {
+    const value = count(tile.key, now);
+    return {
+      key: tile.key,
+      label: tile.label,
+      value: value,
+      star: tile.key === STAR_TILE,
+      ...compare(value, count(tile.key, before)),
+    };
   });
-  const links = connected().length;
-  const gained = S.ledger.filter(function (l) {
-    return l.key === "conn" && l.day > now;
-  }).length;
-  rows.push({
-    key: "connections",
-    label: "Connections",
-    value: links,
-    ...compare(links, links - gained),
-  });
-  return rows;
 }
 
 /** Search appearances and recommendations for each day since the claim; empty with none. */
@@ -3208,6 +3253,27 @@ export function visibilityByDay(): VisibilityDay[] {
   return days;
 }
 
+/** The chart's note: where it starts, and whether search appearances are rising, meaning the
+ * latest day after the first week beats that week's daily average. */
+export function visibilityNote() {
+  const days = visibilityByDay();
+  const firstWeek = days.filter(function (d) {
+    return d.day < S.joined + PERIOD_DAYS;
+  });
+  const average =
+    firstWeek.reduce(function (sum, d) {
+      return sum + d.searches;
+    }, 0) / (firstWeek.length || 1);
+  const latest = days[days.length - 1];
+  const rising =
+    latest !== undefined && latest.day >= S.joined + PERIOD_DAYS && latest.searches > average;
+  return (
+    "Since you claimed your profile on " +
+    dayLabel(S.joined) +
+    (rising ? ". Search appearances are rising." : "")
+  );
+}
+
 /** One tip per step of the funnel after the first, shown for the step that loses the most. */
 const FUNNEL_TIPS = [
   "Most companies that find you stop there. A fuller profile gives them a reason to look closer.",
@@ -3217,7 +3283,7 @@ const FUNNEL_TIPS = [
 ];
 
 const FUNNEL_STAGES = [
-  "Found you",
+  "Found you in search",
   "Viewed your profile",
   "Saved your profile",
   "Messaged you",
@@ -3225,9 +3291,17 @@ const FUNNEL_STAGES = [
 ];
 const STAGE_OF: Partial<Record<SignalKind, number>> = { viewed: 1, saved: 2, messaged: 3 };
 
-/** How many Companies reached each stage, or a later one, in the last 30 days; null with none. */
+/** A step as a share of the one before: whole, or one decimal under 10%; null with a 0. */
+function percentOf(count: number, before: number | undefined) {
+  if (!count || !before) return null;
+  const tenths = Math.round((count / before) * 1000) / 10;
+  return (tenths < 10 ? tenths.toFixed(1) : String(Math.round(tenths))) + "%";
+}
+
+/** How many Companies reached each stage, or a later one, in the last 14 days; null with none.
+ * The suggestion is the tip for the step with the biggest drop. */
 export function interestFunnel(): Funnel | null {
-  const recent = interestBetween(S.day - INSIGHT_DAYS, S.day);
+  const recent = interestBetween(S.day - LEVEL_DAYS, S.day);
   const found = companiesIn(recent);
   if (!found.length) return null;
   const furthest = found.map(function (id) {
@@ -3241,23 +3315,19 @@ export function interestFunnel(): Funnel | null {
       return f >= stage;
     }).length;
   });
-  const steps = FUNNEL_STAGES.map(function (label, i) {
+  let drop: { ratio: number; tip: string | null } = { ratio: 1, tip: null };
+  counts.forEach(function (count, i) {
     const before = counts[i - 1];
-    const count = counts[i] ?? 0;
-    return {
-      label: label,
-      count: count,
-      ofPrevious: before ? Math.round((count / before) * 100) : null,
-    };
+    if (!before || count / before >= drop.ratio) return;
+    drop = { ratio: count / before, tip: FUNNEL_TIPS[i - 1] ?? null };
   });
-  const weakest = steps.slice(1).reduce(
-    function (worst, step, i) {
-      const ratio = step.ofPrevious ?? 100;
-      return ratio < worst.ratio ? { ratio: ratio, tip: FUNNEL_TIPS[i] ?? worst.tip } : worst;
-    },
-    { ratio: Infinity, tip: FUNNEL_TIPS[0] ?? "" },
-  );
-  return { steps: steps, suggestion: weakest.tip };
+  return {
+    steps: FUNNEL_STAGES.map(function (label, i) {
+      const count = counts[i] ?? 0;
+      return { label: label, count: count, ofPrevious: percentOf(count, counts[i - 1]) };
+    }),
+    suggestion: drop.tip,
+  };
 }
 
 /** Saves, messages, intros and Companies becoming Hot in the last 14 days, newest first. */
@@ -3366,6 +3436,7 @@ export function searchTerms(): SearchTerm[] {
       term: row.label,
       count: row.count,
       gap: !profileLists(row.label) && !S.dismissedTerms.includes(row.label),
+      added: S.addedTerms.includes(row.label) && profileLists(row.label),
     };
   });
 }
@@ -3737,9 +3808,9 @@ export function emptyReplyNote() {
     : "The AI Assistant is off. Write your reply.";
 }
 
-/** A Company's industry and city, and its chamber when that isn't the user's own. */
+/** A Company's industry and city, marked "other chamber" with its name when not the user's. */
 export function companyLine(c: Pick<Company, "ind" | "city">, chamber?: string | null) {
-  return c.ind + " · " + c.city + (chamber ? " · " + chamber : "");
+  return c.ind + " · " + c.city + (chamber ? " · other chamber (" + chamber + ")" : "");
 }
 
 /** Each morning one Connection with news posts its profile update. */

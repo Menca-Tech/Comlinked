@@ -22,9 +22,10 @@ export function SearchTermsPanel() {
               {t.gap ? (
                 <div className="cd-gap">
                   <p>Your profile doesn’t list this. Add it if you offer it.</p>
-                  <GapActions term={t.term} />
+                  <GapActions term={t.term} links />
                 </div>
               ) : null}
+              {t.added ? <p className="cd-gap ok">Added to your profile.</p> : null}
             </li>
           ))}
         </ul>

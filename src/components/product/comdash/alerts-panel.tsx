@@ -2,7 +2,7 @@
 
 import { DashPanel, EmptyNote } from "@/components/product/comdash/dash-panel";
 import { useSimulation } from "@/components/product/use-simulation";
-import { comDashAlerts, dayName } from "@/services/comlinked";
+import { comDashAlerts, dayLabel } from "@/services/comlinked";
 
 export function AlertsPanel() {
   useSimulation();
@@ -13,7 +13,7 @@ export function AlertsPanel() {
         <ul className="cd-feed">
           {alerts.map((a) => (
             <li key={a.text}>
-              <span className="cd-when">{dayName(a.day)}</span>
+              <span className="cd-day">{dayLabel(a.day)}</span>
               <span>{a.text}</span>
             </li>
           ))}

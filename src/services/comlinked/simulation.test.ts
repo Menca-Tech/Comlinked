@@ -9,6 +9,9 @@ import {
   connectionList,
   connectionStatus,
   INTEREST_LEVELS,
+  companyLine,
+  dayLabel,
+  pointsTotal,
   intentScore,
   interestForView,
   invitations,
@@ -26,6 +29,7 @@ import {
   searcherRoles,
   topNumbers,
   visibilityByDay,
+  visibilityNote,
   allowed,
   award,
   byFit,
@@ -451,45 +455,138 @@ describe("Overview figures", () => {
     newCompany();
     expect(topNumbers().map((n) => n.label)).toEqual([
       "Search appearances",
+      "Recommendations",
+      "Messages",
+      "Introductions",
       "Profile views",
       "Profile saves",
-      "Messages",
-      "Recommendations",
-      "Connections",
     ]);
     expect(topNumbers().every((n) => n.change === null)).toBe(true);
     act.morning("1");
     expect(topNumbers().every((n) => n.change === null)).toBe(true);
   });
 
-  it("compares the last 7 days with the 7 before once two weeks have passed", () => {
+  it("highlights Messages and only Messages", () => {
     act.demoActive();
-    const byLabel = Object.fromEntries(topNumbers().map((n) => [n.label, n]));
-    expect(byLabel["Search appearances"]).toMatchObject({
-      value: 3,
-      change: "50% more than last week",
-      trend: "up",
-    });
-    expect(byLabel["Profile views"]).toMatchObject({ value: 4, change: "4 more than last week" });
-    expect(byLabel["Recommendations"]).toMatchObject({
-      value: 1,
-      change: "Same as last week",
-      trend: "same",
-    });
-    expect(byLabel["Connections"]).toMatchObject({ value: 3 });
+    expect(
+      topNumbers()
+        .filter((n) => n.star)
+        .map((n) => n.label),
+    ).toEqual(["Messages"]);
   });
 
-  it("counts companies that reached each funnel step or a later one", () => {
+  it("compares the last 7 days with the 7 before once two weeks have passed", () => {
+    act.demoActive();
+    expect(topNumbers().map((n) => [n.label, n.value, n.change, n.trend])).toEqual([
+      ["Search appearances", 3, "1 more than before", "up"],
+      ["Recommendations", 1, "Same as before", "same"],
+      ["Messages", 2, "2 more than before", "up"],
+      ["Introductions", 1, "1 more than before", "up"],
+      ["Profile views", 4, "4 more than before", "up"],
+      ["Profile saves", 2, "2 more than before", "up"],
+    ]);
+  });
+
+  it("shows a percentage once a change is 5 or more", () => {
+    withSignals([
+      ...Array.from({ length: 10 }, (_, i): [string, Kind, number] => [
+        "sari",
+        "viewed",
+        7 + (i % 2),
+      ]),
+      ...Array.from({ length: 4 }, (): [string, Kind, number] => ["sari", "viewed", 15]),
+    ]);
+    expect(topNumbers().find((n) => n.key === "viewed")).toMatchObject({
+      value: 4,
+      change: "60%",
+      trend: "down",
+    });
+  });
+
+  it("counts companies that reached each funnel step in the last 14 days", () => {
     act.demoActive();
     const funnel = interestFunnel();
     expect(funnel?.steps.map((s) => [s.label, s.count, s.ofPrevious])).toEqual([
-      ["Found you", 12, null],
-      ["Viewed your profile", 5, 42],
-      ["Saved your profile", 4, 80],
-      ["Messaged you", 3, 75],
-      ["Connected", 2, 67],
+      ["Found you in search", 12, null],
+      ["Viewed your profile", 5, "42%"],
+      ["Saved your profile", 4, "80%"],
+      ["Messaged you", 3, "75%"],
+      ["Connected", 2, "67%"],
     ]);
-    expect(funnel?.suggestion).toMatch(/\.$/);
+  });
+
+  it("leaves out signals older than 14 days from the funnel", () => {
+    withSignals([
+      ["sari", "viewed", 6],
+      ["maple", "viewed", 7],
+      ["hapag", "search", 20, "snacks"],
+    ]);
+    expect(interestFunnel()?.steps[0]?.count).toBe(2);
+  });
+
+  it("shows one decimal under 10% and no percentage for a step of 0", () => {
+    withSignals([
+      ...POOL.slice(0, 10).map((c): [string, Kind, number, string] => [
+        c.id,
+        "search",
+        20,
+        "snacks",
+      ]),
+      [POOL[10]!.id, "viewed", 20],
+    ]);
+    const steps = interestFunnel()?.steps ?? [];
+    expect(steps.map((s) => s.ofPrevious)).toEqual([null, "9.1%", null, null, null]);
+  });
+
+  it("picks the suggestion from the biggest drop", () => {
+    const tipFor = (list: [string, Kind, number, string?][]) => {
+      withSignals(list);
+      return interestFunnel()?.suggestion;
+    };
+    expect(tipFor([["sari", "search", 20, "snacks"]])).toMatch(/^Most companies that find you/);
+    expect(
+      tipFor([
+        ["sari", "viewed", 20],
+        ["kainan", "viewed", 20],
+      ]),
+    ).toMatch(/^Companies view your profile but few save it/);
+    expect(
+      tipFor([
+        ["sari", "saved", 20],
+        ["kainan", "saved", 20],
+      ]),
+    ).toMatch(/^Companies save your profile but few message you/);
+    expect(
+      tipFor([
+        ["sari", "messaged", 20],
+        ["kainan", "messaged", 20],
+      ]),
+    ).toMatch(/^Companies message you but few connect/);
+  });
+
+  it("gives no suggestion when no step loses anyone", () => {
+    withSignals([["sari", "messaged", 20]]);
+    getState().conn.sari = "connected";
+    expect(interestFunnel()?.steps.map((s) => s.count)).toEqual([1, 1, 1, 1, 1]);
+    expect(interestFunnel()?.suggestion).toBeNull();
+  });
+
+  it("dates the chart from the claim and says when search appearances are rising", () => {
+    act.demoActive();
+    expect(visibilityNote()).toBe("Since you claimed your profile on Day 1");
+    withSignals([
+      ["sari", "search", 20, "snacks"],
+      ["kainan", "search", 20, "snacks"],
+    ]);
+    expect(visibilityNote()).toBe(
+      "Since you claimed your profile on Day 1. Search appearances are rising.",
+    );
+  });
+
+  it("mentions only the claim day with one day of history", () => {
+    newCompany();
+    getState().signals = [{ co: "sari", type: "search", detail: "snacks", day: 1 }];
+    expect(visibilityNote()).toBe("Since you claimed your profile on Day 1");
   });
 
   it("charts search appearances and recommendations from the claim day", () => {
@@ -557,6 +654,7 @@ describe("search terms and profile gaps", () => {
       term: "polvoron",
       count: 1,
       gap: true,
+      added: false,
     });
     expect(searchTerms().find((t) => t.term === "snacks")?.gap).toBe(false);
     act.dismissGap("polvoron");
@@ -572,6 +670,25 @@ describe("search terms and profile gaps", () => {
     expect(profileGaps()).toHaveLength(1);
     act.saveAbout();
     expect(profileGaps()).toEqual([]);
+  });
+
+  it("marks a gap term as added once it is saved to the profile, and only then", () => {
+    act.demoActive();
+    const polvoron = () => searchTerms().find((t) => t.term === "polvoron");
+    act.addGap("polvoron");
+    expect(polvoron()).toMatchObject({ gap: true, added: false });
+    act.saveAbout();
+    expect(polvoron()).toMatchObject({ gap: false, added: true });
+    expect(searchTerms().find((t) => t.term === "snacks")?.added).toBe(false);
+  });
+
+  it("keeps a dismissed term in the list, with no gap line", () => {
+    act.demoActive();
+    act.dismissGap("polvoron");
+    expect(searchTerms().find((t) => t.term === "polvoron")).toMatchObject({
+      gap: false,
+      added: false,
+    });
   });
 
   it("adds the term to the draft only once", () => {
@@ -652,11 +769,7 @@ describe("a company that has just claimed with no signals", () => {
     expect(searcherRoles()).toEqual([]);
     expect(industryGroups()).toEqual([]);
     expect(searchTerms()).toEqual([]);
-    expect(
-      topNumbers()
-        .slice(0, 5)
-        .every((n) => n.value === 0 && n.change === null),
-    ).toBe(true);
+    expect(topNumbers().every((n) => n.value === 0 && n.change === null)).toBe(true);
   });
 });
 
@@ -679,24 +792,35 @@ describe("Interest Signals timeline", () => {
     const [row] = interestedCompanies();
     expect(row?.level).toBe("New");
     expect(row?.timeline).toEqual([{ day: 20, text: "Viewed your profile", points: 3 }]);
-    expect(row?.repeat).toBeNull();
   });
 
-  it("dates each signal, counts same-day repeats together and calls out separate days", () => {
+  it("shows one row per kind per day with ×N, plus a repeat row once there are 3 days", () => {
     withSignals([
       ["sari", "viewed", 15],
       ["sari", "viewed", 15],
       ["sari", "search", 18, "polvoron"],
+      ["sari", "search", 18, "ube spread"],
       ["sari", "saved", 20],
     ]);
     const [row] = interestedCompanies();
     expect(row?.timeline).toEqual([
-      { day: 15, text: "Viewed your profile twice", points: 3 },
-      { day: 18, text: "Found you in search: polvoron", points: 1 },
+      { day: 15, text: "Viewed your profile ×2", points: 3 },
+      { day: 18, text: "Found you in search ×2: polvoron, ube spread", points: 1 },
       { day: 20, text: "Saved your profile", points: 5 },
+      { day: 20, text: "Repeat interest: signals on 3 separate days", points: null },
     ]);
-    expect(row?.repeat).toBe("Interest on 3 separate days");
-    expect(row?.summary).toBe("Found you in search once, viewed your profile twice and saved it");
+    expect(row?.summary).toBe("Found you in search twice, viewed your profile twice and saved it");
+  });
+
+  it("adds no repeat row for interest on 2 days", () => {
+    withSignals([
+      ["sari", "viewed", 18],
+      ["sari", "viewed", 20],
+    ]);
+    expect(interestedCompanies()[0]?.timeline.map((e) => e.text)).toEqual([
+      "Viewed your profile",
+      "Viewed your profile",
+    ]);
   });
 });
 
@@ -706,7 +830,7 @@ describe("intent points on the timeline", () => {
       ["sari", "search", 20, "polvoron"],
       ["sari", "search", 20, "ube spread"],
     ]);
-    expect(interestedCompanies()[0]?.timeline.map((e) => e.points)).toEqual([1, 0]);
+    expect(interestedCompanies()[0]?.timeline.map((e) => e.points)).toEqual([1]);
   });
 
   it("hides points on Free and shows entries that add up to the score on Growth and Pro", () => {
@@ -716,14 +840,56 @@ describe("intent points on the timeline", () => {
     expect(row("free")?.timeline.every((e) => e.points === null)).toBe(true);
     for (const view of ["growth", "pro"] as const) {
       const entries = row(view)?.timeline ?? [];
-      const total = entries.reduce((sum, e) => sum + (e.points ?? 0), 0);
-      expect(total).toBe(row(view)?.score);
-      expect(total).toBe(11);
+      expect(pointsTotal(entries)).toBe(row(view)?.score);
+      expect(pointsTotal(entries)).toBe(11);
     }
+  });
+
+  it("totals points past 100 while the score stops at 100", () => {
+    withSignals(
+      Array.from({ length: 12 }, (_, i): [string, Kind, number] => ["sari", "messaged", 20 - i]),
+    );
+    const row = interestForView("growth")[0];
+    expect(pointsTotal(row?.timeline ?? [])).toBe(120);
+    expect(row?.score).toBe(100);
   });
 
   it("lists the Interest Levels in filter order", () => {
     expect(INTEREST_LEVELS).toEqual(["Hot", "Warm", "New"]);
+  });
+});
+
+describe("interested companies table", () => {
+  it("shows Connected, then Messaged, then nothing as the row status", () => {
+    act.demoActive();
+    const status = (id: string) => interestForView("free").find((r) => r.company.id === id)?.status;
+    expect(status("pack")).toBe("Connected");
+    expect(status("maple")).toBe("Connected");
+    expect(status("hapag")).toBeNull();
+    act.message("hapag");
+    const thread = getState().threads.find((t) => t.co === "hapag")!;
+    setDraft(thread.id, "Thanks for saving our profile.");
+    act.send(thread.id);
+    expect(status("hapag")).toBe("Messaged");
+  });
+
+  it("folds New companies with only search appearances into light activity", () => {
+    act.demoActive();
+    const light = interestForView("free").filter((r) => r.light);
+    expect(light.map((r) => r.company.id).sort()).toEqual(
+      ["kainan", "malaya", "palengke", "paaralan", "tindahan"].sort(),
+    );
+    expect(light.every((r) => r.level === "New")).toBe(true);
+  });
+
+  it("dates signals by day number", () => {
+    expect(dayLabel(12)).toBe("Day 12");
+  });
+
+  it("labels other-chamber rows on Pro", () => {
+    act.demoActive();
+    const other = interestForView("pro").find((r) => r.chamber);
+    expect(companyLine(other!.company, other!.chamber)).toMatch(/ · other chamber \(.+\)$/);
   });
 });
 

@@ -73,7 +73,8 @@ export type InterestLevel = "Hot" | "Warm" | "New";
 export interface TimelineEntry {
   day: number;
   text: string;
-  /** Intent points this entry adds; null where the view shows no intent score. */
+  /** Intent points this entry adds; null where the view shows no intent score, and on the
+   * repeat-interest row, which adds none. */
   points: number | null;
 }
 
@@ -82,10 +83,12 @@ export interface InterestedCompany {
   level: InterestLevel;
   latest: Signal;
   summary: string;
-  /** Oldest first, with same-day repeats of a kind counted together. */
+  /** Oldest first: one row per kind per day, then a repeat-interest row once there are 3 days. */
   timeline: TimelineEntry[];
-  /** Such as "Interest on 3 separate days"; null when all interest fell on one day. */
-  repeat: string | null;
+  /** "Connected" or "Messaged" once the Company has acted; null leaves Message as the action. */
+  status: "Connected" | "Messaged" | null;
+  /** A New Company with only search appearances, folded under light activity in the table. */
+  light: boolean;
 }
 
 /** Free is the MVP. Growth and Pro are a labelled demo of possible future pricing. */
@@ -144,11 +147,12 @@ export interface ConnectionRow {
 }
 
 export interface TopNumber {
-  /** The signal kind counted, or "connections" for the Connection total. */
-  key: SignalKind | "connections";
+  key: SignalKind;
   label: string;
   value: number;
-  /** Null until there is a previous period to compare with. */
+  /** The highlighted tile. */
+  star: boolean;
+  /** Such as "38%" or "3 more than before"; null until there is a previous period. */
   change: string | null;
   trend: "up" | "down" | "same" | null;
 }
@@ -162,13 +166,15 @@ export interface VisibilityDay {
 export interface FunnelStep {
   label: string;
   count: number;
-  /** Percent of the step before; null for the first step or after an empty one. */
-  ofPrevious: number | null;
+  /** Such as "42%" or "9.1%" of the step before; null for the first step, a step of 0 or after
+   * an empty one. */
+  ofPrevious: string | null;
 }
 
 export interface Funnel {
   steps: FunnelStep[];
-  suggestion: string;
+  /** The tip for the biggest drop; null when no step loses anyone. */
+  suggestion: string | null;
 }
 
 export interface DashAlert {
@@ -185,6 +191,8 @@ export interface SearchTerm {
   term: string;
   count: number;
   gap: boolean;
+  /** Added from its gap line and now saved on the profile. */
+  added: boolean;
 }
 
 /** Profile editor fields that ComDash can open with focus. */
@@ -450,6 +458,8 @@ export interface SimState {
   forms: Forms;
   flags: Flags;
   dismissedTerms: string[];
+  /** Gap terms the Company chose to add to its profile. */
+  addedTerms: string[];
   profileFocus: ProfileField | null;
   view: PlanView;
   /** Interest from Companies in other chambers, shown only on the Pro view. */
