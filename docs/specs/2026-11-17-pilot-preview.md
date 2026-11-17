@@ -422,6 +422,10 @@ These follow from the decisions but were not put to the user one by one. Any of 
 - After the last Stop, leaving the ask for any other screen is exploring. The Story Bar becomes one line, "Pilot Preview · exploring", with "Back to stop 6", and the member's own top bar shows.
 - A drafted profile's claim status reads "Claimed" once the Company has claimed, and "Claim link ready for ECCP to send" until then.
 - The Member List's rows show each name with its website under it, in a box that scrolls, so 100 rows do not push the rest of the screen away.
+- Each member other than Kalayaan Foods has an activity record held with its data: whether it had a Lead on its first day, and how often it acts after claiming. ECCP's figures, statuses and the Team Dashboard all read one status rule built on it. Added while building ticket 05.
+- The side step from Stop 5 is a button in the Story Bar, so the Chamber Contact's screen keeps the filters as its only controls. A reload during it reopens Stop 5.
+- ECCP's member list follows the filters' order, Active first, with Kalayaan Foods at the top. In the Community Manager's Seat each name opens its draft profile.
+- The Team Dashboard's queue lists claim reminders before quiet members, so reminders still show among its first rows now that 16 members are quiet on Day 14.
 
 ### Clashes the user accepted knowingly
 
