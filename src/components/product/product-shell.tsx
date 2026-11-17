@@ -20,6 +20,7 @@ import {
   openStop,
   rememberStop,
   setHandlers,
+  shownRoute,
   stopAfterReload,
   stopForAddress,
 } from "@/services/comlinked";
@@ -48,6 +49,11 @@ function focusMainHeading() {
   target.focus();
 }
 
+/** Opens the screen the simulation shows in a route's place, when it shows another. */
+function showInstead(router: ReturnType<typeof useRouter>, route: string, shown: string) {
+  if (shown !== route && isRoute(shown)) router.replace(paths.product[shown]);
+}
+
 function ProductRoot({ children }: { children?: ReactNode }) {
   return (
     <div className="cl-product">
@@ -60,7 +66,8 @@ function ProductRoot({ children }: { children?: ReactNode }) {
 /** Enters each address the shell shows, and returns whether its screen is ready to show. A Stop's
  * address opens that Stop afresh, however it was reached. A reload of an address with no Stop in
  * it reopens the Stop the tab remembers. Anything else enters the screen as before. The tab
- * remembers the Stop it is on, and opening a Stop moves focus to the screen's main heading. */
+ * remembers the Stop it is on, and opening a Stop moves focus to the screen's main heading. A
+ * screen the after-MVP previews switch hides gives way to the ComDash Overview. */
 function useAddressEntry(route: string) {
   const pathname = usePathname();
   const marker = useSearchParams().get(paths.preview.stopParam);
@@ -77,8 +84,8 @@ function useAddressEntry(route: string) {
   const address = marker === null ? pathname : paths.preview.stop(pathname, marker);
   const previewsShown = laterItemShown("previews");
 
-  // Runs before paint, so no screen shows in the wrong state, and again when the after-MVP
-  // previews switch changes, so a screen the switch hides gives way to the Overview.
+  // Runs before paint, so no screen shows in the wrong state. It runs only when the address
+  // changes: entering a screen can claim Kalayaan Foods, which a change of state alone must not.
   useLayoutEffect(() => {
     reopenAfterReload.current ??= reloadedHere() ? stopAfterReload() : null;
     const stop = stopForAddress(pathname, marker);
@@ -101,12 +108,15 @@ function useAddressEntry(route: string) {
       lastOpened.current = null;
       setOpenedAt(null);
     }
-    const shown = enterRoute(route);
-    if (shown !== route && isRoute(shown)) router.replace(paths.product[shown]);
+    showInstead(router, route, enterRoute(route));
     emit();
     entered.current = true;
     setMounted(true);
-  }, [address, marker, pathname, previewsShown, route, router]);
+  }, [address, marker, pathname, route, router]);
+
+  useLayoutEffect(() => {
+    if (mounted) showInstead(router, route, shownRoute(route));
+  }, [mounted, previewsShown, route, router]);
 
   useEffect(() => {
     if (!openedAt || !focusOnOpen.current) return;
