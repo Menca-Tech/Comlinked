@@ -18,7 +18,7 @@ async function guide(page: Page, name: string | RegExp) {
 }
 
 const WIDTHS = [360, 390, 1280, 1440];
-const TWO_WEEKS_HEADING = "12 interested companies";
+const TWO_WEEKS_HEADING = "13 interested companies";
 const LEVEL_FILTER = "Filter by Interest Level";
 const TABS = [
   { name: "Overview", path: "/app/dash", shows: "Next action" },
@@ -79,6 +79,25 @@ async function backToComDash(page: Page) {
   await expect(page).toHaveURL(/\/app\/dash$/);
 }
 
+const searchField = (page: Page) => page.getByLabel("Industry, product or need");
+const results = (page: Page) => page.locator("#search-results");
+const openSection = (page: Page, name: string) =>
+  page.locator(".a-web-nav .nav-link:visible, .a-tab:visible", { hasText: name }).first().click();
+
+async function openSearch(page: Page, query: string) {
+  await page.getByRole("button", { name: "Search" }).click();
+  await searchField(page).fill(query);
+}
+
+/** Opens a Company's profile from the search results. */
+async function openProfile(page: Page, name: string) {
+  await openSearch(page, name);
+  await results(page)
+    .getByRole("button", { name: new RegExp(name) })
+    .click();
+  await expect(page.getByRole("heading", { name, level: 1 })).toBeVisible();
+}
+
 async function noSidewaysScroll(page: Page) {
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
@@ -111,7 +130,9 @@ test.describe("on a phone", () => {
     await tap(page, "Go to my ComDash");
     await expect(page.getByRole("heading", { name: "Next action" })).toBeVisible();
 
+    // Nordhavn is the next open lead, so Pacific Pack is opened by tapping its row.
     await page.locator(".a-tab", { hasText: "Leads" }).click();
+    await page.locator('[data-lead="pack"] .a-pick').click();
     await page.locator('[data-lead="pack"]').getByRole("button", { name: "Message" }).click();
     const draft = page.locator("textarea[data-draft]");
     await expect(draft).toHaveValue(/Pacific Pack/);
@@ -145,8 +166,11 @@ test.describe("on a phone", () => {
     await expect(page.getByText("Joined. New Member Boost active")).toBeVisible();
     await page.getByRole("switch").click();
 
+    // Nothing was sent for the company before it claimed, so the one waiting thread is the
+    // message Luntian Foods sent on day one.
     await page.locator(".a-tab", { hasText: "ComMail" }).click();
-    await page.locator(".a-li", { hasText: "Northline" }).click();
+    await expect(page.locator(".a-li", { hasText: "Northline" })).toHaveCount(0);
+    await page.locator(".a-li", { hasText: "Luntian" }).click();
     await expect(page.locator("textarea[data-draft]")).toHaveValue("");
     await expect(page.getByRole("button", { name: "Quote request" })).toBeVisible();
     await tap(page, "Back to ComMail");
@@ -256,7 +280,7 @@ test.describe("ComDash", () => {
     await expect(page.locator(".cd-tile .cd-d")).toHaveCount(6);
     const messages = page.locator(".cd-tile", { hasText: "Messages" }).locator(".cd-d");
     await expect(messages).toContainText("▲");
-    await expect(messages).toContainText("2 more than before");
+    await expect(messages).toContainText("1 more than before");
     const chart = panel(page, "Visibility by day");
     await expect(chart.locator(".cd-chart")).toBeVisible();
     await expect(chart.locator(".cd-area")).toHaveCount(1);
@@ -269,7 +293,7 @@ test.describe("ComDash", () => {
     await expect(chart.locator(".cd-ph")).toContainText("Since you claimed your profile on Day 1");
     await expect(page.locator(".cd-fstep")).toHaveCount(5);
     await expect(page.locator(".cd-fstep").first()).toContainText("Found you in search");
-    await expect(page.locator(".cd-fstep").nth(1)).toContainText("42% of previous");
+    await expect(page.locator(".cd-fstep").nth(1)).toContainText("46% of previous");
     await expect(panel(page, "Interest funnel").locator(".cd-tip")).toHaveCount(1);
     await expect(page.getByRole("heading", { name: TWO_WEEKS_HEADING })).toBeVisible();
     await expect(companyRow(page, "hapag")).toContainText("Hot");
@@ -290,7 +314,7 @@ test.describe("ComDash", () => {
     await twoWeeksIn(page);
     await openTab(page, "Interest Signals");
     await expect(levelButton(page, "All")).toHaveAttribute("aria-pressed", "true");
-    await expect(page.locator("tr[data-company]")).toHaveCount(7);
+    await expect(page.locator("tr[data-company]")).toHaveCount(8);
     for (const level of ["Hot", "Warm", "New"]) {
       await levelButton(page, level).click();
       await expect(levelButton(page, level)).toHaveAttribute("aria-pressed", "true");
@@ -302,7 +326,7 @@ test.describe("ComDash", () => {
       }
     }
     await levelButton(page, "All").click();
-    await expect(page.locator("tr[data-company]")).toHaveCount(12);
+    await expect(page.locator("tr[data-company]")).toHaveCount(13);
   });
 
   test("light activity folds search-only New companies under a button", async ({ page }) => {
@@ -612,11 +636,12 @@ test.describe("ComDash", () => {
     await openTab(page, "Connections");
     const invites = panel(page, /^Invitations/);
     await expect(invites).toContainText("Lakbay Hotels");
-    await expect(panel(page, "Manage connections")).toContainText("3 Connections");
+    await expect(panel(page, "Manage connections")).toContainText("4 Connections");
+    await expect(panel(page, "Manage connections")).toContainText("Nordhavn Freight Forwarders");
     await invites.getByRole("button", { name: "Accept Lakbay Hotels" }).click();
     await expect(page.getByRole("heading", { name: "Invitations (0)" })).toBeVisible();
     await expect(invites).toContainText("No pending invitations.");
-    await expect(panel(page, "Manage connections")).toContainText("4 Connections");
+    await expect(panel(page, "Manage connections")).toContainText("5 Connections");
     await expect(panel(page, "Manage connections")).toContainText("Lakbay Hotels");
   });
 
@@ -628,7 +653,7 @@ test.describe("ComDash", () => {
       .click();
     await expect(page.getByText("Request ignored. They won’t be notified.")).toBeVisible();
     await expect(page.getByRole("heading", { name: "Invitations (0)" })).toBeVisible();
-    await expect(panel(page, "Manage connections")).toContainText("3 Connections");
+    await expect(panel(page, "Manage connections")).toContainText("4 Connections");
   });
 
   test("an AI-drafted reply to a connection's ask is editable and sends only on Send", async ({
@@ -642,20 +667,24 @@ test.describe("ComDash", () => {
         .getByRole("button", { name: /^Connect with/ })
         .first(),
     ).toBeVisible();
+    // The newest ask is the one Nordhavn Freight Forwarders, a Connection, posted this morning.
     const ask = page.locator('.cd-moment[data-item="ask"]').first();
+    await expect(ask).toContainText("Nordhavn Freight Forwarders");
     await ask.getByRole("button", { name: /^Reply to/ }).click();
     const box = ask.getByRole("textbox");
     await expect(box).toHaveValue(/We saw your ask/);
     await expect(ask.getByText("AI draft")).toBeVisible();
     await expect(ask.getByText("Nothing is sent until you tap Send.")).toBeVisible();
     await expect(ask.getByText("Answered.")).toHaveCount(0);
-    await box.fill("Hello, we make compostable-ready snacks and would like to talk.");
+    await box.fill("Hello, we make export-ready snacks and would like to talk.");
     await expect(ask.getByText("AI draft")).toHaveCount(0);
     await expectAccessible(page);
     await ask.getByRole("button", { name: "Send", exact: true }).click();
     await expect(ask).toContainText("Answered. Your reply is in ComMail.");
+    // The reply joins the thread the two companies already have, so that thread is opened here.
     await page.locator(".a-web-nav .nav-link", { hasText: "ComMail" }).click();
-    await expect(page.getByText("compostable-ready snacks").first()).toBeVisible();
+    await page.locator(".a-li", { hasText: "Nordhavn Freight Forwarders" }).click();
+    await expect(page.locator(".a-msg.me").last()).toContainText("export-ready snacks");
   });
 
   test("with the AI Assistant off, a connection reply starts empty and still sends", async ({
@@ -854,23 +883,6 @@ test.describe("ComDash", () => {
 test.describe("the chamber's network of 100", () => {
   test.use({ viewport: { width: 1280, height: 900 } });
 
-  const searchField = (page: Page) => page.getByLabel("Industry, product or need");
-  const openSearch = async (page: Page, query: string) => {
-    await page.getByRole("button", { name: "Search" }).click();
-    await searchField(page).fill(query);
-  };
-  const results = (page: Page) => page.locator("#search-results");
-  const openSection = (page: Page, name: string) =>
-    page.locator(".a-web-nav .nav-link:visible, .a-tab:visible", { hasText: name }).first().click();
-
-  test("a new company still gets its three day-one matches", async ({ page }) => {
-    await claimToMatches(page);
-    await expect(page.locator("[data-lead]")).toHaveCount(3);
-    await expect(page.locator('[data-lead="maple"]')).toContainText("Maple Bay Grocers");
-    await expect(page.locator('[data-lead="pack"]')).toContainText("Pacific Pack Solutions");
-    await expect(page.locator('[data-lead="palengke"]')).toContainText("Palengke Online");
-  });
-
   test("search reaches European-style and existing members", async ({ page }) => {
     await claimNewCompany(page);
     await openSearch(page, "wine");
@@ -885,7 +897,7 @@ test.describe("the chamber's network of 100", () => {
     await expect(page.getByText("Food manufacturing · Quezon City · ECCP member")).toBeVisible();
     await openTab(page, "Interest Signals");
     await expect(page.getByRole("heading", { name: TWO_WEEKS_HEADING })).toBeVisible();
-    for (const id of ["hapag", "luntian", "pack", "maple", "sari", "lakbay", "bukas"]) {
+    for (const id of ["hapag", "luntian", "pack", "nordhavn", "maple", "sari", "lakbay", "bukas"]) {
       await expect(companyRow(page, id)).toHaveCount(1);
     }
   });
@@ -894,10 +906,10 @@ test.describe("the chamber's network of 100", () => {
     await twoWeeksIn(page);
     await guide(page, /^Open the chamber tools/);
     await expect(page.getByText("ECCP community manager view, example members")).toBeVisible();
-    await expect(page.locator(".t-sum")).toContainText("100 members · 42 claimed");
+    await expect(page.locator(".t-sum")).toContainText("100 members · 40 claimed");
     await page.locator("#f-b2").fill("Our next member meeting is on Friday.");
-    await tap(page, "Send to 42 claimed members");
-    await expect(page.getByText("Sent to 42 members who have claimed.")).toBeVisible();
+    await tap(page, "Send to 40 claimed members");
+    await expect(page.getByText("Sent to 40 members who have claimed.")).toBeVisible();
     await tap(page, "Back to company view");
     await page.getByRole("button", { name: /Notifications/ }).click();
     await expect(page.getByText("ECCP sent an announcement")).toBeVisible();
@@ -956,14 +968,12 @@ test.describe("the chamber's network of 100", () => {
     );
   });
 
-  test("a company that has not claimed neither accepts a request nor replies", async ({ page }) => {
+  test("a company that has not claimed is offered no Connect and never replies", async ({
+    page,
+  }) => {
     await claimNewCompany(page);
-    await openSearch(page, "Kahon");
-    await results(page)
-      .getByRole("button", { name: /Kahon Corrugated/ })
-      .click();
-    await tap(page, "Connect");
-    await expect(page.getByText("Connection Request sent")).toBeVisible();
+    await openProfile(page, "Kahon Corrugated");
+    await expect(page.getByRole("button", { name: "Connect", exact: true })).toHaveCount(0);
     await tap(page, "Message");
     await page.locator("textarea[data-draft]").fill("Hello, could we talk about shipping cartons?");
     await tap(page, "Send");
@@ -974,11 +984,10 @@ test.describe("the chamber's network of 100", () => {
     await page.locator(".a-li", { hasText: "Kahon" }).click();
     await expect(page.locator(".a-msg.me")).toHaveCount(1);
     await expect(page.locator(".a-msg.them")).toHaveCount(0);
-    await openSearch(page, "Kahon");
-    await results(page)
-      .getByRole("button", { name: /Kahon Corrugated/ })
-      .click();
-    await expect(page.getByText("Connection Request sent")).toBeVisible();
+    await expect(page.getByText("Waiting until Kahon Corrugated claims its profile")).toBeVisible();
+    await openProfile(page, "Kahon Corrugated");
+    await expect(page.getByRole("button", { name: "Connect", exact: true })).toHaveCount(0);
+    await expect(page.getByText("Connection Request sent")).toHaveCount(0);
   });
 
   for (const width of [360, 1280]) {
@@ -1006,11 +1015,336 @@ test.describe("the chamber's network of 100", () => {
     await openSearch(page, "insurance");
     const row = results(page).getByRole("button", { name: /Sterling Rivera Insurance Brokers/ });
     await expect(row).toBeVisible();
+    await expect(row).toContainText("Not yet claimed");
     const box = await row.boundingBox();
     expect((box?.x ?? 0) + (box?.width ?? 0)).toBeLessThanOrEqual(360);
     await noSidewaysScroll(page);
     await row.click();
-    await expect(page.getByText("Sterling Rivera Insurance Brokers").first()).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Sterling Rivera Insurance Brokers" }),
+    ).toBeVisible();
+    await expect(page.locator(".a-profile")).toContainText("Not yet claimed");
     await noSidewaysScroll(page);
   });
+});
+
+test.describe("Kalayaan's first export shipment, and basics only before a Claim", () => {
+  test.use({ viewport: { width: 1280, height: 900 } });
+
+  const NORTHLINE_REASON =
+    "You’re looking for freight. Northline Logistics works in cold-chain freight, Valenzuela City.";
+  const lead = (page: Page, id: string) => page.locator(`[data-lead="${id}"]`);
+  const detail = (page: Page) => page.locator("#lead-detail");
+  const connect = (page: Page) => page.getByRole("button", { name: "Connect", exact: true });
+
+  test("the profile check says when other members see the description", async ({ page }) => {
+    await page.goto("/app/claim");
+    await tap(page, "Claim your profile");
+    await expect(page.getByRole("heading", { name: "Check your company profile" })).toBeVisible();
+    await expect(
+      page.getByText("Other members see this description once you confirm it."),
+    ).toBeVisible();
+  });
+
+  test("a new company's three matches are Maple Bay, Nordhavn and Pacific Pack", async ({
+    page,
+  }) => {
+    await claimToMatches(page);
+    await expect(page.locator(".a-leads [data-lead]")).toHaveCount(3);
+    await expect(lead(page, "maple")).toContainText("Maple Bay Grocers");
+    await expect(lead(page, "pack")).toContainText("Pacific Pack Solutions");
+    await expect(lead(page, "nordhavn")).toContainText("Nordhavn Freight Forwarders");
+    await expect(lead(page, "nordhavn")).toContainText(
+      "Ships between Manila and European ports and is looking for manufacturers ready to export.",
+    );
+    await expect(page.getByText("Not yet claimed")).toHaveCount(0);
+  });
+
+  test("Nordhavn accepts a Connection Request, and its AI draft sends only on Send", async ({
+    page,
+  }) => {
+    await claimToMatches(page);
+    await lead(page, "nordhavn").locator(".a-pick").click();
+    await expect(detail(page)).toContainText("Nordhavn Freight Forwarders");
+    await detail(page).getByRole("button", { name: "Connect", exact: true }).click();
+    await expect(lead(page, "nordhavn")).toContainText("Connected");
+    await lead(page, "nordhavn").getByRole("button", { name: "Message", exact: true }).click();
+    const draft = page.locator("textarea[data-draft]");
+    await expect(draft).toHaveValue(/ships between Manila and European ports/);
+    await expect(page.locator('[data-chip="draft"]')).toBeVisible();
+    await expect(page.locator(".a-msg.me")).toHaveCount(0);
+    await draft.fill("Hello Nordhavn team. We are planning a first shipment of banana chips.");
+    await expect(page.locator('[data-chip="draft"]')).toHaveCount(0);
+    await expect(page.locator(".a-msg.me")).toHaveCount(0);
+    await tap(page, "Send");
+    await expect(page.locator(".a-msg.me")).toContainText("first shipment of banana chips");
+    await expect(page.locator(".a-msg.them")).toBeVisible();
+  });
+
+  test("with the AI Assistant off, the first message to Nordhavn starts empty and still sends", async ({
+    page,
+  }) => {
+    await claimNewCompany(page);
+    await openTab(page, "Profile");
+    await page.getByRole("switch", { name: "AI Assistant" }).click();
+    await openSection(page, "Leads");
+    await lead(page, "nordhavn").locator(".a-pick").click();
+    await detail(page).getByRole("button", { name: "Message", exact: true }).click();
+    const draft = page.locator("textarea[data-draft]");
+    await expect(draft).toHaveValue("");
+    await expect(page.locator('[data-chip="draft"]')).toHaveCount(0);
+    await tap(page, "Introduction");
+    await expect(draft).toHaveValue(/^Hello Nordhavn Freight Forwarders team/);
+    await tap(page, "Send");
+    await expect(page.locator(".a-msg.me")).toContainText("Nordhavn Freight Forwarders");
+  });
+
+  test("Day 1's leads end with Palengke Online and Northline, the one not yet claimed", async ({
+    page,
+  }) => {
+    await claimNewCompany(page);
+    await openSection(page, "Leads");
+    const rows = page.locator(".a-leads [data-lead]");
+    await expect(rows).toHaveCount(5);
+    for (const [place, id] of ["maple", "nordhavn", "pack", "palengke", "north"].entries()) {
+      await expect(rows.nth(place)).toHaveAttribute("data-lead", id);
+    }
+    await expect(page.locator(".a-leads").getByText("Not yet claimed")).toHaveCount(1);
+    await expect(lead(page, "north")).toContainText("Not yet claimed");
+    await expect(lead(page, "north")).toContainText(NORTHLINE_REASON);
+  });
+
+  test("a lead that has not claimed shows its basics, a Fit Score and one reason, with no Connect", async ({
+    page,
+  }) => {
+    await claimNewCompany(page);
+    await openSection(page, "Leads");
+    await lead(page, "north").locator(".a-pick").click();
+    const card = detail(page);
+    await expect(card).toContainText("Northline Logistics");
+    await expect(card).toContainText("Cold-chain freight, Valenzuela City · north.example");
+    await expect(card).toContainText("Not yet claimed");
+    await expect(card.locator(".a-fit")).toContainText("77");
+    await expect(card).toContainText(NORTHLINE_REASON);
+    await expect(card.getByRole("button", { name: "Connect", exact: true })).toHaveCount(0);
+    await expect(card.getByRole("button", { name: "Message", exact: true })).toBeVisible();
+    await expect(card.getByText("Why it fits")).toHaveCount(0);
+    await expect(card.locator(".a-reasons")).toHaveCount(0);
+    await expect(card.getByText("What we offer")).toHaveCount(0);
+    await expect(card).not.toContainText("chilled goods");
+
+    await card.locator(".a-co").click();
+    const profile = page.locator(".w-read");
+    await expect(profile.getByRole("heading", { name: "Northline Logistics" })).toBeVisible();
+    await expect(profile).toContainText("Cold-chain freight, Valenzuela City");
+    await expect(profile).toContainText("north.example");
+    await expect(profile.locator(".a-profile")).toContainText("Not yet claimed");
+    await expect(profile.locator(".a-fit")).toContainText("77");
+    await expect(profile).toContainText(NORTHLINE_REASON);
+    await expect(connect(page)).toHaveCount(0);
+    await expect(profile.locator(".a-reasons")).toHaveCount(0);
+    await expect(profile.getByText("What we offer")).toHaveCount(0);
+    await expect(profile.getByText("What we’re looking for")).toHaveCount(0);
+    await expect(profile).not.toContainText("chilled goods");
+    await expect(profile).not.toContainText("company connection");
+    await expectAccessible(page);
+  });
+
+  test("a message to a company that has not claimed waits, and the next morning brings no reply", async ({
+    page,
+  }) => {
+    await claimNewCompany(page);
+    await openProfile(page, "Northline Logistics");
+    await tap(page, "Message");
+    await expect(
+      page.getByText(
+        "Northline Logistics hasn’t claimed its profile yet. Your message waits until it does.",
+      ),
+    ).toBeVisible();
+    const draft = page.locator("textarea[data-draft]");
+    await expect(draft).toHaveValue(/works in cold-chain freight in Valenzuela City/);
+    await expect(draft).not.toHaveValue(/chilled goods/);
+    await tap(page, "Send");
+    await expect(page.locator(".a-msg.me")).toHaveCount(1);
+    const waiting = page.getByText("Waiting until Northline Logistics claims its profile");
+    await expect(waiting).toBeVisible();
+    await guide(page, "Next morning");
+    await openSection(page, "ComMail");
+    const row = page.locator(".a-li", { hasText: "Northline Logistics" });
+    await expect(row).toContainText("Not yet claimed");
+    await row.click();
+    await expect(page.locator(".a-msg.me")).toHaveCount(1);
+    await expect(page.locator(".a-msg.them")).toHaveCount(0);
+    await expect(waiting).toBeVisible();
+    await expect(page.getByText("No reply in 3 days")).toHaveCount(0);
+  });
+
+  test("search marks a company that has not claimed and shows only its basics", async ({
+    page,
+  }) => {
+    await claimNewCompany(page);
+    await openSearch(page, "freight");
+    const northline = results(page).getByRole("button", { name: /Northline Logistics/ });
+    await expect(northline).toContainText("Cold-chain freight, Valenzuela City · north.example");
+    await expect(northline).toContainText("Not yet claimed");
+    const nordhavn = results(page).getByRole("button", { name: /Nordhavn Freight Forwarders/ });
+    await expect(nordhavn).toContainText("Freight forwarding, Quezon City");
+    await expect(nordhavn).not.toContainText("Not yet claimed");
+    // Its draft says it delivers chilled goods. A search does not read the draft.
+    await searchField(page).fill("chilled");
+    await expect(results(page).locator(".a-li, .a-empty").first()).toBeVisible();
+    await expect(results(page)).not.toContainText("Northline Logistics");
+  });
+
+  test("a reason for a company that seeks what Kalayaan offers starts from Kalayaan's offer", async ({
+    page,
+  }) => {
+    await claimNewCompany(page);
+    await openProfile(page, "Himig Events");
+    const profile = page.locator(".w-read");
+    await expect(profile).toContainText(
+      "You offer Filipino snacks. Himig Events works in event planning, Pasig City.",
+    );
+    await expect(profile).not.toContainText("Local snacks");
+    await expect(profile).not.toContainText("corporate events");
+  });
+
+  test("on the day a company claims, its mark goes and its profile fills in", async ({ page }) => {
+    await claimNewCompany(page);
+    await openProfile(page, "Sari Central Wholesale");
+    const profile = page.locator(".w-read");
+    await expect(profile.locator(".a-profile")).toContainText("Not yet claimed");
+    await expect(profile.getByText("What we offer")).toHaveCount(0);
+    await expect(connect(page)).toHaveCount(0);
+    await guide(page, "Next morning");
+    await openProfile(page, "Sari Central Wholesale");
+    await expect(profile.getByText("Not yet claimed")).toHaveCount(0);
+    await expect(profile).toContainText("Supplies 400 neighborhood stores with packaged snacks.");
+    await expect(profile.getByText("What we offer")).toBeVisible();
+    await expect(profile.getByText("What we’re looking for")).toBeVisible();
+    await expect(connect(page)).toBeVisible();
+  });
+
+  test("no company that has not claimed shows as a viewer, searcher or sender", async ({
+    page,
+  }) => {
+    const NEVER_CLAIMS = [
+      "Northline Logistics",
+      "Sinag Energy Systems",
+      "Agos Water Services",
+      "Daloy Fleet Rentals",
+      "Himig Events",
+      "Gabay Trade Consultants",
+      "Kalye Food Carts",
+    ];
+    const noneNamed = async () => {
+      for (const name of NEVER_CLAIMS) await expect(page.getByText(name)).toHaveCount(0);
+    };
+    await claimNewCompany(page);
+    for (let morning = 0; morning < 3; morning++) await guide(page, "Next morning");
+    await guide(page, /^Open the morning digest/);
+    await expect(page.getByRole("heading", { name: "Who viewed you" })).toBeVisible();
+    await expect(page.locator(".a-sec .a-li").first()).toBeVisible();
+    await noneNamed();
+    await page.getByRole("button", { name: /Notifications/ }).click();
+    await expect(page.getByText(/viewed your profile/).first()).toBeVisible();
+    await noneNamed();
+    await backToComDash(page);
+    await openTab(page, "Interest Signals");
+    // The fold renders with the table, so it is checked once the first row shows.
+    await expect(page.locator("tr[data-company]").first()).toBeVisible();
+    if (await lightFold(page).isVisible()) await lightFold(page).click();
+    await noneNamed();
+    await openSection(page, "ComMail");
+    await expect(page.getByRole("heading", { name: "ComMail" })).toBeVisible();
+    await expect(page.locator(".a-li", { hasText: "Luntian Foods Inc." })).toBeVisible();
+    await noneNamed();
+  });
+
+  test("the Success Wall is empty on Day 1 and Day 2", async ({ page }) => {
+    await claimNewCompany(page);
+    await openSection(page, "Wins");
+    const empty = page.getByText("No wins yet. The first appears when two members confirm a deal.");
+    await expect(empty).toBeVisible();
+    await expect(page.locator(".a-win")).toHaveCount(0);
+    await guide(page, "Next morning");
+    await openSection(page, "Wins");
+    await expect(empty).toBeVisible();
+    await expect(page.locator(".a-win")).toHaveCount(0);
+  });
+
+  test("Two weeks in is Day 14, with the Nordhavn deal confirmed by both companies", async ({
+    page,
+  }) => {
+    await twoWeeksIn(page);
+    await page.locator(".demo-guide").click();
+    const day = page
+      .getByRole("dialog")
+      .locator(".g-kv")
+      .filter({ has: page.getByText("Day", { exact: true }) });
+    await expect(day).toHaveText("Day14");
+    await page.keyboard.press("Escape");
+    await expect(page.getByRole("dialog")).toBeHidden();
+
+    await openSection(page, "ComMail");
+    await page.locator(".a-li", { hasText: "Nordhavn Freight Forwarders" }).click();
+    await expect(page.locator(".a-sys")).toHaveText([
+      "Both companies confirmed: We met.",
+      "Both companies confirmed: We did business.",
+    ]);
+    await expect(page.getByText("Confirmed by both companies: 1 meeting, 1 deal.")).toBeVisible();
+    await expect(page.locator(".a-msg.me").first()).toContainText("first shipment to Europe");
+
+    await guide(page, "ComLinked team dashboard");
+    await expect(page.locator(".t-sum")).toContainText("Day 14 of the 90-day ECCP pilot");
+  });
+
+  test("on Day 14 the wall, Nordhavn's profile and the Team Dashboard show the same wins and deals", async ({
+    page,
+  }) => {
+    await twoWeeksIn(page);
+    await openSection(page, "Wins");
+    const wins = page.locator(".a-win");
+    await expect(wins).toHaveCount(2);
+    await expect(wins.first()).toContainText(
+      "Kalayaan Foods Inc. with Nordhavn Freight Forwarders",
+    );
+    await expect(wins.first()).toContainText(
+      "We needed a forwarder for our first shipment of banana chips to Europe.",
+    );
+    await expect(wins.nth(1)).toContainText("Regalia Business Hotel with Vinoteca Wine Importers");
+
+    await openProfile(page, "Nordhavn Freight Forwarders");
+    const profile = page.locator(".w-read");
+    await expect(profile.getByRole("heading", { name: "Testimonials" })).toBeVisible();
+    await expect(profile).toContainText(
+      "We met through a day-one match, and the shipment left Manila within two weeks.",
+    );
+    await expect(profile).toContainText("Connected to your company");
+
+    await guide(page, "ComLinked team dashboard");
+    const now = (metric: string) =>
+      page.locator(".t-row", { hasText: metric }).locator(".t-num b").first();
+    await expect(now("Deals confirmed by both companies")).toHaveText("3");
+    await expect(now("Testimonials posted / shared outside ComLinked")).toHaveText("2 / 3");
+  });
+
+  for (const width of [360, 1280]) {
+    test(`Leads, a not-yet-claimed profile and Wins fit a ${width}px screen`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 844 });
+      await claimNewCompany(page);
+      await openSection(page, "Leads");
+      await lead(page, "north").locator(".a-pick").click();
+      await expect(page.locator(".a-lead-open")).toContainText("Not yet claimed");
+      await noSidewaysScroll(page);
+      await page.locator(".a-lead-open .a-co").click();
+      await expect(page.getByRole("heading", { name: "Northline Logistics" })).toBeVisible();
+      await expect(page.locator(".a-profile")).toContainText("Not yet claimed");
+      await noSidewaysScroll(page);
+      await tap(page, "Back");
+      await openSection(page, "Wins");
+      await expect(page.getByText("No wins yet.")).toBeVisible();
+      await noSidewaysScroll(page);
+    });
+  }
 });

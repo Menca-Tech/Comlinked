@@ -1,6 +1,7 @@
 "use client";
 
-import { Btn, LeadBoard, Tally } from "@/components/product/shared";
+import { LeadBoard } from "@/components/product/lead-board";
+import { Btn, Tally } from "@/components/product/shared";
 import { useIsDesktop, useSimulation } from "@/components/product/use-simulation";
 import { act } from "@/services/comlinked";
 

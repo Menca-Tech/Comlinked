@@ -81,6 +81,7 @@ export function Claim() {
           </span>
         </div>
         <p className="a-why">{cap(m.about)}.</p>
+        <p className="a-small">Other members see this description once you confirm it.</p>
         <OfferSeek c={m} />
         <div className="a-sec a-rule">
           <label className="a-check">

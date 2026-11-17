@@ -2,12 +2,12 @@
 import { EUROPEAN_EDGES, EUROPEAN_MEMBERS } from "@/services/comlinked/european-members";
 import type {
   Company,
+  Deal,
   MyCompany,
   PlanView,
   PlanViewRules,
   Rule,
   RuleKey,
-  Win,
 } from "@/services/comlinked/types";
 
 export interface AgentType {
@@ -168,7 +168,7 @@ const RAW: RawCompany[] = [
     "builds export-grade pallets for food shipments.",
     ["Export pallets"],
     ["Exporters"],
-    null,
+    18,
   ],
   [
     "sinag",
@@ -694,6 +694,17 @@ export const TAG: Record<string, string> = {
   gabay: "exportadvice|foodmfg",
   kalye: "foodcarts|frozen",
 };
+/** Plain words for what Kalayaan Foods seeks and offers, by tag. A reason to meet a Company that
+ * has not claimed is told from Kalayaan Foods' side, in these words. */
+export const TRADE_WORDS: Record<string, string> = {
+  grocery: "grocery retailers",
+  freight: "freight",
+  packaging: "packaging",
+  snacks: "Filipino snacks",
+  frozen: "frozen foods",
+  privatelabel: "private-label manufacturing",
+  foodmfg: "food manufacturing",
+};
 export const EDGES = (
   "maple-pack maple-tanim maple-sari maple-lakbay maple-kahon maple-palengke maple-north pack-tala pack-kahon pack-tibay pack-kapwa pack-tamis pack-lasa pack-bukas north-bayan north-daloy north-biyahe north-masagana north-dagat north-lasa " +
   "luntian-palengke luntian-sari luntian-tanim luntian-sariwa tala-selyo tala-kapwa tala-alon tala-tamis bayan-malaya bayan-dagat bayan-lasa sari-tindahan sari-kapwa sari-tamis sari-daloy hapag-kainan hapag-dagat hapag-lasa hapag-sariwa hapag-himig " +
@@ -812,24 +823,46 @@ export const AGENT_TYPES: Record<string, AgentType> = {
   },
 };
 
-export const WINS: Win[] = [
+/** The deals other Companies in the chamber confirm, each on its day, with the Testimonial the
+ * first Company posted that day. The Success Wall, profiles and the Team Dashboard all read this list, so
+ * adding a deal or a win is one row here. Kalayaan Foods' own deals come from its story. */
+export const CHAMBER_DEALS: Deal[] = [
   {
-    a: "Maple Bay Grocers",
-    b: "Tanim Farm Cooperative",
-    need: "We needed a steady banana chip supplier for our Quezon City stores.",
-    got: "We met through a day-one match and placed a first order within two weeks.",
+    a: "regalia",
+    b: "vinoteca",
+    day: 9,
+    testimonial: {
+      need: "We needed a European wine supplier for our restaurant and events.",
+      got: "A reply on the Asks board turned into a twelve-month supply agreement.",
+    },
+  },
+  { a: "azurbay", b: "maisonblanc", day: 12 },
+  {
+    a: "maple",
+    b: "tanim",
+    day: 15,
+    testimonial: {
+      need: "We needed a steady banana chip supplier for our Quezon City stores.",
+      got: "We met through a day-one match and placed a first order within two weeks.",
+    },
   },
   {
-    a: "Bukas Office Canteens",
-    b: "Pacific Pack Solutions",
-    need: "We needed single-serve packaging for 30 office counters.",
-    got: "A reply on the Asks board turned into a six-month supply agreement.",
+    a: "bukas",
+    b: "pack",
+    day: 19,
+    testimonial: {
+      need: "We needed single-serve packaging for 30 office counters.",
+      got: "A reply on the Asks board turned into a six-month supply agreement.",
+    },
   },
   {
-    a: "Malaya Export Traders",
-    b: "Tibay Crates and Pallets",
-    need: "We needed export-grade pallets on short notice.",
-    got: "Our community manager made the introduction, and the shipment left on time.",
+    a: "malaya",
+    b: "tibay",
+    day: 25,
+    testimonial: {
+      need: "We needed export-grade pallets on short notice.",
+      got: "Our community manager made the introduction, and the shipment left on time.",
+    },
   },
 ];
 export const REPLIES = [

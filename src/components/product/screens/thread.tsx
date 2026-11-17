@@ -7,7 +7,17 @@ import { AiChip, Back, Btn, CoBtn, St } from "@/components/product/shared";
 import { useIsDesktop, useSimulation } from "@/components/product/use-simulation";
 import { Textarea } from "@/components/ui/textarea";
 import type { Thread as ThreadData } from "@/services/comlinked";
-import { act, co, dayName, jobFor, prepareThread, setDraft, TEMPLATES } from "@/services/comlinked";
+import {
+  act,
+  co,
+  dayName,
+  jobFor,
+  prepareThread,
+  publicView,
+  setDraft,
+  TEMPLATES,
+  waitingForClaim,
+} from "@/services/comlinked";
 
 // C2 C3 C4: a conversation, its outcome buttons and the composer.
 export function Thread({ t }: { t: ThreadData }) {
@@ -21,12 +31,19 @@ export function Thread({ t }: { t: ThreadData }) {
   const both =
     t.handoff || (t.msgs.some((m) => m.from === "them") && t.msgs.some((m) => m.from === "me"));
   const waiting = last && last.from === "me" && job !== "followup";
+  const held = waitingForClaim(t.co);
+  const unclaimed = !publicView(c).claimed;
   return (
     <>
       {isWeb ? null : <h1 className="a-h1 a-vh">ComMail with {c.name}</h1>}
       <Back label="Back to ComMail" cls="w-hide" onClick={() => act.closeThread()} />
       <CoBtn c={c} />
       {t.note ? <div className="a-note">{t.note}</div> : null}
+      {unclaimed && !held ? (
+        <div className="a-note">
+          {c.name} hasn’t claimed its profile yet. Your message waits until it does.
+        </div>
+      ) : null}
       {t.handoff ? (
         <div className="a-note">
           <div className="a-between">
@@ -80,7 +97,11 @@ export function Thread({ t }: { t: ThreadData }) {
           ) : null}
         </section>
       ) : null}
-      {waiting && !draft.text ? (
+      {held ? (
+        <St kind="wait" icon={<Clock className="a-ic" aria-hidden="true" />}>
+          Waiting until {c.name} claims its profile
+        </St>
+      ) : waiting && !draft.text ? (
         <p className="a-small">Waiting for a reply from {c.name}.</p>
       ) : null}
       <section className="a-card a-rule">

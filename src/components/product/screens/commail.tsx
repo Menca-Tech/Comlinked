@@ -2,6 +2,7 @@
 
 import { useLayoutEffect } from "react";
 
+import { ClaimMark } from "@/components/product/claim-mark";
 import { Mono, NewMark, PageHead, Panel } from "@/components/product/shared";
 import { Thread } from "@/components/product/screens/thread";
 import { useIsDesktop, useSimulation } from "@/components/product/use-simulation";
@@ -33,6 +34,7 @@ function MailList() {
             <span className="a-li-m">
               <strong>{c.name}</strong>
               <small>{preview}</small>
+              <ClaimMark c={c} />
             </span>
             {t.unread ? <NewMark /> : null}
           </button>

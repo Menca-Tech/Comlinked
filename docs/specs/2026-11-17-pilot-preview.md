@@ -413,6 +413,11 @@ These follow from the decisions but were not put to the user one by one. Any of 
 - The website's "Request a pilot" form opens the Opening.
 - The Daily Lead List and overnight attention draw only on Companies that share Kalayaan's trade: they buy what it offers, sell what it seeks, or sell the same. Added while building ticket 01, because it is what keeps the 60 out of its leads and interested Companies on every day.
 - An Ask reaches only Companies that have claimed.
+- Nordhavn Freight Forwarders is placed in Quezon City. With the freight Kalayaan seeks and two of the things it offers among its needs, that brings its Fit Score to 92 with no change to the Fit Score rules. Added while building ticket 02.
+- Two weeks in, Kalayaan's Activity Score is 123 and it ranks #1 of 12 in its category. It had 59 points before, and the rules give 64 for connecting with Nordhavn, three replies, the meeting, the deal and the Testimonial.
+- Tibay Crates and Pallets claims on Day 18, so that its win with Malaya Export Traders can be dated Day 25. The other two earlier wins are dated Day 15 and Day 19.
+- A Company that has not claimed is found in search by its name and industry only. Its connections are not shown, no follow-up is suggested on a message to it, and the AI Draft of a first message to it uses its industry and city.
+- On Day 14 three of Kalayaan's five leads have not claimed, which is in line with 40 of 100 having claimed. Only Day 1's list was fixed by a decision.
 
 ### Clashes the user accepted knowingly
 

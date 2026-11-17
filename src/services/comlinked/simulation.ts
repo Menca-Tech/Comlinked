@@ -8,6 +8,7 @@ import {
   AGENT_TYPES,
   AI_LIMIT,
   CAT,
+  CHAMBER_DEALS,
   EDGES,
   FULL_BOOST_AT,
   INDUSTRY,
@@ -27,7 +28,7 @@ import {
   STRONG_FIT,
   TEMPLATES,
   TOTAL,
-  WINS,
+  TRADE_WORDS,
 } from "@/services/comlinked/data";
 import type {
   AgentCandidate,
@@ -50,6 +51,7 @@ import type {
   NoteGroup,
   PlanView,
   ProfileField,
+  PublicView,
   RuleKey,
   SearchTerm,
   Signal,
@@ -66,6 +68,7 @@ import type {
   ToastAction,
   TopNumber,
   VisibilityDay,
+  Win,
 } from "@/services/comlinked/types";
 
 let gen = 0;
@@ -158,6 +161,31 @@ export function claimedCount(day = S.day) {
     }).length + (hasClaimed("me", day) ? 1 : 0)
   );
 }
+/** What Kalayaan Foods may see of another Company: always its name, industry, city and website,
+ * and whether it has claimed. Its description, offers and needs show only once it has claimed.
+ * Every screen that shows a Company's profile reads it from here. */
+export function publicView(c: Company): PublicView {
+  const basics = {
+    id: c.id,
+    name: c.name,
+    ini: c.ini,
+    ind: c.ind,
+    city: c.city,
+    website: c.website,
+  };
+  return hasClaimed(c.id)
+    ? { ...basics, claimed: true, description: c.why, offer: c.offer, seek: c.seek }
+    : { ...basics, claimed: false };
+}
+/** Whether a message Kalayaan Foods sent a Company is waiting for it to claim its profile. */
+export function waitingForClaim(coId: string) {
+  return (
+    !hasClaimed(coId) &&
+    (threadFor(coId)?.msgs ?? []).some(function (m) {
+      return m.from === "me";
+    })
+  );
+}
 /** The Activity Score points a Company holds: none until it has claimed. */
 export function pointsOf(c: Company) {
   return hasClaimed(c.id) ? c.pts : 0;
@@ -175,6 +203,15 @@ export const initials = function (n: string) {
     .split(/\s+/);
   return ((p[0] || "C")[0]! + (p[1] ? p[1][0] : "")).toUpperCase();
 };
+/** A label as it reads mid-sentence: its first letter lowered, unless it opens with an acronym
+ * such as B2B. */
+function inSentence(label: string) {
+  return /^[A-Z][a-z]/.test(label) ? label.charAt(0).toLowerCase() + label.slice(1) : label;
+}
+/** A Company's trade in words, from its public industry: "works in cold-chain freight". */
+function worksIn(c: Pick<Company, "ind">) {
+  return "works in " + inSentence(c.ind);
+}
 /** A simulation day as a date, such as "Day 12". */
 export function dayLabel(d: number) {
   return "Day " + d;
@@ -252,7 +289,7 @@ function fresh(): SimState {
         resp: 2,
       },
     ],
-    wall: WINS.slice(),
+    wall: [],
     pendingT: [],
     lastWin: null,
     shares: {},
@@ -460,6 +497,19 @@ export function attention() {
     searches: Math.floor(total / 2),
     requests: total >= 3 ? 1 : 0,
   };
+}
+/** Why overnight attention came to its total, as the engine log tells it. */
+function attentionReason(a: ReturnType<typeof attention>) {
+  return (
+    "1 base, plus " +
+    a.activity +
+    " for " +
+    a.recent +
+    " points in the last 7 days, plus " +
+    a.standing +
+    " for rank #" +
+    rank()
+  );
 }
 export function linkUp(id: string, theyAccepted: boolean) {
   if (S.conn[id] === "connected") return;
@@ -698,21 +748,6 @@ export function finishClaim() {
   signal("maple", "search", "snacks");
   signal("luntian", "viewed");
   S.threads.push({
-    id: "t-north",
-    co: "north",
-    msgs: [
-      {
-        from: "me",
-        text: "Hello Northline Logistics team,\n\nWe are looking for chilled delivery across Metro Manila. Could we discuss your rates?",
-        day: S.day - 3,
-        ai: false,
-      },
-    ],
-    note: "Your community manager sent this for your company before you claimed your profile.",
-    metDone: 0,
-    dealDone: 0,
-  });
-  S.threads.push({
     id: "t-luntian",
     co: "luntian",
     unread: true,
@@ -732,17 +767,40 @@ export function finishClaim() {
   signal("luntian", "messaged");
   notify("reply", "luntian", "Luntian Foods Inc. messaged you in ComMail");
 }
+/** The day "Two weeks in" lands on, and the day before it, when the first deal was confirmed. */
+const TWO_WEEKS_IN = 14,
+  FIRST_DEAL_DAY = 13;
+/** What Kalayaan Foods earned in its first two weeks, newest first. Each row is one award the
+ * rules allow on its day. */
+const TWO_WEEKS_LEDGER: [day: number, key: RuleKey, co?: string][] = [
+  [FIRST_DEAL_DAY, "testimonial", "nordhavn"],
+  [FIRST_DEAL_DAY, "deal", "nordhavn"],
+  [13, "list"],
+  [10, "meet", "pack"],
+  [9, "reply", "pack"],
+  [9, "reply", "nordhavn"],
+  [8, "profile"],
+  [8, "list"],
+  [6, "reply", "maple"],
+  [6, "ask"],
+  [5, "meet", "nordhavn"],
+  [4, "profile"],
+  [4, "list"],
+  [4, "reply", "nordhavn"],
+  [3, "conn", "tala"],
+  [2, "conn", "pack"],
+  [2, "reply", "pack"],
+  [2, "reply", "nordhavn"],
+  [2, "list"],
+  [1, "conn", "nordhavn"],
+  [1, "conn", "maple"],
+  [1, "list"],
+];
+/** "Two weeks in": Kalayaan Foods on Day 14, having claimed on Day 1. Its first export shipment,
+ * carried by Nordhavn Freight Forwarders, is confirmed by both Companies, with a Testimonial on
+ * the Success Wall. The one seed for this state. */
 export function seedTwoWeeks() {
   const m = S.me;
-  const led = function (day: number, key: RuleKey, cid?: string) {
-    S.ledger.push({
-      day: day,
-      key: key,
-      pts: RULES[key].pts,
-      label: RULES[key].label,
-      co: cid || null,
-    });
-  };
   const sig = function (cid: string, type: SignalKind, day: number, detail?: string) {
     S.signals.push({ co: cid, type: type, detail: detail || "", day: day });
   };
@@ -752,65 +810,67 @@ export function seedTwoWeeks() {
   const them = function (text: string, day: number): Message {
     return { from: "them", text: text, day: day };
   };
+  const both = function (text: string, day: number): Message {
+    return { from: "sys", text: "Both companies confirmed: " + text, day: day };
+  };
+  const [asksForList = "", proposesMeeting = ""] = REPLIES;
   S.claimed = true;
-  S.day = 15;
   S.joined = 1;
+  // Day 1's Daily Lead List, built as the Claim builds it, before anything else has happened.
+  buildList();
   m.products = "Banana chips, ube spread, frozen lumpia";
   m.projects = ["Private-label chips for a Quezon City grocer"];
-  m.lastUpdate = 9;
-  S.lists[1] = ["maple", "pack", "north", "luntian", "tala"];
-  S.lists[14] = ["bayan", "sari", "hapag", "kainan", "malaya"];
-  S.conn = { maple: "connected", pack: "connected", tala: "connected" };
+  m.lastUpdate = 8;
+  S.lists[13] = ["bayan", "sari", "hapag", "kainan", "malaya"];
+  S.conn = { nordhavn: "connected", maple: "connected", pack: "connected", tala: "connected" };
   S.leadAct = {
     maple: "connect",
+    nordhavn: "connect",
     pack: "connect",
     north: "message",
-    luntian: "message",
-    tala: "connect",
     bayan: "skip",
   };
   S.skipCats = { freight: 1 };
-  led(14, "list");
-  led(12, "reply", "pack");
-  led(11, "meet", "pack");
-  led(9, "profile");
-  led(9, "list");
-  led(7, "reply", "maple");
-  led(7, "ask");
-  led(5, "profile");
-  led(5, "list");
-  led(3, "conn", "tala");
-  led(2, "conn", "pack");
-  led(2, "reply", "pack");
-  led(2, "list");
-  led(1, "conn", "maple");
-  led(1, "list");
-  sig("sari", "viewed", 15);
-  sig("hapag", "viewed", 15);
-  sig("luntian", "messaged", 15);
-  sig("hapag", "saved", 14);
-  sig("malaya", "search", 14, "snacks");
-  sig("lakbay", "recommended", 13);
-  sig("tindahan", "search", 13, "polvoron");
-  sig("malaya", "intro", 13);
-  sig("pack", "messaged", 12);
-  sig("hapag", "viewed", 12);
-  sig("palengke", "search", 11, "frozen lumpia");
-  sig("maple", "saved", 10);
-  sig("maple", "viewed", 9);
-  sig("kainan", "search", 8, "frozen lumpia");
-  sig("bukas", "recommended", 6);
-  sig("paaralan", "search", 6, "banana chips");
+  const earned = TWO_WEEKS_LEDGER.map(function ([day, key, cid]) {
+    return { day: day, key: key, pts: RULES[key].pts, label: RULES[key].label, co: cid ?? null };
+  });
+  // The morning of the deal: the rank that this morning's digest compares with.
+  S.day = FIRST_DEAL_DAY;
+  S.ledger = earned.filter(function (l) {
+    return l.day < FIRST_DEAL_DAY;
+  });
+  const rankBefore = rank();
+  S.day = TWO_WEEKS_IN;
+  S.ledger = earned;
+  sig("sari", "viewed", TWO_WEEKS_IN);
+  sig("hapag", "viewed", TWO_WEEKS_IN);
+  sig("luntian", "messaged", TWO_WEEKS_IN);
+  sig("malaya", "search", TWO_WEEKS_IN, "snacks");
+  sig("hapag", "saved", 13);
+  sig("lakbay", "recommended", 12);
+  sig("tindahan", "search", 12, "polvoron");
+  sig("malaya", "intro", 12);
+  sig("pack", "messaged", 11);
+  sig("hapag", "viewed", 11);
+  sig("palengke", "search", 10, "frozen lumpia");
+  sig("maple", "saved", 9);
+  sig("nordhavn", "messaged", 9);
+  sig("maple", "viewed", 8);
+  sig("kainan", "search", 7, "frozen lumpia");
+  sig("bukas", "recommended", 5);
+  sig("paaralan", "search", 5, "banana chips");
+  sig("nordhavn", "messaged", 4);
+  sig("nordhavn", "messaged", 1);
   S.otherSignals = [
-    { co: "oc-bagwis", type: "viewed", detail: "", day: 14 },
-    { co: "oc-harbour", type: "saved", detail: "", day: 13 },
-    { co: "oc-bagwis", type: "search", detail: "banana chips", day: 11 },
-    { co: "oc-handaan", type: "search", detail: "frozen lumpia", day: 10 },
-    { co: "oc-bagwis", type: "viewed", detail: "", day: 8 },
+    { co: "oc-bagwis", type: "viewed", detail: "", day: 13 },
+    { co: "oc-harbour", type: "saved", detail: "", day: 12 },
+    { co: "oc-bagwis", type: "search", detail: "banana chips", day: 10 },
+    { co: "oc-handaan", type: "search", detail: "frozen lumpia", day: 9 },
+    { co: "oc-bagwis", type: "viewed", detail: "", day: 7 },
   ];
   S.updates = [
-    { co: "pack", day: 13, text: PROFILE_UPDATES.pack ?? "" },
-    { co: "maple", day: 8, text: PROFILE_UPDATES.maple ?? "" },
+    { co: "pack", day: 12, text: PROFILE_UPDATES.pack ?? "" },
+    { co: "maple", day: 7, text: PROFILE_UPDATES.maple ?? "" },
   ];
   S.threads = [
     {
@@ -824,8 +884,34 @@ export function seedTwoWeeks() {
           "Hello " +
             m.name +
             " team. We distribute organic products to retailers in Marikina and Antipolo. Are you open to a distribution partnership?",
-          15,
+          TWO_WEEKS_IN,
         ),
+      ],
+    },
+    {
+      id: "t-nordhavn",
+      co: "nordhavn",
+      metDone: 1,
+      dealDone: 1,
+      msgs: [
+        me(
+          "Hello Nordhavn Freight Forwarders team. We make banana chips and are planning our first shipment to Europe. Could we talk about sea freight?",
+          1,
+        ),
+        them("Thanks for the note. What are you shipping, and to which port?", 1),
+        me("One pallet of banana chips to Rotterdam, to start. Our product list is attached.", 2),
+        them(
+          "We can carry that. Shall we meet at our office on Thursday to go through the paperwork?",
+          4,
+        ),
+        me("Thursday works. See you then.", 4),
+        both("We met.", 5),
+        them(
+          "Good to meet your team. We have space on a sailing next week. Shall we book your pallet?",
+          9,
+        ),
+        me("Yes, please book it. The pallet will be ready.", 9),
+        both("We did business.", FIRST_DEAL_DAY),
       ],
     },
     {
@@ -838,14 +924,14 @@ export function seedTwoWeeks() {
           "Hello Pacific Pack Solutions team. We make Filipino snacks and need food-grade pouches. Could we talk?",
           2,
         ),
-        them(REPLIES[0]!, 2),
+        them(asksForList, 2),
         me("Our product list is attached. We usually start at 5,000 units.", 2),
-        them(REPLIES[1]!, 10),
-        me("Thursday works. See you at your office.", 10),
-        { from: "sys", text: "Both companies confirmed: We met.", day: 11 },
+        them(proposesMeeting, 9),
+        me("Thursday works. See you at your office.", 9),
+        both("We met.", 10),
         them(
           "Good to meet your team. We are ready when you are. Shall we confirm the first order?",
-          14,
+          13,
         ),
       ],
     },
@@ -856,10 +942,10 @@ export function seedTwoWeeks() {
       dealDone: 0,
       msgs: [
         me("Hello Maple Bay Grocers team. We would like to supply your Quezon City stores.", 1),
-        them(REPLIES[0]!, 7),
+        them(asksForList, 6),
         me(
           "Our product list and minimum order quantities are ready. Which lines interest you most?",
-          13,
+          6,
         ),
       ],
     },
@@ -871,17 +957,26 @@ export function seedTwoWeeks() {
       msgs: [
         me(
           "Hello Northline Logistics team,\n\nWe are looking for chilled delivery across Metro Manila. Could we discuss your rates?",
-          11,
+          10,
         ),
       ],
     },
   ];
+  const firstShipment: Win = {
+    a: m.name,
+    b: co("nordhavn").name,
+    need: "We needed a forwarder for our first shipment of banana chips to Europe.",
+    got: "We met through a day-one match, and the shipment left Manila within two weeks.",
+    day: FIRST_DEAL_DAY,
+  };
+  S.wall = [firstShipment];
+  S.lastWin = firstShipment;
   const earlierAsk = makeAsk("Looking for a packaging supplier in QC");
-  earlierAsk.resp = 3;
+  earlierAsk.resp = 2;
   earlierAsk.now = [];
   earlierAsk.later = [];
   S.asks.unshift(earlierAsk);
-  S.announcements.unshift({ text: "Our next member meeting is on Friday at 3:00 p.m.", day: 13 });
+  S.announcements.unshift({ text: "Our next member meeting is on Friday at 3:00 p.m.", day: 12 });
   S.intros.unshift({ a: "me", b: "malaya" });
   S.cm.stage = "done";
   S.cm.built = 12;
@@ -890,25 +985,39 @@ export function seedTwoWeeks() {
     claimed: true,
     dashSeen: true,
     listActed: true,
-    listDay: 14,
+    listDay: 13,
     sent: true,
     asked: true,
+    deal: true,
+    posted: true,
   };
   S.conn.buhay = "pending";
-  S.pendingUntil.buhay = 16;
-  S.conn.tibay = "pending";
-  S.incoming = [{ co: "lakbay", day: 15 }];
+  S.pendingUntil.buhay = TWO_WEEKS_IN + 1;
+  S.incoming = [{ co: "lakbay", day: TWO_WEEKS_IN }];
   buildList();
   S.rankAtMorning = rank();
   const seededAsks = overnightAsk();
+  const today = S.signals.filter(function (x) {
+    return x.day === S.day;
+  });
   S.digest = {
-    day: 15,
-    leads: S.lists[15]!.length,
-    viewers: ["Sari Central Wholesale", "Hapag Kitchen Group"],
-    searches: 2,
-    requests: 1,
+    day: S.day,
+    leads: (S.lists[S.day] ?? []).length,
+    viewers: today
+      .filter(function (x) {
+        return x.type === "viewed";
+      })
+      .map(function (x) {
+        return co(x.co).name;
+      }),
+    searches: today.filter(function (x) {
+      return x.type === "search";
+    }).length,
+    requests: S.incoming.filter(function (r) {
+      return r.day === S.day;
+    }).length,
     asks: seededAsks,
-    moved: 3,
+    moved: rankBefore - rank(),
     rank: rank(),
   };
   notify("search", "malaya", "Malaya Export Traders found you in search: snacks");
@@ -917,10 +1026,8 @@ export function seedTwoWeeks() {
   notify("request", "lakbay", "Lakbay Hotels sent a Connection Request");
   notify("reply", "luntian", "Luntian Foods Inc. messaged you in ComMail");
   notify("digest", null, cap(digestLine()));
-  engineLog(
-    "Overnight attention: 4",
-    "1 base, plus 1 for 22 points in the last 7 days, plus 2 for rank #4.",
-  );
+  const a = attention();
+  engineLog("Overnight attention: " + a.total, attentionReason(a) + ".");
 }
 export function ensureThread(cid: string) {
   let t = threadFor(cid);
@@ -947,11 +1054,13 @@ export function jobFor(t: Thread) {
   const last = t.msgs[t.msgs.length - 1];
   if (!last) return "intro";
   if (last.from === "them") return "reply";
-  if (last.from === "me" && S.day - last.day >= 3) return "followup";
+  // No follow-up goes to a Company that cannot read the first message until it claims.
+  if (last.from === "me" && S.day - last.day >= 3 && hasClaimed(t.co)) return "followup";
   return null;
 }
 export function draftText(job: string, t: Thread) {
   const c = co(t.co),
+    view = publicView(c),
     m = S.me;
   if (job === "intro")
     return (
@@ -966,7 +1075,7 @@ export function draftText(job: string, t: Thread) {
       " company in " +
       m.city +
       ". I saw that your company " +
-      c.why +
+      (view.claimed ? view.description : worksIn(view) + " in " + view.city + ".") +
       " We offer " +
       m.offer.join(", ").toLowerCase() +
       ", and we would like to explore working together.\n\nWould you have 15 minutes this week?"
@@ -1093,14 +1202,7 @@ export function nextMorning(n: number) {
   connectionUpdateMorning();
   engineLog(
     "Overnight attention: " + a.total,
-    "1 base, plus " +
-      a.activity +
-      " for " +
-      a.recent +
-      " points in the last 7 days, plus " +
-      a.standing +
-      " for rank #" +
-      rank() +
+    attentionReason(a) +
       ". Result: " +
       viewers.length +
       " views, " +
@@ -1143,7 +1245,10 @@ export function digestLine() {
     m
   );
 }
+/** A Company's degree and its count of mutual connections, as a line's ending. Neither shows
+ * for a Company that has not claimed. */
 export function searchDegree(c: Company) {
+  if (!hasClaimed(c.id)) return "";
   const d = degreeLabel(c),
     m = mutuals(c).length;
   return (d ? " · " + d : "") + (m ? " · " + m + " mutual" : "");
@@ -1624,11 +1729,6 @@ export function teamData(): TeamData {
       }).length + (meIn(day, 7) ? 1 : 0)
     );
   };
-  const count = function (key: RuleKey, from?: number) {
-    return S.ledger.filter(function (l) {
-      return l.key === key && (!from || l.day > from);
-    }).length;
-  };
   const claimed = claimedBy(D),
     base = claimed.length + (S.claimed ? 1 : 0),
     wac = wacAt(D),
@@ -1693,8 +1793,8 @@ export function teamData(): TeamData {
         return since - Math.floor(since / x.r.period) * x.r.period < 30;
       }).length + (S.claimed && S.day - S.me.lastUpdate < 30 ? 1 : 0),
     freshPct = pct(fresh4, base);
-  const deals = Math.floor(D / 4.5) + count("deal"),
-    wins = Math.floor(D / 10) + count("testimonial"),
+  const deals = dealsConfirmed(D),
+    wins = successWall(D).length,
     shares = Math.floor(D / 4) + Object.keys(S.shares).length;
   const joined =
       Math.floor(D / 5) +
@@ -2022,17 +2122,16 @@ const ACT = {
   },
   connect: function (id: string) {
     if (S.conn[id]) return;
-    const c = co(id),
-      f = fit(c).score;
+    const c = co(id);
+    if (!hasClaimed(id)) {
+      toast(c.name + " hasn’t claimed its profile yet, so it can’t accept a Connection Request.");
+      return;
+    }
+    const f = fit(c).score;
     S.conn[id] = "pending";
     S.leadAct[id] = S.leadAct[id] || "connect";
     actList();
-    if (!hasClaimed(id)) {
-      engineLog(
-        "Connection Request to " + c.name,
-        "It has not claimed its profile, so the request stays pending.",
-      );
-    } else if (f >= STRONG_FIT) {
+    if (f >= STRONG_FIT) {
       engineLog(
         "Connection Request to " + c.name,
         "Fit " + f + " is strong, so it is accepted within seconds.",
@@ -2382,7 +2481,7 @@ const ACT = {
     }
     const p = S.pendingT.shift()!,
       c = co(p.co);
-    const w = { a: S.me.name, b: c.name, need: polish(f.need), got: polish(f.got) };
+    const w = { a: S.me.name, b: c.name, need: polish(f.need), got: polish(f.got), day: S.day };
     S.wall.unshift(w);
     S.lastWin = w;
     f.need = "";
@@ -2398,6 +2497,7 @@ const ACT = {
         b: S.me.name,
         need: "We needed a reliable partner for this order.",
         got: "Their team delivered on time, and we plan to order again.",
+        day: S.day,
       });
       notify("win", p.co, c.name + " posted a testimonial about your deal");
       toast(c.name + " posted its testimonial too.");
@@ -2755,8 +2855,10 @@ export function prepareThread(id: string) {
 }
 
 /* ---------- Read models for screens ---------- */
+/** The Connections a Company shares with Kalayaan Foods, in words. None show for a Company that
+ * has not claimed. */
 export function mutualText(c: Pick<Company, "id">) {
-  const m = mutuals(c);
+  const m = hasClaimed(c.id) ? mutuals(c) : [];
   if (!m.length) return "";
   const names = m
     .slice(0, 2)
@@ -2773,10 +2875,35 @@ export function mutualText(c: Pick<Company, "id">) {
     (m.length > 2 ? " and " + (m.length - 2) + " more" : "")
   );
 }
+/** What makes up a Company's Fit Score. Empty until it has claimed: the score then shows with no
+ * breakdown, because the breakdown would tell what its unpublished draft offers and needs. */
 export function fitReasons(c: Company) {
+  if (!hasClaimed(c.id)) return [];
   return fit(c).parts.filter(function (p) {
     return p[0] !== "Starting score";
   });
+}
+/** The Match Reason: the one line that says why to meet a Company. Its own description once it
+ * has claimed. Until then a line told from Kalayaan Foods' side with the Company's public
+ * industry and city, or none when their trades do not meet. */
+export function matchReason(c: Company): string | null {
+  const view = publicView(c);
+  if (view.claimed) return cap(view.description);
+  const word = function (tag: string) {
+    return TRADE_WORDS[tag] ?? tag;
+  };
+  const need = S.me.wants.find(function (t) {
+      return c.gives.includes(t);
+    }),
+    offer = S.me.gives.find(function (t) {
+      return c.wants.includes(t);
+    });
+  const opening = need
+    ? "You’re looking for " + word(need)
+    : offer
+      ? "You offer " + word(offer)
+      : null;
+  return opening && opening + ". " + view.name + " " + worksIn(view) + ", " + view.city + ".";
 }
 export function selectedLead(ids: string[]) {
   const open = function (id: string) {
@@ -2790,6 +2917,41 @@ export function firstMatches() {
       return !S.conn[c.id];
     }),
   ).slice(0, 3);
+}
+/** The Success Wall on a day, newest first: the Testimonials the chamber's Companies had posted
+ * by then, and the ones posted this session. No win shows before its day. */
+export function successWall(day = S.day): Win[] {
+  const chamber = CHAMBER_DEALS.flatMap(function (d): Win[] {
+    const t = d.testimonial;
+    return t ? [{ a: co(d.a).name, b: co(d.b).name, need: t.need, got: t.got, day: d.day }] : [];
+  });
+  return S.wall
+    .concat(chamber)
+    .filter(function (w) {
+      return w.day <= day;
+    })
+    .sort(function (x, y) {
+      return y.day - x.day;
+    });
+}
+/** The wins on the Success Wall that name a Company. */
+export function winsOf(c: Pick<Company, "name">) {
+  return successWall().filter(function (w) {
+    return w.a === c.name || w.b === c.name;
+  });
+}
+/** How many deals both Companies had confirmed by a day: the chamber's, plus Kalayaan Foods' own
+ * as its Activity Score counts them. */
+export function dealsConfirmed(day = S.day) {
+  const byThen = function (x: { day: number }) {
+    return x.day <= day;
+  };
+  return (
+    CHAMBER_DEALS.filter(byThen).length +
+    S.ledger.filter(function (l) {
+      return l.key === "deal" && byThen(l);
+    }).length
+  );
 }
 export function monthlyTop() {
   const month = monthOf(S.day);
@@ -2835,7 +2997,12 @@ export function searchRows(): SearchRow[] | null {
     S.extra,
   )
     .map(function (c) {
-      const r = score1(c.name, c.ind + " " + c.why, c.offer.concat(c.seek));
+      // A search reads what the searcher may see: the draft of a Company that has not claimed
+      // stays out of it.
+      const view = publicView(c);
+      const r = view.claimed
+        ? score1(view.name, view.ind + " " + view.description, view.offer.concat(view.seek))
+        : score1(view.name, view.ind, []);
       const b = c.joinedDay ? (S.day - c.joinedDay < 30 ? NEW_BOOST : 0) : compBoost(pointsOf(c));
       return { me: false, c: c, r: r, b: b, val: r * (1 + b) };
     })
@@ -3817,7 +3984,7 @@ const ITEM_KINDS: Record<ConnectionItemKind, ItemKind> = {
   },
   win: {
     collect: function (mine) {
-      return S.wall.flatMap(function (w) {
+      return successWall().flatMap(function (w) {
         if (w.a === S.me.name || w.b === S.me.name) return [];
         const ids = [w.a, w.b].map(poolIdByName);
         const at = ids.findIndex(function (id) {
@@ -3831,7 +3998,7 @@ const ITEM_KINDS: Record<ConnectionItemKind, ItemKind> = {
             kind: "win" as const,
             label: "Success Wall",
             company: co(partner),
-            day: null,
+            day: w.day,
             title: "Shared a win with " + (at === 0 ? w.b : w.a),
             text: w.got,
             askId: null,

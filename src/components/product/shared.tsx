@@ -1,22 +1,20 @@
 "use client";
 
 import type { ComponentProps, ReactNode } from "react";
-import { Check, ChevronLeft, Clock, Minus } from "lucide-react";
+import { Check, ChevronLeft, Minus } from "lucide-react";
 
-import { useIsDesktop, useSimulation } from "@/components/product/use-simulation";
+import { ClaimMark } from "@/components/product/claim-mark";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { Company } from "@/services/comlinked";
 import {
   act,
-  CAT,
-  co,
   degreeLabel,
-  fit,
   fitReasons,
-  cap,
+  matchReason,
   mutualText,
-  selectedLead,
+  publicView,
+  searchDegree,
 } from "@/services/comlinked";
 
 type ButtonProps = Omit<ComponentProps<typeof Button>, "variant" | "size"> & { cls?: string };
@@ -36,21 +34,29 @@ export function Mono({ c, cls }: { c: Mark; cls?: string }) {
   );
 }
 
-export function CoBtn({ c, detail, cls }: { c: Company; detail?: ReactNode; cls?: string }) {
+/** The line under a Company's name: its industry and city, then its degree once it has claimed,
+ * with the count of mutual connections where `mutuals` asks for it. Until then the line ends
+ * with its website, the last of the basics other Companies may see. */
+export function BasicsLine({ c, mutuals = false }: { c: Company; mutuals?: boolean }) {
+  const view = publicView(c);
   const degree = degreeLabel(c);
+  const relation = mutuals ? searchDegree(c) : degree ? ` · ${degree}` : "";
+  return (
+    <>
+      {view.ind}, {view.city}
+      {view.claimed ? relation : ` · ${view.website}`}
+    </>
+  );
+}
+
+export function CoBtn({ c, detail, cls }: { c: Company; detail?: ReactNode; cls?: string }) {
   return (
     <button type="button" className="a-co" onClick={() => act.viewCo(c.id)}>
       <Mono c={c} cls={cls} />
       <span className="a-co-t">
         <strong>{c.name}</strong>
-        <small>
-          {detail ?? (
-            <>
-              {c.ind}, {c.city}
-              {degree ? ` · ${degree}` : ""}
-            </>
-          )}
-        </small>
+        <small>{detail ?? <BasicsLine c={c} />}</small>
+        <ClaimMark c={c} />
       </span>
     </button>
   );
@@ -149,12 +155,15 @@ export function PageHead({
   );
 }
 
+/** The head of a profile. `note` adds lines under the industry and city. */
 export function ProfileHead({
   c,
   tail,
+  note,
 }: {
   c: Mark & Pick<Company, "name" | "ind" | "city">;
   tail?: ReactNode;
+  note?: ReactNode;
 }) {
   return (
     <header className="a-profile">
@@ -164,6 +173,7 @@ export function ProfileHead({
         <p className="a-small">
           {c.ind}, {c.city}
         </p>
+        {note}
       </div>
       {tail}
     </header>
@@ -197,19 +207,25 @@ export function FitMark({ score }: { score: number }) {
   );
 }
 
+/** The Match Reason: one line on why to meet a Company. Shows nothing when there is none. */
 export function WhyMeet({ c }: { c: Company }) {
+  const reason = matchReason(c);
+  if (!reason) return null;
   return (
     <div>
       <div className="a-label">Why meet</div>
-      <p className="a-why">{cap(c.why)}</p>
+      <p className="a-why">{reason}</p>
     </div>
   );
 }
 
+/** What makes up a Fit Score. Shows nothing for a Company that has not claimed. */
 export function ReasonList({ c }: { c: Company }) {
+  const reasons = fitReasons(c);
+  if (!reasons.length) return null;
   return (
     <ul className="a-reasons">
-      {fitReasons(c).map(([label, points]) => (
+      {reasons.map(([label, points]) => (
         <li key={label}>
           {points > 0 ? (
             <Check className="a-ic" aria-hidden="true" />
@@ -226,166 +242,6 @@ export function ReasonList({ c }: { c: Company }) {
 export function MutualLine({ c }: { c: Company }) {
   const text = mutualText(c);
   return text ? <p className="a-small">{text}</p> : null;
-}
-
-export function LeadActions({ c }: { c: Company }) {
-  return (
-    <div className="a-acts a-lead-actions">
-      <Btn onClick={() => act.connect(c.id)}>Connect</Btn>
-      <Btn cls="o" onClick={() => act.message(c.id)}>
-        Message
-      </Btn>
-      <Btn cls="g" onClick={() => act.skip(c.id)}>
-        Skip
-      </Btn>
-    </div>
-  );
-}
-
-/** The selected Lead in full: inside the list on a phone and on ComDash. */
-export function LeadCard({ c, markCls }: { c: Company; markCls?: string }) {
-  return (
-    <article className="a-lead active a-lead-open" data-lead={c.id}>
-      <div className="a-between">
-        <CoBtn c={c} cls={markCls} />
-        <FitMark score={fit(c).score} />
-      </div>
-      <WhyMeet c={c} />
-      <ReasonList c={c} />
-      <MutualLine c={c} />
-      <LeadActions c={c} />
-    </article>
-  );
-}
-
-/** The selected Lead in full: the right-hand panel on a laptop. */
-function LeadDetail({ c }: { c: Company }) {
-  return (
-    <article className="a-lead-open" id="lead-detail">
-      <div className="a-between">
-        <CoBtn c={c} cls="lg" />
-        <FitMark score={fit(c).score} />
-      </div>
-      <WhyMeet c={c} />
-      <div>
-        <div className="a-label">Why it fits</div>
-        <ReasonList c={c} />
-      </div>
-      <MutualLine c={c} />
-      <OfferSeek c={c} />
-      <LeadActions c={c} />
-    </article>
-  );
-}
-
-function LeadRow({ c, selected }: { c: Company; selected: boolean }) {
-  const S = useSimulation();
-  const isWeb = useIsDesktop();
-  const action = S.leadAct[c.id];
-  const conn = S.conn[c.id];
-  const score = <FitMark score={fit(c).score} />;
-  let result: ReactNode = null;
-  let tail: ReactNode = null;
-  if (conn === "connected") {
-    result = (
-      <span className="a-st good">
-        <Check className="a-ic" aria-hidden="true" />
-        Connected
-      </span>
-    );
-    tail = (
-      <Btn cls="g sm" onClick={() => act.message(c.id)}>
-        Message
-      </Btn>
-    );
-  } else if (conn === "pending") {
-    result = (
-      <span className="a-st">
-        <Clock className="a-ic" aria-hidden="true" />
-        Connection Request sent
-      </span>
-    );
-    tail = (
-      <Btn cls="g sm" onClick={() => act.withdraw(c.id)}>
-        Withdraw
-      </Btn>
-    );
-  } else if (action === "skip") {
-    result = `Skipped. Fewer ${CAT[c.cat]} companies tomorrow.`;
-  } else if (action === "message") {
-    result = (
-      <span className="a-st">
-        <Check className="a-ic" aria-hidden="true" />
-        Message started
-      </span>
-    );
-    tail = (
-      <Btn cls="g sm" onClick={() => act.connect(c.id)}>
-        Connect
-      </Btn>
-    );
-  }
-  if (result) {
-    return (
-      <article className="a-lead done" data-lead={c.id}>
-        <CoBtn c={c} detail={result} cls="sm" />
-        {score}
-        {tail}
-      </article>
-    );
-  }
-  if (selected && !isWeb) return <LeadCard c={c} />;
-  const degree = degreeLabel(c);
-  return (
-    <article className={cn("a-lead pick", selected && "sel")} data-lead={c.id}>
-      <button
-        type="button"
-        className="a-pick"
-        onClick={() => act.pickLead(c.id)}
-        aria-current={selected ? "true" : undefined}
-      >
-        <Mono c={c} />
-        <span className="a-co-t">
-          <strong>{c.name}</strong>
-          <small>
-            {c.ind}, {c.city}
-            {degree ? ` · ${degree}` : ""}
-          </small>
-          <small className="a-pick-why">{cap(c.why)}</small>
-        </span>
-        {score}
-      </button>
-    </article>
-  );
-}
-
-/** Ranked list beside the selected company on a laptop; a single opening list on a phone. */
-export function LeadBoard({ ids, finished }: { ids: string[]; finished: ReactNode }) {
-  const isWeb = useIsDesktop();
-  const selected = selectedLead(ids);
-  const rows = (
-    <div className="a-leads">
-      {ids.map((id) => (
-        <LeadRow key={id} c={co(id)} selected={id === selected} />
-      ))}
-    </div>
-  );
-  if (!isWeb) {
-    return (
-      <>
-        {selected ? null : finished}
-        <Panel>{rows}</Panel>
-      </>
-    );
-  }
-  return (
-    <div className="w-board">
-      <Panel cls="a-board-list">{rows}</Panel>
-      <aside className="a-surface a-detail">
-        {selected ? <LeadDetail c={co(selected)} /> : finished}
-      </aside>
-    </div>
-  );
 }
 
 export function AiChip({ field, on }: { field: string; on: boolean }) {

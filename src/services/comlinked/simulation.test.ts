@@ -6,7 +6,9 @@ import {
   agentRunFor,
   CAT,
   CHAMBER,
+  CHAMBER_DEALS,
   claimedCount,
+  dealsConfirmed,
   EUROPEAN_EDGES,
   EUROPEAN_MEMBERS,
   INDUSTRY,
@@ -35,6 +37,8 @@ import {
   interestFunnel,
   interestLevel,
   interestedCompanies,
+  jobFor,
+  matchReason,
   profileCompleteness,
   profileGaps,
   searchTerms,
@@ -51,6 +55,7 @@ import {
   enterRoute,
   firstMatches,
   fit,
+  fitReasons,
   getState,
   groupText,
   markDashSeen,
@@ -68,9 +73,13 @@ import {
   pointsOf,
   POOL,
   prepareThread,
+  publicView,
   rank,
+  RULES,
   score,
+  searchDegree,
   searchRows,
+  successWall,
   selectedLead,
   setDraft,
   setForm,
@@ -79,6 +88,7 @@ import {
   TOTAL,
   trendPoints,
   unreadCount,
+  waitingForClaim,
 } from "@/services/comlinked";
 import type { ConnectionItem } from "@/services/comlinked";
 
@@ -104,11 +114,11 @@ describe("claiming", () => {
   });
 
   it("offers the three best matches before claiming and lists them after", () => {
-    expect(firstMatches().map((c) => c.id)).toEqual(["maple", "pack", "palengke"]);
+    expect(firstMatches().map((c) => c.id)).toEqual(["maple", "nordhavn", "pack"]);
     newCompany();
     const ids = getState().lists[1]!.slice(0, 3);
-    expect(ids).toEqual(["maple", "pack", "palengke"]);
-    expect(ids.map((id) => fit(co(id)).score)).toEqual([92, 87, 87]);
+    expect(ids).toEqual(["maple", "nordhavn", "pack"]);
+    expect(ids.map((id) => fit(co(id)).score)).toEqual([92, 92, 87]);
   });
 });
 
@@ -141,13 +151,16 @@ describe("connections", () => {
   });
 
   it("leaves a weak fit pending until withdrawn", () => {
-    expect(fit(co("agos")).score).toBeLessThan(50);
-    act.connect("agos");
+    // Hapag Kitchen Group has claimed. Agos Water Services, used here before, has not, so it
+    // cannot be sent a request at all.
+    expect(hasClaimed("hapag")).toBe(true);
+    expect(fit(co("hapag")).score).toBeLessThan(50);
+    act.connect("hapag");
     vi.advanceTimersByTime(5000);
     act.morning("1");
-    expect(getState().conn.agos).toBe("pending");
-    act.withdraw("agos");
-    expect(getState().conn.agos).toBeUndefined();
+    expect(getState().conn.hapag).toBe("pending");
+    act.withdraw("hapag");
+    expect(getState().conn.hapag).toBeUndefined();
   });
 
   it("puts today's Leads on the ring and pulls a new Connection inward", () => {
@@ -184,10 +197,12 @@ describe("connections", () => {
 describe("the two-weeks-in preset", () => {
   beforeEach(() => act.demoActive());
 
-  it("sits at #4 of 12 with an Activity Score of 59", () => {
-    expect(rank()).toBe(4);
+  it("sits at #1 of 12 with an Activity Score of 123", () => {
+    // The 59 points it had before, plus 64 for connecting, replying, meeting, the deal and the
+    // Testimonial with Nordhavn.
+    expect(rank()).toBe(1);
     expect(TOTAL).toBe(12);
-    expect(score()).toBe(59);
+    expect(score()).toBe(123);
   });
 
   it("points at today's leads", () => {
@@ -495,7 +510,7 @@ describe("Overview figures", () => {
     expect(topNumbers().map((n) => [n.label, n.value, n.change, n.trend])).toEqual([
       ["Search appearances", 3, "1 more than before", "up"],
       ["Recommendations", 1, "Same as before", "same"],
-      ["Messages", 2, "2 more than before", "up"],
+      ["Messages", 3, "1 more than before", "up"],
       ["Introductions", 1, "1 more than before", "up"],
       ["Profile views", 4, "4 more than before", "up"],
       ["Profile saves", 2, "2 more than before", "up"],
@@ -522,11 +537,11 @@ describe("Overview figures", () => {
     act.demoActive();
     const funnel = interestFunnel();
     expect(funnel?.steps.map((s) => [s.label, s.count, s.ofPrevious])).toEqual([
-      ["Found you in search", 12, null],
-      ["Viewed your profile", 5, "42%"],
-      ["Saved your profile", 4, "80%"],
-      ["Messaged you", 3, "75%"],
-      ["Connected", 2, "67%"],
+      ["Found you in search", 13, null],
+      ["Viewed your profile", 6, "46%"],
+      ["Saved your profile", 5, "83%"],
+      ["Messaged you", 4, "80%"],
+      ["Connected", 3, "75%"],
     ]);
   });
 
@@ -588,6 +603,11 @@ describe("Overview figures", () => {
 
   it("dates the chart from the claim and says when search appearances are rising", () => {
     act.demoActive();
+    // Day 14 brought one search, more than the first week's daily average.
+    expect(visibilityNote()).toBe(
+      "Since you claimed your profile on Day 1. Search appearances are rising.",
+    );
+    getState().signals = getState().signals.filter((s) => s.day !== 14);
     expect(visibilityNote()).toBe("Since you claimed your profile on Day 1");
     withSignals([
       ["sari", "search", 20, "snacks"],
@@ -608,8 +628,8 @@ describe("Overview figures", () => {
     act.demoActive();
     const days = visibilityByDay();
     expect(days[0]!.day).toBe(1);
-    expect(days.at(-1)!.day).toBe(15);
-    expect(days.find((d) => d.day === 13)).toMatchObject({ searches: 1, recommendations: 1 });
+    expect(days.at(-1)!.day).toBe(14);
+    expect(days.find((d) => d.day === 12)).toMatchObject({ searches: 1, recommendations: 1 });
   });
 
   it("only shows industries with 3 or more interested companies", () => {
@@ -657,7 +677,7 @@ describe("Overview figures", () => {
 
   it("summarises Connections and profile completeness", () => {
     act.demoActive();
-    expect(connectionSummary()).toEqual({ connections: 3, incoming: 1, outgoing: 2 });
+    expect(connectionSummary()).toEqual({ connections: 4, incoming: 1, outgoing: 1 });
     expect(profileCompleteness()).toEqual({ percent: 90, missing: ["a photo of your work"] });
   });
 });
@@ -1025,12 +1045,13 @@ describe("Connections tab", () => {
   it("lists Connections first, then requests sent", () => {
     act.demoActive();
     const rows = connectionList();
-    expect(rows.filter((r) => r.status === "connected").map((r) => r.company.id)).toEqual([
-      "maple",
-      "pack",
-      "tala",
+    expect(rows.map((r) => [r.company.id, r.status])).toEqual([
+      ["nordhavn", "connected"],
+      ["maple", "connected"],
+      ["pack", "connected"],
+      ["tala", "connected"],
+      ["buhay", "pending"],
     ]);
-    expect(rows.slice(-2).every((r) => r.status === "pending")).toBe(true);
   });
 
   it("suggests chamber members with shared Connections and buyers of what the profile sells", () => {
@@ -1074,13 +1095,19 @@ describe("From your connections", () => {
   beforeEach(() => act.demoActive());
 
   it("holds only Asks, Success Wall wins and profile updates by Connections", () => {
-    const items = connectionItems();
-    const kinds = new Set(items.map((i) => i.kind));
-    expect([...kinds].sort()).toEqual(["ask", "update", "win"]);
+    const kinds = () => [...new Set(connectionItems().map((i) => i.kind))].sort();
+    // No Connection has a win on the wall yet: Maple Bay Grocers posts its own on Day 15.
+    expect(kinds()).toEqual(["ask", "update"]);
+    act.morning("1");
+    expect(kinds()).toEqual(["ask", "update", "win"]);
+    expect(itemOf("win")).toMatchObject({
+      day: 15,
+      title: "Shared a win with Tanim Farm Cooperative",
+    });
     const mine = new Set(
       Object.keys(getState().conn).filter((id) => getState().conn[id] === "connected"),
     );
-    expect(items.every((i) => mine.has(i.company.id))).toBe(true);
+    expect(connectionItems().every((i) => mine.has(i.company.id))).toBe(true);
   });
 
   it("drops a Company's items when it isn't a Connection", () => {
@@ -1123,6 +1150,7 @@ describe("From your connections", () => {
   });
 
   it("starts with an empty reply box when the daily AI limit is spent", () => {
+    act.morning("1");
     getState().aiUsed[getState().day] = 30;
     const item = itemOf("win");
     act.startReply(item.id);
@@ -1182,15 +1210,15 @@ describe("claiming as one fact", () => {
 
   it("turns a staff reminder into a claim the next morning, for that session only", () => {
     act.demoActive();
-    expect(hasClaimed("tibay")).toBe(false);
-    act.teamRemind("tibay");
-    expect(hasClaimed("tibay")).toBe(false);
+    expect(hasClaimed("agos")).toBe(false);
+    act.teamRemind("agos");
+    expect(hasClaimed("agos")).toBe(false);
     act.morning("1");
-    expect(claimDayOf("tibay")).toBe(16);
-    expect(hasClaimed("tibay")).toBe(true);
-    expect(teamData().queue.some((q) => q.id === "tibay" && q.act === "remind")).toBe(false);
+    expect(claimDayOf("agos")).toBe(15);
+    expect(hasClaimed("agos")).toBe(true);
+    expect(teamData().queue.some((q) => q.id === "agos" && q.act === "remind")).toBe(false);
     act.demoActive();
-    expect(claimDayOf("tibay")).toBeNull();
+    expect(claimDayOf("agos")).toBeNull();
   });
 });
 
@@ -1251,25 +1279,34 @@ describe("a Company that has not claimed", () => {
       );
     }
     expect(acted.size).toBeGreaterThan(15);
-    ["north", "tibay"].forEach((id) => {
-      expect(S.conn[id]).toBe("pending");
-      expect(S.threads.find((t) => t.co === id)?.msgs.every((m) => m.from === "me")).toBe(true);
+    ["north", "kahon", "bayan", "tibay"].forEach((id) => {
+      expect([id, S.conn[id]]).toEqual([id, undefined]);
+      expect(S.threads.find((t) => t.co === id)?.msgs.map((m) => m.from)).toEqual(["me"]);
     });
   });
 
-  it("leaves a Connection Request pending, however strong the fit", () => {
+  it("cannot be sent a Connection Request, however strong the fit", () => {
     newCompany();
     act.connect("maple");
     vi.advanceTimersByTime(1500);
+    expect(getState().conn.maple).toBe("connected");
     expect(fit(co("kahon")).score).toBeGreaterThanOrEqual(80);
     expect(fit(co("north")).score).toBeGreaterThanOrEqual(50);
+    const toast = vi.fn();
+    setHandlers({ toast });
     act.connect("kahon");
     act.connect("north");
     vi.advanceTimersByTime(5000);
     act.morning("1");
     act.morning("1");
-    expect(getState().conn.kahon).toBe("pending");
-    expect(getState().conn.north).toBe("pending");
+    expect(connectionStatus("kahon")).toBeNull();
+    expect(connectionStatus("north")).toBeNull();
+    expect(connectionList().map((r) => r.company.id)).toEqual(["maple"]);
+    expect(toast).toHaveBeenCalledWith(
+      "Northline Logistics hasn’t claimed its profile yet, so it can’t accept a Connection Request.",
+      undefined,
+      undefined,
+    );
   });
 
   it("sends no reply to a message", () => {
@@ -1360,7 +1397,7 @@ describe("the network of 100", () => {
     expect(co("nordhavn").website).toBe("nordhavn.example");
   });
 
-  it("keeps the 60 out of what Kalayaan Foods buys and sells", () => {
+  it("keeps the 60 out of what Kalayaan Foods buys and sells, apart from Nordhavn", () => {
     const seeks = ["grocery", "freight", "packaging"];
     const offers = ["snacks", "frozen", "privatelabel", "foodmfg"];
     expect(getState().me.wants).toEqual(seeks);
@@ -1368,7 +1405,7 @@ describe("the network of 100", () => {
     const trading = EUROPEAN_MEMBERS.filter(
       (c) => c.gives.some((t) => seeks.includes(t)) || c.wants.some((t) => offers.includes(t)),
     );
-    expect(trading.map((c) => c.id)).toEqual([]);
+    expect(trading.map((c) => c.id)).toEqual(["nordhavn"]);
   });
 
   it("links each new member to at most one original, and no two originals to each other", () => {
@@ -1443,41 +1480,31 @@ describe("the network of 100", () => {
 });
 
 describe("Kalayaan Foods' story with 100 Companies", () => {
-  it("keeps its day-one Matches and Day 1 Daily Lead List", () => {
-    expect(firstMatches().map((c) => c.id)).toEqual(["maple", "pack", "palengke"]);
+  it("makes Nordhavn a day-one Match, with Palengke Online and Northline completing Day 1's list", () => {
+    expect(firstMatches().map((c) => c.id)).toEqual(["maple", "nordhavn", "pack"]);
     newCompany();
-    expect(getState().lists[1]).toEqual(["maple", "pack", "palengke", "north", "tala"]);
+    expect(getState().lists[1]).toEqual(["maple", "nordhavn", "pack", "palengke", "north"]);
     expect((getState().lists[1] ?? []).map((id) => fit(co(id)).score)).toEqual([
-      92, 87, 87, 77, 77,
+      92, 92, 87, 87, 77,
     ]);
     expect(rank()).toBe(8);
   });
 
-  it("keeps its interested Companies and today's leads two weeks in", () => {
-    act.demoActive();
-    expect(interestedCompanies().map((r) => [r.company.id, r.level])).toEqual([
-      ["hapag", "Hot"],
-      ["luntian", "Hot"],
-      ["pack", "Hot"],
-      ["maple", "Warm"],
-      ["sari", "New"],
-      ["malaya", "New"],
-      ["lakbay", "New"],
-      ["tindahan", "New"],
-      ["palengke", "New"],
-      ["kainan", "New"],
-      ["bukas", "New"],
-      ["paaralan", "New"],
-    ]);
-    expect(getState().lists[15]).toEqual(["palengke", "kahon", "tindahan", "biyahe", "lakbay"]);
-    expect(getState().digest).toMatchObject({
-      viewers: ["Sari Central Wholesale", "Hapag Kitchen Group"],
-      asks: 1,
-    });
-    expect(getState().asks[0]).toMatchObject({ id: "o15", co: "tala" });
+  it("gives Nordhavn a reason to meet about shipping to Europe", () => {
+    expect(co("nordhavn").why).toBe(
+      "ships between Manila and European ports and is looking for manufacturers ready to export.",
+    );
+    expect(co("nordhavn").city).toBe("Quezon City");
   });
 
-  it("never draws interest from the 60, or lists them as leads, on any later morning", () => {
+  it("has three day-one Matches that have all claimed, and one lead that has not", () => {
+    newCompany();
+    const list = getState().lists[1] ?? [];
+    expect(list.slice(0, 3).filter((id) => !hasClaimed(id))).toEqual([]);
+    expect(list.filter((id) => !hasClaimed(id))).toEqual(["north"]);
+  });
+
+  it("never draws interest from the other 59, or lists them as leads, on any later morning", () => {
     const fromEurope = () => {
       const S = getState();
       return S.signals
@@ -1486,7 +1513,7 @@ describe("Kalayaan Foods' story with 100 Companies", () => {
           S.incoming.map((r) => r.co),
           Object.values(S.lists).flat(),
         )
-        .filter(isEuropean);
+        .filter((id) => isEuropean(id) && id !== "nordhavn");
     };
     newCompany();
     for (let i = 0; i < 30; i++) act.morning("1");
@@ -1501,11 +1528,13 @@ describe("Kalayaan Foods' story with 100 Companies", () => {
     newCompany();
     for (let i = 0; i < 9; i++) act.morning("1");
     const lists = getState().lists;
-    expect(lists[2]).toEqual(["bayan", "sari", "buhay", "tindahan", "biyahe"]);
-    expect(lists[6]).toEqual(["tibay", "agos", "kalye", "hilaga", "tanim"]);
-    expect(lists[7]).toEqual(["bigas", "kapwa", "lasa", "ginhawa", "masagana"]);
-    // Sulit Accounting was a fourth lead here. Nothing links its trade to Kalayaan Foods'.
-    expect(lists[8]).toEqual(["sariwa", "dagat", "tamis"]);
+    // Nordhavn takes a place on Day 1, so Tala Print and Label opens Day 2 and each list after
+    // it starts one Company later.
+    expect(lists[2]).toEqual(["tala", "bayan", "sari", "buhay", "tindahan"]);
+    expect(lists[6]).toEqual(["gabay", "tibay", "agos", "kalye", "hilaga"]);
+    expect(lists[7]).toEqual(["tanim", "bigas", "kapwa", "lasa", "ginhawa"]);
+    // Sulit Accounting is never a lead. Nothing links its trade to Kalayaan Foods'.
+    expect(lists[8]).toEqual(["masagana", "sariwa", "dagat", "tamis"]);
     expect(lists[9]).toEqual([]);
   });
 });
@@ -1582,7 +1611,7 @@ describe("the claim schedule", () => {
     act.teamRemind("tibay");
     act.morning("1");
     expect(hasClaimed("tibay")).toBe(true);
-    // One claim among the 57 Companies sent a claim email by Day 16: 2%, rounded.
+    // One claim among the 58 Companies sent a claim email by Day 15: 2%, rounded.
     expect(claimRate()).toBe("2%");
   });
 
@@ -1618,9 +1647,9 @@ describe("the chamber's name and its counts", () => {
     setHandlers({ toast });
     setForm("broadcast", "Our next member meeting is on Friday.");
     act.broadcast();
-    expect(claimedCount()).toBe(42);
+    expect(claimedCount()).toBe(40);
     expect(toast).toHaveBeenCalledWith(
-      "Sent to 42 members who have claimed.",
+      "Sent to 40 members who have claimed.",
       undefined,
       undefined,
     );
@@ -1630,12 +1659,503 @@ describe("the chamber's name and its counts", () => {
     act.demoActive();
     const totals = memberTotals();
     expect(totals.members).toBe(100);
-    expect(totals.claimed).toBe(42);
+    expect(totals.claimed).toBe(40);
     expect(totals.active).toBeGreaterThan(members().filter((m) => m.state === "Active").length);
     expect(totals.active).toBeLessThanOrEqual(totals.claimed);
     expect(totals.needIntro).toBeGreaterThan(0);
     expect(totals.needIntro).toBeLessThan(totals.claimed);
     getState().day = 0;
     expect(memberTotals()).toEqual({ members: 100, claimed: 0, active: 0, needIntro: 0 });
+  });
+});
+
+describe("the day-one state", () => {
+  it("holds no message sent before the Claim, and nothing sent in Kalayaan Foods' name", () => {
+    newCompany();
+    const S = getState();
+    const claimDay = need(claimDayOf("me"), "Kalayaan Foods' claim day");
+    const messages = S.threads.flatMap((t) => t.msgs);
+    expect(messages.filter((m) => m.from === "me")).toEqual([]);
+    expect(messages.filter((m) => m.day < claimDay)).toEqual([]);
+    expect(S.threads.filter((t) => t.note)).toEqual([]);
+  });
+
+  it("keeps the day-one Interest Signals and the incoming message", () => {
+    newCompany();
+    const S = getState();
+    expect(S.signals.map((s) => [s.co, s.type])).toEqual([
+      ["luntian", "messaged"],
+      ["luntian", "viewed"],
+      ["maple", "search"],
+      ["pack", "recommended"],
+    ]);
+    expect(S.threads.map((t) => [t.co, t.msgs.map((m) => m.from)])).toEqual([
+      ["luntian", ["them"]],
+    ]);
+  });
+});
+
+describe("dated wins and deals", () => {
+  it("shows no win before its day, and none through Day 2", () => {
+    newCompany();
+    [0, 1, 2].forEach((day) => expect([day, successWall(day)]).toEqual([day, []]));
+    const all = successWall(90);
+    expect(all.length).toBeGreaterThanOrEqual(4);
+    all.forEach((win) => {
+      expect(successWall(win.day - 1)).not.toContainEqual(win);
+      expect(successWall(win.day)).toContainEqual(win);
+    });
+  });
+
+  it("has three confirmed deals and two wins in the chamber on Day 14", () => {
+    act.demoActive();
+    expect(dealsConfirmed()).toBe(3);
+    expect(successWall().map((w) => [w.a, w.b, w.day])).toEqual([
+      ["Kalayaan Foods Inc.", "Nordhavn Freight Forwarders", 13],
+      ["Regalia Business Hotel", "Vinoteca Wine Importers", 9],
+    ]);
+    expect(successWall()[1]).toMatchObject({
+      need: "We needed a European wine supplier for our restaurant and events.",
+      got: "A reply on the Asks board turned into a twelve-month supply agreement.",
+    });
+    // Azur Bay Resort and Maison Blanc Linens confirmed a deal on Day 12, with no Testimonial yet.
+    expect(dealsConfirmed(11)).toBe(1);
+    expect(dealsConfirmed(12)).toBe(2);
+    expect(successWall(12)).toHaveLength(1);
+  });
+
+  it("gives the Team Dashboard the same deals and Testimonials as the wall", () => {
+    act.demoActive();
+    const now = (goal: string) => teamData().rows.find((r) => r.goal === goal)?.now;
+    expect(now("Results")).toBe("3");
+    expect(now("Advocacy")).toMatch(/^2 \/ /);
+    act.morning("7");
+    expect(now("Results")).toBe(String(dealsConfirmed()));
+    expect(now("Advocacy")).toMatch(new RegExp("^" + successWall().length + " / "));
+    expect(dealsConfirmed()).toBeGreaterThan(3);
+  });
+
+  it("holds the three earlier wins on days after Day 14", () => {
+    const later = successWall(90).filter((w) => w.day > 14);
+    expect(later.map((w) => [w.a, w.b]).sort()).toEqual([
+      ["Bukas Office Canteens", "Pacific Pack Solutions"],
+      ["Malaya Export Traders", "Tibay Crates and Pallets"],
+      ["Maple Bay Grocers", "Tanim Farm Cooperative"],
+    ]);
+  });
+
+  it("has both Companies in a deal claimed by its day", () => {
+    expect(CHAMBER_DEALS.length).toBeGreaterThanOrEqual(5);
+    CHAMBER_DEALS.forEach((deal) => {
+      [deal.a, deal.b].forEach((id) =>
+        expect([id, deal.day, hasClaimed(id, deal.day)]).toEqual([id, deal.day, true]),
+      );
+    });
+  });
+
+  it("puts a Testimonial posted this session on the wall on the day it is posted", () => {
+    act.demoActive();
+    act.outcome("t-pack|deal");
+    vi.advanceTimersByTime(1600);
+    expect(dealsConfirmed()).toBe(4);
+    setForm("need", "We needed food-grade pouches");
+    setForm("got", "We placed a first order");
+    act.postT();
+    expect(successWall()[0]).toEqual({
+      a: "Kalayaan Foods Inc.",
+      b: "Pacific Pack Solutions",
+      need: "We needed food-grade pouches.",
+      got: "We placed a first order.",
+      day: 14,
+    });
+    expect(successWall(13).some((w) => w.b === "Pacific Pack Solutions")).toBe(false);
+  });
+});
+
+describe("two weeks in, on Day 14", () => {
+  beforeEach(() => act.demoActive());
+
+  it("lands on Day 14, with nothing dated after it or before Day 1", () => {
+    const S = getState();
+    expect(S.day).toBe(14);
+    expect(S.digest?.day).toBe(14);
+    const days = [
+      ...S.ledger.map((l) => l.day),
+      ...S.signals.map((x) => x.day),
+      ...S.otherSignals.map((x) => x.day),
+      ...S.threads.flatMap((t) => t.msgs.map((m) => m.day)),
+      ...S.updates.map((u) => u.day),
+      ...S.incoming.map((r) => r.day),
+      ...S.announcements.map((a) => a.day),
+      ...S.wall.map((w) => w.day),
+      ...S.notes.map((n) => n.day),
+      ...S.log.map((l) => l.day),
+      ...Object.keys(S.lists).map(Number),
+      S.me.lastUpdate,
+    ];
+    expect(Math.max(...days)).toBe(14);
+    expect(Math.min(...days)).toBe(1);
+  });
+
+  it("has the Nordhavn deal confirmed by both Companies on Day 13", () => {
+    const S = getState();
+    const thread = need(
+      S.threads.find((t) => t.co === "nordhavn"),
+      "thread with Nordhavn",
+    );
+    expect(S.conn.nordhavn).toBe("connected");
+    expect(thread.msgs[0]).toMatchObject({ from: "me", day: 1 });
+    expect(thread.msgs.filter((m) => m.from === "sys").map((m) => [m.text, m.day])).toEqual([
+      ["Both companies confirmed: We met.", 5],
+      ["Both companies confirmed: We did business.", 13],
+    ]);
+    expect([thread.metDone, thread.dealDone]).toEqual([1, 1]);
+    expect(S.pendingT).toEqual([]);
+  });
+
+  it("has Kalayaan Foods' Testimonial about the shipment on the Success Wall", () => {
+    expect(successWall()[0]).toEqual({
+      a: "Kalayaan Foods Inc.",
+      b: "Nordhavn Freight Forwarders",
+      need: "We needed a forwarder for our first shipment of banana chips to Europe.",
+      got: "We met through a day-one match, and the shipment left Manila within two weeks.",
+      day: 13,
+    });
+  });
+
+  it("awards the points the rules give, within every limit", () => {
+    const S = getState();
+    expect(S.ledger.filter((l) => l.co === "nordhavn").map((l) => [l.day, l.key, l.pts])).toEqual([
+      [13, "testimonial", 15],
+      [13, "deal", 25],
+      [9, "reply", 3],
+      [5, "meet", 10],
+      [4, "reply", 3],
+      [2, "reply", 3],
+      [1, "conn", 5],
+    ]);
+    S.ledger.forEach((l) => expect([l.key, l.pts]).toEqual([l.key, RULES[l.key].pts]));
+    expect(score()).toBe(123);
+    // Replay the ledger from Day 1: the rules allow each entry on the day it is dated.
+    const entries = S.ledger.slice().reverse();
+    S.ledger = [];
+    entries.forEach((l) => {
+      S.day = l.day;
+      expect([l.day, l.key, l.co, allowed(l.key, l.co)]).toEqual([l.day, l.key, l.co, true]);
+      S.ledger.unshift(l);
+    });
+  });
+
+  it("backs each reply, meeting and deal it earned points for with a message that day", () => {
+    const S = getState();
+    const messages = (id: string | null) => S.threads.find((t) => t.co === id)?.msgs ?? [];
+    const backed = S.ledger.map((l) => {
+      const thread = messages(l.co);
+      const confirmed = (text: string) =>
+        thread.some((m) => m.from === "sys" && m.day === l.day && m.text.endsWith(text));
+      if (l.key === "meet") return [l.day, l.key, l.co, confirmed("We met.")];
+      if (l.key === "deal") return [l.day, l.key, l.co, confirmed("We did business.")];
+      if (l.key !== "reply") return [l.day, l.key, l.co, true];
+      // A reply earns points when it answers their message within 24 hours.
+      const answered = thread.some((m, i) => {
+        const before = thread[i - 1];
+        return (
+          m.from === "me" && m.day === l.day && before?.from === "them" && l.day - before.day <= 1
+        );
+      });
+      return [l.day, l.key, l.co, answered];
+    });
+    expect(backed.filter((row) => row[3] !== true)).toEqual([]);
+    expect(backed.filter((row) => row[1] === "reply")).toHaveLength(6);
+  });
+
+  it("has nobody acting before the day it claimed", () => {
+    const S = getState();
+    const acted: [string, string, number][] = [
+      ...S.signals
+        .filter((x) => x.type !== "intro")
+        .map((x): [string, string, number] => ["signal", x.co, x.day]),
+      ...S.threads.flatMap((t) =>
+        t.msgs
+          .filter((m) => m.from !== "me")
+          .map((m): [string, string, number] => ["message or outcome", t.co, m.day]),
+      ),
+      ...S.updates.map((u): [string, string, number] => ["profile update", u.co, u.day]),
+      ...S.incoming.map((r): [string, string, number] => ["request", r.co, r.day]),
+      ...S.ledger.flatMap((l): [string, string, number][] =>
+        l.co ? [["points with", l.co, l.day]] : [],
+      ),
+      ...S.asks
+        .filter((a) => a.co !== "me")
+        .map((a): [string, string, number] => ["ask", a.co, a.day ?? 1]),
+      ...Object.keys(S.conn).map((id): [string, string, number] => [
+        "connection or request",
+        id,
+        14,
+      ]),
+    ];
+    expect(acted.length).toBeGreaterThan(40);
+    acted.forEach(([what, id, day]) =>
+      expect([what, id, day, hasClaimed(id, day)]).toEqual([what, id, day, true]),
+    );
+  });
+
+  it("keeps the other interested Companies and their Interest Levels, with Nordhavn Hot", () => {
+    expect(interestedCompanies().map((r) => [r.company.id, r.level, r.status])).toEqual([
+      ["hapag", "Hot", null],
+      ["luntian", "Hot", null],
+      ["pack", "Hot", "Connected"],
+      ["nordhavn", "Hot", "Connected"],
+      ["maple", "Warm", "Connected"],
+      ["sari", "New", null],
+      ["malaya", "New", null],
+      ["lakbay", "New", null],
+      ["tindahan", "New", null],
+      ["palengke", "New", null],
+      ["kainan", "New", null],
+      ["bukas", "New", null],
+      ["paaralan", "New", null],
+    ]);
+  });
+
+  it("writes the morning's digest from what the state holds", () => {
+    const S = getState();
+    const today = S.signals.filter((x) => x.day === 14);
+    expect(today.filter((x) => x.type === "search").map((x) => x.co)).toEqual(["malaya"]);
+    expect(today.filter((x) => x.type === "viewed").map((x) => x.co)).toEqual(["sari", "hapag"]);
+    expect(S.digest).toMatchObject({
+      day: 14,
+      leads: 5,
+      viewers: ["Sari Central Wholesale", "Hapag Kitchen Group"],
+      searches: 1,
+      requests: 1,
+      rank: rank(),
+    });
+    expect(S.incoming).toEqual([{ co: "lakbay", day: 14 }]);
+    expect(digestLine()).toBe("5 new leads, 2 companies viewed you, you moved up 1 place");
+  });
+
+  it("builds today's leads and the morning's Ask from the network as it stands on Day 14", () => {
+    const S = getState();
+    expect(S.lists[1]).toEqual(["maple", "nordhavn", "pack", "palengke", "north"]);
+    expect(S.lists[14]).toEqual(["kahon", "tindahan", "biyahe", "lakbay", "selyo"]);
+    expect(S.asks[0]).toMatchObject({ id: "o14", co: "nordhavn", day: 14 });
+    expect(S.asks[0]?.text).toBe(
+      "Looking for food manufacturers for our freight forwarding business.",
+    );
+  });
+});
+
+describe("what a Company may see of another", () => {
+  beforeEach(newCompany);
+
+  it("shows only the basics of a Company that has not claimed", () => {
+    expect(publicView(co("north"))).toEqual({
+      id: "north",
+      name: "Northline Logistics",
+      ini: "NL",
+      ind: "Cold-chain freight",
+      city: "Valenzuela City",
+      website: "north.example",
+      claimed: false,
+    });
+  });
+
+  it("adds the description, offers and needs of a Company that has claimed", () => {
+    expect(publicView(co("nordhavn"))).toEqual({
+      id: "nordhavn",
+      name: "Nordhavn Freight Forwarders",
+      ini: "NF",
+      ind: "Freight forwarding",
+      city: "Quezon City",
+      website: "nordhavn.example",
+      claimed: true,
+      description:
+        "ships between Manila and European ports and is looking for manufacturers ready to export.",
+      offer: ["Sea freight to Europe", "Air cargo"],
+      seek: ["Food manufacturers", "Snack exporters"],
+    });
+    expect(matchReason(co("nordhavn"))).toBe(
+      "Ships between Manila and European ports and is looking for manufacturers ready to export.",
+    );
+  });
+
+  it("changes on the day the Company claims", () => {
+    const kainan = co("kainan");
+    act.morning("2");
+    expect(getState().day).toBe(3);
+    expect(publicView(kainan).claimed).toBe(false);
+    expect(fitReasons(kainan)).toEqual([]);
+    expect(matchReason(kainan)).toBe(
+      "You offer frozen foods. Kainan Catering Co. works in catering, San Juan City.",
+    );
+    act.morning("1");
+    expect(publicView(kainan)).toMatchObject({
+      claimed: true,
+      description: "needs a steady supply of frozen lumpia for events.",
+      offer: ["Event catering"],
+      seek: ["Frozen foods"],
+    });
+    expect(fitReasons(kainan).map(([label]) => label)).toEqual([
+      "Seeks what you offer",
+      "Also in Metro Manila",
+    ]);
+    expect(matchReason(kainan)).toBe("Needs a steady supply of frozen lumpia for events.");
+  });
+
+  it("keeps the Fit Score of a Company that has not claimed, with no breakdown", () => {
+    expect(fit(co("north")).score).toBe(77);
+    expect(fitReasons(co("north"))).toEqual([]);
+    expect(fitReasons(co("maple")).map(([label]) => label)).toEqual([
+      "Seeks what you offer",
+      "Offers what you seek",
+      "Same city",
+    ]);
+  });
+
+  it("does not show the Connections of a Company that has not claimed", () => {
+    act.connect("maple");
+    vi.advanceTimersByTime(1500);
+    expect(mutualText(co("pack"))).toContain("Maple Bay Grocers");
+    expect(NEIGHBORS.north).toContain("maple");
+    expect(mutualText(co("north"))).toBe("");
+    expect(searchDegree(co("pack"))).toBe(" · 2nd · 1 mutual");
+    expect(searchDegree(co("north"))).toBe("");
+    // Matching still counts the shared Connection, in private.
+    expect(fit(co("north")).score).toBe(82);
+  });
+
+  it("finds a Company that has not claimed by its name and industry, never by its draft", () => {
+    const found = (query: string) => {
+      setForm("query", query);
+      return (searchRows() ?? []).flatMap((r) => (r.source ? [r.source.id] : []));
+    };
+    // Northline's draft says it delivers chilled goods, and offers "Chilled delivery".
+    expect(co("north").why).toContain("chilled");
+    expect(found("chilled")).not.toContain("north");
+    expect(found("cold-chain")).toContain("north");
+    expect(found("northline")).toEqual(["north"]);
+    // Kainan Catering's draft mentions lumpia. It claims on Day 4.
+    expect(found("lumpia")).not.toContain("kainan");
+    act.morning("3");
+    expect(found("lumpia")).toContain("kainan");
+    // A Company that has claimed is found by what it offers and seeks.
+    expect(found("shelf placement")).toEqual(["maple"]);
+  });
+
+  it("gives one reason from the viewer's need when the Company gives what it seeks", () => {
+    expect(matchReason(co("north"))).toBe(
+      "You’re looking for freight. Northline Logistics works in cold-chain freight, Valenzuela City.",
+    );
+    expect(matchReason(co("kahon"))).toBe(
+      "You’re looking for packaging. Kahon Corrugated works in corrugated boxes, Valenzuela City.",
+    );
+  });
+
+  it("starts from the viewer's offer when the Company only seeks what it offers", () => {
+    expect(matchReason(co("himig"))).toBe(
+      "You offer Filipino snacks. Himig Events works in event planning, Pasig City.",
+    );
+    expect(matchReason(co("sinag"))).toBe(
+      "You offer food manufacturing. Sinag Energy Systems works in commercial solar, Pasay City.",
+    );
+  });
+
+  it("gives no reason for a Company whose trade does not meet the viewer's", () => {
+    expect(hasClaimed("polyglot")).toBe(false);
+    expect(matchReason(co("polyglot"))).toBeNull();
+    expect(matchReason(co("sulit"))).toBeNull();
+  });
+
+  it("builds that reason from the viewer's side and public basics, never the unpublished draft", () => {
+    const disguise = (id: string) => ({
+      ...co(id),
+      why: "trains unicorns for parades.",
+      offer: ["Unicorn training"],
+      seek: ["Unicorn riders"],
+    });
+    const unclaimed = POOL.filter((c) => !hasClaimed(c.id));
+    const reasons = unclaimed.flatMap((c) => {
+      const reason = matchReason(c);
+      expect([c.id, matchReason(disguise(c.id))]).toEqual([c.id, reason]);
+      if (reason) expect(reason).not.toContain(c.why);
+      return reason ? [reason] : [];
+    });
+    expect(reasons.length).toBeGreaterThanOrEqual(15);
+    expect(publicView(disguise("north"))).toEqual(publicView(co("north")));
+  });
+
+  it("keeps an acronym in an industry as it is written", () => {
+    getState().me.wants = ["hr"];
+    const company = need(
+      POOL.find((c) => c.ind === "Payroll and HR"),
+      "the payroll Company",
+    );
+    expect(hasClaimed(company.id)).toBe(false);
+    expect(matchReason(company)).toContain(" works in payroll and HR, ");
+  });
+});
+
+describe("contacting a Company that has not claimed", () => {
+  beforeEach(newCompany);
+
+  const send = (id: string, text: string) => {
+    act.message(id);
+    const thread = need(
+      getState().threads.find((t) => t.co === id),
+      "thread with " + id,
+    );
+    setDraft(thread.id, text);
+    act.send(thread.id);
+    return thread;
+  };
+
+  it("holds a message as waiting, with no reply across several mornings", () => {
+    expect(waitingForClaim("north")).toBe(false);
+    const thread = send("north", "Hello, could we talk about chilled delivery?");
+    expect(waitingForClaim("north")).toBe(true);
+    for (let morning = 0; morning < 5; morning++) {
+      vi.advanceTimersByTime(5000);
+      act.morning("1");
+    }
+    expect(thread.msgs.map((m) => m.from)).toEqual(["me"]);
+    expect(waitingForClaim("north")).toBe(true);
+    // No follow-up is suggested to a Company that cannot read the first message yet.
+    expect(jobFor(thread)).toBeNull();
+  });
+
+  it("stops waiting on the day the Company claims", () => {
+    send("kainan", "Hello, could we supply your events?");
+    expect(waitingForClaim("kainan")).toBe(true);
+    act.morning("3");
+    expect(hasClaimed("kainan")).toBe(true);
+    expect(waitingForClaim("kainan")).toBe(false);
+  });
+
+  it("is not waiting on a Company that has claimed and has yet to reply", () => {
+    send("maple", "Hello, could we supply your stores?");
+    expect(waitingForClaim("maple")).toBe(false);
+    vi.advanceTimersByTime(2000);
+    expect(
+      getState()
+        .threads.find((t) => t.co === "maple")
+        ?.msgs.at(-1)?.from,
+    ).toBe("them");
+  });
+
+  it("drafts the first message from the Company's public basics only", () => {
+    act.message("north");
+    const thread = need(
+      getState().threads.find((t) => t.co === "north"),
+      "thread with Northline",
+    );
+    prepareThread(thread.id);
+    const draft = need(getState().drafts[thread.id], "AI draft");
+    expect(draft.ai).toBe(true);
+    expect(draft.text).toContain(
+      "I saw that your company works in cold-chain freight in Valenzuela City.",
+    );
+    expect(draft.text).not.toContain(co("north").why);
+    expect(getState().threads.find((t) => t.co === "north")?.msgs).toEqual([]);
   });
 });

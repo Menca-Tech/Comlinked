@@ -5,7 +5,15 @@ import Image from "next/image";
 import { AiChip, Btn, PageHead } from "@/components/product/shared";
 import { useSimulation } from "@/components/product/use-simulation";
 import { Textarea } from "@/components/ui/textarea";
-import { act, CHAMBER, co, monthlyTop, setForm, SHARE_LINK } from "@/services/comlinked";
+import {
+  act,
+  CHAMBER,
+  co,
+  monthlyTop,
+  setForm,
+  SHARE_LINK,
+  successWall,
+} from "@/services/comlinked";
 
 // S1 S2 S3 D5: testimonials, sharing, the Success Wall and Monthly Top Companies.
 export function Wins() {
@@ -14,6 +22,7 @@ export function Wins() {
   const pending = S.pendingT[0];
   const w = S.lastWin;
   const { month, top } = monthlyTop();
+  const wall = successWall();
   return (
     <>
       <PageHead title="Wins" />
@@ -109,18 +118,24 @@ export function Wins() {
           ) : null}
           <section className="a-sec">
             <h2 className="a-h2">Success wall</h2>
-            <div className="a-list">
-              {S.wall.map((win, i) => (
-                <article className="a-win" key={i}>
-                  <p className="a-why">
-                    <b>{win.need}</b> {win.got}
-                  </p>
-                  <p className="a-small">
-                    {win.a} with {win.b}
-                  </p>
-                </article>
-              ))}
-            </div>
+            {wall.length ? (
+              <div className="a-list">
+                {wall.map((win) => (
+                  <article className="a-win" key={`${win.day}|${win.a}|${win.b}|${win.need}`}>
+                    <p className="a-why">
+                      <b>{win.need}</b> {win.got}
+                    </p>
+                    <p className="a-small">
+                      {win.a} with {win.b}
+                    </p>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <p className="a-empty">
+                No wins yet. The first appears when two members confirm a deal.
+              </p>
+            )}
           </section>
         </div>
         <div className="w-col w-sticky a-surface">

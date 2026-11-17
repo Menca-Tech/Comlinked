@@ -2,8 +2,9 @@
 // invented. Data only: the network is assembled in data.ts.
 //
 // Rules that keep Kalayaan Foods' story intact, checked in simulation.test.ts:
-// - none gives what Kalayaan Foods seeks (grocery, freight, packaging) or wants what it offers
-//   (snacks, frozen, privatelabel, foodmfg);
+// - apart from Nordhavn Freight Forwarders, its day-one Match, none gives what Kalayaan Foods
+//   seeks (grocery, freight, packaging) or wants what it offers (snacks, frozen, privatelabel,
+//   foodmfg);
 // - each links to at most one of the 39 original companies, and every one has a connection.
 import type { MemberRow } from "@/services/comlinked/types";
 
@@ -13,13 +14,13 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     name: "Nordhavn Freight Forwarders",
     ini: "NF",
     ind: "Freight forwarding",
-    city: "Taguig City",
+    city: "Quezon City",
     cat: "logistics",
-    why: "moves sea and air shipments between Manila and European ports.",
+    why: "ships between Manila and European ports and is looking for manufacturers ready to export.",
     offer: ["Sea freight to Europe", "Air cargo"],
-    seek: ["Exporters", "Manufacturers"],
-    gives: ["shipping", "international"],
-    wants: ["export", "manufacturing"],
+    seek: ["Food manufacturers", "Snack exporters"],
+    gives: ["freight", "shipping", "international"],
+    wants: ["foodmfg", "snacks", "export", "manufacturing"],
     pts: 96,
     claimDay: 1,
   },

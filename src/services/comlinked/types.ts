@@ -26,6 +26,10 @@ export interface Company {
   chamber?: string;
 }
 
+/** What one Company may see of another. The description, offers and needs wait for the Claim. */
+export type PublicView = Pick<Company, "id" | "name" | "ini" | "ind" | "city" | "website"> &
+  ({ claimed: true; description: string; offer: string[]; seek: string[] } | { claimed: false });
+
 /** One example Company as its data file holds it. The network adds the rest in data.ts. */
 export type MemberRow = Omit<Company, "website" | "rival">;
 
@@ -276,11 +280,24 @@ export interface Ask {
   answered?: boolean;
 }
 
+/** A Testimonial on the Success Wall, naming both Companies. */
 export interface Win {
   a: string;
   b: string;
   need: string;
   got: string;
+  /** The day it was posted. It shows on the Success Wall from that day. */
+  day: number;
+}
+
+/** A deal two Companies confirmed, with the Testimonial the first of them posted that day. */
+export interface Deal {
+  /** Company ids. */
+  a: string;
+  b: string;
+  /** The day both Companies confirmed it. */
+  day: number;
+  testimonial?: { need: string; got: string };
 }
 
 export interface Invite {
@@ -432,6 +449,7 @@ export interface SimState {
   openThread: string | null;
   viewCo: string | null;
   asks: Ask[];
+  /** Testimonials posted this session, newest first. Read the whole wall with successWall(). */
   wall: Win[];
   pendingT: { co: string }[];
   lastWin: Win | null;

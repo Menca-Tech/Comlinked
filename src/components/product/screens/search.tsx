@@ -1,9 +1,54 @@
 "use client";
 
-import { Mono, PageHead, Panel } from "@/components/product/shared";
+import { ClaimMark } from "@/components/product/claim-mark";
+import { BasicsLine, Mono, PageHead, Panel } from "@/components/product/shared";
 import { useSimulation } from "@/components/product/use-simulation";
 import { Input } from "@/components/ui/input";
-import { act, searchDegree, searchRows, setForm } from "@/services/comlinked";
+import type { SearchRow } from "@/services/comlinked";
+import { act, searchRows, setForm } from "@/services/comlinked";
+
+/** One result. A Company that has not claimed shows its basics and the mark, and nothing else. */
+function ResultRow({ rank, row }: { rank: number; row: SearchRow }) {
+  const source = row.source;
+  const body = (
+    <>
+      <Mono c={row.company} cls="sm" />
+      <span className="a-li-m">
+        <strong>
+          {rank}. {row.company.name}
+        </strong>
+        <small>
+          {source ? (
+            <BasicsLine c={source} mutuals />
+          ) : (
+            <>
+              {row.company.ind}, {row.company.city}
+            </>
+          )}
+        </small>
+        {source ? <ClaimMark c={source} /> : null}
+      </span>
+      {row.me ? <span className="a-li-r">Your company</span> : null}
+    </>
+  );
+  if (row.me || !source) {
+    return (
+      <div className="a-li me" data-score={row.calc}>
+        {body}
+      </div>
+    );
+  }
+  return (
+    <button
+      type="button"
+      className="a-li"
+      data-score={row.calc}
+      onClick={() => act.viewCo(source.id)}
+    >
+      {body}
+    </button>
+  );
+}
 
 function Results() {
   const rows = searchRows();
@@ -13,38 +58,9 @@ function Results() {
   }
   return (
     <div className="a-list">
-      {rows.map((x, i) => {
-        const body = (
-          <>
-            <Mono c={x.company} cls="sm" />
-            <span className="a-li-m">
-              <strong>
-                {i + 1}. {x.company.name}
-              </strong>
-              <small>
-                {x.company.ind}, {x.company.city}
-                {x.source ? searchDegree(x.source) : ""}
-              </small>
-            </span>
-            {x.me ? <span className="a-li-r">Your company</span> : null}
-          </>
-        );
-        return x.me || !x.source ? (
-          <div className="a-li me" data-score={x.calc} key="me">
-            {body}
-          </div>
-        ) : (
-          <button
-            type="button"
-            className="a-li"
-            data-score={x.calc}
-            key={x.source.id}
-            onClick={() => act.viewCo(x.source!.id)}
-          >
-            {body}
-          </button>
-        );
-      })}
+      {rows.map((row, i) => (
+        <ResultRow key={row.source?.id ?? "me"} rank={i + 1} row={row} />
+      ))}
     </div>
   );
 }

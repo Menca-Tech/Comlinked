@@ -1523,6 +1523,27 @@
     color: var(--color-accent-strong);
     font-weight: 600;
   }
+  /* A message held until the other Company claims. Long names wrap under the clock. */
+  .a-st.wait {
+    align-items: flex-start;
+    color: var(--color-ink-2);
+  }
+  .a-st.wait .a-ic {
+    flex: none;
+    margin-top: 3px;
+  }
+  /* "Not yet claimed", in words. It sits on its own line under a Company's name and basics. */
+  .a-unclaimed {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 4px;
+    padding: 0 8px;
+    border: 1px solid var(--color-rule);
+    border-radius: 999px;
+    font: 600 14px/20px var(--font-text);
+    color: var(--color-ink-2);
+    white-space: nowrap;
+  }
   .a-dash-head {
     display: flex;
     flex-direction: column;
