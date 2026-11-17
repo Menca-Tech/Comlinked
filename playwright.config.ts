@@ -24,6 +24,8 @@ export default defineConfig({
       NEXT_PUBLIC_SUPABASE_URL:
         process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://placeholder.supabase.co",
       NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "placeholder",
+      // An example address on a reserved domain, so the Pilot Preview's ask shows its button.
+      NEXT_PUBLIC_PREVIEW_PRESENTER_EMAIL: "presenter@comlinked.example",
     },
   },
 });
