@@ -2,18 +2,12 @@
 
 import Image from "next/image";
 
+import { MonthlyTopList } from "@/components/product/monthly-top";
 import { AiChip, Btn, PageHead } from "@/components/product/shared";
+import { SuccessWallList } from "@/components/product/success-wall";
 import { useSimulation } from "@/components/product/use-simulation";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  act,
-  CHAMBER,
-  co,
-  monthlyTop,
-  setForm,
-  SHARE_LINK,
-  successWall,
-} from "@/services/comlinked";
+import { act, co, setForm, SHARE_LINK } from "@/services/comlinked";
 
 // S1 S2 S3 D5: testimonials, sharing, the Success Wall and Monthly Top Companies.
 export function Wins() {
@@ -21,8 +15,6 @@ export function Wins() {
   const f = S.forms;
   const pending = S.pendingT[0];
   const w = S.lastWin;
-  const { month, top } = monthlyTop();
-  const wall = successWall();
   return (
     <>
       <PageHead title="Wins" />
@@ -118,44 +110,13 @@ export function Wins() {
           ) : null}
           <section className="a-sec">
             <h2 className="a-h2">Success wall</h2>
-            {wall.length ? (
-              <div className="a-list">
-                {wall.map((win) => (
-                  <article className="a-win" key={`${win.day}|${win.a}|${win.b}|${win.need}`}>
-                    <p className="a-why">
-                      <b>{win.need}</b> {win.got}
-                    </p>
-                    <p className="a-small">
-                      {win.a} with {win.b}
-                    </p>
-                  </article>
-                ))}
-              </div>
-            ) : (
-              <p className="a-empty">
-                No wins yet. The first appears when two members confirm a deal.
-              </p>
-            )}
+            <SuccessWallList />
           </section>
         </div>
         <div className="w-col w-sticky a-surface">
           <section className="a-sec" id="monthly">
             <h2 className="a-h2">Monthly top companies</h2>
-            <p className="a-small">
-              {CHAMBER.shortName}, month {month}. For recognition only, and it resets each month.
-            </p>
-            <div className="a-list">
-              {top.map((t, i) => (
-                <div className={`a-li${t.me ? "me" : ""}`} key={t.n}>
-                  <span className="a-li-m">
-                    <strong>
-                      {i + 1}. {t.n}
-                    </strong>
-                  </span>
-                  <span className="a-li-r">{t.p} points</span>
-                </div>
-              ))}
-            </div>
+            <MonthlyTopList />
           </section>
         </div>
       </div>
