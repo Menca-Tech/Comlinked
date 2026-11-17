@@ -1,17 +1,27 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { PlanSwitcher } from "@/components/product/comdash/plan-switcher";
-import { COMDASH_TABS } from "@/components/product/comdash/tabs";
+import { COMDASH_TABS, comDashTabs } from "@/components/product/comdash/tabs";
 import { useSimulation } from "@/components/product/use-simulation";
+import { paths } from "@/paths";
+import { laterItemShown } from "@/services/comlinked";
 
-/** ComDash's header, plan switcher and tab row, shared by every tab. */
+/** ComDash's header, plan switcher and tab row, shared by every tab. A hidden tab's address opens
+ * the Overview. */
 export function ComDashFrame({ children }: { children: ReactNode }) {
   const S = useSimulation();
   const pathname = usePathname();
+  const router = useRouter();
+  const tabs = comDashTabs();
+  const onHiddenTab =
+    COMDASH_TABS.some((tab) => tab.href === pathname) && !tabs.some((tab) => tab.href === pathname);
+  useEffect(() => {
+    if (onHiddenTab) router.replace(paths.dashTabs.overview);
+  }, [onHiddenTab, router]);
   const m = S.me;
   return (
     <div className="cd">
@@ -21,10 +31,10 @@ export function ComDashFrame({ children }: { children: ReactNode }) {
         <p className="a-small">
           {m.ind} · {m.city} · {m.chamber} member
         </p>
-        <PlanSwitcher />
+        {laterItemShown("pricing") ? <PlanSwitcher /> : null}
       </header>
       <nav className="cd-tabs" aria-label="ComDash sections">
-        {COMDASH_TABS.map((tab) => (
+        {tabs.map((tab) => (
           <Link
             key={tab.href}
             href={tab.href}
@@ -35,7 +45,7 @@ export function ComDashFrame({ children }: { children: ReactNode }) {
           </Link>
         ))}
       </nav>
-      <div className="cd-body">{children}</div>
+      <div className="cd-body">{onHiddenTab ? null : children}</div>
       <p className="cd-fict">Sample ComDash. All companies, people and figures are example data.</p>
     </div>
   );

@@ -2,7 +2,7 @@
 
 import { Back, Btn, PageHead, Panel } from "@/components/product/shared";
 import { useSimulation } from "@/components/product/use-simulation";
-import { act, NEXT_UP } from "@/services/comlinked";
+import { act, laterItemShown, NEXT_UP } from "@/services/comlinked";
 
 // Section 6 of the plan: planned after the MVP.
 export function WhatsNext() {
@@ -34,7 +34,7 @@ export function WhatsNext() {
                     <strong>{n[0]}</strong>
                     <small>{n[1]}</small>
                   </span>
-                  {n[0] === "AI Lead Agent" ? (
+                  {n[0] === "AI Lead Agent" && laterItemShown("previews") ? (
                     <Btn cls="o sm" onClick={() => act.nav("agent")}>
                       Open the preview
                     </Btn>

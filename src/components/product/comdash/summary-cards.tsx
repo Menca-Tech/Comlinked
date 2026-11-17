@@ -12,6 +12,7 @@ import {
   companyLine,
   connectionSummary,
   interestedCompanies,
+  laterItemShown,
   profileCompleteness,
   profileGaps,
   topNumbers,
@@ -142,12 +143,14 @@ function ProfileCard() {
   );
 }
 
-/** The Overview's four summary cards, two by two on a laptop. */
+/** The Overview's summary cards, two by two on a laptop. The AI Lead Agent's shows only while the
+ * after-MVP previews are on. */
 export function SummaryCards() {
+  useSimulation();
   return (
     <div className="cd-cards">
       <InterestSignalsCard />
-      <AgentCard />
+      {laterItemShown("previews") ? <AgentCard /> : null}
       <ConnectionsCard />
       <ProfileCard />
     </div>
