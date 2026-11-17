@@ -685,7 +685,7 @@ const closingButtonReachesJoin = async (page: Page, path: string) => {
 
 test.describe("for chambers page", () => {
   const submit = (page: Page) => page.getByRole("button", { name: "Request a pilot" });
-  const confirmation = "This is a demo, so nothing was sent. Opening the chamber tools.";
+  const confirmation = "This is a demo, so nothing was sent. Opening a preview of a pilot.";
 
   async function openForm(page: Page) {
     await page.goto("/for-chambers#pilot");
@@ -746,13 +746,14 @@ test.describe("for chambers page", () => {
     ).toBeVisible();
   });
 
-  test("a valid form confirms honestly and opens the chamber tools", async ({ page }) => {
+  test("a valid form confirms honestly and opens the Pilot Preview's Opening", async ({ page }) => {
     await openForm(page);
     await fillValid(page);
     await submit(page).click();
 
     await expect(page.getByText(confirmation)).toBeVisible();
-    await expect(page).toHaveURL(/\/app\/chamber$/);
+    await expect(page).toHaveURL(/\/app\/preview$/);
+    await expect(page.locator("main h1")).toHaveText("A preview for ECCP");
     expect(page.url()).not.toContain("ana");
   });
 
@@ -800,7 +801,7 @@ test.describe("for chambers page", () => {
     await fillValid(page);
     await submit(page).dblclick();
 
-    await expect(page).toHaveURL(/\/app\/chamber$/);
+    await expect(page).toHaveURL(/\/app\/preview$/);
     await expect(page.getByText(confirmation)).toHaveCount(1);
   });
 

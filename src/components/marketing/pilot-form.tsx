@@ -32,12 +32,12 @@ const FIELDS: FieldConfig<keyof PilotFormValues>[] = [
   { name: "message", label: "Message (optional)", multiline: true },
 ];
 
-/** Checks the request, says nothing was sent, then opens the chamber tools. */
+/** Checks the request, says nothing was sent, then opens the Pilot Preview's Opening. */
 export function PilotForm() {
   const router = useRouter();
   const { ready, submit } = useSingleSubmit(() => {
-    toast("This is a demo, so nothing was sent. Opening the chamber tools.");
-    router.push(paths.product.chamber);
+    toast("This is a demo, so nothing was sent. Opening a preview of a pilot.");
+    router.push(paths.preview.opening);
   });
   // No defaultValues: react-hook-form then reads each field from the page, which keeps
   // anything a visitor typed before the script finished loading.
