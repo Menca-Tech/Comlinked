@@ -1,18 +1,19 @@
 # ComLinked MVP feature status
 
-Created 2026-11-08 · Last updated 2026-11-11 · Scope: [MVP Build Plan](2026-10-11-mvp-build-plan.md) ·
-Repo state: branch `feat/website-redesign-pages` at commit `a9ab837`, plus the
-uncommitted ComDash session 2 work
+Created 2026-11-08 · Last updated 2026-11-18 · Scope: [MVP Build Plan](2026-10-11-mvp-build-plan.md) ·
+Repo state: branch `feat/website-redesign-pages` at commit `5d8f98e`, plus the
+Pilot Preview's final check
 
 Full requirements are in the [ComLinked SRS](2026-11-09-comlinked-srs.md), version
-0.2, a draft for Richard's review. This file tracks progress against them.
+0.3, a draft for Richard's review. This file tracks progress against them.
 
 The pilot is ECCP, the European Chamber of Commerce of the Philippines, decided on
 2026-11-10. It replaces PCCI–Quezon City, which the plan named first.
 
 **All 21 MVP features are now simulated in the local mockup.** No launch is
-planned for now. The mockup is a demo for Richard and pilot chambers, presented
-from a laptop.
+planned for now. The Demo is for Richard and pilot chambers. Richard presents the
+[Pilot Preview](#pilot-preview) in a first meeting, sharing his screen, and then
+sends a private link that can be replayed and forwarded.
 
 The mockup's leads, Connection Requests and overnight activity are calculated by
 a simulated engine, modeled on how LinkedIn works but built around companies.
@@ -68,32 +69,55 @@ only its flows, layouts and design carry over to a real build.
 
 ## Chamber tools and supporting features
 
-| Feature                          | Mockup    | Real app | What was done                                                                                                                                                                                                                                                                       |
-| -------------------------------- | --------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Member import                    | Simulated | No       | Upload screen and preview of 12 rows, always using the sample list so no real company gets invented details.                                                                                                                                                                        |
-| Activity view                    | Simulated | No       | Claimed, active and needs-an-intro counts, plus a member list.                                                                                                                                                                                                                      |
-| Intros and broadcasts            | Simulated | No       | Both work in the mockup, and announcements appear on ComDash.                                                                                                                                                                                                                       |
-| Admin back office                | No        | No       | Left out by design: the plan has staff use the database dashboard.                                                                                                                                                                                                                  |
-| Search and company profile pages | Simulated | No       | Example search ranked by relevance × boost, plus profile pages. Degree and mutual connections are labels only.                                                                                                                                                                      |
-| Anti-gaming rules                | Simulated | No       | Limits are enforced, deals need both sides, and there is one example points spike to review.                                                                                                                                                                                        |
-| New member boost                 | Simulated | No       | 30 days at 10%. The 10% is an assumption; the plan gives no size.                                                                                                                                                                                                                   |
-| Visible-views notice at sign-up  | Simulated | No       | Shown in the mockup's claim flow. The repo's join form has the text but is not connected.                                                                                                                                                                                           |
-| Mobile-first and web layouts     | Simulated | Partly   | The mockup, the five public pages and the simulated product at `/app` all have phone and web layouts.                                                                                                                                                                               |
-| Website pages                    | Done      | Partly   | All 5 pages are in the mockup and the repo. In the repo, the join and pilot forms check their fields and lead into the simulated product; nothing is stored or sent. The repo's pages have since been redesigned, so they no longer match the mockup, which has the current design. |
+| Feature                          | Mockup    | Real app | What was done                                                                                                                                                                                                                                                                             |
+| -------------------------------- | --------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Member import                    | Simulated | No       | The Member List of 100 company names and websites, always the sample list. Building ends with 100 profiles and claim links ready for the chamber to send. Nothing is sent.                                                                                                                |
+| Activity view                    | Simulated | No       | ECCP's Activity View: claimed of 100, active, need an intro, deals confirmed and wins posted, one status per member with filters, and the Success Wall and Monthly Top Companies beside it. The Chamber Contact only reads it; the Community Manager sees the same screen with the tools. |
+| Intros and broadcasts            | Simulated | No       | Both work in the mockup, and announcements appear on ComDash.                                                                                                                                                                                                                             |
+| Admin back office                | No        | No       | Left out by design: the plan has staff use the database dashboard.                                                                                                                                                                                                                        |
+| Search and company profile pages | Simulated | No       | Example search ranked by relevance × boost, plus profile pages. Degree and mutual connections are labels only.                                                                                                                                                                            |
+| Anti-gaming rules                | Simulated | No       | Limits are enforced, deals need both sides, and there is one example points spike to review.                                                                                                                                                                                              |
+| New member boost                 | Simulated | No       | 30 days at 10%. The 10% is an assumption; the plan gives no size.                                                                                                                                                                                                                         |
+| Visible-views notice at sign-up  | Simulated | No       | Shown in the mockup's claim flow. The repo's join form has the text but is not connected.                                                                                                                                                                                                 |
+| Mobile-first and web layouts     | Simulated | Partly   | The mockup, the five public pages and the simulated product at `/app` all have phone and web layouts.                                                                                                                                                                                     |
+| Website pages                    | Done      | Partly   | All 5 pages are in the mockup and the repo. In the repo, the join and pilot forms check their fields and lead into the simulated product; nothing is stored or sent. The repo's pages have since been redesigned, so they no longer match the mockup, which has the current design.       |
 
 ## Agreed for the demo
 
 | Topic              | Decision                                                                                                             |
 | ------------------ | -------------------------------------------------------------------------------------------------------------------- |
 | Demo surface       | Since 2026-11-11 the demo runs on the Next.js app at `/app`. The HTML mockup is the frozen backup.                   |
-| Audience           | Richard and pilot chambers, presented from a laptop. The mockup stays on the Mac.                                    |
+| Audience           | ECCP's Chamber Leader first. Richard presents in a first meeting, then sends a private link that works without him.  |
 | Scope              | The 21 MVP features and chamber basics, plus a read-only "What's next" page.                                         |
 | "What's next" page | Customer-facing postponed items only, with no paid items or staff tools. Reached from the presenter guide only.      |
 | Website claims     | Chamber quote, pilot block and About link removed. Unknown answers say they will be confirmed during pilot planning. |
 | Contact            | "Contact us" goes to the chamber pilot form.                                                                         |
-| Demo start         | The presenter guide offers a new company, or an active company two weeks in at rank #4 of 12 with a pending deal.    |
-| Presenter controls | The G key opens the guide. Phone widths keep a Guide button because they have no keyboard.                           |
+| Demo start         | The Pilot Preview's Opening, or from the Presenter Guide a new company, or Day 14 with its first deal confirmed.     |
+| Presenter controls | The G key opens the guide. Phone widths keep a Guide button, except inside the Pilot Preview.                        |
 | Honesty markers    | The "Working mockup" ribbon and "Example data" labels stay, so example companies are not mistaken for real activity. |
+
+## Pilot Preview
+
+Added 2026-11-17 in the Next.js Demo, for ECCP. Brief: the
+[Pilot Preview spec](2026-11-17-pilot-preview.md). Script: the
+[Run of Show](../presentations/2026-11-17-pilot-preview-run-of-show.md).
+
+- **Opening and six Stops**, at `/app/preview`. Day 0, the Member List becomes
+  profiles. Day 1, a member claims. Day 2, the morning digest. Day 14, the member
+  and then ECCP's Activity View. Last, what a pilot asks of ECCP. Each Stop has
+  its own address and opens in a prepared state.
+- **Story Bar** under the top bar names the day, the Stop and the Seat, with Back
+  and Next. Stop 5 adds a side step into the Community Manager's Seat.
+- **Later items hidden.** Possible future pricing and the after-MVP previews are
+  off in the Pilot Preview. The presenter switches them on from the guide.
+- **The ask.** The Member List and one Chamber Contact who sends the claim links.
+  The email button goes to the presenter's address, set on the deployment.
+- **What changed underneath.** One claim day per Company. A Company that has not
+  claimed shows its basics only and never acts. Wins are dated, so the Success
+  Wall is empty on Days 0 to 2. One status rule feeds the Activity View and the
+  Team Dashboard.
+- **Name check.** Started on 2026-11-18. Some invented names match real
+  businesses and are still to be renamed before the link is shared.
 
 ## Simulated engine
 
@@ -101,7 +125,7 @@ Runs entirely inside the mockup, and every demo runs the same way.
 
 | Part                | How it works                                                                                                                                                                                                                                                                                                                                                                                             |
 | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Network             | 100 example ECCP members, all invented: the original 39 companies around Kalayaan Foods plus 60 added on 2026-11-10 across ECCP-style industries. Fixed connections, one Chamber Network. 12 are food suppliers.                                                                                                                                                                                         |
+| Network             | 100 example ECCP members, all invented, in the mockup and the Next.js Demo: the original 39 companies around Kalayaan Foods plus 60 added on 2026-11-10 across ECCP-style industries. Fixed connections, one Chamber Network. 12 are food suppliers.                                                                                                                                                     |
 | Connection Degree   | 1st, 2nd or 3rd degree and mutual connections on every company, updating as connections change.                                                                                                                                                                                                                                                                                                          |
 | Fit Score           | Starts at 12. Adds points for seeking what you offer, offering what you seek, mutual connections and location. Past skips and offering the same as you subtract.                                                                                                                                                                                                                                         |
 | Connection Requests | 80 or more accepted in seconds, 50 to 79 by the next morning, below 50 pending until withdrawn. Others also send them.                                                                                                                                                                                                                                                                                   |
@@ -133,7 +157,7 @@ and labeled "Preview: after the MVP". Source:
 | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | How to open it             | From the presenter guide, or the AI Lead Agent card on What's next.                                                                                                   |
 | Mandate                    | Choose customer, vendor, supplier or partner, then edit a pre-filled need.                                                                                            |
-| Candidates                 | Found and scored from the 40-company network, so different needs give different results.                                                                              |
+| Candidates                 | Found and scored from the 100-company network, so different needs give different results.                                                                             |
 | Match Score                | 7 categories, 90 before contact and 10 after. Book at 75 or more, Nurture at 60 to 74, Drop below 60. It is separate from the Fit Score on leads.                     |
 | Gate A and Gate B          | The presenter approves or declines for Kalayaan Foods, and the decision changes the outcome. The other company's approver is simulated.                               |
 | Companies without an agent | A fixed few are opted out (knocked out) or unclaimed (claim email sent).                                                                                              |
@@ -159,7 +183,7 @@ simulated in the mockup and labeled "Preview: after the MVP".
 | Chambers               | ECCP by name, with invented members marked as example data.                                                                         |
 | Privacy                | Staff see counts, statuses and company names, never conversations or confidential items.                                            |
 | Staff actions          | Send a claim reminder, make an intro, and clear or flag unusual points. Each is recorded in an activity log and affects the mockup. |
-| Community Managers     | They work for the chamber and use the chamber tools. ComLinked Staff step in when a company is waiting.                             |
+| Community Managers     | During the Pilot ComLinked supplies the Community Manager, awaiting Richard's answer. ComLinked Staff step in when one is waiting.  |
 
 ## Still needed before any launch
 
@@ -194,6 +218,12 @@ plan's [Adoption notes](2026-10-11-mvp-build-plan.md#adoption-notes).
   unrestricted access, but the dashboard promises staff never see private
   content. The on track and behind labels also rely on pilot targets the plan
   calls starting points.
+- The Pilot Preview's four choices, listed in its spec under
+  [Questions for Richard](2026-11-17-pilot-preview.md#questions-for-richard):
+  ComLinked supplies the Community Manager during the pilot; ECCP sends the claim
+  links, so the Member List has no contact details; a Company shows its basics
+  only before it claims; and Companies that have not claimed can still be
+  Matches.
 
 ## Next decision for a real build
 

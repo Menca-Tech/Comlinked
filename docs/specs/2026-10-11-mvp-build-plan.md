@@ -374,3 +374,29 @@ once it is resolved, and record any hard-to-reverse answer as an ADR.
     name PCCI–Quezon City; read them as ECCP. Which chambers follow, and in what
     order, is not yet set. The Section 8.1 targets were written for PCCI–Quezon
     City, so check that they still fit.
+
+### Awaiting Richard: choices in the Pilot Preview
+
+Added 2026-11-18. The [Pilot Preview](2026-11-17-pilot-preview.md) for ECCP shows
+four things the plan says differently. They stay open until Richard confirms them,
+and Sections 1 to 8 are unchanged until he does. The spec lists them under
+[Questions for Richard](2026-11-17-pilot-preview.md#questions-for-richard).
+
+17. **Who supplies the Community Manager.** Section 3.6 and L4 speak of pilot
+    community managers without saying who employs them, and Section 8.3 treats
+    them as human help brought in for the first weeks. The SRS has them work for
+    the Chamber. The Pilot Preview shows ComLinked supplying the Community
+    Manager, with ECCP naming one Chamber Contact.
+18. **Who sends the claim links.** A2 sends a personal link by email or SMS, and
+    Section 3.6 has the member import send the claim links. The Pilot Preview has
+    ECCP send each link from its own address, with a message ComLinked prepares,
+    so the Member List holds only company names and websites.
+19. **What shows before a Claim.** A1 builds a draft profile for every company
+    before launch. The Pilot Preview shows a Company that has not claimed with
+    its public basics only: name, industry, city and website. The AI-written
+    description appears once the Company has checked it while claiming.
+20. **Matching before a Claim.** L1 gives 3 matches right after claiming, and
+    does not say whether they may include companies that have not claimed. The
+    Pilot Preview allows it: such a Match shows its basics and a reason drawn
+    from the viewer's needs, cannot be connected with, and a message to it waits
+    until it claims.
