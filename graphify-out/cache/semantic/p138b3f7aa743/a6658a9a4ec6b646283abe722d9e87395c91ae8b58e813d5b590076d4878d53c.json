@@ -1,0 +1,203 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_skills_testing_unit_skill",
+      "label": "testing-unit skill",
+      "file_type": "document",
+      "source_file": ".claude/skills/testing-unit/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_skills_testing_unit_skill_accessible_queries",
+      "label": "RTL accessible queries + user-event (no fireEvent)",
+      "file_type": "rationale",
+      "source_file": ".claude/skills/testing-unit/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_skills_testing_unit_skill_coverage_ratchet",
+      "label": "v8 coverage ratchet with per-glob thresholds",
+      "file_type": "rationale",
+      "source_file": ".claude/skills/testing-unit/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Thresholds sit just below the measured baseline so a regression fails CI - raise tests, don't lower thresholds."
+    },
+    {
+      "id": "_claude_skills_testing_unit_skill_offline_db_exclusion",
+      "label": "Coverage excludes the offline-unverifiable Drizzle DB layer",
+      "file_type": "rationale",
+      "source_file": ".claude/skills/testing-unit/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_skills_testing_unit_skill_server_only_stub",
+      "label": "server-only test alias stub (test/stubs/server-only.ts)",
+      "file_type": "concept",
+      "source_file": ".claude/skills/testing-unit/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_skills_testing_unit_skill",
+      "target": "_claude_skills_testing_unit_skill_accessible_queries",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/testing-unit/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_testing_unit_skill",
+      "target": "_claude_skills_testing_unit_skill_coverage_ratchet",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/testing-unit/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_testing_unit_skill",
+      "target": "_claude_skills_testing_unit_skill_offline_db_exclusion",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/testing-unit/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_testing_unit_skill",
+      "target": "_claude_skills_testing_unit_skill_server_only_stub",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/testing-unit/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_testing_unit_skill",
+      "target": "agents",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/testing-unit/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_testing_unit_skill_coverage_ratchet",
+      "target": "vitest_config",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/testing-unit/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_testing_unit_skill_server_only_stub",
+      "target": "vitest_config",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/testing-unit/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_testing_unit_skill_server_only_stub",
+      "target": "src_env_server",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/testing-unit/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_testing_unit_skill_offline_db_exclusion",
+      "target": "_claude_skills_drizzle_data_skill_known_gap_live_query_path",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/testing-unit/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_testing_unit_skill_offline_db_exclusion",
+      "target": "src_services_customers_db",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/testing-unit/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_testing_unit_skill_offline_db_exclusion",
+      "target": "src_lib_db_client",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/testing-unit/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_testing_unit_skill",
+      "target": "_claude_skills_testing_e2e_skill",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/testing-unit/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_testing_unit_skill_coverage_ratchet",
+      "target": "_claude_skills_coding_standards_skill",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".claude/skills/testing-unit/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_drizzle_data_skill_known_gap_live_query_path",
+      "target": "_claude_skills_testing_unit_skill_offline_db_exclusion",
+      "relation": "rationale_for",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".claude/skills/testing-unit/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

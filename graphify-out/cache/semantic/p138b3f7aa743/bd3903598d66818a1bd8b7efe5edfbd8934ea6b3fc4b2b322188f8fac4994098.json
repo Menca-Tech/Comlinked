@@ -1,0 +1,154 @@
+{
+  "nodes": [
+    {
+      "id": "_scratch_website_redesign_issues_05_validated_join_form",
+      "label": "Website redesign 05: Validated Join form",
+      "file_type": "document",
+      "source_file": ".scratch/website-redesign/issues/05-validated-join-form.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_scratch_website_redesign_issues_05_validated_join_form_join_form",
+      "label": "Validated Join form",
+      "file_type": "concept",
+      "source_file": ".scratch/website-redesign/issues/05-validated-join-form.md",
+      "source_location": "L35",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Ends the homepage at #join; zod trims and requires company, name, role and work email, caps text at 200; valid submit calls router.push to the claim flow once; nothing is stored, sent or put in a URL."
+    },
+    {
+      "id": "_scratch_website_redesign_issues_05_validated_join_form_form_field",
+      "label": "FormField component",
+      "file_type": "concept",
+      "source_file": ".scratch/website-redesign/issues/05-validated-join-form.md",
+      "source_location": "L63",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Label, message and aria wiring in one component, used by every field and by the pilot form."
+    },
+    {
+      "id": "_scratch_website_redesign_issues_05_validated_join_form_disabled_until_mounted",
+      "label": "Submit disabled until mounted",
+      "file_type": "rationale",
+      "source_file": ".scratch/website-redesign/issues/05-validated-join-form.md",
+      "source_location": "L39",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "A native submission without JavaScript would put values in the URL, and a disabled default button also blocks implicit submission on Enter."
+    }
+  ],
+  "edges": [
+    {
+      "source": "_scratch_website_redesign_issues_05_validated_join_form",
+      "target": "_scratch_website_redesign_issues_05_validated_join_form_join_form",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/05-validated-join-form.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_05_validated_join_form",
+      "target": "_scratch_website_redesign_issues_05_validated_join_form_form_field",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/05-validated-join-form.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_05_validated_join_form",
+      "target": "_scratch_website_redesign_issues_05_validated_join_form_disabled_until_mounted",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/05-validated-join-form.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_05_validated_join_form",
+      "target": "_scratch_website_redesign_issues_04_homepage_sections",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/05-validated-join-form.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_05_validated_join_form",
+      "target": "docs_specs_2026_11_09_website_redesign",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/05-validated-join-form.md",
+      "source_location": "L38",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_05_validated_join_form",
+      "target": "docs_adr_0010_client_side_product_simulation",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/05-validated-join-form.md",
+      "source_location": "L38",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_05_validated_join_form_disabled_until_mounted",
+      "target": "_scratch_website_redesign_issues_05_validated_join_form_join_form",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/05-validated-join-form.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_05_validated_join_form_join_form",
+      "target": "_scratch_website_redesign_issues_05_validated_join_form_form_field",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/05-validated-join-form.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_05_validated_join_form_join_form",
+      "target": "src_components_marketing_join_form",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/05-validated-join-form.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_05_validated_join_form_form_field",
+      "target": "src_components_marketing_form_field",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/05-validated-join-form.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

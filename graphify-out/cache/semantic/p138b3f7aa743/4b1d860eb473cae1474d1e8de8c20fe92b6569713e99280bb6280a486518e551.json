@@ -1,0 +1,285 @@
+{
+  "nodes": [
+    {
+      "id": "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check",
+      "label": "Pilot Preview 06: Names, Run of Show, documents and the final check",
+      "file_type": "document",
+      "source_file": ".scratch/pilot-preview/issues/06-names-run-of-show-and-final-check.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check_name_check",
+      "label": "Invented company name check",
+      "file_type": "rationale",
+      "source_file": ".scratch/pilot-preview/issues/06-names-run-of-show-and-final-check.md",
+      "source_location": "L69",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Each of the 100 invented names is searched against real businesses, ECCP's member directory first; an inconclusive search counts as a clash; clashes are renamed everywhere while ids stay the same."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check_run_of_show",
+      "label": "One-page Run of Show",
+      "file_type": "rationale",
+      "source_file": ".scratch/pilot-preview/issues/06-names-run-of-show-and-final-check.md",
+      "source_location": "L71",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Printable table with Click, Say and If asked for the Opening and each Stop, under 500 words, kept in docs/presentations; every unconfirmed answer is marked 'Richard to confirm'."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check_questions_for_richard",
+      "label": "Four choices awaiting Richard",
+      "file_type": "rationale",
+      "source_file": ".scratch/pilot-preview/issues/06-names-run-of-show-and-final-check.md",
+      "source_location": "L83",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Recorded as open decisions in the plan's Adoption notes and the SRS (ASM-06 and TD-11; FR-A2-01 and FR-CH-02; FR-A1-01; matching before a Claim) without changing any requirement text."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check_final_check",
+      "label": "Final check against Testing Decisions",
+      "file_type": "concept",
+      "source_file": ".scratch/pilot-preview/issues/06-names-run-of-show-and-final-check.md",
+      "source_location": "L84",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Every Testing Decisions bullet maps to a named test; the Preview is walked at 1280 and 390 pixels with screenshots saved to test-results/pilot-preview/."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check_richard",
+      "label": "Richard (product owner and presenter)",
+      "file_type": "concept",
+      "source_file": ".scratch/pilot-preview/issues/06-names-run-of-show-and-final-check.md",
+      "source_location": "L51",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Wrote the product plan but did not build the Demo; presents the Pilot Preview alone to ECCP's Chamber Leader and signs off before anything goes to ECCP."
+    }
+  ],
+  "edges": [
+    {
+      "source": "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check",
+      "target": "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check_name_check",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/06-names-run-of-show-and-final-check.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check",
+      "target": "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check_run_of_show",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/06-names-run-of-show-and-final-check.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check",
+      "target": "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check_questions_for_richard",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/06-names-run-of-show-and-final-check.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check",
+      "target": "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check_final_check",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/06-names-run-of-show-and-final-check.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check",
+      "target": "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check_richard",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/06-names-run-of-show-and-final-check.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check",
+      "target": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/06-names-run-of-show-and-final-check.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check",
+      "target": "_scratch_pilot_preview_issues_05_eccp_activity_view",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/06-names-run-of-show-and-final-check.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check",
+      "target": "docs_specs_2026_11_17_pilot_preview",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/06-names-run-of-show-and-final-check.md",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check",
+      "target": "docs_specs_2026_11_08_mvp_feature_status",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/06-names-run-of-show-and-final-check.md",
+      "source_location": "L61",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check",
+      "target": "docs_specs_2026_10_11_mvp_build_plan",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/06-names-run-of-show-and-final-check.md",
+      "source_location": "L62",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check",
+      "target": "docs_specs_2026_11_09_comlinked_srs",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/06-names-run-of-show-and-final-check.md",
+      "source_location": "L63",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check_name_check",
+      "target": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_network_of_100",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/06-names-run-of-show-and-final-check.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check_run_of_show",
+      "target": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_six_stops",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/06-names-run-of-show-and-final-check.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check_run_of_show",
+      "target": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_later_item_switches",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/06-names-run-of-show-and-final-check.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check_run_of_show",
+      "target": "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check_richard",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/06-names-run-of-show-and-final-check.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check_questions_for_richard",
+      "target": "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check_richard",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/06-names-run-of-show-and-final-check.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check_questions_for_richard",
+      "target": "docs_specs_2026_10_11_mvp_build_plan",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/06-names-run-of-show-and-final-check.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check_questions_for_richard",
+      "target": "docs_specs_2026_11_09_comlinked_srs",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/06-names-run-of-show-and-final-check.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check_final_check",
+      "target": "docs_specs_2026_11_17_pilot_preview",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/06-names-run-of-show-and-final-check.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "pilot_preview_ticket_sequence",
+      "label": "Pilot Preview ticket sequence (01 to 06)",
+      "nodes": [
+        "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100",
+        "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim",
+        "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items",
+        "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask",
+        "_scratch_pilot_preview_issues_05_eccp_activity_view",
+        "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/06-names-run-of-show-and-final-check.md"
+    }
+  ]
+}

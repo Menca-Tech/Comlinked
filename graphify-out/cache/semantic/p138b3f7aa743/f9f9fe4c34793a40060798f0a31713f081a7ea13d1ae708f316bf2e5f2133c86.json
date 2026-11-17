@@ -1,0 +1,345 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_skills_posthog_skill",
+      "label": "posthog skill",
+      "file_type": "document",
+      "source_file": ".claude/skills/posthog/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_skills_posthog_skill_opt_in_inert",
+      "label": "PostHog opt-in / inert by default (NEXT_PUBLIC_POSTHOG_KEY, isAnalyticsConfigured)",
+      "file_type": "rationale",
+      "source_file": ".claude/skills/posthog/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Token is publishable so it lives in src/env.ts, never src/env.server.ts."
+    },
+    {
+      "id": "_claude_skills_posthog_skill_relay_reverse_proxy",
+      "label": "/relay reverse proxy (one constant, three places in sync)",
+      "file_type": "rationale",
+      "source_file": ".claude/skills/posthog/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "If the CSP middleware intercepts /relay it silently breaks ingestion while assets still load."
+    },
+    {
+      "id": "_claude_skills_posthog_skill_session_replay_worker_src",
+      "label": "Session Replay CSP delta: worker-src 'self' blob:",
+      "file_type": "rationale",
+      "source_file": ".claude/skills/posthog/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "The replay recorder runs in a blob: Web Worker, which strict-dynamic does not cover; add it only when replay is on."
+    },
+    {
+      "id": "_claude_skills_posthog_skill_server_flags_evaluateflags",
+      "label": "Server feature flags via evaluateFlags()",
+      "file_type": "rationale",
+      "source_file": ".claude/skills/posthog/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_skills_posthog_skill_serverless_flush",
+      "label": "Serverless flush: fresh client per request, captureImmediate, await shutdown()",
+      "file_type": "rationale",
+      "source_file": ".claude/skills/posthog/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "A serverless function must not exit before the event/flag call completes; a cached singleton is unsafe with per-request shutdown."
+    },
+    {
+      "id": "_claude_skills_posthog_skill_consent_gating",
+      "label": "Consent-gated capture (identified_only, respect_dnt, optIn)",
+      "file_type": "rationale",
+      "source_file": ".claude/skills/posthog/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "GDPR: with consent required and no banner, zero events fire by design."
+    },
+    {
+      "id": "_claude_skills_posthog_skill_defaults_spa_pageviews",
+      "label": "defaults '2026-05-30' SPA pageviews (no manual pathname tracker)",
+      "file_type": "rationale",
+      "source_file": ".claude/skills/posthog/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "A manual usePathname tracker would double-count pageviews."
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_skills_posthog_skill",
+      "target": "_claude_skills_posthog_skill_opt_in_inert",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/posthog/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_posthog_skill",
+      "target": "_claude_skills_posthog_skill_relay_reverse_proxy",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/posthog/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_posthog_skill",
+      "target": "_claude_skills_posthog_skill_session_replay_worker_src",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/posthog/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_posthog_skill",
+      "target": "_claude_skills_posthog_skill_server_flags_evaluateflags",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/posthog/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_posthog_skill",
+      "target": "_claude_skills_posthog_skill_serverless_flush",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/posthog/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_posthog_skill",
+      "target": "_claude_skills_posthog_skill_consent_gating",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/posthog/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_posthog_skill",
+      "target": "_claude_skills_posthog_skill_defaults_spa_pageviews",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/posthog/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_posthog_skill",
+      "target": "docs_adr_0007_analytics_posthog",
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/posthog/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_posthog_skill",
+      "target": "_claude_skills_nextjs_app_router_skill",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/posthog/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_posthog_skill",
+      "target": "_claude_skills_coding_standards_skill",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/posthog/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_posthog_skill_relay_reverse_proxy",
+      "target": "src_middleware",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/posthog/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_posthog_skill_relay_reverse_proxy",
+      "target": "next_config",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/posthog/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_posthog_skill_session_replay_worker_src",
+      "target": "src_lib_csp",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/posthog/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_posthog_skill_opt_in_inert",
+      "target": "src_config",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/posthog/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_posthog_skill_opt_in_inert",
+      "target": "src_env",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/posthog/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_posthog_skill_opt_in_inert",
+      "target": "src_instrumentation_client",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/posthog/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_posthog_skill_server_flags_evaluateflags",
+      "target": "src_lib_analytics_server",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/posthog/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_posthog_skill_serverless_flush",
+      "target": "src_lib_analytics_server",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/posthog/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_posthog_skill_opt_in_inert",
+      "target": "_claude_skills_drizzle_data_skill_mock_first_selector",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/posthog/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_posthog_skill",
+      "target": "_claude_skills_supabase_auth_skill",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/posthog/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_posthog_skill_opt_in_inert",
+      "target": "_claude_skills_supabase_auth_skill_configured_or_disabled",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/posthog/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_posthog_skill_session_replay_worker_src",
+      "target": "_claude_skills_coding_standards_skill_strict_nonce_csp",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".claude/skills/posthog/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_posthog_skill_relay_reverse_proxy",
+      "target": "_claude_skills_nextjs_app_router_skill_edge_middleware_nonce",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".claude/skills/posthog/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "env_gated_optional_integrations",
+      "label": "Env-gated optional integrations (inert/mock/disabled when unconfigured)",
+      "nodes": [
+        "_claude_skills_drizzle_data_skill_mock_first_selector",
+        "_claude_skills_supabase_auth_skill_configured_or_disabled",
+        "_claude_skills_posthog_skill_opt_in_inert"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/posthog/SKILL.md"
+    }
+  ]
+}

@@ -1,0 +1,338 @@
+{
+  "nodes": [
+    {
+      "id": "docs_adr_0008_free_mvp_product_direction",
+      "label": "ADR 0008: Free MVP product direction",
+      "file_type": "document",
+      "source_file": "docs/adr/0008-free-mvp-product-direction.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_adr_0008_free_mvp_product_direction_free_launch",
+      "label": "Free launch: no payments or tiers, company names shown on Interest Signals",
+      "file_type": "rationale",
+      "source_file": "docs/adr/0008-free-mvp-product-direction.md",
+      "source_location": "L26",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Hiding names would block the first-lead moment the MVP exists to create."
+    },
+    {
+      "id": "docs_adr_0008_free_mvp_product_direction_earned_visibility",
+      "label": "Visibility is earned: relevance first, up to 30% boost from 30-day Activity Score",
+      "file_type": "rationale",
+      "source_file": "docs/adr/0008-free-mvp-product-direction.md",
+      "source_location": "L29",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_adr_0008_free_mvp_product_direction_relationships_belong_to_companies",
+      "label": "Relationships belong to companies",
+      "file_type": "rationale",
+      "source_file": "docs/adr/0008-free-mvp-product-direction.md",
+      "source_location": "L31",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_adr_0008_free_mvp_product_direction_ai_drafts_person_decides",
+      "label": "AI drafts, a person decides (one switch, four jobs, works with AI off)",
+      "file_type": "rationale",
+      "source_file": "docs/adr/0008-free-mvp-product-direction.md",
+      "source_location": "L33",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_adr_0008_free_mvp_product_direction_mobile_web_only",
+      "label": "Mobile-first web only (native apps in Phase 2)",
+      "file_type": "rationale",
+      "source_file": "docs/adr/0008-free-mvp-product-direction.md",
+      "source_location": "L36",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_adr_0008_free_mvp_product_direction_no_admin_console",
+      "label": "No custom admin console (staff use the database dashboard)",
+      "file_type": "rationale",
+      "source_file": "docs/adr/0008-free-mvp-product-direction.md",
+      "source_location": "L37",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_adr_0008_free_mvp_product_direction_hosted_services",
+      "label": "Hosted services: Vercel, Supabase Singapore, Anthropic API, transactional email, web push",
+      "file_type": "concept",
+      "source_file": "docs/adr/0008-free-mvp-product-direction.md",
+      "source_location": "L38",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_adr_0008_free_mvp_product_direction_passwordless_signin",
+      "label": "Google, Facebook, magic link and mobile OTP sign-in via Supabase Auth",
+      "file_type": "concept",
+      "source_file": "docs/adr/0008-free-mvp-product-direction.md",
+      "source_location": "L47",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_adr_0008_free_mvp_product_direction_canadian_data_region",
+      "label": "Canadian data region required before Toronto launch",
+      "file_type": "concept",
+      "source_file": "docs/adr/0008-free-mvp-product-direction.md",
+      "source_location": "L51",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_adr_0008_free_mvp_product_direction",
+      "target": "docs_adr_0002_supabase_only_auth",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0008-free-mvp-product-direction.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0008_free_mvp_product_direction",
+      "target": "docs_adr_0005_multi_tenancy",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0008-free-mvp-product-direction.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0008_free_mvp_product_direction",
+      "target": "claude_mvp_build_plan",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0008-free-mvp-product-direction.md",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0008_free_mvp_product_direction",
+      "target": "claude_scope_test",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0008-free-mvp-product-direction.md",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0008_free_mvp_product_direction",
+      "target": "docs_adr_0008_free_mvp_product_direction_free_launch",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0008-free-mvp-product-direction.md",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0008_free_mvp_product_direction",
+      "target": "docs_adr_0008_free_mvp_product_direction_earned_visibility",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0008-free-mvp-product-direction.md",
+      "source_location": "L29",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0008_free_mvp_product_direction",
+      "target": "docs_adr_0008_free_mvp_product_direction_relationships_belong_to_companies",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0008-free-mvp-product-direction.md",
+      "source_location": "L31",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0008_free_mvp_product_direction",
+      "target": "docs_adr_0008_free_mvp_product_direction_ai_drafts_person_decides",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0008-free-mvp-product-direction.md",
+      "source_location": "L33",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0008_free_mvp_product_direction",
+      "target": "docs_adr_0008_free_mvp_product_direction_mobile_web_only",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0008-free-mvp-product-direction.md",
+      "source_location": "L36",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0008_free_mvp_product_direction",
+      "target": "docs_adr_0008_free_mvp_product_direction_no_admin_console",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0008-free-mvp-product-direction.md",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0008_free_mvp_product_direction",
+      "target": "docs_adr_0008_free_mvp_product_direction_hosted_services",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0008-free-mvp-product-direction.md",
+      "source_location": "L38",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0008_free_mvp_product_direction",
+      "target": "docs_adr_0008_free_mvp_product_direction_passwordless_signin",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0008-free-mvp-product-direction.md",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0008_free_mvp_product_direction",
+      "target": "docs_adr_0008_free_mvp_product_direction_canadian_data_region",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0008-free-mvp-product-direction.md",
+      "source_location": "L51",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0008_free_mvp_product_direction_free_launch",
+      "target": "context_interest_signal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0008-free-mvp-product-direction.md",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0008_free_mvp_product_direction_earned_visibility",
+      "target": "context_search_rank",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0008-free-mvp-product-direction.md",
+      "source_location": "L29",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0008_free_mvp_product_direction_earned_visibility",
+      "target": "context_activity_score",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0008-free-mvp-product-direction.md",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0008_free_mvp_product_direction_relationships_belong_to_companies",
+      "target": "context_connection",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0008-free-mvp-product-direction.md",
+      "source_location": "L31",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0008_free_mvp_product_direction_ai_drafts_person_decides",
+      "target": "context_ai_assistant",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "docs/adr/0008-free-mvp-product-direction.md",
+      "source_location": "L33",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0008_free_mvp_product_direction_ai_drafts_person_decides",
+      "target": "context_ai_lead_agent",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/adr/0008-free-mvp-product-direction.md",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0008_free_mvp_product_direction_passwordless_signin",
+      "target": "docs_adr_0002_supabase_only_auth_supabase_auth",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0008-free-mvp-product-direction.md",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0008_free_mvp_product_direction_no_admin_console",
+      "target": "context_superadmin",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0008-free-mvp-product-direction.md",
+      "source_location": "L49",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0008_free_mvp_product_direction_canadian_data_region",
+      "target": "docs_adr_0008_free_mvp_product_direction_hosted_services",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/adr/0008-free-mvp-product-direction.md",
+      "source_location": "L51",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

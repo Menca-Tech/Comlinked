@@ -1,0 +1,216 @@
+{
+  "nodes": [
+    {
+      "id": "_scratch_website_redesign_issues_04_homepage_sections",
+      "label": "Website redesign 04: Homepage sections below the hero",
+      "file_type": "document",
+      "source_file": ".scratch/website-redesign/issues/04-homepage-sections.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_scratch_website_redesign_issues_04_homepage_sections_homepage_sections",
+      "label": "Homepage sections order",
+      "file_type": "rationale",
+      "source_file": ".scratch/website-redesign/issues/04-homepage-sections.md",
+      "source_location": "L46",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Your first day, For chambers, When people leave, What we commit to, Questions; specific commitments replace example figures as the proof; '312' and 'One network, three ways in' removed."
+    },
+    {
+      "id": "_scratch_website_redesign_issues_04_homepage_sections_first_chamber_spot",
+      "label": "First-chamber spot",
+      "file_type": "rationale",
+      "source_file": ".scratch/website-redesign/issues/04-homepage-sections.md",
+      "source_location": "L53",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "zod schema for name, quote, person and role with a constant set to null; renders nothing unless the value parses, so no placeholder shows until Richard confirms real details."
+    },
+    {
+      "id": "_scratch_website_redesign_issues_04_homepage_sections_what_we_commit_to",
+      "label": "What we commit to (#free)",
+      "file_type": "concept",
+      "source_file": ".scratch/website-redesign/issues/04-homepage-sections.md",
+      "source_location": "L50",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Free for every company, names never hidden, Connections stay with the Company, each Chamber Network separate, AI drafts while a person decides; no Verified badge."
+    },
+    {
+      "id": "_scratch_website_redesign_issues_04_homepage_sections_questions_component",
+      "label": "Questions component",
+      "file_type": "concept",
+      "source_file": ".scratch/website-redesign/issues/04-homepage-sections.md",
+      "source_location": "L65",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "One component taking a typed list in questions.tsx, reused on the For chambers page."
+    }
+  ],
+  "edges": [
+    {
+      "source": "_scratch_website_redesign_issues_04_homepage_sections",
+      "target": "_scratch_website_redesign_issues_04_homepage_sections_homepage_sections",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/04-homepage-sections.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_04_homepage_sections",
+      "target": "_scratch_website_redesign_issues_04_homepage_sections_first_chamber_spot",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/04-homepage-sections.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_04_homepage_sections",
+      "target": "_scratch_website_redesign_issues_04_homepage_sections_what_we_commit_to",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/04-homepage-sections.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_04_homepage_sections",
+      "target": "_scratch_website_redesign_issues_04_homepage_sections_questions_component",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/04-homepage-sections.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_04_homepage_sections",
+      "target": "_scratch_website_redesign_issues_01_quiet_authority_foundation",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/04-homepage-sections.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_04_homepage_sections",
+      "target": "docs_specs_2026_11_09_website_redesign",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/04-homepage-sections.md",
+      "source_location": "L36",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_04_homepage_sections",
+      "target": "docs_specs_2026_10_11_mvp_build_plan",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/04-homepage-sections.md",
+      "source_location": "L36",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_04_homepage_sections_homepage_sections",
+      "target": "_scratch_website_redesign_issues_04_homepage_sections_what_we_commit_to",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/04-homepage-sections.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_04_homepage_sections_homepage_sections",
+      "target": "_scratch_website_redesign_issues_04_homepage_sections_questions_component",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/04-homepage-sections.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_04_homepage_sections_homepage_sections",
+      "target": "_scratch_website_redesign_issues_04_homepage_sections_first_chamber_spot",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/04-homepage-sections.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_04_homepage_sections_homepage_sections",
+      "target": "_scratch_website_redesign_issues_02_homepage_hero_network_ring_example_tag",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/04-homepage-sections.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_04_homepage_sections_what_we_commit_to",
+      "target": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_ai_drafts_person_decides",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/04-homepage-sections.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_04_homepage_sections_first_chamber_spot",
+      "target": "src_components_marketing_first_chamber",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/04-homepage-sections.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_04_homepage_sections_questions_component",
+      "target": "src_components_marketing_questions",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/04-homepage-sections.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_04_homepage_sections_first_chamber_spot",
+      "target": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_presenter_email_env",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".scratch/website-redesign/issues/04-homepage-sections.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

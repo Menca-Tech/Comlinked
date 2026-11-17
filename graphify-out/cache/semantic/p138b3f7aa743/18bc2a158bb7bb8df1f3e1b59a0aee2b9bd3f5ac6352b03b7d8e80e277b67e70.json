@@ -1,0 +1,72 @@
+{
+  "nodes": [
+    {
+      "id": "_github_pull_request_template",
+      "label": "Pull request template",
+      "file_type": "document",
+      "source_file": ".github/pull_request_template.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_github_pull_request_template_pr_checklist",
+      "label": "PR checklist",
+      "file_type": "rationale",
+      "source_file": ".github/pull_request_template.md",
+      "source_location": "L15",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Each PR confirms pnpm type:check, pnpm test and pnpm build pass, commits follow Conventional Commits, and docs or ADRs are updated when behaviour or a decision changes."
+    },
+    {
+      "id": "_github_pull_request_template_conventional_commits",
+      "label": "Conventional Commits",
+      "file_type": "rationale",
+      "source_file": ".github/pull_request_template.md",
+      "source_location": "L20",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Commit message convention required by the PR checklist and by every ticket's guardrails."
+    }
+  ],
+  "edges": [
+    {
+      "source": "_github_pull_request_template",
+      "target": "_github_pull_request_template_pr_checklist",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".github/pull_request_template.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_github_pull_request_template",
+      "target": "_github_pull_request_template_conventional_commits",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".github/pull_request_template.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_github_pull_request_template_pr_checklist",
+      "target": "_github_pull_request_template_conventional_commits",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".github/pull_request_template.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

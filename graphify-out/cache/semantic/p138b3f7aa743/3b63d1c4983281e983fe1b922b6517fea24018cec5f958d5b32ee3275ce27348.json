@@ -1,0 +1,144 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_skills_testing_e2e_skill",
+      "label": "testing-e2e skill",
+      "file_type": "document",
+      "source_file": ".claude/skills/testing-e2e/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_skills_testing_e2e_skill_user_facing_locators",
+      "label": "User-facing locators + web-first assertions (no waitForTimeout)",
+      "file_type": "rationale",
+      "source_file": ".claude/skills/testing-e2e/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Role/label locators survive DOM changes; auto-retrying assertions replace manual waits."
+    },
+    {
+      "id": "_claude_skills_testing_e2e_skill_axe_a11y_gate",
+      "label": "axe a11y gate on serious/critical violations",
+      "file_type": "rationale",
+      "source_file": ".claude/skills/testing-e2e/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "A parked issue disables one rule on one page with a TODO - never blanket-disable."
+    },
+    {
+      "id": "_claude_skills_testing_e2e_skill_placeholder_supabase_webserver",
+      "label": "webServer with placeholder Supabase env (auth enforced)",
+      "file_type": "rationale",
+      "source_file": ".claude/skills/testing-e2e/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Supabase reads as configured, so auth is enforced and the dashboard-redirect smoke test is meaningful."
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_skills_testing_e2e_skill",
+      "target": "_claude_skills_testing_e2e_skill_user_facing_locators",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/testing-e2e/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_testing_e2e_skill",
+      "target": "_claude_skills_testing_e2e_skill_axe_a11y_gate",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/testing-e2e/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_testing_e2e_skill",
+      "target": "_claude_skills_testing_e2e_skill_placeholder_supabase_webserver",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/testing-e2e/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_testing_e2e_skill_placeholder_supabase_webserver",
+      "target": "playwright_config",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/testing-e2e/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_testing_e2e_skill_axe_a11y_gate",
+      "target": "e2e_a11y_spec",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/testing-e2e/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_testing_e2e_skill",
+      "target": "_claude_skills_supabase_auth_skill",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/testing-e2e/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_testing_e2e_skill",
+      "target": "_claude_skills_testing_unit_skill",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/testing-e2e/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_testing_e2e_skill_placeholder_supabase_webserver",
+      "target": "_claude_skills_supabase_auth_skill_configured_or_disabled",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".claude/skills/testing-e2e/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_testing_e2e_skill_user_facing_locators",
+      "target": "_claude_skills_testing_unit_skill_accessible_queries",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".claude/skills/testing-e2e/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

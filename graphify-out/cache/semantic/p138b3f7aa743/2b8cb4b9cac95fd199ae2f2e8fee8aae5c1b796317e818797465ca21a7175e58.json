@@ -1,0 +1,324 @@
+{
+  "nodes": [
+    {
+      "id": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim",
+      "label": "Pilot Preview 02: Kalayaan's first export shipment, and basics only before a Claim",
+      "file_type": "document",
+      "source_file": ".scratch/pilot-preview/issues/02-export-story-and-basics-before-claim.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim_nordhavn_match",
+      "label": "Nordhavn Freight Forwarders as day-one Match",
+      "file_type": "rationale",
+      "source_file": ".scratch/pilot-preview/issues/02-export-story-and-basics-before-claim.md",
+      "source_location": "L84",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Replaces Palengke Online among the three day-one Matches (decided 2026-11-17). Only Nordhavn's own row changes: it offers freight, wants two Kalayaan offers and sits in Quezon City, giving Fit Score 92."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim_export_shipment_deal",
+      "label": "First export shipment of banana chips to Europe",
+      "file_type": "concept",
+      "source_file": ".scratch/pilot-preview/issues/02-export-story-and-basics-before-claim.md",
+      "source_location": "L86",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Kalayaan and Nordhavn connect on Day 1, confirm 'We met', and both confirm 'We did business' on Day 13, with Kalayaan's Testimonial on the Success Wall."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim_dated_wins_and_deals",
+      "label": "Dated wins and deals (CHAMBER_DEALS)",
+      "file_type": "rationale",
+      "source_file": ".scratch/pilot-preview/issues/02-export-story-and-basics-before-claim.md",
+      "source_location": "L87",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "A win shows only from the day it was posted; the wall is empty on Days 0 to 2; by Day 14 the chamber has three confirmed deals and two wins; teamData counts from this data instead of a formula. Read through successWall(), winsOf() and dealsConfirmed()."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim_basics_only_rule",
+      "label": "Basics only before a Claim (publicView)",
+      "file_type": "rationale",
+      "source_file": ".scratch/pilot-preview/issues/02-export-story-and-basics-before-claim.md",
+      "source_location": "L92",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Until a Company claims, others see only its name, industry, city, website and a 'Not yet claimed' mark; description, offers and needs wait for the Claim; the name is never hidden."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim_match_reason",
+      "label": "One-line reason from the viewer's side (matchReason)",
+      "file_type": "rationale",
+      "source_file": ".scratch/pilot-preview/issues/02-export-story-and-basics-before-claim.md",
+      "source_location": "L92",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "'You're looking for {need}. {Name} works in {industry}, {city}.' or 'You offer {offer}. ...'; never contains the other Company's unpublished offers or needs."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim_waiting_for_claim",
+      "label": "Message waiting for a Claim (waitingForClaim)",
+      "file_type": "rationale",
+      "source_file": ".scratch/pilot-preview/issues/02-export-story-and-basics-before-claim.md",
+      "source_location": "L93",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Connect is not offered for an unclaimed Company; a message waits with 'Waiting until {Name} claims its profile', gets no reply, and the waiting state is readable from the seam for the chamber view."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim_two_weeks_seed_day_14",
+      "label": "Two weeks in seed on Day 14",
+      "file_type": "concept",
+      "source_file": ".scratch/pilot-preview/issues/02-export-story-and-basics-before-claim.md",
+      "source_location": "L86",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "One seed builds the two-weeks state, moved from Day 15 to Day 14; the Presenter Guide's 'Two weeks in' uses it."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim_fit_score_steps",
+      "label": "Fit Score steps",
+      "file_type": "rationale",
+      "source_file": ".scratch/pilot-preview/issues/02-export-story-and-basics-before-claim.md",
+      "source_location": "L61",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "12 to start; 40 for wanting two or more things Kalayaan offers (30 for one); 30 for offering something it seeks; 10 for the same city or 5 elsewhere in Metro Manila; ties keep network order."
+    }
+  ],
+  "edges": [
+    {
+      "source": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim",
+      "target": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim_nordhavn_match",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/02-export-story-and-basics-before-claim.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim",
+      "target": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim_export_shipment_deal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/02-export-story-and-basics-before-claim.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim",
+      "target": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim_dated_wins_and_deals",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/02-export-story-and-basics-before-claim.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim",
+      "target": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim_basics_only_rule",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/02-export-story-and-basics-before-claim.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim",
+      "target": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim_match_reason",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/02-export-story-and-basics-before-claim.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim",
+      "target": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim_waiting_for_claim",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/02-export-story-and-basics-before-claim.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim",
+      "target": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim_two_weeks_seed_day_14",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/02-export-story-and-basics-before-claim.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim",
+      "target": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim_fit_score_steps",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/02-export-story-and-basics-before-claim.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim",
+      "target": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/02-export-story-and-basics-before-claim.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim",
+      "target": "docs_specs_2026_11_17_pilot_preview",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/02-export-story-and-basics-before-claim.md",
+      "source_location": "L52",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim_nordhavn_match",
+      "target": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_shares_my_trade_rule",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/02-export-story-and-basics-before-claim.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim_nordhavn_match",
+      "target": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim_fit_score_steps",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/02-export-story-and-basics-before-claim.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim_nordhavn_match",
+      "target": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_kalayaan_foods",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/02-export-story-and-basics-before-claim.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim_export_shipment_deal",
+      "target": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim_nordhavn_match",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/02-export-story-and-basics-before-claim.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim_export_shipment_deal",
+      "target": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim_dated_wins_and_deals",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/02-export-story-and-basics-before-claim.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim_two_weeks_seed_day_14",
+      "target": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim_export_shipment_deal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/02-export-story-and-basics-before-claim.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim_basics_only_rule",
+      "target": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_claim_day",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/02-export-story-and-basics-before-claim.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim_match_reason",
+      "target": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim_basics_only_rule",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/02-export-story-and-basics-before-claim.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim_waiting_for_claim",
+      "target": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_never_acts_rule",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/02-export-story-and-basics-before-claim.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim_dated_wins_and_deals",
+      "target": "_scratch_comdash_redesign_issues_02_session_2_signals_connections_plans_final_from_your_connections",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/02-export-story-and-basics-before-claim.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim",
+      "target": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_ai_drafts_person_decides",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/02-export-story-and-basics-before-claim.md",
+      "source_location": "L133",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

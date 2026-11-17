@@ -1,0 +1,202 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_commands_handoff",
+      "label": "/handoff command",
+      "file_type": "document",
+      "source_file": ".claude/commands/handoff.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_commands_handoff_risen_framework",
+      "label": "RISEN framework (role, ordered steps, end product, constraints)",
+      "file_type": "rationale",
+      "source_file": ".claude/commands/handoff.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_commands_handoff_handoff_prompt_sections",
+      "label": "Handoff prompt sections (Goal, Context, Scope, Approach, Acceptance criteria, Verification, Guardrails)",
+      "file_type": "rationale",
+      "source_file": ".claude/commands/handoff.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_commands_handoff_code_quality_bar",
+      "label": "Code quality bar (Clean, Maintainable, Scalable, Limits)",
+      "file_type": "rationale",
+      "source_file": ".claude/commands/handoff.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Clean/scalable/maintainable must be stated as checkable conditions tied to the Scope files, never as the three words alone."
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_commands_handoff",
+      "target": "_claude_commands_handoff_risen_framework",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/commands/handoff.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_commands_handoff",
+      "target": "_claude_commands_handoff_handoff_prompt_sections",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/commands/handoff.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_commands_handoff",
+      "target": "_claude_commands_handoff_code_quality_bar",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/commands/handoff.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_commands_handoff",
+      "target": "_claude_readme_prompt_architect_standing_rule",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/commands/handoff.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_commands_handoff",
+      "target": "_claude_readme_planning_executer_workflow",
+      "relation": "implements",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".claude/commands/handoff.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_commands_handoff_risen_framework",
+      "target": "_claude_commands_handoff_handoff_prompt_sections",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/commands/handoff.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_commands_handoff_code_quality_bar",
+      "target": "src_paths",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/commands/handoff.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_commands_handoff",
+      "target": "agents",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/commands/handoff.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_commands_handoff_code_quality_bar",
+      "target": "_claude_skills_coding_standards_skill",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/commands/handoff.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_commands_handoff",
+      "target": "_claude_skills_readme",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".claude/commands/handoff.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_commands_handoff_handoff_prompt_sections",
+      "target": "_claude_skills_coding_standards_skill_tooling_gate",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/commands/handoff.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_commands_handoff_handoff_prompt_sections",
+      "target": "_claude_skills_coding_standards_skill_conventional_commits",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".claude/commands/handoff.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_commands_handoff_code_quality_bar",
+      "target": "_claude_skills_coding_standards_skill_no_any_no_bang_no_as",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".claude/commands/handoff.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_commands_handoff_code_quality_bar",
+      "target": "_claude_skills_nextjs_app_router_skill_server_components_default",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".claude/commands/handoff.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_commands_handoff_code_quality_bar",
+      "target": "_claude_skills_coding_standards_skill_zod_single_source_of_truth",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".claude/commands/handoff.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

@@ -1,0 +1,455 @@
+{
+  "nodes": [
+    {
+      "id": "docs_specs_2026_11_09_website_redesign",
+      "label": "Spec: ComLinked website redesign (quiet authority)",
+      "file_type": "document",
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_09_website_redesign_quiet_authority",
+      "label": "Quiet authority design feel",
+      "file_type": "rationale",
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": "L14",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Calm, spacious pages with one navy hero and one strong visual per page so a Chamber Leader feels comfortable lending the chamber's name and a company owner trusts the site."
+    },
+    {
+      "id": "docs_specs_2026_11_09_website_redesign_chamber_leader",
+      "label": "Chamber Leader",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": "L8",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_09_website_redesign_homepage_hero",
+      "label": "Shared homepage hero with two paths",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": "L16",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_09_website_redesign_network_ring_hero",
+      "label": "Network Ring sequence in the hero",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": "L225",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "The finished drawing is the default and a small script arms the sequence, so a script failure, reduced motion or no JavaScript still show the finished ring; it never delays the headline or causes layout shift."
+    },
+    {
+      "id": "docs_specs_2026_11_09_website_redesign_for_chambers_page",
+      "label": "For chambers page",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": "L192",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_09_website_redesign_how_it_works_page",
+      "label": "How it works page",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": "L202",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_09_website_redesign_comdash_page",
+      "label": "ComDash marketing page",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": "L211",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_09_website_redesign_working_mockup_ribbon",
+      "label": "Working mockup ribbon",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": "L178",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_09_website_redesign_validated_forms",
+      "label": "Join and pilot forms (validated, nothing sent)",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": "L243",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_09_website_redesign_commitments_as_proof",
+      "label": "Commitments as proof (no example figures)",
+      "file_type": "rationale",
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": "L233",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Commitments come only from the MVP Build Plan and accepted ADRs; invented figures such as 312 are removed from the sales argument."
+    },
+    {
+      "id": "docs_specs_2026_11_09_website_redesign_reserved_chamber_spot",
+      "label": "Reserved first-chamber name and quote spot",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": "L240",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_09_website_redesign_verified_badge",
+      "label": "Verified badge (OD-08, unconfirmed)",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": "L237",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_09_website_redesign_typography",
+      "label": "Source Serif 4 headlines with Nunito Sans",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": "L161",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_09_website_redesign_site_mode",
+      "label": "Site Mode design system rules",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": "L171",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_specs_2026_11_09_website_redesign",
+      "target": "docs_specs_2026_10_11_mvp_build_plan",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_09_website_redesign",
+      "target": "context",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_09_website_redesign",
+      "target": "docs_specs_2026_11_09_website_redesign_quiet_authority",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_09_website_redesign",
+      "target": "docs_specs_2026_11_09_website_redesign_homepage_hero",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_09_website_redesign",
+      "target": "docs_specs_2026_11_09_website_redesign_for_chambers_page",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_09_website_redesign",
+      "target": "docs_specs_2026_11_09_website_redesign_how_it_works_page",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_09_website_redesign",
+      "target": "docs_specs_2026_11_09_website_redesign_comdash_page",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_09_website_redesign",
+      "target": "docs_specs_2026_11_09_website_redesign_validated_forms",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_09_website_redesign",
+      "target": "docs_specs_2026_11_09_website_redesign_commitments_as_proof",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_09_website_redesign",
+      "target": "docs_specs_2026_11_09_website_redesign_working_mockup_ribbon",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_09_website_redesign_homepage_hero",
+      "target": "docs_specs_2026_11_09_website_redesign_network_ring_hero",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": "L182",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_09_website_redesign_homepage_hero",
+      "target": "docs_specs_2026_11_09_website_redesign_chamber_leader",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": "L38",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_09_website_redesign_homepage_hero",
+      "target": "docs_specs_2026_10_11_mvp_build_plan_first_lead_in_24_hours",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_09_website_redesign_quiet_authority",
+      "target": "docs_specs_2026_11_09_website_redesign_typography",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_09_website_redesign_site_mode",
+      "target": "docs_specs_2026_11_09_website_redesign_typography",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": "L293",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_09_website_redesign_for_chambers_page",
+      "target": "docs_specs_2026_11_09_website_redesign_chamber_leader",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_09_website_redesign_for_chambers_page",
+      "target": "docs_specs_2026_11_09_website_redesign_validated_forms",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": "L200",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_09_website_redesign_how_it_works_page",
+      "target": "docs_specs_2026_10_11_mvp_build_plan_daily_lead_loop",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": "L207",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_09_website_redesign_how_it_works_page",
+      "target": "docs_specs_2026_10_11_mvp_build_plan_c3_ai_assistant_switch",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": "L208",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_09_website_redesign_comdash_page",
+      "target": "docs_specs_2026_10_11_mvp_build_plan_l2_comdash_interest_signals",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": "L214",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_09_website_redesign_comdash_page",
+      "target": "docs_specs_2026_10_11_mvp_build_plan_d3_activity_score_and_search_rank",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": "L215",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_09_website_redesign_commitments_as_proof",
+      "target": "docs_specs_2026_10_11_mvp_build_plan_free_for_everyone",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": "L235",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_09_website_redesign_commitments_as_proof",
+      "target": "docs_specs_2026_10_11_mvp_build_plan_company_owned_relationships",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": "L235",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_09_website_redesign_commitments_as_proof",
+      "target": "docs_specs_2026_10_11_mvp_build_plan_c3_ai_assistant_switch",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": "L235",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_09_website_redesign_commitments_as_proof",
+      "target": "docs_specs_2026_11_09_website_redesign_verified_badge",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": "L237",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_09_website_redesign_reserved_chamber_spot",
+      "target": "docs_specs_2026_10_11_mvp_build_plan_richard",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": "L106",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_09_website_redesign_validated_forms",
+      "target": "docs_adr_0010_client_side_product_simulation",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_09_website_redesign_working_mockup_ribbon",
+      "target": "docs_specs_2026_11_08_mvp_feature_status_agreed_for_demo",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "docs/specs/2026-11-09-website-redesign.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

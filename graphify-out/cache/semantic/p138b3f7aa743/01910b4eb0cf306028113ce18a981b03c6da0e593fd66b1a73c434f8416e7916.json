@@ -1,0 +1,247 @@
+{
+  "nodes": [
+    {
+      "id": "docs_adr_0007_analytics_posthog",
+      "label": "ADR 0007: PostHog analytics, opt-in, reverse-proxied, privacy-first",
+      "file_type": "document",
+      "source_file": "docs/adr/0007-analytics-posthog.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_adr_0007_analytics_posthog_posthog",
+      "label": "PostHog (posthog-js, posthog-node, @posthog/react)",
+      "file_type": "concept",
+      "source_file": "docs/adr/0007-analytics-posthog.md",
+      "source_location": "L20",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_adr_0007_analytics_posthog_opt_in_inert",
+      "label": "Opt-in, inert by default (isAnalyticsConfigured, NEXT_PUBLIC_POSTHOG_KEY)",
+      "file_type": "rationale",
+      "source_file": "docs/adr/0007-analytics-posthog.md",
+      "source_location": "L23",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Analytics must not fire or add network, cost or privacy exposure until a project turns it on, preserving the runs-with-nothing-configured default."
+    },
+    {
+      "id": "docs_adr_0007_analytics_posthog_relay_proxy",
+      "label": "/relay same-origin reverse proxy (kept in sync in three places)",
+      "file_type": "concept",
+      "source_file": "docs/adr/0007-analytics-posthog.md",
+      "source_location": "L35",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Keeps the CSP unchanged and dodges ad-blockers; the middleware-matcher exclusion is the load-bearing, easy-to-miss site."
+    },
+    {
+      "id": "docs_adr_0007_analytics_posthog_privacy_first_consent",
+      "label": "Privacy-first, consent-gated capture (identified_only, respect_dnt)",
+      "file_type": "rationale",
+      "source_file": "docs/adr/0007-analytics-posthog.md",
+      "source_location": "L45",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_adr_0007_analytics_posthog_strict_nonce_csp",
+      "label": "Strict per-request nonce CSP with strict-dynamic",
+      "file_type": "concept",
+      "source_file": "docs/adr/0007-analytics-posthog.md",
+      "source_location": "L13",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_adr_0007_analytics_posthog_session_replay_worker_src",
+      "label": "Session Replay CSP delta: worker-src 'self' blob:",
+      "file_type": "concept",
+      "source_file": "docs/adr/0007-analytics-posthog.md",
+      "source_location": "L59",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_adr_0007_analytics_posthog_node_engine_pin",
+      "label": "Node pin bumped to 22.23.1 for posthog-node",
+      "file_type": "concept",
+      "source_file": "docs/adr/0007-analytics-posthog.md",
+      "source_location": "L69",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_adr_0007_analytics_posthog",
+      "target": "docs_adr_0003_mock_first_service_seam",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0007-analytics-posthog.md",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0007_analytics_posthog",
+      "target": "docs_adr_0007_analytics_posthog_posthog",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0007-analytics-posthog.md",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0007_analytics_posthog",
+      "target": "docs_adr_0007_analytics_posthog_opt_in_inert",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0007-analytics-posthog.md",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0007_analytics_posthog",
+      "target": "docs_adr_0007_analytics_posthog_relay_proxy",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0007-analytics-posthog.md",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0007_analytics_posthog",
+      "target": "docs_adr_0007_analytics_posthog_privacy_first_consent",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0007-analytics-posthog.md",
+      "source_location": "L45",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0007_analytics_posthog",
+      "target": "docs_adr_0007_analytics_posthog_strict_nonce_csp",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0007-analytics-posthog.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0007_analytics_posthog",
+      "target": "docs_adr_0007_analytics_posthog_session_replay_worker_src",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0007-analytics-posthog.md",
+      "source_location": "L59",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0007_analytics_posthog",
+      "target": "docs_adr_0007_analytics_posthog_node_engine_pin",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0007-analytics-posthog.md",
+      "source_location": "L69",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0007_analytics_posthog_opt_in_inert",
+      "target": "docs_adr_0007_analytics_posthog_posthog",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0007-analytics-posthog.md",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0007_analytics_posthog_opt_in_inert",
+      "target": "docs_adr_0006_drizzle_data_layer_mock_db_selector",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0007-analytics-posthog.md",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0007_analytics_posthog_opt_in_inert",
+      "target": "docs_adr_0003_mock_first_service_seam_mock_by_default",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0007-analytics-posthog.md",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0007_analytics_posthog_relay_proxy",
+      "target": "docs_adr_0007_analytics_posthog_strict_nonce_csp",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0007-analytics-posthog.md",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0007_analytics_posthog_session_replay_worker_src",
+      "target": "docs_adr_0007_analytics_posthog_strict_nonce_csp",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0007-analytics-posthog.md",
+      "source_location": "L59",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0007_analytics_posthog_privacy_first_consent",
+      "target": "docs_adr_0007_analytics_posthog_posthog",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0007-analytics-posthog.md",
+      "source_location": "L45",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0007_analytics_posthog_node_engine_pin",
+      "target": "docs_adr_0007_analytics_posthog_posthog",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0007-analytics-posthog.md",
+      "source_location": "L69",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

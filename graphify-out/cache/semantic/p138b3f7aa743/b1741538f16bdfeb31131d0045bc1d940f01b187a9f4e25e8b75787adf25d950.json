@@ -1,0 +1,110 @@
+{
+  "nodes": [
+    {
+      "id": "_scratch_website_redesign_issues_06_homepage_review_with_richard",
+      "label": "Website redesign 06: Homepage review with Richard",
+      "file_type": "document",
+      "source_file": ".scratch/website-redesign/issues/06-homepage-review-with-richard.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_scratch_website_redesign_issues_06_homepage_review_with_richard_homepage_review_pack",
+      "label": "Homepage review pack (homepage-review.md)",
+      "file_type": "concept",
+      "source_file": ".scratch/website-redesign/issues/06-homepage-review-with-richard.md",
+      "source_location": "L43",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Screenshots at four sizes, how to open the site, the demo path, a judging checklist, wording for Richard to approve, open items and a blank decision section; people make the decision."
+    }
+  ],
+  "edges": [
+    {
+      "source": "_scratch_website_redesign_issues_06_homepage_review_with_richard",
+      "target": "_scratch_website_redesign_issues_06_homepage_review_with_richard_homepage_review_pack",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/06-homepage-review-with-richard.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_06_homepage_review_with_richard",
+      "target": "_scratch_website_redesign_issues_02_homepage_hero_network_ring",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/06-homepage-review-with-richard.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_06_homepage_review_with_richard",
+      "target": "_scratch_website_redesign_issues_03_network_ring_sequence",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/06-homepage-review-with-richard.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_06_homepage_review_with_richard",
+      "target": "_scratch_website_redesign_issues_04_homepage_sections",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/06-homepage-review-with-richard.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_06_homepage_review_with_richard",
+      "target": "_scratch_website_redesign_issues_05_validated_join_form",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/06-homepage-review-with-richard.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_06_homepage_review_with_richard",
+      "target": "docs_specs_2026_11_09_website_redesign",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/06-homepage-review-with-richard.md",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_06_homepage_review_with_richard_homepage_review_pack",
+      "target": "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check_richard",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/06-homepage-review-with-richard.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_06_homepage_review_with_richard_homepage_review_pack",
+      "target": "_scratch_website_redesign_issues_01_quiet_authority_foundation_quiet_authority",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/06-homepage-review-with-richard.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

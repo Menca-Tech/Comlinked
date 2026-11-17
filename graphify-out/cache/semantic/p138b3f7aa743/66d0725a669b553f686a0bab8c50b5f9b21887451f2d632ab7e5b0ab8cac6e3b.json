@@ -1,0 +1,167 @@
+{
+  "nodes": [
+    {
+      "id": "_scratch_website_redesign_issues_01_quiet_authority_foundation",
+      "label": "Website redesign 01: Quiet authority foundation",
+      "file_type": "document",
+      "source_file": ".scratch/website-redesign/issues/01-quiet-authority-foundation.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_scratch_website_redesign_issues_01_quiet_authority_foundation_quiet_authority",
+      "label": "Quiet authority Site Mode",
+      "file_type": "rationale",
+      "source_file": ".scratch/website-redesign/issues/01-quiet-authority-foundation.md",
+      "source_location": "L37",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Source Serif 4 headlines, deep navy instead of near-black, a solid white sticky navigation with For chambers first, a quieter footer, one thin ribbon and no page-load fades; one navy band per page."
+    },
+    {
+      "id": "_scratch_website_redesign_issues_01_quiet_authority_foundation_navy_token",
+      "label": "--color-cl-navy token (#133E5E)",
+      "file_type": "concept",
+      "source_file": ".scratch/website-redesign/issues/01-quiet-authority-foundation.md",
+      "source_location": "L52",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "The product's navy; defined once, with every navy use on the public site reading it."
+    },
+    {
+      "id": "_scratch_website_redesign_issues_01_quiet_authority_foundation_section_components",
+      "label": "PageHero, Section and SectionIntro (section.tsx)",
+      "file_type": "concept",
+      "source_file": ".scratch/website-redesign/issues/01-quiet-authority-foundation.md",
+      "source_location": "L54",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Server components; section.tsx is the only definition of the navy band and section spacing."
+    }
+  ],
+  "edges": [
+    {
+      "source": "_scratch_website_redesign_issues_01_quiet_authority_foundation",
+      "target": "_scratch_website_redesign_issues_01_quiet_authority_foundation_quiet_authority",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/01-quiet-authority-foundation.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_01_quiet_authority_foundation",
+      "target": "_scratch_website_redesign_issues_01_quiet_authority_foundation_navy_token",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/01-quiet-authority-foundation.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_01_quiet_authority_foundation",
+      "target": "_scratch_website_redesign_issues_01_quiet_authority_foundation_section_components",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/01-quiet-authority-foundation.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_01_quiet_authority_foundation",
+      "target": "docs_specs_2026_11_09_website_redesign",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/01-quiet-authority-foundation.md",
+      "source_location": "L40",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_01_quiet_authority_foundation",
+      "target": "docs_design_system_readme",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/01-quiet-authority-foundation.md",
+      "source_location": "L59",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_01_quiet_authority_foundation",
+      "target": "_github_pull_request_template_conventional_commits",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/01-quiet-authority-foundation.md",
+      "source_location": "L76",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_01_quiet_authority_foundation_quiet_authority",
+      "target": "_scratch_website_redesign_issues_01_quiet_authority_foundation_navy_token",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/01-quiet-authority-foundation.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_01_quiet_authority_foundation_quiet_authority",
+      "target": "_scratch_website_redesign_issues_01_quiet_authority_foundation_section_components",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/01-quiet-authority-foundation.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_01_quiet_authority_foundation_section_components",
+      "target": "src_components_marketing_section",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/01-quiet-authority-foundation.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "website_redesign_build_sequence",
+      "label": "Website redesign tickets 01 to 10 and the two fast-track sessions",
+      "nodes": [
+        "_scratch_website_redesign_issues_01_quiet_authority_foundation",
+        "_scratch_website_redesign_issues_02_homepage_hero_network_ring",
+        "_scratch_website_redesign_issues_03_network_ring_sequence",
+        "_scratch_website_redesign_issues_04_homepage_sections",
+        "_scratch_website_redesign_issues_05_validated_join_form",
+        "_scratch_website_redesign_issues_06_homepage_review_with_richard",
+        "_scratch_website_redesign_issues_07_for_chambers_page",
+        "_scratch_website_redesign_issues_08_how_it_works_page",
+        "_scratch_website_redesign_issues_09_comdash_page",
+        "_scratch_website_redesign_issues_10_final_cleanup_and_check",
+        "_scratch_website_redesign_fast_track_session_1_homepage",
+        "_scratch_website_redesign_fast_track_session_2_pages_and_final_check"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/01-quiet-authority-foundation.md"
+    }
+  ]
+}

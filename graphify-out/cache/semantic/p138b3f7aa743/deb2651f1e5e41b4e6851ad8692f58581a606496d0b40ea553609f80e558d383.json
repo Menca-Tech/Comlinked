@@ -1,0 +1,496 @@
+{
+  "nodes": [
+    {
+      "id": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items",
+      "label": "Pilot Preview 03: Walk the Pilot Preview end to end, with the later items hidden",
+      "file_type": "document",
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_pilot_preview",
+      "label": "Pilot Preview",
+      "file_type": "concept",
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": "L64",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "A guided walk for ECCP's Chamber Leader, who has never seen ComLinked; Richard presents it and then sends a private link, so it must be followable on a phone with no presenter."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_six_stops",
+      "label": "Six Stops declared in preview.ts",
+      "file_type": "concept",
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": "L97",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Stop 1 Day 0 member list becomes profiles (Community Manager); Stop 2 Day 1 a member claims; Stop 3 Day 2 the next morning; Stop 4 Day 14 the member two weeks in; Stop 5 Day 14 ECCP's view (Chamber Contact); Stop 6 what a pilot asks of ECCP. Declared once as PREVIEW_OPENING, PREVIEW_STOPS, PREVIEW_CLOSING and SEAT_LINES."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_story_bar",
+      "label": "Story Bar",
+      "file_type": "concept",
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": "L113",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Strip under the top bar with 'Day N \u00b7 title', the Seat line, the position, Back and Next; a labelled landmark that announces Stop changes politely; shows no presenter controls."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_seats",
+      "label": "Seats (Community Manager, Company, Chamber Contact)",
+      "file_type": "concept",
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": "L114",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "The top bar follows the Seat; Community Manager and Chamber Contact Seats show a labelled bar with no member's initials. SEAT_BARS in product-bars.tsx."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_open_stop",
+      "label": "openStop prepared states (STOP_STATES)",
+      "file_type": "rationale",
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": "L106",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Starts the simulation over, marks it as in the Pilot Preview on that Stop and builds the state synchronously without timers so every run is identical."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_tab_memory",
+      "label": "Tab memory for reload (rememberStop / stopAfterReload)",
+      "file_type": "rationale",
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": "L112",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "A reload reopens the remembered Stop at its address; blocked storage or an unknown Stop shows the Opening; any other fresh load opens the full Demo."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_later_item_switches",
+      "label": "Later-item switches (pricing, after-MVP previews)",
+      "file_type": "rationale",
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": "L116",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Both off in the Pilot Preview and on in the full Demo. Previews off: ComDash shows four tabs and three Overview cards, and AI Lead Agent, Team Dashboard and Engine addresses open the Overview. Pricing off: the View as switcher is not rendered and the view stays Free. Read with laterItemShown, changed with act.toggleLaterItem."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_day_0",
+      "label": "Day 0",
+      "file_type": "concept",
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": "L111",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "A real day before any Claim, with no activity, no claimed Company and no points."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_opening",
+      "label": "Opening: A preview for ECCP",
+      "file_type": "concept",
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": "L115",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "States that ECCP has not joined ComLinked and every company, person and figure is invented; lists the six Stops and offers Start."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_presenter_guide",
+      "label": "Presenter Guide (G key)",
+      "file_type": "concept",
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": "L117",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Its button is hidden in the Pilot Preview while the G key still opens it; it jumps to any Stop and holds the two later-item switches."
+    }
+  ],
+  "edges": [
+    {
+      "source": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items",
+      "target": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_pilot_preview",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items",
+      "target": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_six_stops",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items",
+      "target": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_story_bar",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items",
+      "target": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_seats",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items",
+      "target": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_open_stop",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items",
+      "target": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_tab_memory",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items",
+      "target": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_later_item_switches",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items",
+      "target": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_day_0",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items",
+      "target": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_opening",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items",
+      "target": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_presenter_guide",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items",
+      "target": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items",
+      "target": "docs_specs_2026_11_17_pilot_preview",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": "L63",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_pilot_preview",
+      "target": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_six_stops",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_pilot_preview",
+      "target": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_eccp",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_six_stops",
+      "target": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_story_bar",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_six_stops",
+      "target": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_seats",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_six_stops",
+      "target": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_opening",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_six_stops",
+      "target": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_open_stop",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_six_stops",
+      "target": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_tab_memory",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_open_stop",
+      "target": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_day_0",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_open_stop",
+      "target": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim_two_weeks_seed_day_14",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_opening",
+      "target": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_chamber_setting",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_six_stops",
+      "target": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_chamber_setting",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_later_item_switches",
+      "target": "_scratch_comdash_redesign_issues_02_session_2_signals_connections_plans_final_plan_switcher",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_later_item_switches",
+      "target": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_comdash_five_tabs",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_presenter_guide",
+      "target": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_later_item_switches",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_presenter_guide",
+      "target": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_six_stops",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_six_stops",
+      "target": "src_services_comlinked_preview",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_story_bar",
+      "target": "src_components_product_story_bar",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_seats",
+      "target": "src_components_product_product_bars",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_open_stop",
+      "target": "src_services_comlinked_simulation_openstop",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_tab_memory",
+      "target": "src_components_product_product_shell_useaddressentry",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_presenter_guide",
+      "target": "src_components_product_demo_guide",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_opening",
+      "target": "src_components_product_screens_preview_opening",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "pilot_preview_stop_screens",
+      "label": "Screens walked by the Pilot Preview's Stops",
+      "nodes": [
+        "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_six_stops",
+        "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_opening",
+        "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_story_bar",
+        "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_member_list_import",
+        "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_claim_message",
+        "_scratch_pilot_preview_issues_05_eccp_activity_view_activity_view",
+        "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_the_ask"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md"
+    }
+  ]
+}

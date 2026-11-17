@@ -1,0 +1,191 @@
+{
+  "nodes": [
+    {
+      "id": "contributing",
+      "label": "CONTRIBUTING.md: contribution workflow",
+      "file_type": "document",
+      "source_file": "CONTRIBUTING.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "contributing_pre_commit_hook",
+      "label": "Pre-commit hook runs lint-staged and type:check",
+      "file_type": "concept",
+      "source_file": "CONTRIBUTING.md",
+      "source_location": "L26",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "contributing_branch_naming",
+      "label": "Branch prefixes feat/, fix/, chore/ off main",
+      "file_type": "concept",
+      "source_file": "CONTRIBUTING.md",
+      "source_location": "L18",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "contributing_template_framing",
+      "label": "Repo-as-template framing (keep changes general)",
+      "file_type": "rationale",
+      "source_file": "CONTRIBUTING.md",
+      "source_location": "L3",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "contributing",
+      "target": "readme",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CONTRIBUTING.md",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "contributing",
+      "target": "agents",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CONTRIBUTING.md",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "contributing",
+      "target": "contributing_branch_naming",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CONTRIBUTING.md",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "contributing",
+      "target": "agents_never_commit_to_main",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CONTRIBUTING.md",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "contributing",
+      "target": "agents_keep_typed_and_green",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CONTRIBUTING.md",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "contributing",
+      "target": "agents_conventional_commits",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CONTRIBUTING.md",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "contributing",
+      "target": "contributing_pre_commit_hook",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CONTRIBUTING.md",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "contributing",
+      "target": "agents_adr_practice",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CONTRIBUTING.md",
+      "source_location": "L31",
+      "weight": 1.0
+    },
+    {
+      "source": "contributing",
+      "target": "context",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CONTRIBUTING.md",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "contributing",
+      "target": "contributing_template_framing",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CONTRIBUTING.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "contributing_branch_naming",
+      "target": "agents_never_commit_to_main",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "CONTRIBUTING.md",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "contributing_pre_commit_hook",
+      "target": "agents_keep_typed_and_green",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "CONTRIBUTING.md",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "contributing_template_framing",
+      "target": "context_web_app_template",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "CONTRIBUTING.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "contributing_template_framing",
+      "target": "docs_adr_0008_free_mvp_product_direction",
+      "relation": "conceptually_related_to",
+      "confidence": "AMBIGUOUS",
+      "confidence_score": 0.25,
+      "source_file": "CONTRIBUTING.md",
+      "source_location": "L3",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

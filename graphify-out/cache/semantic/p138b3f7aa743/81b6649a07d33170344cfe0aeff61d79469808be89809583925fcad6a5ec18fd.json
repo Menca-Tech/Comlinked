@@ -1,0 +1,132 @@
+{
+  "nodes": [
+    {
+      "id": "_scratch_website_redesign_issues_08_how_it_works_page",
+      "label": "Website redesign 08: How it works page",
+      "file_type": "document",
+      "source_file": ".scratch/website-redesign/issues/08-how-it-works-page.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_scratch_website_redesign_issues_08_how_it_works_page_daily_lead_loop",
+      "label": "Daily Lead Loop visual",
+      "file_type": "rationale",
+      "source_file": ".scratch/website-redesign/issues/08-how-it-works-page.md",
+      "source_location": "L50",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Five steps: Morning Digest, act on Leads, talk and close, share the win, rank rises, with the last feeding the first; one typed array renders an ordered list that CSS draws as a loop on laptops and a sequence on phones; no animation."
+    },
+    {
+      "id": "_scratch_website_redesign_issues_08_how_it_works_page_closing_cta",
+      "label": "ClosingCta",
+      "file_type": "concept",
+      "source_file": ".scratch/website-redesign/issues/08-how-it-works-page.md",
+      "source_location": "L62",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "The single closing band in section.tsx with text passed as props; one navy 'Join ComLinked free' button to the Join form."
+    }
+  ],
+  "edges": [
+    {
+      "source": "_scratch_website_redesign_issues_08_how_it_works_page",
+      "target": "_scratch_website_redesign_issues_08_how_it_works_page_daily_lead_loop",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/08-how-it-works-page.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_08_how_it_works_page",
+      "target": "_scratch_website_redesign_issues_08_how_it_works_page_closing_cta",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/08-how-it-works-page.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_08_how_it_works_page",
+      "target": "_scratch_website_redesign_issues_06_homepage_review_with_richard",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/08-how-it-works-page.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_08_how_it_works_page",
+      "target": "docs_specs_2026_11_09_website_redesign",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/08-how-it-works-page.md",
+      "source_location": "L33",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_08_how_it_works_page",
+      "target": "docs_specs_2026_10_11_mvp_build_plan",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/08-how-it-works-page.md",
+      "source_location": "L33",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_08_how_it_works_page",
+      "target": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_ai_drafts_person_decides",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/08-how-it-works-page.md",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_08_how_it_works_page_closing_cta",
+      "target": "src_components_marketing_section",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/08-how-it-works-page.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_08_how_it_works_page_closing_cta",
+      "target": "_scratch_website_redesign_issues_05_validated_join_form_join_form",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/08-how-it-works-page.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_08_how_it_works_page_daily_lead_loop",
+      "target": "src_components_marketing_daily_lead_loop",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/08-how-it-works-page.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

@@ -1,0 +1,193 @@
+{
+  "nodes": [
+    {
+      "id": "_scratch_comdash_redesign_issues_03_fix_interest_signals_layout",
+      "label": "ComDash redesign 03: Fix Interest Signals tab layout",
+      "file_type": "document",
+      "source_file": ".scratch/comdash-redesign/issues/03-fix-interest-signals-layout.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_scratch_comdash_redesign_issues_03_fix_interest_signals_layout_signal_drawer",
+      "label": "Signal timeline drawer (?company=)",
+      "file_type": "concept",
+      "source_file": ".scratch/comdash-redesign/issues/03-fix-interest-signals-layout.md",
+      "source_location": "L61",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Side panel with role=dialog labelled by the Company name; the open Company is kept in the address as ?company=<id> so it survives tab changes; Escape returns focus to the row; points shown only on Growth and Pro."
+    },
+    {
+      "id": "_scratch_comdash_redesign_issues_03_fix_interest_signals_layout_level_filter",
+      "label": "Interest Level filter chips (All / Hot / Warm / New)",
+      "file_type": "concept",
+      "source_file": ".scratch/comdash-redesign/issues/03-fix-interest-signals-layout.md",
+      "source_location": "L60",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_scratch_comdash_redesign_issues_03_fix_interest_signals_layout_overview_summary_cards",
+      "label": "Overview cut to Next action and four summary cards",
+      "file_type": "rationale",
+      "source_file": ".scratch/comdash-redesign/issues/03-fix-interest-signals-layout.md",
+      "source_location": "L62",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "The prototype puts the analytics panels on Interest Signals and keeps the Overview to Next action plus four cards; sessions 1 and 2 had it inverted, reported by the user on 2026-11-11."
+    }
+  ],
+  "edges": [
+    {
+      "source": "_scratch_comdash_redesign_issues_03_fix_interest_signals_layout",
+      "target": "_scratch_comdash_redesign_issues_03_fix_interest_signals_layout_signal_drawer",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/03-fix-interest-signals-layout.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_03_fix_interest_signals_layout",
+      "target": "_scratch_comdash_redesign_issues_03_fix_interest_signals_layout_level_filter",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/03-fix-interest-signals-layout.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_03_fix_interest_signals_layout",
+      "target": "_scratch_comdash_redesign_issues_03_fix_interest_signals_layout_overview_summary_cards",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/03-fix-interest-signals-layout.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_03_fix_interest_signals_layout",
+      "target": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/03-fix-interest-signals-layout.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_03_fix_interest_signals_layout",
+      "target": "_scratch_comdash_redesign_issues_02_session_2_signals_connections_plans_final",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/03-fix-interest-signals-layout.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_03_fix_interest_signals_layout",
+      "target": "docs_specs_2026_11_11_comdash_redesign",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/03-fix-interest-signals-layout.md",
+      "source_location": "L46",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_03_fix_interest_signals_layout",
+      "target": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_comdash_prototype",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/03-fix-interest-signals-layout.md",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_03_fix_interest_signals_layout_signal_drawer",
+      "target": "_scratch_comdash_redesign_issues_02_session_2_signals_connections_plans_final_intent_score",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/03-fix-interest-signals-layout.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_03_fix_interest_signals_layout_signal_drawer",
+      "target": "src_components_product_comdash_signal_drawer",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/03-fix-interest-signals-layout.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_03_fix_interest_signals_layout_level_filter",
+      "target": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_interest_level_rule",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/03-fix-interest-signals-layout.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_03_fix_interest_signals_layout_level_filter",
+      "target": "src_components_product_comdash_level_filter",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/03-fix-interest-signals-layout.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_03_fix_interest_signals_layout_overview_summary_cards",
+      "target": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_next_action_order",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/03-fix-interest-signals-layout.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_03_fix_interest_signals_layout_overview_summary_cards",
+      "target": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_overview_panels",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/03-fix-interest-signals-layout.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_03_fix_interest_signals_layout",
+      "target": "src_components_product_comdash_signals_tab",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/03-fix-interest-signals-layout.md",
+      "source_location": "L53",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

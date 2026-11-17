@@ -1,0 +1,172 @@
+{
+  "nodes": [
+    {
+      "id": "_scratch_website_redesign_fast_track_session_1_homepage",
+      "label": "Website redesign fast track, session 1: demo leftovers and the homepage",
+      "file_type": "document",
+      "source_file": ".scratch/website-redesign/fast-track/session-1-homepage.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_scratch_website_redesign_fast_track_session_1_homepage_comdash_ring_motion_fix",
+      "label": "ComDash Network Ring motion fix",
+      "file_type": "rationale",
+      "source_file": ".scratch/website-redesign/fast-track/session-1-homepage.md",
+      "source_location": "L61",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "initial={false} on both AnimatePresence elements, a 0.2s ease-out tween instead of the spring and 0.6s spoke transition, no per-item delays, reduced motion at zero; follows the App Mode motion rule."
+    },
+    {
+      "id": "_scratch_website_redesign_fast_track_session_1_homepage_website_links",
+      "label": "Website links into /app",
+      "file_type": "concept",
+      "source_file": ".scratch/website-redesign/fast-track/session-1-homepage.md",
+      "source_location": "L62",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Try the product reaches /app/claim and Sign in reaches /app/dash through next/link, so simulation state survives the move."
+    }
+  ],
+  "edges": [
+    {
+      "source": "_scratch_website_redesign_fast_track_session_1_homepage",
+      "target": "_scratch_website_redesign_fast_track_session_1_homepage_comdash_ring_motion_fix",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/fast-track/session-1-homepage.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_fast_track_session_1_homepage",
+      "target": "_scratch_website_redesign_fast_track_session_1_homepage_website_links",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/fast-track/session-1-homepage.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_fast_track_session_1_homepage",
+      "target": "_scratch_website_redesign_issues_01_quiet_authority_foundation",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/fast-track/session-1-homepage.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_fast_track_session_1_homepage",
+      "target": "_scratch_website_redesign_issues_02_homepage_hero_network_ring",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/fast-track/session-1-homepage.md",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_fast_track_session_1_homepage",
+      "target": "_scratch_website_redesign_issues_03_network_ring_sequence",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/fast-track/session-1-homepage.md",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_fast_track_session_1_homepage",
+      "target": "_scratch_website_redesign_issues_04_homepage_sections",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/fast-track/session-1-homepage.md",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_fast_track_session_1_homepage",
+      "target": "_scratch_website_redesign_issues_05_validated_join_form",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/fast-track/session-1-homepage.md",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_fast_track_session_1_homepage",
+      "target": "docs_specs_2026_11_09_website_redesign",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/fast-track/session-1-homepage.md",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_fast_track_session_1_homepage",
+      "target": "docs_adr_0010_client_side_product_simulation",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/fast-track/session-1-homepage.md",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_fast_track_session_1_homepage",
+      "target": "docs_design_system_readme",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/fast-track/session-1-homepage.md",
+      "source_location": "L54",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_fast_track_session_1_homepage",
+      "target": "_github_pull_request_template_conventional_commits",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/fast-track/session-1-homepage.md",
+      "source_location": "L84",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_fast_track_session_1_homepage_comdash_ring_motion_fix",
+      "target": "src_components_product_network_ring",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/fast-track/session-1-homepage.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_fast_track_session_1_homepage_website_links",
+      "target": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_service_seam",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".scratch/website-redesign/fast-track/session-1-homepage.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

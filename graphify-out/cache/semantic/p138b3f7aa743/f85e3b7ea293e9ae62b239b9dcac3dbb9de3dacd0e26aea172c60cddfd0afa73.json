@@ -1,0 +1,367 @@
+{
+  "nodes": [
+    {
+      "id": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action",
+      "label": "ComDash redesign 01: Session 1 shell, Overview and Next action",
+      "file_type": "document",
+      "source_file": ".scratch/comdash-redesign/issues/01-session-1-shell-overview-next-action.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_comdash_prototype",
+      "label": "ComDash prototype (comdash-prototype.html)",
+      "file_type": "concept",
+      "source_file": ".scratch/comdash-redesign/issues/01-session-1-shell-overview-next-action.md",
+      "source_location": "L51",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Visual reference kept outside the repo in Downloads; read, never copied in, and its figures and NorthPack data are never used."
+    },
+    {
+      "id": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_comdash_five_tabs",
+      "label": "ComDash five tabs with own addresses",
+      "file_type": "concept",
+      "source_file": ".scratch/comdash-redesign/issues/01-session-1-shell-overview-next-action.md",
+      "source_location": "L63",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Overview, Interest Signals, AI Lead Agent, Connections and Profile as client-side links, because a full page load resets the simulation. The Network Ring, rank and score card and Recent wins leave ComDash."
+    },
+    {
+      "id": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_overview_panels",
+      "label": "ComDash Overview panels",
+      "file_type": "concept",
+      "source_file": ".scratch/comdash-redesign/issues/01-session-1-shell-overview-next-action.md",
+      "source_location": "L66",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Top numbers, visibility chart, funnel, interested Companies, alerts, Found you as a..., industry groups of 3+, search terms with profile gaps; filled from the simulation with calm empty states and no invented history."
+    },
+    {
+      "id": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_interest_level_rule",
+      "label": "Interest Level rule (Hot / Warm / New)",
+      "file_type": "rationale",
+      "source_file": ".scratch/comdash-redesign/issues/01-session-1-shell-overview-next-action.md",
+      "source_location": "L65",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Over the last 14 simulated days: Hot if the Company messaged or showed interest on 3+ separate days; Warm if 2 separate days or it saved the profile; New after one signal. Same-day repeats count once."
+    },
+    {
+      "id": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_next_action_order",
+      "label": "Next action 8-step order",
+      "file_type": "rationale",
+      "source_file": ".scratch/comdash-redesign/issues/01-session-1-shell-overview-next-action.md",
+      "source_location": "L67",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "AI drafts to approve; today's leads; a Connection's Ask matching what the Company sells; a Hot Company not yet contacted; connection requests; profile gaps; freshness nudge after 14 days unchanged; You're all caught up. Each carries a 'Shown because...' sentence."
+    },
+    {
+      "id": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_profile_gap_actions",
+      "label": "Profile gap actions (Add to profile / We don't offer this)",
+      "file_type": "concept",
+      "source_file": ".scratch/comdash-redesign/issues/01-session-1-shell-overview-next-action.md",
+      "source_location": "L66",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_saved_signal_kind",
+      "label": "Saved signal kind",
+      "file_type": "concept",
+      "source_file": ".scratch/comdash-redesign/issues/01-session-1-shell-overview-next-action.md",
+      "source_location": "L64",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Added to the simulation so every Overview panel has honest data by day 14."
+    },
+    {
+      "id": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_ai_drafts_person_decides",
+      "label": "AI drafts, a person decides",
+      "file_type": "rationale",
+      "source_file": ".scratch/comdash-redesign/issues/01-session-1-shell-overview-next-action.md",
+      "source_location": "L87",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Non-negotiable: nothing sends without the person tapping Send, and every flow works with AI off."
+    },
+    {
+      "id": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_code_quality_points",
+      "label": "Clean, maintainable, scalable code quality points",
+      "file_type": "rationale",
+      "source_file": ".scratch/comdash-redesign/issues/01-session-1-shell-overview-next-action.md",
+      "source_location": "L75",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Every executer prompt states code quality as checkable conditions: one job per component, one source for each fact, adding a panel or rule changes one place, no new dependencies, no refactor outside Scope."
+    },
+    {
+      "id": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_service_seam",
+      "label": "ComLinked service seam (src/services/comlinked)",
+      "file_type": "concept",
+      "source_file": ".scratch/comdash-redesign/issues/01-session-1-shell-overview-next-action.md",
+      "source_location": "L52",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Browser-held simulation with simulated days and demo states; screens read derived data only through the seam and never compute it themselves."
+    }
+  ],
+  "edges": [
+    {
+      "source": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action",
+      "target": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_comdash_prototype",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/01-session-1-shell-overview-next-action.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action",
+      "target": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_comdash_five_tabs",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/01-session-1-shell-overview-next-action.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action",
+      "target": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_overview_panels",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/01-session-1-shell-overview-next-action.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action",
+      "target": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_interest_level_rule",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/01-session-1-shell-overview-next-action.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action",
+      "target": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_next_action_order",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/01-session-1-shell-overview-next-action.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action",
+      "target": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_profile_gap_actions",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/01-session-1-shell-overview-next-action.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action",
+      "target": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_saved_signal_kind",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/01-session-1-shell-overview-next-action.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action",
+      "target": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_ai_drafts_person_decides",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/01-session-1-shell-overview-next-action.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action",
+      "target": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_code_quality_points",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/01-session-1-shell-overview-next-action.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action",
+      "target": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_service_seam",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/01-session-1-shell-overview-next-action.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action",
+      "target": "docs_specs_2026_11_11_comdash_redesign",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/01-session-1-shell-overview-next-action.md",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action",
+      "target": "docs_adr_0010_client_side_product_simulation",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/01-session-1-shell-overview-next-action.md",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action",
+      "target": "context",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/01-session-1-shell-overview-next-action.md",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_service_seam",
+      "target": "docs_adr_0010_client_side_product_simulation",
+      "relation": "implements",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".scratch/comdash-redesign/issues/01-session-1-shell-overview-next-action.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_overview_panels",
+      "target": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_interest_level_rule",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/01-session-1-shell-overview-next-action.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_overview_panels",
+      "target": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_profile_gap_actions",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/01-session-1-shell-overview-next-action.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_overview_panels",
+      "target": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_saved_signal_kind",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/01-session-1-shell-overview-next-action.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_overview_panels",
+      "target": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_service_seam",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/01-session-1-shell-overview-next-action.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_next_action_order",
+      "target": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_ai_drafts_person_decides",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/01-session-1-shell-overview-next-action.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_comdash_five_tabs",
+      "target": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_comdash_prototype",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/01-session-1-shell-overview-next-action.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_comdash_five_tabs",
+      "target": "src_components_product_screens_comdash",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/01-session-1-shell-overview-next-action.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action",
+      "target": "_scratch_website_redesign_fast_track_session_1_homepage_comdash_ring_motion_fix",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".scratch/comdash-redesign/issues/01-session-1-shell-overview-next-action.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action",
+      "target": "_scratch_website_redesign_fast_track_session_2_pages_and_final_check",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/01-session-1-shell-overview-next-action.md",
+      "source_location": "L7",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

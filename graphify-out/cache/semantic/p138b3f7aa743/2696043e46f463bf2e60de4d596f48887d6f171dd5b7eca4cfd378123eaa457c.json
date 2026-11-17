@@ -1,0 +1,401 @@
+{
+  "nodes": [
+    {
+      "id": "claude",
+      "label": "CLAUDE.md: how Claude works in this repo",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "claude_mvp_build_plan",
+      "label": "ComLinked MVP Build Plan (docs/specs/2026-10-11-mvp-build-plan.md)",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": "L11",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "claude_one_job",
+      "label": "One job: a new company's first real lead within 24 hours, then a reason to return daily",
+      "file_type": "rationale",
+      "source_file": "CLAUDE.md",
+      "source_location": "L14",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "claude_scope_test",
+      "label": "Scope test: sign up, get leads, return daily, talk to companies, share wins",
+      "file_type": "rationale",
+      "source_file": "CLAUDE.md",
+      "source_location": "L16",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Anything outside these five jobs waits; check Section 6 of the plan before adding something new."
+    },
+    {
+      "id": "claude_non_negotiables",
+      "label": "Non-negotiables: free, no blurred names, AI drafts and a person decides, AI-off works, company-owned connections, mobile first",
+      "file_type": "rationale",
+      "source_file": "CLAUDE.md",
+      "source_location": "L19",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "claude_eccp_pilot_first",
+      "label": "ECCP pilot comes first (decided 2026-11-10)",
+      "file_type": "concept",
+      "source_file": "CLAUDE.md",
+      "source_location": "L22",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Replaced the plan's PCCI-Quezon City; follow-on chambers unset (PCCI-Quezon City, Toronto Region Board of Trade are candidates)."
+    },
+    {
+      "id": "claude_build_by_id_and_order",
+      "label": "Build by plan feature ID (A1-S3) in Section 7.2 order, test on a phone",
+      "file_type": "rationale",
+      "source_file": "CLAUDE.md",
+      "source_location": "L26",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "claude_planning_executer_workflow",
+      "label": "Two sessions: planning then executer",
+      "file_type": "rationale",
+      "source_file": "CLAUDE.md",
+      "source_location": "L32",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Executer has no memory of planning, so the handoff must carry everything it needs."
+    },
+    {
+      "id": "claude_handoff_prompt",
+      "label": "Handoff prompt (Goal, Context, Scope, Approach, Acceptance criteria, Verification, Guardrails)",
+      "file_type": "concept",
+      "source_file": "CLAUDE.md",
+      "source_location": "L42",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "claude_prompt_architect_rule",
+      "label": "Standing rule: author every handoff with prompt-architect via /handoff",
+      "file_type": "rationale",
+      "source_file": "CLAUDE.md",
+      "source_location": "L46",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "claude_executer_skills",
+      "label": "Executer skills: test-driven-development, systematic-debugging, verification-before-completion, code review",
+      "file_type": "concept",
+      "source_file": "CLAUDE.md",
+      "source_location": "L62",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "claude",
+      "target": "agents",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "claude",
+      "target": "context",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "claude",
+      "target": "claude_mvp_build_plan",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "claude",
+      "target": "claude_one_job",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "claude",
+      "target": "claude_scope_test",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "claude",
+      "target": "claude_non_negotiables",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "claude",
+      "target": "claude_eccp_pilot_first",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "claude",
+      "target": "claude_build_by_id_and_order",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "claude",
+      "target": "claude_planning_executer_workflow",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "claude",
+      "target": "claude_prompt_architect_rule",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": "L46",
+      "weight": 1.0
+    },
+    {
+      "source": "claude",
+      "target": "claude_executer_skills",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": "L62",
+      "weight": 1.0
+    },
+    {
+      "source": "claude_one_job",
+      "target": "claude_mvp_build_plan",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "claude_scope_test",
+      "target": "claude_mvp_build_plan",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "claude_non_negotiables",
+      "target": "claude_mvp_build_plan",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "claude_build_by_id_and_order",
+      "target": "claude_mvp_build_plan",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "claude_eccp_pilot_first",
+      "target": "claude_mvp_build_plan",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "claude_planning_executer_workflow",
+      "target": "claude_handoff_prompt",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": "L36",
+      "weight": 1.0
+    },
+    {
+      "source": "claude_prompt_architect_rule",
+      "target": "claude_handoff_prompt",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "claude_eccp_pilot_first",
+      "target": "context_pilot",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "CLAUDE.md",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "claude",
+      "target": "agents_keep_typed_and_green",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": "L67",
+      "weight": 1.0
+    },
+    {
+      "source": "claude",
+      "target": "agents_conventional_commits",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": "L69",
+      "weight": 1.0
+    },
+    {
+      "source": "claude",
+      "target": "agents_never_commit_to_main",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": "L69",
+      "weight": 1.0
+    },
+    {
+      "source": "claude_non_negotiables",
+      "target": "docs_adr_0008_free_mvp_product_direction_free_launch",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "CLAUDE.md",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "claude_non_negotiables",
+      "target": "docs_adr_0008_free_mvp_product_direction_ai_drafts_person_decides",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "CLAUDE.md",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "claude_non_negotiables",
+      "target": "docs_adr_0008_free_mvp_product_direction_relationships_belong_to_companies",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "CLAUDE.md",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "claude_non_negotiables",
+      "target": "docs_adr_0008_free_mvp_product_direction_mobile_web_only",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "CLAUDE.md",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "claude_scope_test",
+      "target": "docs_design_system_readme_element_job_test",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": "CLAUDE.md",
+      "source_location": "L16",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

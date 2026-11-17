@@ -1,0 +1,280 @@
+{
+  "nodes": [
+    {
+      "id": "docs_adr_0009_company_directory_and_chambers",
+      "label": "ADR 0009: Company directory, Organizations and Chambers",
+      "file_type": "document",
+      "source_file": "docs/adr/0009-company-directory-and-chambers.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_adr_0009_company_directory_and_chambers_directory_data",
+      "label": "Directory data: one shared Company profile per Chamber Network",
+      "file_type": "concept",
+      "source_file": "docs/adr/0009-company-directory-and-chambers.md",
+      "source_location": "L21",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_adr_0009_company_directory_and_chambers_private_data",
+      "label": "Private data: a Claim creates one Organization owning ComMail, leads, notifications, activity ledger",
+      "file_type": "concept",
+      "source_file": "docs/adr/0009-company-directory-and-chambers.md",
+      "source_location": "L23",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_adr_0009_company_directory_and_chambers_chamber_staff_records",
+      "label": "Chamber record with Chamber staff records for Community Managers",
+      "file_type": "concept",
+      "source_file": "docs/adr/0009-company-directory-and-chambers.md",
+      "source_location": "L26",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Making a Chamber an Organization was rejected because it mixes two different kinds of account; making every Company an Organization needs exceptions for ownerless orgs and shared profiles."
+    },
+    {
+      "id": "docs_adr_0009_company_directory_and_chambers_network_boundary_rls",
+      "label": "Chamber Network boundary enforced by row-level security",
+      "file_type": "rationale",
+      "source_file": "docs/adr/0009-company-directory-and-chambers.md",
+      "source_location": "L28",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_adr_0009_company_directory_and_chambers_comlinked_srs",
+      "label": "ComLinked SRS (docs/specs/2026-11-09-comlinked-srs.md)",
+      "file_type": "document",
+      "source_file": "docs/adr/0009-company-directory-and-chambers.md",
+      "source_location": "L44",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_adr_0009_company_directory_and_chambers",
+      "target": "docs_adr_0005_multi_tenancy",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0009-company-directory-and-chambers.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0009_company_directory_and_chambers",
+      "target": "docs_adr_0008_free_mvp_product_direction",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0009-company-directory-and-chambers.md",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0009_company_directory_and_chambers",
+      "target": "docs_adr_0009_company_directory_and_chambers_directory_data",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0009-company-directory-and-chambers.md",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0009_company_directory_and_chambers",
+      "target": "docs_adr_0009_company_directory_and_chambers_private_data",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0009-company-directory-and-chambers.md",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0009_company_directory_and_chambers",
+      "target": "docs_adr_0009_company_directory_and_chambers_chamber_staff_records",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0009-company-directory-and-chambers.md",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0009_company_directory_and_chambers",
+      "target": "docs_adr_0009_company_directory_and_chambers_network_boundary_rls",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0009-company-directory-and-chambers.md",
+      "source_location": "L28",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0009_company_directory_and_chambers",
+      "target": "docs_adr_0009_company_directory_and_chambers_comlinked_srs",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0009-company-directory-and-chambers.md",
+      "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0009_company_directory_and_chambers_directory_data",
+      "target": "context_company",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0009-company-directory-and-chambers.md",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0009_company_directory_and_chambers_directory_data",
+      "target": "context_chamber_network",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0009-company-directory-and-chambers.md",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0009_company_directory_and_chambers_directory_data",
+      "target": "context_pre_built_profile",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0009-company-directory-and-chambers.md",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0009_company_directory_and_chambers_private_data",
+      "target": "context_claim",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0009-company-directory-and-chambers.md",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0009_company_directory_and_chambers_private_data",
+      "target": "context_organization",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0009-company-directory-and-chambers.md",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0009_company_directory_and_chambers_private_data",
+      "target": "context_commail",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0009-company-directory-and-chambers.md",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0009_company_directory_and_chambers_private_data",
+      "target": "docs_adr_0005_multi_tenancy_rls_isolation",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0009-company-directory-and-chambers.md",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0009_company_directory_and_chambers_private_data",
+      "target": "docs_adr_0009_company_directory_and_chambers_directory_data",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0009-company-directory-and-chambers.md",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0009_company_directory_and_chambers_chamber_staff_records",
+      "target": "context_chamber",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0009-company-directory-and-chambers.md",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0009_company_directory_and_chambers_chamber_staff_records",
+      "target": "context_community_manager",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0009-company-directory-and-chambers.md",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0009_company_directory_and_chambers_network_boundary_rls",
+      "target": "context_chamber_network",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0009-company-directory-and-chambers.md",
+      "source_location": "L28",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0009_company_directory_and_chambers_network_boundary_rls",
+      "target": "docs_adr_0005_multi_tenancy_rls_isolation",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0009-company-directory-and-chambers.md",
+      "source_location": "L29",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "rls_tenant_and_network_isolation",
+      "label": "RLS-backed tenant and Chamber Network isolation",
+      "nodes": [
+        "docs_adr_0005_multi_tenancy_rls_isolation",
+        "docs_adr_0005_multi_tenancy_active_org_cookie",
+        "docs_adr_0006_drizzle_data_layer_seam_scoped_authz",
+        "docs_adr_0009_company_directory_and_chambers_network_boundary_rls",
+        "docs_adr_0009_company_directory_and_chambers_private_data"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/adr/0009-company-directory-and-chambers.md"
+    }
+  ]
+}

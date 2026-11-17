@@ -1,0 +1,299 @@
+{
+  "nodes": [
+    {
+      "id": "agents",
+      "label": "AGENTS.md: agent and contributor guide",
+      "file_type": "document",
+      "source_file": "AGENTS.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "agents_tech_stack",
+      "label": "Stack: Next.js 15, React 19, strict TypeScript, Tailwind v4, shadcn/ui, Supabase auth, Vitest, Playwright, pnpm",
+      "file_type": "concept",
+      "source_file": "AGENTS.md",
+      "source_location": "L8",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "agents_feature_scaffold_pattern",
+      "label": "Copy-the-Customers feature scaffold (services, route, actions.ts, components)",
+      "file_type": "rationale",
+      "source_file": "AGENTS.md",
+      "source_location": "L30",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Every new feature copies customers: services/<name>.ts, app/dashboard/<name>/, actions.ts, components/dashboard/<name>/ so all features share one shape."
+    },
+    {
+      "id": "agents_paths_registry",
+      "label": "Routes and links live in src/paths.ts (never hard-code paths)",
+      "file_type": "rationale",
+      "source_file": "AGENTS.md",
+      "source_location": "L32",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "agents_keep_typed_and_green",
+      "label": "Keep it typed and green (lint, type:check, test, build)",
+      "file_type": "rationale",
+      "source_file": "AGENTS.md",
+      "source_location": "L25",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Every change must pass pnpm type:check, pnpm lint and pnpm test; add a test when adding behavior."
+    },
+    {
+      "id": "agents_conventional_commits",
+      "label": "Conventional Commits enforced by commitlint",
+      "file_type": "concept",
+      "source_file": "AGENTS.md",
+      "source_location": "L37",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "agents_never_commit_to_main",
+      "label": "Branch off main; never commit to main",
+      "file_type": "rationale",
+      "source_file": "AGENTS.md",
+      "source_location": "L37",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "agents_adr_practice",
+      "label": "Record big, hard-to-reverse choices as ADRs in docs/adr",
+      "file_type": "rationale",
+      "source_file": "AGENTS.md",
+      "source_location": "L42",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "agents_roles_from_app_metadata",
+      "label": "Roles from app_metadata.role via src/lib/authz.ts (never trust client metadata)",
+      "file_type": "rationale",
+      "source_file": "AGENTS.md",
+      "source_location": "L21",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Client-set metadata is untrusted; role must come from server-controlled app_metadata."
+    }
+  ],
+  "edges": [
+    {
+      "source": "agents",
+      "target": "agents_tech_stack",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "AGENTS.md",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "agents",
+      "target": "context_service_seam",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "AGENTS.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "agents",
+      "target": "docs_adr_0004_rsc_server_actions_first_rsc_reads_server_action_writes",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "AGENTS.md",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "agents",
+      "target": "docs_adr_0002_supabase_only_auth_supabase_auth",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "AGENTS.md",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "agents",
+      "target": "docs_adr_0001_shadcn_tailwind_over_mui_joy_shadcn_tailwind",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "AGENTS.md",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "agents",
+      "target": "agents_roles_from_app_metadata",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "AGENTS.md",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "agents",
+      "target": "agents_keep_typed_and_green",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "AGENTS.md",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "agents",
+      "target": "agents_feature_scaffold_pattern",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "AGENTS.md",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "agents",
+      "target": "agents_paths_registry",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "AGENTS.md",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "agents",
+      "target": "agents_conventional_commits",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "AGENTS.md",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
+      "source": "agents",
+      "target": "agents_never_commit_to_main",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "AGENTS.md",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
+      "source": "agents",
+      "target": "agents_adr_practice",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "AGENTS.md",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "agents",
+      "target": "context",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "AGENTS.md",
+      "source_location": "L43",
+      "weight": 1.0
+    },
+    {
+      "source": "agents",
+      "target": "claude_mvp_build_plan",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "AGENTS.md",
+      "source_location": "L43",
+      "weight": 1.0
+    },
+    {
+      "source": "agents_feature_scaffold_pattern",
+      "target": "context_reference_feature",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "AGENTS.md",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "agents_roles_from_app_metadata",
+      "target": "context_platform_role",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "AGENTS.md",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "agents_roles_from_app_metadata",
+      "target": "docs_adr_0005_multi_tenancy_two_tier_roles",
+      "relation": "conceptually_related_to",
+      "confidence": "AMBIGUOUS",
+      "confidence_score": 0.3,
+      "source_file": "AGENTS.md",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "agents_tech_stack",
+      "target": "docs_adr_0001_shadcn_tailwind_over_mui_joy_shadcn_tailwind",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "AGENTS.md",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "agents_tech_stack",
+      "target": "docs_adr_0002_supabase_only_auth_supabase_auth",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "AGENTS.md",
+      "source_location": "L8",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

@@ -1,0 +1,407 @@
+{
+  "nodes": [
+    {
+      "id": "docs_specs_2026_07_31_coding_standards",
+      "label": "Coding standards - comlinked",
+      "file_type": "document",
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_07_31_coding_standards_data_access_layer",
+      "label": "Server-only Data Access Layer / service seam",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": "L22",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Only the DAL reads env; reads are Server Components, writes are thin Server Functions that delegate to the DAL and return DTOs, not raw rows."
+    },
+    {
+      "id": "docs_specs_2026_07_31_coding_standards_server_actions_public_endpoints",
+      "label": "Server Actions are public POST endpoints",
+      "file_type": "rationale",
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": "L35",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Each must re-authenticate, authorize the specific resource (IDOR) and zod-validate every argument; page, layout and middleware gating are optimistic only. Roles come from app_metadata.role only."
+    },
+    {
+      "id": "docs_specs_2026_07_31_coding_standards_verifysession",
+      "label": "verifySession() memoized with React cache()",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": "L40",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_07_31_coding_standards_rls_every_table",
+      "label": "RLS on every table with cross-tenant denial tests",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": "L54",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_07_31_coding_standards_drizzle_bypasses_rls",
+      "label": "Drizzle / postgres.js bypasses RLS",
+      "file_type": "rationale",
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": "L57",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "A direct pooler connection runs as the table owner, so tenancy must be scoped in WHERE clauses or via SET LOCAL request.jwt.claims + SET ROLE authenticated; decide before multi-tenancy ships."
+    },
+    {
+      "id": "docs_specs_2026_07_31_coding_standards_strict_csp",
+      "label": "Strict nonce + strict-dynamic CSP",
+      "file_type": "rationale",
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": "L69",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "A nonce CSP forces dynamic rendering, and @supabase/ssr cookies are not HttpOnly by design, so the strict script-src CSP is the primary defense against session-token theft. style-src 'unsafe-inline' is an accepted trade-off for Radix/shadcn inline styles."
+    },
+    {
+      "id": "docs_specs_2026_07_31_coding_standards_zod_single_source_of_truth",
+      "label": "zod as single source of truth",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": "L104",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_07_31_coding_standards_typescript_strictness",
+      "label": "TypeScript strictness (no any, no non-null !, no silencing as)",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": "L96",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_07_31_coding_standards_use_client_leaves_only",
+      "label": "\"use client\" on interactive leaves only",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": "L113",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_07_31_coding_standards_shadcn_tailwind_v4_only",
+      "label": "shadcn/ui + Tailwind v4 only",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": "L132",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_07_31_coding_standards_wcag_2_2_aa",
+      "label": "WCAG 2.2 AA with axe zero violations",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": "L162",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_07_31_coding_standards_definition_of_done",
+      "label": "Definition of done: lint, type:check, test, build green",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": "L191",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_07_31_coding_standards_conventional_commits",
+      "label": "Conventional Commits, gated hooks, never commit to main",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": "L186",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_07_31_coding_standards_remediation_backlog",
+      "label": "Remediation backlog (S1-S5, T1-T2, Q1, C1)",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": "L205",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_07_31_coding_standards_new_adr_rule",
+      "label": "Hard-to-reverse choices get a new ADR",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": "L199",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_specs_2026_07_31_coding_standards",
+      "target": "agents",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_31_coding_standards",
+      "target": "docs_specs_2026_07_31_coding_standards_data_access_layer",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_31_coding_standards",
+      "target": "docs_specs_2026_07_31_coding_standards_server_actions_public_endpoints",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_31_coding_standards",
+      "target": "docs_specs_2026_07_31_coding_standards_rls_every_table",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_31_coding_standards",
+      "target": "docs_specs_2026_07_31_coding_standards_strict_csp",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_31_coding_standards",
+      "target": "docs_specs_2026_07_31_coding_standards_typescript_strictness",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_31_coding_standards",
+      "target": "docs_specs_2026_07_31_coding_standards_wcag_2_2_aa",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_31_coding_standards",
+      "target": "docs_specs_2026_07_31_coding_standards_definition_of_done",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_31_coding_standards",
+      "target": "docs_specs_2026_07_31_coding_standards_remediation_backlog",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_31_coding_standards_verifysession",
+      "target": "docs_specs_2026_07_31_coding_standards_server_actions_public_endpoints",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": "L40",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_31_coding_standards_drizzle_bypasses_rls",
+      "target": "docs_specs_2026_07_31_coding_standards_rls_every_table",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": "L57",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_31_coding_standards_remediation_backlog",
+      "target": "docs_specs_2026_07_31_coding_standards_drizzle_bypasses_rls",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": "L217",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_31_coding_standards_remediation_backlog",
+      "target": "docs_specs_2026_07_31_coding_standards_strict_csp",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": "L213",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_31_coding_standards_remediation_backlog",
+      "target": "docs_specs_2026_07_31_coding_standards_server_actions_public_endpoints",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": "L216",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_31_coding_standards_zod_single_source_of_truth",
+      "target": "docs_specs_2026_07_31_coding_standards_server_actions_public_endpoints",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_31_coding_standards_conventional_commits",
+      "target": "docs_specs_2026_07_31_coding_standards_definition_of_done",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": "L186",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_31_coding_standards_data_access_layer",
+      "target": "docs_specs_2026_07_15_multi_tenancy_customers_reference_feature",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_31_coding_standards_data_access_layer",
+      "target": "docs_specs_2026_07_15_multi_tenancy_service_seam",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_31_coding_standards_rls_every_table",
+      "target": "docs_specs_2026_07_15_multi_tenancy_rls_isolation_boundary",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_31_coding_standards_rls_every_table",
+      "target": "docs_specs_2026_07_15_multi_tenancy_cross_tenant_integration_tests",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_31_coding_standards_server_actions_public_endpoints",
+      "target": "docs_specs_2026_07_15_multi_tenancy_in_action_authorization",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_31_coding_standards_drizzle_bypasses_rls",
+      "target": "docs_specs_2026_07_15_multi_tenancy_rls_isolation_boundary",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/specs/2026-07-31-coding-standards.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

@@ -1,0 +1,272 @@
+{
+  "nodes": [
+    {
+      "id": "docs_adr_0006_drizzle_data_layer",
+      "label": "ADR 0006: Drizzle as the typed data layer behind the seam",
+      "file_type": "document",
+      "source_file": "docs/adr/0006-drizzle-data-layer.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_adr_0006_drizzle_data_layer_drizzle_orm",
+      "label": "Drizzle ORM with postgres.js (prepare: false)",
+      "file_type": "concept",
+      "source_file": "docs/adr/0006-drizzle-data-layer.md",
+      "source_location": "L30",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "A typed query builder and migration workflow were missing; Supabase keeps auth, RLS and storage. prepare:false is required by the Supabase transaction pooler (port 6543)."
+    },
+    {
+      "id": "docs_adr_0006_drizzle_data_layer_lazy_db_singleton",
+      "label": "Lazy getDb() singleton in src/lib/db/client.ts (no connection at build)",
+      "file_type": "concept",
+      "source_file": "docs/adr/0006-drizzle-data-layer.md",
+      "source_location": "L36",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_adr_0006_drizzle_data_layer_mock_db_selector",
+      "label": "Service selector: customers.db.ts vs customers.mock.ts via isDatabaseConfigured",
+      "file_type": "concept",
+      "source_file": "docs/adr/0006-drizzle-data-layer.md",
+      "source_location": "L42",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_adr_0006_drizzle_data_layer_server_only_env",
+      "label": "Server-only DATABASE_URL validated in src/env.server.ts",
+      "file_type": "concept",
+      "source_file": "docs/adr/0006-drizzle-data-layer.md",
+      "source_location": "L38",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_adr_0006_drizzle_data_layer_dual_migration_sources",
+      "label": "Two migration sources: ./drizzle (app data) and supabase/migrations (tenancy, RLS)",
+      "file_type": "concept",
+      "source_file": "docs/adr/0006-drizzle-data-layer.md",
+      "source_location": "L62",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "They must stay aligned on shared objects such as the customer_status enum and created_at column; this ADR fixes the shared names as the contract."
+    },
+    {
+      "id": "docs_adr_0006_drizzle_data_layer_seam_scoped_authz",
+      "label": "Seam-scoped authorization with RLS as defense-in-depth",
+      "file_type": "rationale",
+      "source_file": "docs/adr/0006-drizzle-data-layer.md",
+      "source_location": "L52",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "The seam scopes every query by active organization; RLS guarantees a seam bug or forged cookie can never cross tenants."
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_adr_0006_drizzle_data_layer",
+      "target": "docs_adr_0003_mock_first_service_seam",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0006-drizzle-data-layer.md",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0006_drizzle_data_layer",
+      "target": "docs_adr_0002_supabase_only_auth",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0006-drizzle-data-layer.md",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0006_drizzle_data_layer",
+      "target": "docs_adr_0005_multi_tenancy",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0006-drizzle-data-layer.md",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0006_drizzle_data_layer",
+      "target": "docs_adr_0006_drizzle_data_layer_drizzle_orm",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0006-drizzle-data-layer.md",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0006_drizzle_data_layer",
+      "target": "docs_adr_0006_drizzle_data_layer_lazy_db_singleton",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0006-drizzle-data-layer.md",
+      "source_location": "L36",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0006_drizzle_data_layer",
+      "target": "docs_adr_0006_drizzle_data_layer_mock_db_selector",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0006-drizzle-data-layer.md",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0006_drizzle_data_layer",
+      "target": "docs_adr_0006_drizzle_data_layer_server_only_env",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0006-drizzle-data-layer.md",
+      "source_location": "L38",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0006_drizzle_data_layer",
+      "target": "docs_adr_0006_drizzle_data_layer_dual_migration_sources",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0006-drizzle-data-layer.md",
+      "source_location": "L62",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0006_drizzle_data_layer",
+      "target": "docs_adr_0006_drizzle_data_layer_seam_scoped_authz",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0006-drizzle-data-layer.md",
+      "source_location": "L52",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0006_drizzle_data_layer_drizzle_orm",
+      "target": "context_service_seam",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0006-drizzle-data-layer.md",
+      "source_location": "L31",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0006_drizzle_data_layer_lazy_db_singleton",
+      "target": "docs_adr_0006_drizzle_data_layer_drizzle_orm",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0006-drizzle-data-layer.md",
+      "source_location": "L36",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0006_drizzle_data_layer_server_only_env",
+      "target": "docs_adr_0006_drizzle_data_layer_drizzle_orm",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0006-drizzle-data-layer.md",
+      "source_location": "L38",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0006_drizzle_data_layer_mock_db_selector",
+      "target": "docs_adr_0003_mock_first_service_seam_mock_by_default",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0006-drizzle-data-layer.md",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0006_drizzle_data_layer_mock_db_selector",
+      "target": "context_reference_feature",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/adr/0006-drizzle-data-layer.md",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0006_drizzle_data_layer_seam_scoped_authz",
+      "target": "docs_adr_0005_multi_tenancy_rls_isolation",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0006-drizzle-data-layer.md",
+      "source_location": "L54",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0006_drizzle_data_layer_seam_scoped_authz",
+      "target": "context_active_organization",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0006-drizzle-data-layer.md",
+      "source_location": "L54",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0006_drizzle_data_layer_dual_migration_sources",
+      "target": "docs_adr_0005_multi_tenancy_rls_isolation",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/adr/0006-drizzle-data-layer.md",
+      "source_location": "L63",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "zero_backend_configured_flag_pattern",
+      "label": "Runs-with-nothing-configured gating (mock seam, DB selector, lazy client, inert analytics)",
+      "nodes": [
+        "docs_adr_0003_mock_first_service_seam_mock_by_default",
+        "docs_adr_0006_drizzle_data_layer_mock_db_selector",
+        "docs_adr_0006_drizzle_data_layer_lazy_db_singleton",
+        "docs_adr_0007_analytics_posthog_opt_in_inert"
+      ],
+      "relation": "implement",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0006-drizzle-data-layer.md"
+    }
+  ]
+}

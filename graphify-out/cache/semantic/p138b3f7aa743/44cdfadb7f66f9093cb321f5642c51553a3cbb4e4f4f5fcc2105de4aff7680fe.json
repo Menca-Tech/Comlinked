@@ -1,0 +1,332 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_skills_drizzle_data_skill",
+      "label": "drizzle-data skill",
+      "file_type": "document",
+      "source_file": ".claude/skills/drizzle-data/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_skills_drizzle_data_skill_mock_first_selector",
+      "label": "Mock-default seam selector (isDatabaseConfigured ? dbImpl : mockImpl)",
+      "file_type": "rationale",
+      "source_file": ".claude/skills/drizzle-data/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "With no DATABASE_URL the app runs, tests and builds with no database (ADR 0003, extended by ADR 0006)."
+    },
+    {
+      "id": "_claude_skills_drizzle_data_skill_prepare_false_pooler",
+      "label": "prepare: false on the Supabase transaction pooler",
+      "file_type": "rationale",
+      "source_file": ".claude/skills/drizzle-data/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "The transaction pooler (port 6543) does not support prepared statements."
+    },
+    {
+      "id": "_claude_skills_drizzle_data_skill_lazy_getdb",
+      "label": "Lazy getDb() client (no connection at import/build)",
+      "file_type": "rationale",
+      "source_file": ".claude/skills/drizzle-data/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "next build must never open a socket."
+    },
+    {
+      "id": "_claude_skills_drizzle_data_skill_database_url_server_only",
+      "label": "DATABASE_URL is a server-only secret",
+      "file_type": "rationale",
+      "source_file": ".claude/skills/drizzle-data/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_skills_drizzle_data_skill_two_migration_sources",
+      "label": "Two aligned migration sources (./drizzle vs supabase/migrations)",
+      "file_type": "rationale",
+      "source_file": ".claude/skills/drizzle-data/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Drizzle owns app data, Supabase owns tenancy + RLS; shared object names must stay identical."
+    },
+    {
+      "id": "_claude_skills_drizzle_data_skill_known_gap_live_query_path",
+      "label": "KNOWN GAP: live query path unverified",
+      "file_type": "rationale",
+      "source_file": ".claude/skills/drizzle-data/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "No Postgres/Supabase database has been available; only offline generation and mock-default build are verified."
+    },
+    {
+      "id": "_claude_skills_drizzle_data_skill_rowtocustomer_mapper",
+      "label": "Pure rowToCustomer row->domain mapper",
+      "file_type": "rationale",
+      "source_file": ".claude/skills/drizzle-data/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Kept pure so it is unit-testable without a database."
+    },
+    {
+      "id": "_claude_skills_drizzle_data_skill_single_tenant_schema",
+      "label": "Single-tenant Drizzle schema (tenancy is a blocked track)",
+      "file_type": "rationale",
+      "source_file": ".claude/skills/drizzle-data/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_skills_drizzle_data_skill",
+      "target": "_claude_skills_drizzle_data_skill_mock_first_selector",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/drizzle-data/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_drizzle_data_skill",
+      "target": "_claude_skills_drizzle_data_skill_prepare_false_pooler",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/drizzle-data/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_drizzle_data_skill",
+      "target": "_claude_skills_drizzle_data_skill_lazy_getdb",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/drizzle-data/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_drizzle_data_skill",
+      "target": "_claude_skills_drizzle_data_skill_database_url_server_only",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/drizzle-data/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_drizzle_data_skill",
+      "target": "_claude_skills_drizzle_data_skill_two_migration_sources",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/drizzle-data/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_drizzle_data_skill",
+      "target": "_claude_skills_drizzle_data_skill_known_gap_live_query_path",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/drizzle-data/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_drizzle_data_skill",
+      "target": "_claude_skills_drizzle_data_skill_rowtocustomer_mapper",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/drizzle-data/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_drizzle_data_skill",
+      "target": "_claude_skills_drizzle_data_skill_single_tenant_schema",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/drizzle-data/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_drizzle_data_skill",
+      "target": "agents",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/drizzle-data/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_drizzle_data_skill",
+      "target": "docs_adr_0003_mock_first_service_seam",
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/drizzle-data/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_drizzle_data_skill",
+      "target": "docs_adr_0006_drizzle_data_layer",
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/drizzle-data/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_drizzle_data_skill_mock_first_selector",
+      "target": "docs_adr_0003_mock_first_service_seam",
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/drizzle-data/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_drizzle_data_skill_mock_first_selector",
+      "target": "src_services_customers",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/drizzle-data/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_drizzle_data_skill_lazy_getdb",
+      "target": "src_lib_db_client",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/drizzle-data/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_drizzle_data_skill_prepare_false_pooler",
+      "target": "src_lib_db_client",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/drizzle-data/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_drizzle_data_skill_database_url_server_only",
+      "target": "src_env_server",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/drizzle-data/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_drizzle_data_skill_rowtocustomer_mapper",
+      "target": "src_services_customers_db",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/drizzle-data/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_drizzle_data_skill_lazy_getdb",
+      "target": "_claude_skills_drizzle_data_skill_database_url_server_only",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/drizzle-data/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_drizzle_data_skill",
+      "target": "_claude_skills_drizzle_data_references_drizzle_rls",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/drizzle-data/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_drizzle_data_skill_mock_first_selector",
+      "target": "_claude_skills_clean_architecture_skill_service_seam",
+      "relation": "implements",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".claude/skills/drizzle-data/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_drizzle_data_skill_single_tenant_schema",
+      "target": "_claude_skills_drizzle_data_references_drizzle_rls",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/drizzle-data/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_drizzle_data_skill_two_migration_sources",
+      "target": "_claude_skills_drizzle_data_references_drizzle_rls_posture_a",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".claude/skills/drizzle-data/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}
