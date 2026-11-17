@@ -905,8 +905,11 @@ test.describe("the chamber's network of 100", () => {
   test("the chamber tools name ECCP and count the whole network", async ({ page }) => {
     await twoWeeksIn(page);
     await guide(page, /^Open the chamber tools/);
-    await expect(page.getByText("ECCP community manager view, example members")).toBeVisible();
-    await expect(page.locator(".t-sum")).toContainText("100 members · 40 claimed");
+    await expect(page.getByText("ECCP on ComLinked")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "100 members" })).toBeVisible();
+    await expect(
+      page.getByRole("region", { name: "The pilot in figures" }).getByRole("listitem").first(),
+    ).toHaveText("Claimed40 of 100");
     await page.locator("#f-b2").fill("Our next member meeting is on Friday.");
     await tap(page, "Send to 40 claimed members");
     await expect(page.getByText("Sent to 40 members who have claimed.")).toBeVisible();
@@ -995,7 +998,7 @@ test.describe("the chamber's network of 100", () => {
       await page.setViewportSize({ width, height: 844 });
       await twoWeeksIn(page);
       await guide(page, /^Open the chamber tools/);
-      await expect(page.locator(".t-sum")).toContainText("100 members");
+      await expect(page.getByRole("heading", { name: "100 members" })).toBeVisible();
       await noSidewaysScroll(page);
       await tap(page, "Back to company view");
       await openSection(page, "Wins");
