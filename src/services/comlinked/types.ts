@@ -14,11 +14,20 @@ export interface Company {
   wants: string[];
   rival: boolean;
   pts: number;
+  /** Invented, on a reserved example domain. Empty for a company invited by name. */
+  website: string;
+  /** The day the Company claims its Pre-built Profile, or null when it never does. Ask
+   * hasClaimed() or claimDayOf() instead of reading this: they also know about a claim made
+   * during the session. */
+  claimDay: number | null;
   silent?: boolean;
   joinedDay?: number;
   /** Set only for Companies outside the user's chamber, shown on the Pro view. */
   chamber?: string;
 }
+
+/** One example Company as its data file holds it. The network adds the rest in data.ts. */
+export type MemberRow = Omit<Company, "website" | "rival">;
 
 export interface MyCompany {
   name: string;
@@ -38,6 +47,8 @@ export interface MyCompany {
   altRep: string;
   lastUpdate: number;
   chamber: string;
+  /** Invented, on a reserved example domain. */
+  website: string;
 }
 
 export type RuleKey =
@@ -449,6 +460,7 @@ export interface SimState {
   team: {
     tab: string;
     reminded: Record<string, number>;
+    /** Claims that followed a staff reminder this session, by day. Read with claimDayOf(). */
     claimed: Record<string, number>;
     helped: Record<string, number>;
     spikes: Record<string, string>;

@@ -5,7 +5,7 @@ import Image from "next/image";
 import { AiChip, Btn, PageHead } from "@/components/product/shared";
 import { useSimulation } from "@/components/product/use-simulation";
 import { Textarea } from "@/components/ui/textarea";
-import { act, co, monthlyTop, setForm, SHARE_LINK } from "@/services/comlinked";
+import { act, CHAMBER, co, monthlyTop, setForm, SHARE_LINK } from "@/services/comlinked";
 
 // S1 S2 S3 D5: testimonials, sharing, the Success Wall and Monthly Top Companies.
 export function Wins() {
@@ -127,7 +127,7 @@ export function Wins() {
           <section className="a-sec" id="monthly">
             <h2 className="a-h2">Monthly top companies</h2>
             <p className="a-small">
-              Your chamber, month {month}. For recognition only, and it resets each month.
+              {CHAMBER.shortName}, month {month}. For recognition only, and it resets each month.
             </p>
             <div className="a-list">
               {top.map((t, i) => (

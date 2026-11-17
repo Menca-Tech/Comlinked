@@ -1,4 +1,5 @@
 // Example data for the ComLinked product simulation, copied from the HTML mockup.
+import { EUROPEAN_EDGES, EUROPEAN_MEMBERS } from "@/services/comlinked/european-members";
 import type {
   Company,
   MyCompany,
@@ -19,7 +20,23 @@ export interface AgentType {
   a: string;
 }
 
-type RawCompany = [string, string, string, string, string, string, string, string[], string[]];
+type RawCompany = [
+  id: string,
+  name: string,
+  ini: string,
+  ind: string,
+  city: string,
+  cat: string,
+  why: string,
+  offer: string[],
+  seek: string[],
+  /** The day the Company claims its profile, or null when it never does. */
+  claimDay: number | null,
+];
+/** Every example company is invented, and so is its website, on a reserved example domain. */
+function websiteOf(id: string) {
+  return id + ".example";
+}
 const RAW: RawCompany[] = [
   [
     "maple",
@@ -31,6 +48,7 @@ const RAW: RawCompany[] = [
     "stocks Filipino snacks and is looking for new suppliers.",
     ["Grocery retail", "Shelf placement"],
     ["Filipino snacks", "Frozen foods", "Private label"],
+    1,
   ],
   [
     "pack",
@@ -42,6 +60,7 @@ const RAW: RawCompany[] = [
     "makes food-grade packaging for products like yours.",
     ["Food-grade pouches", "Printed boxes"],
     ["Food manufacturers", "Exporters"],
+    1,
   ],
   [
     "north",
@@ -53,6 +72,7 @@ const RAW: RawCompany[] = [
     "delivers chilled goods across Metro Manila.",
     ["Chilled delivery", "Cold-chain freight"],
     ["Food manufacturers", "Grocers"],
+    null,
   ],
   [
     "luntian",
@@ -64,6 +84,7 @@ const RAW: RawCompany[] = [
     "distributes organic products to the retailers you want to reach.",
     ["Distribution", "Retail accounts"],
     ["Filipino snacks", "Organic lines"],
+    1,
   ],
   [
     "tala",
@@ -75,6 +96,7 @@ const RAW: RawCompany[] = [
     "prints compliant food labels in small batches.",
     ["Food labels", "Short runs"],
     ["Food brands"],
+    1,
   ],
   [
     "bayan",
@@ -86,6 +108,7 @@ const RAW: RawCompany[] = [
     "rents frozen storage near the Manila port.",
     ["Frozen storage"],
     ["Exporters", "Frozen foods"],
+    15,
   ],
   [
     "sari",
@@ -97,6 +120,7 @@ const RAW: RawCompany[] = [
     "supplies 400 neighborhood stores with packaged snacks.",
     ["Wholesale", "Store delivery"],
     ["Packaged snacks"],
+    2,
   ],
   [
     "hapag",
@@ -108,6 +132,7 @@ const RAW: RawCompany[] = [
     "buys frozen foods for 12 restaurants.",
     ["Restaurant accounts"],
     ["Frozen foods", "Lumpia"],
+    1,
   ],
   [
     "kainan",
@@ -119,6 +144,7 @@ const RAW: RawCompany[] = [
     "needs a steady supply of frozen lumpia for events.",
     ["Event catering"],
     ["Frozen foods"],
+    4,
   ],
   [
     "malaya",
@@ -130,6 +156,7 @@ const RAW: RawCompany[] = [
     "ships Filipino food products to Canada and the Gulf.",
     ["Export handling"],
     ["Shelf-stable snacks"],
+    1,
   ],
   [
     "tibay",
@@ -141,6 +168,7 @@ const RAW: RawCompany[] = [
     "builds export-grade pallets for food shipments.",
     ["Export pallets"],
     ["Exporters"],
+    null,
   ],
   [
     "sinag",
@@ -152,6 +180,7 @@ const RAW: RawCompany[] = [
     "installs rooftop solar that lowers cold-room power costs.",
     ["Rooftop solar"],
     ["Food plants"],
+    null,
   ],
   [
     "agos",
@@ -163,6 +192,7 @@ const RAW: RawCompany[] = [
     "tests and treats process water for food plants.",
     ["Water testing"],
     ["Food plants"],
+    null,
   ],
   [
     "lakbay",
@@ -174,6 +204,7 @@ const RAW: RawCompany[] = [
     "buys local snacks for guest rooms in 5 hotels.",
     ["Hotel accounts"],
     ["Local snacks"],
+    1,
   ],
   [
     "buhay",
@@ -185,6 +216,7 @@ const RAW: RawCompany[] = [
     "adds healthy snack lines to its checkout counters.",
     ["Retail counters"],
     ["Healthy snacks"],
+    8,
   ],
   [
     "tanim",
@@ -196,6 +228,7 @@ const RAW: RawCompany[] = [
     "grows bananas and ube for food manufacturers.",
     ["Bananas", "Ube"],
     ["Food manufacturers"],
+    1,
   ],
   [
     "hilaga",
@@ -207,6 +240,7 @@ const RAW: RawCompany[] = [
     "imports and blends spices for snack producers.",
     ["Spice blends"],
     ["Snack producers"],
+    1,
   ],
   [
     "daloy",
@@ -218,6 +252,7 @@ const RAW: RawCompany[] = [
     "rents delivery vans by the week during peak seasons.",
     ["Van rental"],
     ["Distributors"],
+    null,
   ],
   [
     "alon",
@@ -229,6 +264,7 @@ const RAW: RawCompany[] = [
     "shoots product photos for food brands.",
     ["Product photos"],
     ["Food brands"],
+    24,
   ],
   [
     "pandayan",
@@ -240,6 +276,7 @@ const RAW: RawCompany[] = [
     "services frying and sealing lines for snack plants.",
     ["Machine servicing"],
     ["Snack plants"],
+    28,
   ],
   [
     "bukas",
@@ -251,6 +288,7 @@ const RAW: RawCompany[] = [
     "stocks snack counters in 30 offices.",
     ["Office canteens"],
     ["Packaged snacks"],
+    2,
   ],
   [
     "bigas",
@@ -262,6 +300,7 @@ const RAW: RawCompany[] = [
     "mills and bags rice for grocers across Luzon.",
     ["Milled rice"],
     ["Grocery retailers", "Packaging"],
+    1,
   ],
   [
     "kapwa",
@@ -273,6 +312,7 @@ const RAW: RawCompany[] = [
     "makes corn chips for the same store shelves you supply.",
     ["Corn chips"],
     ["Grocery retailers", "Packaging"],
+    1,
   ],
   [
     "lasa",
@@ -284,6 +324,7 @@ const RAW: RawCompany[] = [
     "produces frozen siomai and could share cold-chain routes.",
     ["Frozen siomai"],
     ["Cold-chain freight", "Grocery retailers"],
+    1,
   ],
   [
     "ginhawa",
@@ -295,6 +336,7 @@ const RAW: RawCompany[] = [
     "supplies flour and fillings to neighborhood bakeries.",
     ["Baking ingredients"],
     ["Grocery retailers"],
+    1,
   ],
   [
     "masagana",
@@ -306,6 +348,7 @@ const RAW: RawCompany[] = [
     "delivers fresh milk and cheese to Metro Manila grocers.",
     ["Fresh dairy"],
     ["Cold-chain freight", "Grocery retailers"],
+    1,
   ],
   [
     "sariwa",
@@ -317,6 +360,7 @@ const RAW: RawCompany[] = [
     "trucks highland vegetables to Metro Manila markets.",
     ["Fresh produce"],
     ["Grocery retailers", "Cold-chain freight"],
+    1,
   ],
   [
     "dagat",
@@ -328,6 +372,7 @@ const RAW: RawCompany[] = [
     "supplies frozen seafood to restaurants and hotels.",
     ["Frozen seafood"],
     ["Cold-chain freight", "Restaurants"],
+    1,
   ],
   [
     "tamis",
@@ -339,6 +384,7 @@ const RAW: RawCompany[] = [
     "makes pastillas and polvoron for gift shops and grocers.",
     ["Filipino sweets"],
     ["Grocery retailers", "Packaging"],
+    1,
   ],
   [
     "palengke",
@@ -350,6 +396,7 @@ const RAW: RawCompany[] = [
     "sells pantry staples and frozen food online across Metro Manila.",
     ["Online grocery"],
     ["Filipino snacks", "Frozen foods"],
+    1,
   ],
   [
     "paaralan",
@@ -361,6 +408,7 @@ const RAW: RawCompany[] = [
     "supplies snacks to 18 school canteens.",
     ["School canteens"],
     ["Packaged snacks"],
+    3,
   ],
   [
     "tindahan",
@@ -372,6 +420,7 @@ const RAW: RawCompany[] = [
     "adds local snacks to its 60 convenience stores.",
     ["Convenience retail"],
     ["Packaged snacks"],
+    5,
   ],
   [
     "biyahe",
@@ -383,6 +432,7 @@ const RAW: RawCompany[] = [
     "delivers small food parcels the same day across Metro Manila.",
     ["Same-day delivery"],
     ["Food manufacturers"],
+    20,
   ],
   [
     "kahon",
@@ -394,6 +444,7 @@ const RAW: RawCompany[] = [
     "makes shipping cartons sized for snack cases.",
     ["Shipping cartons"],
     ["Food manufacturers"],
+    15,
   ],
   [
     "selyo",
@@ -405,6 +456,7 @@ const RAW: RawCompany[] = [
     "handles product registration for food makers.",
     ["Product registration"],
     ["Food manufacturers"],
+    22,
   ],
   [
     "sulit",
@@ -416,6 +468,7 @@ const RAW: RawCompany[] = [
     "keeps the books for small manufacturers.",
     ["Bookkeeping"],
     ["Small manufacturers"],
+    null,
   ],
   [
     "himig",
@@ -427,6 +480,7 @@ const RAW: RawCompany[] = [
     "plans corporate events that need local food gifts.",
     ["Corporate events"],
     ["Local snacks"],
+    null,
   ],
   [
     "gabay",
@@ -438,6 +492,7 @@ const RAW: RawCompany[] = [
     "helps food brands meet export requirements.",
     ["Export advice"],
     ["Food manufacturers"],
+    null,
   ],
   [
     "kalye",
@@ -449,6 +504,7 @@ const RAW: RawCompany[] = [
     "runs 40 food carts that need frozen ingredients.",
     ["Food carts"],
     ["Frozen foods"],
+    null,
   ],
 ];
 export const POOL: Company[] = RAW.map(function (r) {
@@ -466,6 +522,8 @@ export const POOL: Company[] = RAW.map(function (r) {
     wants: [],
     rival: false,
     pts: 0,
+    website: websiteOf(r[0]),
+    claimDay: r[9],
   };
 });
 POOL.find(function (c) {
@@ -480,6 +538,13 @@ export const CAT: Record<string, string> = {
   hospitality: "hospitality",
   export: "export",
   services: "services",
+  logistics: "logistics",
+  industrial: "industrial",
+  tech: "technology",
+  professional: "professional services",
+  health: "health",
+  fnb: "food and drink",
+  property: "property",
 };
 /** Industry names for ComDash's interest by industry. */
 export const INDUSTRY: Record<string, string> = {
@@ -490,6 +555,13 @@ export const INDUSTRY: Record<string, string> = {
   hospitality: "Food service and hospitality",
   export: "Export",
   services: "Business services",
+  logistics: "Logistics",
+  industrial: "Industry and energy",
+  tech: "Technology",
+  professional: "Professional services",
+  health: "Health",
+  fnb: "Food and drink",
+  property: "Property and facilities",
 };
 /** Words companies search with in the daily simulation. Some aren't on the example profile. */
 export const SEARCH_TERMS = [
@@ -564,6 +636,9 @@ export const OTHER_CHAMBER_COMPANIES: Company[] = (
     wants: [],
     rival: false,
     pts: 0,
+    website: websiteOf(id),
+    // Claimed in its own chamber, which is outside this network's claim days.
+    claimDay: 1,
   };
 });
 /** Profile updates that Connections post, one each, in the daily simulation. */
@@ -623,7 +698,8 @@ export const EDGES = (
   "maple-pack maple-tanim maple-sari maple-lakbay maple-kahon maple-palengke maple-north pack-tala pack-kahon pack-tibay pack-kapwa pack-tamis pack-lasa pack-bukas north-bayan north-daloy north-biyahe north-masagana north-dagat north-lasa " +
   "luntian-palengke luntian-sari luntian-tanim luntian-sariwa tala-selyo tala-kapwa tala-alon tala-tamis bayan-malaya bayan-dagat bayan-lasa sari-tindahan sari-kapwa sari-tamis sari-daloy hapag-kainan hapag-dagat hapag-lasa hapag-sariwa hapag-himig " +
   "kainan-himig kainan-kalye kainan-ginhawa malaya-tibay malaya-gabay malaya-hilaga malaya-kapwa tibay-kahon tibay-gabay sinag-agos sinag-pandayan sinag-masagana agos-pandayan agos-tanim lakbay-himig lakbay-ginhawa lakbay-hapag buhay-tindahan buhay-palengke buhay-selyo " +
-  "tanim-bigas tanim-sariwa tanim-masagana hilaga-kapwa hilaga-tamis hilaga-ginhawa daloy-biyahe daloy-kahon alon-gabay alon-himig alon-palengke alon-sulit pandayan-kapwa pandayan-lasa pandayan-tamis bukas-paaralan bukas-kalye bukas-ginhawa bigas-palengke bigas-hapag selyo-gabay selyo-sulit selyo-masagana sulit-kalye sulit-tindahan sulit-paaralan paaralan-tamis"
+  "tanim-bigas tanim-sariwa tanim-masagana hilaga-kapwa hilaga-tamis hilaga-ginhawa daloy-biyahe daloy-kahon alon-gabay alon-himig alon-palengke alon-sulit pandayan-kapwa pandayan-lasa pandayan-tamis bukas-paaralan bukas-kalye bukas-ginhawa bigas-palengke bigas-hapag selyo-gabay selyo-sulit selyo-masagana sulit-kalye sulit-tindahan sulit-paaralan paaralan-tamis " +
+  EUROPEAN_EDGES
 )
   .split(" ")
   .map(function (p) {
@@ -657,19 +733,17 @@ POOL.forEach(function (c, i) {
 POOL.find(function (c) {
   return c.id === "kalye";
 })!.ini = "KL";
+// The European-style members join after the originals, so each original keeps its place and points.
+EUROPEAN_MEMBERS.forEach(function (row) {
+  POOL.push({ ...row, rival: false, website: websiteOf(row.id) });
+});
 export const METRO =
   /Quezon City|Pasig|Valenzuela|Marikina|Makati|Navotas|Caloocan|Taguig|San Juan|Manila|Pasay|Mandaluyong/;
 export const STRONG_FIT = 80,
   MODERATE_FIT = 50;
+/** Companies that opted out of contact by an AI Lead Agent. Whether one has claimed is a separate
+ * fact, read with hasClaimed(). */
 export const AGENT_STATUS: Record<string, string> = {
-  tibay: "unclaimed",
-  daloy: "unclaimed",
-  sinag: "unclaimed",
-  agos: "unclaimed",
-  bigas: "unclaimed",
-  sulit: "unclaimed",
-  kalye: "unclaimed",
-  himig: "unclaimed",
   kahon: "optout",
   buhay: "optout",
   alon: "optout",

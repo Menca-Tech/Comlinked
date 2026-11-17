@@ -53,12 +53,17 @@ async function openTab(page: Page, name: string) {
   );
 }
 
-async function claimNewCompany(page: Page) {
+/** Claims the profile and stops on the three day-one matches. */
+async function claimToMatches(page: Page) {
   await page.goto("/app/claim");
   await tap(page, "Claim your profile");
   await page.locator("#claim-auth").check();
   await tap(page, "Confirm and claim");
   await tap(page, "Continue with Google");
+}
+
+async function claimNewCompany(page: Page) {
+  await claimToMatches(page);
   await tap(page, "Go to my ComDash");
   await expect(page.getByRole("heading", { name: "Next action" })).toBeVisible();
 }
@@ -843,5 +848,169 @@ test.describe("ComDash", () => {
       (el) => el.getBoundingClientRect().width,
     );
     expect(width).toBe(390);
+  });
+});
+
+test.describe("the chamber's network of 100", () => {
+  test.use({ viewport: { width: 1280, height: 900 } });
+
+  const searchField = (page: Page) => page.getByLabel("Industry, product or need");
+  const openSearch = async (page: Page, query: string) => {
+    await page.getByRole("button", { name: "Search" }).click();
+    await searchField(page).fill(query);
+  };
+  const results = (page: Page) => page.locator("#search-results");
+  const openSection = (page: Page, name: string) =>
+    page.locator(".a-web-nav .nav-link:visible, .a-tab:visible", { hasText: name }).first().click();
+
+  test("a new company still gets its three day-one matches", async ({ page }) => {
+    await claimToMatches(page);
+    await expect(page.locator("[data-lead]")).toHaveCount(3);
+    await expect(page.locator('[data-lead="maple"]')).toContainText("Maple Bay Grocers");
+    await expect(page.locator('[data-lead="pack"]')).toContainText("Pacific Pack Solutions");
+    await expect(page.locator('[data-lead="palengke"]')).toContainText("Palengke Online");
+  });
+
+  test("search reaches European-style and existing members", async ({ page }) => {
+    await claimNewCompany(page);
+    await openSearch(page, "wine");
+    await expect(results(page)).toContainText("Vinoteca Wine Importers");
+    await searchField(page).fill("freight");
+    await expect(results(page)).toContainText("Nordhavn Freight Forwarders");
+    await expect(results(page)).toContainText("Northline Logistics");
+  });
+
+  test("two weeks in, ComDash names ECCP and keeps its interested companies", async ({ page }) => {
+    await twoWeeksIn(page);
+    await expect(page.getByText("Food manufacturing · Quezon City · ECCP member")).toBeVisible();
+    await openTab(page, "Interest Signals");
+    await expect(page.getByRole("heading", { name: TWO_WEEKS_HEADING })).toBeVisible();
+    for (const id of ["hapag", "luntian", "pack", "maple", "sari", "lakbay", "bukas"]) {
+      await expect(companyRow(page, id)).toHaveCount(1);
+    }
+  });
+
+  test("the chamber tools name ECCP and count the whole network", async ({ page }) => {
+    await twoWeeksIn(page);
+    await guide(page, /^Open the chamber tools/);
+    await expect(page.getByText("ECCP community manager view, example members")).toBeVisible();
+    await expect(page.locator(".t-sum")).toContainText("100 members · 42 claimed");
+    await page.locator("#f-b2").fill("Our next member meeting is on Friday.");
+    await tap(page, "Send to 42 claimed members");
+    await expect(page.getByText("Sent to 42 members who have claimed.")).toBeVisible();
+    await tap(page, "Back to company view");
+    await page.getByRole("button", { name: /Notifications/ }).click();
+    await expect(page.getByText("ECCP sent an announcement")).toBeVisible();
+  });
+
+  test("Monthly Top Companies is ECCP's and lists only companies that have claimed", async ({
+    page,
+  }) => {
+    await twoWeeksIn(page);
+    await openSection(page, "Wins");
+    const top = page.locator("#monthly");
+    await expect(top).toContainText("ECCP, month 1.");
+    await expect(top.locator(".a-list > *")).toHaveCount(10);
+    await expect(top).toContainText("Kalayaan Foods Inc.");
+    // Northline Logistics holds enough points for the list, but it has not claimed its profile.
+    await expect(top).not.toContainText("Northline Logistics");
+  });
+
+  test("the Team Dashboard names the ECCP pilot and reads 40% claimed within 14 days", async ({
+    page,
+  }) => {
+    await twoWeeksIn(page);
+    await guide(page, "ComLinked team dashboard");
+    await expect(page.locator(".t-sum")).toContainText("of the 90-day ECCP pilot");
+    const adoption = page.locator(".t-row", {
+      hasText: "Invited companies that claim within 14 days",
+    });
+    await expect(adoption.locator(".t-num").first()).toContainText("40%");
+    await expect(adoption).toContainText("On track");
+  });
+
+  test("a staff claim reminder leads to a claim the next morning", async ({ page }) => {
+    await twoWeeksIn(page);
+    await guide(page, "ComLinked team dashboard");
+    await page.getByRole("tab", { name: "Companies needing help" }).click();
+    // The queue's rows stack; the activity log's rows, which also name the company, do not.
+    const northline = page.locator(".a-li.stack", { hasText: "Northline Logistics" });
+    await expect(northline).toContainText("Hasn’t claimed its profile");
+    await northline.getByRole("button", { name: "Send claim reminder" }).click();
+    await expect(northline).toContainText("Reminder sent");
+    await guide(page, "Next morning");
+    await expect(
+      page.getByText("Northline Logistics claimed its profile after a reminder"),
+    ).toBeVisible();
+    await expect(northline).toHaveCount(0);
+  });
+
+  test("the Engine map draws all 100 companies", async ({ page }) => {
+    await twoWeeksIn(page);
+    await guide(page, "Engine");
+    await expect(page.getByText("calculated from a network of 100 companies")).toBeVisible();
+    await expect(page.locator(".e-map .e-n")).toHaveCount(100);
+    await expect(page.locator(".e-map")).toHaveAttribute(
+      "aria-label",
+      /^Network map of 100 companies/,
+    );
+  });
+
+  test("a company that has not claimed neither accepts a request nor replies", async ({ page }) => {
+    await claimNewCompany(page);
+    await openSearch(page, "Kahon");
+    await results(page)
+      .getByRole("button", { name: /Kahon Corrugated/ })
+      .click();
+    await tap(page, "Connect");
+    await expect(page.getByText("Connection Request sent")).toBeVisible();
+    await tap(page, "Message");
+    await page.locator("textarea[data-draft]").fill("Hello, could we talk about shipping cartons?");
+    await tap(page, "Send");
+    await expect(page.locator(".a-msg.me")).toHaveCount(1);
+    await guide(page, "Next morning");
+    await guide(page, "Next morning");
+    await openSection(page, "ComMail");
+    await page.locator(".a-li", { hasText: "Kahon" }).click();
+    await expect(page.locator(".a-msg.me")).toHaveCount(1);
+    await expect(page.locator(".a-msg.them")).toHaveCount(0);
+    await openSearch(page, "Kahon");
+    await results(page)
+      .getByRole("button", { name: /Kahon Corrugated/ })
+      .click();
+    await expect(page.getByText("Connection Request sent")).toBeVisible();
+  });
+
+  for (const width of [360, 1280]) {
+    test(`chamber tools, Wins and the Engine fit a ${width}px screen`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 844 });
+      await twoWeeksIn(page);
+      await guide(page, /^Open the chamber tools/);
+      await expect(page.locator(".t-sum")).toContainText("100 members");
+      await noSidewaysScroll(page);
+      await tap(page, "Back to company view");
+      await openSection(page, "Wins");
+      await expect(page.locator("#monthly")).toContainText("ECCP, month 1.");
+      await noSidewaysScroll(page);
+      await guide(page, "Engine");
+      await expect(page.locator(".e-map .e-n")).toHaveCount(100);
+      await noSidewaysScroll(page);
+      const map = await page.locator(".e-map").boundingBox();
+      expect(map?.width ?? 0).toBeLessThanOrEqual(width);
+    });
+  }
+
+  test("a long European-style name wraps inside its row on a 360px phone", async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 800 });
+    await claimNewCompany(page);
+    await openSearch(page, "insurance");
+    const row = results(page).getByRole("button", { name: /Sterling Rivera Insurance Brokers/ });
+    await expect(row).toBeVisible();
+    const box = await row.boundingBox();
+    expect((box?.x ?? 0) + (box?.width ?? 0)).toBeLessThanOrEqual(360);
+    await noSidewaysScroll(page);
+    await row.click();
+    await expect(page.getByText("Sterling Rivera Insurance Brokers").first()).toBeVisible();
+    await noSidewaysScroll(page);
   });
 });

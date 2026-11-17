@@ -1004,6 +1004,9 @@
   .e-t.d0 {
     font-size: 15px;
   }
+  .e-t.sm {
+    font-size: 9px;
+  }
   .e-legend {
     gap: 6px 18px;
     font: 600 14px/20px var(--font-text);

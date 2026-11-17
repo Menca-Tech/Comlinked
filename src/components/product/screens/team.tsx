@@ -10,6 +10,7 @@ import type { TeamData, TeamRow } from "@/services/comlinked";
 import {
   act,
   AI_LIMIT,
+  CHAMBER,
   co,
   NETWORK,
   spikeState,
@@ -51,6 +52,9 @@ function MetricRows({ rows }: { rows: TeamRow[] }) {
     </div>
   );
 }
+
+/** Five grid lines from none to the whole network; every other one is labelled. */
+const GRID_LINES = [0, 1, 2, 3, 4].map((step) => (NETWORK * step) / 4);
 
 function TrendChart({ d }: { d: TeamData }) {
   const isWeb = useIsDesktop();
@@ -97,7 +101,7 @@ function TrendChart({ d }: { d: TeamData }) {
           }}
           onPointerLeave={() => setHover(null)}
         >
-          {[0, 10, 20, 30, 40].map((v) => (
+          {GRID_LINES.map((v, i) => (
             <g key={v}>
               <line
                 className="t-gridl"
@@ -106,7 +110,7 @@ function TrendChart({ d }: { d: TeamData }) {
                 y1={sy(v).toFixed(1)}
                 y2={sy(v).toFixed(1)}
               />
-              {v % 20 === 0 ? (
+              {i % 2 === 0 ? (
                 <text className="t-axis" x={L - 8} y={sy(v).toFixed(1)} dy=".32em" textAnchor="end">
                   {v}
                 </text>
@@ -349,7 +353,7 @@ export function Team() {
         tail={<span className="a-tag accent">Preview: after the MVP</span>}
         sub={
           <p className="t-sum">
-            <b>Day {d.D}</b> of the 90-day pilot ·{" "}
+            <b>Day {d.D}</b> of the 90-day {CHAMBER.shortName} pilot ·{" "}
             <b>
               {d.onTrack} of {d.rows.length}
             </b>{" "}

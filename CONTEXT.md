@@ -83,11 +83,27 @@ Terms from the [ComLinked MVP Build Plan](docs/specs/2026-10-11-mvp-build-plan.m
 - **Chamber Network** — the Companies of one Chamber, within which they can find
   and connect with each other. Each Chamber Network is kept apart from the others.
 
-- **Community Manager** — a person working for a Chamber who supports its
-  Companies with Intros and Asks, and reviews unusual spikes in points.
+- **Community Manager** — a person assigned to one Chamber who runs its member
+  import, supports its Companies with Intros and Asks, and reviews unusual spikes
+  in points. During the Pilot, ComLinked supplies the Community Manager, who still
+  acts within that one Chamber only.
 
 - **Chamber Leader** — the person who decides whether a Chamber joins ComLinked.
   Distinct from a Community Manager, who supports its Companies day to day.
+
+- **Chamber Contact** — the person a Chamber names to work with ComLinked during
+  a Pilot. Hands over the Member List, sends each Company its claim link from the
+  Chamber's own address, and can see the Activity View but not act from it.
+  Distinct from the Chamber Leader, who decides, and the Community Manager, who
+  does the daily work.
+
+- **Member List** — the list of its Companies a Chamber hands to ComLinked for
+  the member import: company names and websites, with no contact details.
+
+- **Activity View** — the one screen showing which of a Chamber's Companies have
+  claimed, which are active and which need an Intro. The Community Manager acts
+  from it; the Chamber Contact only reads it. Distinct from the Team Dashboard,
+  which is for ComLinked Staff.
 
 - **ComLinked Staff** — people working for ComLinked itself, who can step in when a
   Company is waiting. Avoid "team" alone: that means an Organization's members.
@@ -101,7 +117,8 @@ Terms from the [ComLinked MVP Build Plan](docs/specs/2026-10-11-mvp-build-plan.m
 ### Getting listed
 
 - **Pre-built Profile** — a draft Company profile built by AI from public sources
-  before the Company joins.
+  before the Company joins. Until the Company claims it, other Companies see only
+  its public basics (name, industry, city and website), marked "Not yet claimed".
 
 - **Claim** — a Company taking over its Pre-built Profile through a personal link.
 
@@ -213,6 +230,29 @@ Terms from the [ComLinked MVP Build Plan](docs/specs/2026-10-11-mvp-build-plan.m
 - **Success Wall** — the display of recent Testimonials and deals on the Wins tab
   and on both Companies' profiles, with the latest shown as Recent Wins on ComDash.
   Avoid "home feed": ComDash is the home screen, and a news feed is postponed.
+
+### Showing ComLinked
+
+- **Demo** — ComLinked running on invented Companies, with nothing stored or
+  sent. Distinct from the mockup, the frozen HTML file kept as a backup.
+
+- **Pilot Preview** — a guided walk through the Demo, made for one Chamber
+  Leader, showing how a Pilot would run for their Chamber. Avoid "demo" alone for
+  this.
+
+- **Stop** — one step of a Pilot Preview's timeline, set on a named day.
+
+- **Seat** — whose view a Stop shows: the Community Manager's, a Company's or the
+  Chamber Contact's.
+
+- **Story Bar** — the strip on every Stop that names the day, what is happening
+  and whose Seat is shown, and leads to the next Stop.
+
+- **Presenter Guide** — the presenter's own controls for steering the Demo, kept
+  out of the way of someone following a Pilot Preview.
+
+- **Run of Show** — the presenter's one-page script for a Pilot Preview: what to
+  do and say at each Stop, and the answers to likely questions.
 
 ### Design
 

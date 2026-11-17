@@ -1,5 +1,6 @@
 // The ComLinked product simulation: state, engine and actions, ported from the
 // HTML mockup (docs/mockup/source/app.js). Browser-held by design; see docs/adr/0010.
+import { CHAMBER } from "@/services/comlinked/chamber";
 import {
   ABOUT_DEFAULT,
   ABOUT_POLISHED,
@@ -21,7 +22,6 @@ import {
   POOL,
   PROFILE_UPDATES,
   REPLIES,
-  RIVAL_PTS,
   RULES,
   SEARCH_TERMS,
   STRONG_FIT,
@@ -138,6 +138,30 @@ export const threadFor = function (coId: string) {
     return t.co === coId;
   });
 };
+/** The day a Company claimed its Pre-built Profile, or null while it has not. The only reader of
+ * claim days: the Company's data, a claim that followed a staff reminder this session, and for
+ * Kalayaan Foods ("me") the day it claimed in the flow. */
+export function claimDayOf(id: string): number | null {
+  if (id === "me") return S.claimed ? S.joined : null;
+  return S.team.claimed[id] ?? co(id).claimDay;
+}
+/** Whether a Company had claimed its profile by a day, which is today unless one is given. */
+export function hasClaimed(id: string, day = S.day) {
+  const claimDay = claimDayOf(id);
+  return claimDay !== null && claimDay <= day;
+}
+/** How many Companies in the network, Kalayaan Foods included, had claimed by a day. */
+export function claimedCount(day = S.day) {
+  return (
+    POOL.filter(function (c) {
+      return hasClaimed(c.id, day);
+    }).length + (hasClaimed("me", day) ? 1 : 0)
+  );
+}
+/** The Activity Score points a Company holds: none until it has claimed. */
+export function pointsOf(c: Company) {
+  return hasClaimed(c.id) ? c.pts : 0;
+}
 const later = function (ms: number, fn: () => void) {
   const g = gen;
   setTimeout(function () {
@@ -189,7 +213,8 @@ function fresh(): SimState {
       rep: "Ana Reyes",
       altRep: "Marco Dizon",
       lastUpdate: 1,
-      chamber: "ECCP",
+      chamber: CHAMBER.shortName,
+      website: "kalayaanfoods.example",
     },
     ai: true,
     aiLog: [{ day: 1, on: true, note: "On by default for new companies" }],
@@ -311,8 +336,8 @@ export function rank() {
   const b = boost();
   return (
     1 +
-    Object.keys(RIVAL_PTS).filter(function (id) {
-      return compBoost(RIVAL_PTS[id]!) > b;
+    POOL.filter(function (c) {
+      return c.rival && compBoost(pointsOf(c)) > b;
     }).length
   );
 }
@@ -494,9 +519,12 @@ export function makeAsk(text: string) {
   const tags = askTags(text),
     matched = byFit(
       POOL.filter(function (c) {
-        return c.gives.some(function (g) {
-          return tags.includes(g);
-        });
+        return (
+          hasClaimed(c.id) &&
+          c.gives.some(function (g) {
+            return tags.includes(g);
+          })
+        );
       }),
     );
   const a: Ask = {
@@ -536,7 +564,7 @@ export function overnightAsk() {
     POOL.filter(function (c) {
       return (
         !c.silent &&
-        !isUnclaimed(c.id) &&
+        hasClaimed(c.id) &&
         !S.asks.some(function (a) {
           return a.co === c.id;
         })
@@ -618,6 +646,21 @@ export function signal(cid: string, type: SignalKind, detail?: string) {
     text = lines[type];
   if (text) notify(type === "viewed" ? "view" : type, cid, text);
 }
+/** Whether a Company shares Kalayaan Foods' trade: it buys what Kalayaan Foods offers, sells what
+ * it seeks, or sells the same. The Daily Lead List and overnight attention draw only on these
+ * Companies, so the rest of the network stays out of both. */
+function sharesMyTrade(c: Company) {
+  const m = S.me;
+  return (
+    c.rival ||
+    c.wants.some(function (w) {
+      return m.gives.includes(w);
+    }) ||
+    c.gives.some(function (g) {
+      return m.wants.includes(g);
+    })
+  );
+}
 export function buildList() {
   if (S.lists[S.day]) return;
   const seen: Record<string, number> = {};
@@ -628,7 +671,7 @@ export function buildList() {
   });
   const cand = byFit(
     POOL.filter(function (c) {
-      return !seen[c.id] && !S.conn[c.id];
+      return !seen[c.id] && !S.conn[c.id] && sharesMyTrade(c);
     }),
   );
   S.lists[S.day] = cand.slice(0, 5).map(function (c) {
@@ -998,7 +1041,7 @@ export function nextMorning(n: number) {
   const a = attention();
   Object.keys(S.team.reminded).forEach(function (id) {
     if (
-      !isUnclaimed(id) ||
+      hasClaimed(id) ||
       S.team.reminded[id]! >= S.day ||
       POOL.findIndex(function (c) {
         return c.id === id;
@@ -1010,7 +1053,7 @@ export function nextMorning(n: number) {
   });
   const pool = byFit(
     POOL.filter(function (c) {
-      return S.conn[c.id] !== "connected" && !isUnclaimed(c.id);
+      return S.conn[c.id] !== "connected" && hasClaimed(c.id) && sharesMyTrade(c);
     }),
   );
   const start = pool.length ? S.day % pool.length : 0;
@@ -1142,35 +1185,55 @@ export function groupText(g: NoteGroup) {
     names.slice(0, 2).join(", ") + (names.length > 2 ? " and " + (names.length - 2) + " more" : "");
   return who + " " + (GROUPED_NOTES[g.type] ?? "");
 }
-export function members() {
-  const list = POOL.slice(0, 11).map(function (c) {
-    const r = teamRec(c),
-      recent = [0, 1, 2, 3, 4, 5, 6].some(function (n) {
-        return activeOn(c, r, Math.max(1, S.day - n));
-      });
-    return {
-      id: c.id,
-      name: c.name,
-      state:
-        r.claimDay == null
-          ? "Not claimed"
-          : S.conn[c.id] === "connected" || recent
-            ? "Active"
-            : "Claimed",
-      intro: r.claimDay != null && !r.dayOne && !S.team.helped[c.id],
-    };
-  });
-  list.unshift({
-    id: "me",
-    name: S.me.name,
-    state: S.claimed ? "Active" : "Not claimed",
+type MemberState = "Not claimed" | "Active" | "Claimed";
+interface MemberStanding {
+  state: MemberState;
+  /** Whether the community manager should make it an introduction. */
+  intro: boolean;
+}
+/** Where a Company stands for the community manager, and whether it still needs an intro. */
+function memberStanding(c: Company): MemberStanding {
+  const r = teamRec(c),
+    claimed = hasClaimed(c.id),
+    recent = [0, 1, 2, 3, 4, 5, 6].some(function (n) {
+      return activeOn(c, r, Math.max(1, S.day - n));
+    });
+  return {
+    state: !claimed ? "Not claimed" : S.conn[c.id] === "connected" || recent ? "Active" : "Claimed",
+    intro: claimed && !r.dayOne && !S.team.helped[c.id],
+  };
+}
+function myStanding(): MemberStanding {
+  return {
+    state: hasClaimed("me") ? "Active" : "Not claimed",
     intro:
       !connected().length &&
       !S.intros.some(function (i) {
         return i.a === "me" || i.b === "me";
       }),
+  };
+}
+/** The latest members the chamber tools list: Kalayaan Foods, then the first 11 of the network. */
+export function members() {
+  const list = POOL.slice(0, 11).map(function (c) {
+    return { id: c.id, name: c.name, ...memberStanding(c) };
   });
+  list.unshift({ id: "me", name: S.me.name, ...myStanding() });
   return list;
+}
+/** Counts across the whole network for the chamber tools, not only the members listed. */
+export function memberTotals() {
+  const standings = POOL.map(memberStanding).concat(myStanding());
+  return {
+    members: NETWORK,
+    claimed: claimedCount(),
+    active: standings.filter(function (x) {
+      return x.state === "Active";
+    }).length,
+    needIntro: standings.filter(function (x) {
+      return x.state !== "Not claimed" && x.intro;
+    }).length,
+  };
 }
 export function memberRows() {
   const src = ["Company website", "Facebook page", "Public directory listing"];
@@ -1212,7 +1275,7 @@ export function agentRunFor(type: string, need: string): AgentRun {
         type === "customer"
           ? (mine >= 2 ? 21 : 17) + (named ? 4 : 0)
           : Math.min(25, 18 + (mine ? 5 : 0) + (named >= 2 ? 2 : 0));
-      const status = isUnclaimed(c.id)
+      const status = !hasClaimed(c.id)
         ? "unclaimed"
         : AGENT_STATUS[c.id] === "optout"
           ? "optout"
@@ -1226,7 +1289,7 @@ export function agentRunFor(type: string, need: string): AgentRun {
         8 + ((i * 3) % 7),
         c.city === m.city ? 10 : METRO.test(c.city) ? 8 : 5,
         cred,
-        Math.min(13, 4 + Math.round(c.pts / 14)),
+        Math.min(13, 4 + Math.round(pointsOf(c) / 14)),
         Math.min(10, 4 + Math.min(mu, 3) * 2),
       ];
       return {
@@ -1517,14 +1580,11 @@ export function agentBook(A: AgentRun) {
   );
   toast("Meeting booked with " + c.name + ". The handoff package is in ComMail.");
 }
-export function isUnclaimed(id: string) {
-  return AGENT_STATUS[id] === "unclaimed" && !S.team.claimed[id];
-}
 export function teamRec(c: Company): TeamRecord {
   const i = POOL.indexOf(c);
   return {
     i: i,
-    claimDay: isUnclaimed(c.id) ? null : S.team.claimed[c.id] || ((i * 5) % 24) + 1,
+    claimDay: claimDayOf(c.id),
     dayOne: i % 8 !== 5,
     ai: i % 5 !== 1,
     period: 8 + ((i * 7) % 27),
@@ -1759,7 +1819,7 @@ export function teamData(): TeamData {
   recs.forEach(function (x) {
     const id = x.c.id;
     if (S.team.helped[id]) return;
-    if (x.r.claimDay == null) {
+    if (x.r.claimDay == null || x.r.claimDay > D) {
       queue.push({
         id: id,
         name: x.c.name,
@@ -1769,7 +1829,6 @@ export function teamData(): TeamData {
       });
       return;
     }
-    if (x.r.claimDay > D) return;
     if (!x.r.dayOne)
       queue.push({ id: id, name: x.c.name, why: "No lead yet", act: "intro", order: 0 });
     else if (D - x.r.claimDay >= 7 && activeDays(x, D) === 0)
@@ -1779,14 +1838,13 @@ export function teamData(): TeamData {
     return a.order - b.order;
   });
   const optOuts = Object.keys(AGENT_STATUS).filter(function (k) {
-    return AGENT_STATUS[k] === "optout";
+    return AGENT_STATUS[k] === "optout" && hasClaimed(k, D);
   }).length;
   const engagements = Math.floor(D * 1.4) + S.team.agentRuns,
     meetings = Math.floor(D / 5) + Object.keys(S.handoffs).length;
-  const emails = Object.keys(AGENT_STATUS).filter(function (k) {
-      return AGENT_STATUS[k] === "unclaimed";
-    }).length,
-    emailClaims = 1 + Object.keys(S.team.claimed).length;
+  // A claim email went to every Company that has not claimed, and to those a reminder brought in.
+  const emailClaims = Object.keys(S.team.claimed).length,
+    emails = recs.length - claimed.length + emailClaims;
   const engRate = pct(meetings, engagements),
     optRate = pct(optOuts, engagements),
     claimRate = pct(emailClaims, emails),
@@ -1884,7 +1942,7 @@ function deliver(t: Thread, text: string, ai: boolean) {
     }
   }
   emit();
-  if (!co(t.co).silent)
+  if (!co(t.co).silent && hasClaimed(t.co))
     later(1700, function () {
       incoming(t);
     });
@@ -1969,7 +2027,12 @@ const ACT = {
     S.conn[id] = "pending";
     S.leadAct[id] = S.leadAct[id] || "connect";
     actList();
-    if (f >= STRONG_FIT) {
+    if (!hasClaimed(id)) {
+      engineLog(
+        "Connection Request to " + c.name,
+        "It has not claimed its profile, so the request stays pending.",
+      );
+    } else if (f >= STRONG_FIT) {
       engineLog(
         "Connection Request to " + c.name,
         "Fit " + f + " is strong, so it is accepted within seconds.",
@@ -2041,7 +2104,7 @@ const ACT = {
     if (id === "me") {
       const p = byFit(
         POOL.filter(function (c) {
-          return !S.conn[c.id] && !isUnclaimed(c.id) && !c.silent;
+          return !S.conn[c.id] && hasClaimed(c.id) && !c.silent;
         }),
       )[0]!;
       S.intros.unshift({ a: "me", b: p.id });
@@ -2051,7 +2114,7 @@ const ACT = {
     } else {
       const p = co(
         (NEIGHBORS[id] || []).find(function (n) {
-          return !isUnclaimed(n);
+          return hasClaimed(n);
         }) || "maple",
       );
       S.intros.unshift({ a: id, b: p.id });
@@ -2454,6 +2517,9 @@ const ACT = {
         gives: [],
         wants: [],
         rival: false,
+        // A company invited by name: its website isn't known, and it claims as it joins.
+        website: "",
+        claimDay: S.day,
       });
       award("invite", null, true);
       toast(n + " joined and claimed its profile.", "+10 points");
@@ -2513,8 +2579,8 @@ const ACT = {
     }
     S.announcements.unshift({ text: v, day: S.day });
     S.forms.broadcast = "";
-    notify("announce", null, "Your chamber sent an announcement");
-    toast("Sent to all " + NETWORK + " members.");
+    notify("announce", null, CHAMBER.shortName + " sent an announcement");
+    toast("Sent to " + claimedCount() + " members who have claimed.");
     emit();
   },
   spike: function (a: string) {
@@ -2734,14 +2800,17 @@ export function monthlyTop() {
     .reduce(function (a, l) {
       return a + l.pts;
     }, 0);
-  const top = POOL.map(function (c, i) {
-    return {
-      n: c.name,
-      p: Math.round(c.pts * 0.6 * (0.7 + ((i * 7 + month * 13) % 10) / 20)),
-      me: false,
-    };
+  const top = POOL.flatMap(function (c, i) {
+    if (!hasClaimed(c.id)) return [];
+    return [
+      {
+        n: c.name,
+        p: Math.round(pointsOf(c) * 0.6 * (0.7 + ((i * 7 + month * 13) % 10) / 20)),
+        me: false,
+      },
+    ];
   })
-    .concat([{ n: S.me.name, p: mine, me: true }])
+    .concat(hasClaimed("me") ? [{ n: S.me.name, p: mine, me: true }] : [])
     .sort(function (a, b) {
       return b.p - a.p;
     })
@@ -2767,7 +2836,7 @@ export function searchRows(): SearchRow[] | null {
   )
     .map(function (c) {
       const r = score1(c.name, c.ind + " " + c.why, c.offer.concat(c.seek));
-      const b = c.joinedDay ? (S.day - c.joinedDay < 30 ? NEW_BOOST : 0) : compBoost(c.pts);
+      const b = c.joinedDay ? (S.day - c.joinedDay < 30 ? NEW_BOOST : 0) : compBoost(pointsOf(c));
       return { me: false, c: c, r: r, b: b, val: r * (1 + b) };
     })
     .filter(function (x) {
@@ -2792,21 +2861,49 @@ export function trendPoints(d: TeamData) {
   for (let day = 1; day <= d.D; day++) pts.push({ day: day, v: d.wacAt(day) });
   return pts;
 }
+/** The radius of a Company's mark on the network map, and of a small one on a crowded ring. */
+const MARK_RADIUS = 17,
+  SMALL_MARK_RADIUS = 12;
+/** With more Companies than this, the outer ring is drawn as two and its marks shrink, so every
+ * mark stays clear of its neighbours. */
+const CROWDED_RING = 40;
+/** The map's rings: 1st degree, 2nd degree, then everyone further out. */
+const RINGS = [1, 2, 3] as const;
+type Ring = (typeof RINGS)[number];
+const OUTER_RING: Ring = 3;
+/** How far from the centre each ring sits, and the two rings a crowded outer ring becomes. */
+const RING_RADIUS: Record<Ring, number> = { 1: 118, 2: 205, 3: 292 },
+  SPLIT_RING_RADIUS = [266, 322] as const;
 export function networkLayout() {
   const depth = degrees(),
     cx = 350,
-    cy = 350,
-    R: Record<number, number> = { 1: 118, 2: 205, 3: 292 };
-  const rings: Record<number, Company[]> = { 1: [], 2: [], 3: [] };
-  POOL.forEach(function (c) {
+    cy = 350;
+  const ringOf = function (c: Company): Ring {
     const d = depth[c.id];
-    rings[d === 1 ? 1 : d === 2 ? 2 : 3]!.push(c);
+    return d === 1 ? 1 : d === 2 ? 2 : OUTER_RING;
+  };
+  const rings: Record<Ring, Company[]> = { 1: [], 2: [], 3: [] };
+  POOL.forEach(function (c) {
+    rings[ringOf(c)].push(c);
   });
+  const crowded = rings[OUTER_RING].length > CROWDED_RING;
   const pos: Record<string, { x: number; y: number }> = { me: { x: cx, y: cy } };
-  [1, 2, 3].forEach(function (r) {
-    rings[r]!.forEach(function (c, i) {
-      const a = (i / rings[r]!.length) * Math.PI * 2 - Math.PI / 2 + r * 0.2;
-      pos[c.id] = { x: cx + R[r]! * Math.cos(a), y: cy + R[r]! * Math.sin(a) };
+  RINGS.forEach(function (r) {
+    const list = rings[r],
+      split = r === OUTER_RING && crowded,
+      inner = Math.ceil(list.length / 2),
+      outer = list.length - inner;
+    list.forEach(function (c, i) {
+      // A split ring alternates between its two rings, each evenly spaced.
+      const onOuter = split && i % 2 === 1,
+        turn = !split
+          ? i / list.length
+          : onOuter
+            ? (Math.floor(i / 2) + 0.5) / outer
+            : i / 2 / inner,
+        a = turn * Math.PI * 2 - Math.PI / 2 + r * 0.2,
+        radius = split ? SPLIT_RING_RADIUS[onOuter ? 1 : 0] : RING_RADIUS[r];
+      pos[c.id] = { x: cx + radius * Math.cos(a), y: cy + radius * Math.sin(a) };
     });
   });
   const lines = EDGES.map(function (p) {
@@ -2817,14 +2914,21 @@ export function networkLayout() {
     }),
   );
   const nodes = POOL.map(function (c) {
-    const d = depth[c.id];
-    return { id: c.id, ini: c.ini, name: c.name, cls: d === 1 ? "d1" : d === 2 ? "d2" : "d3" };
+    const ring = ringOf(c),
+      small = crowded && ring === OUTER_RING;
+    return {
+      id: c.id,
+      ini: c.ini,
+      name: c.name,
+      cls: "d" + ring + (small ? " sm" : ""),
+      radius: small ? SMALL_MARK_RADIUS : MARK_RADIUS,
+    };
   });
   return {
     pos: pos,
     lines: lines,
     nodes: nodes,
-    counts: { 1: rings[1]!.length, 2: rings[2]!.length, 3: rings[3]!.length },
+    counts: { 1: rings[1].length, 2: rings[2].length, 3: rings[3].length },
   };
 }
 
@@ -3604,7 +3708,7 @@ function openCompanies() {
   return POOL.filter(function (c) {
     return (
       S.conn[c.id] !== "connected" &&
-      !isUnclaimed(c.id) &&
+      hasClaimed(c.id) &&
       !S.incoming.some(function (r) {
         return r.co === c.id;
       })

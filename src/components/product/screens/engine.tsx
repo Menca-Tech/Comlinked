@@ -71,7 +71,7 @@ function NetworkMap() {
             y2={map.pos[l.b]!.y.toFixed(1)}
           />
         ))}
-        {map.nodes.map((n) => node(n.id, n.ini, n.name, n.cls, 17))}
+        {map.nodes.map((n) => node(n.id, n.ini, n.name, n.cls, n.radius))}
         {node("me", S.me.ini, S.me.name, "d0", 26)}
       </svg>
       <div className="a-row e-legend">

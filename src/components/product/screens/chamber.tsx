@@ -13,7 +13,17 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import type { TextField } from "@/services/comlinked";
-import { act, cap, co, memberRows, members, NETWORK, POOL, setForm } from "@/services/comlinked";
+import {
+  act,
+  cap,
+  CHAMBER,
+  co,
+  memberRows,
+  members,
+  memberTotals,
+  POOL,
+  setForm,
+} from "@/services/comlinked";
 
 const check = <Check className="a-ic" aria-hidden="true" />;
 const clock = <Clock className="a-ic" aria-hidden="true" />;
@@ -185,7 +195,9 @@ export function Chamber() {
     <PageHead
       title="Members"
       back={<Back label="Back to company view" onClick={() => act.nav("dash")} />}
-      tail={<span className="a-small">Community manager view, example chamber</span>}
+      tail={
+        <span className="a-small">{CHAMBER.shortName} community manager view, example members</span>
+      }
     />
   );
   if (!cm.imported) {
@@ -199,19 +211,18 @@ export function Chamber() {
       </>
     );
   }
-  const claimedN = list.filter((x) => x.state !== "Not claimed").length;
-  const activeN = list.filter((x) => x.state === "Active").length;
-  const needN = list.filter((x) => x.intro).length;
+  const totals = memberTotals();
   return (
     <>
       {head}
       <p className="t-sum">
-        <b>{claimedN}</b> claimed · <b>{activeN}</b> active · <b>{needN}</b> need an intro
+        <b>{totals.members}</b> members · <b>{totals.claimed}</b> claimed · <b>{totals.active}</b>{" "}
+        active · <b>{totals.needIntro}</b> need an intro
       </p>
       <div className="w-2">
         <div className="w-col a-surface">
           <section className="a-sec">
-            <h2 className="a-h2">Latest 12 members</h2>
+            <h2 className="a-h2">Latest {list.length} members</h2>
             <div className="a-list">
               {list.map((x) => (
                 <button
@@ -255,7 +266,7 @@ export function Chamber() {
             </Btn>
           </section>
           <section className="a-card">
-            <h2 className="a-h2">Announcement to all members</h2>
+            <h2 className="a-h2">Announcement to members</h2>
             <div>
               <label className="a-label" htmlFor="f-b2">
                 Message
@@ -270,7 +281,7 @@ export function Chamber() {
               />
             </div>
             <Btn cls="o block" onClick={() => act.broadcast()}>
-              Send to all {NETWORK} members
+              Send to {totals.claimed} claimed members
             </Btn>
           </section>
           <section className="a-sec">
