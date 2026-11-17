@@ -418,6 +418,10 @@ These follow from the decisions but were not put to the user one by one. Any of 
 - Tibay Crates and Pallets claims on Day 18, so that its win with Malaya Export Traders can be dated Day 25. The other two earlier wins are dated Day 15 and Day 19.
 - A Company that has not claimed is found in search by its name and industry only. Its connections are not shown, no follow-up is suggested on a message to it, and the AI Draft of a first message to it uses its industry and city.
 - On Day 14 three of Kalayaan's five leads have not claimed, which is in line with 40 of 100 having claimed. Only Day 1's list was fixed by a decision.
+- On the ask, "What your members get" lists the four benefits by their titles only. The first benefit's text on the For Chambers page says ComLinked sends the claim link, which the ask must not say, and the website's wording stays as it is until Richard confirms who sends the links. Added while building ticket 04.
+- After the last Stop, leaving the ask for any other screen is exploring. The Story Bar becomes one line, "Pilot Preview · exploring", with "Back to stop 6", and the member's own top bar shows.
+- A drafted profile's claim status reads "Claimed" once the Company has claimed, and "Claim link ready for ECCP to send" until then.
+- The Member List's rows show each name with its website under it, in a box that scrolls, so 100 rows do not push the rest of the screen away.
 
 ### Clashes the user accepted knowingly
 
