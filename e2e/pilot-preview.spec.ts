@@ -70,6 +70,11 @@ const backLink = (page: Page) => storyBar(page).getByRole("link", { name: "Back"
 const mainHeading = (page: Page) => page.locator("main h1");
 const banner = (page: Page) => page.getByRole("banner").first();
 const tabRow = (page: Page) => page.getByRole("navigation", { name: "ComDash sections" });
+/** A section in the Company's top bar, whose name may end with a count. */
+const section = (page: Page, name: string) =>
+  page
+    .getByRole("navigation", { name: "Product main" })
+    .getByRole("button", { name: new RegExp(`^${name}`) });
 const viewAs = (page: Page) => page.getByRole("group", { name: "View as" });
 const guideButton = (page: Page) => page.getByRole("button", { name: "Demo guide" });
 const guideDialog = (page: Page) => page.getByRole("dialog");
@@ -280,7 +285,7 @@ test.describe("the Pilot Preview", () => {
       "aria-current",
       "page",
     );
-    await page.locator(".a-web-nav .nav-link", { hasText: "ComMail" }).click();
+    await section(page, "ComMail").click();
     await page.locator(".a-li", { hasText: "Nordhavn Freight Forwarders" }).click();
     await expect(page.locator(".a-sys")).toHaveText([
       "Both companies confirmed: We met.",
@@ -312,7 +317,7 @@ test.describe("the Pilot Preview", () => {
     await tabRow(page).getByRole("link", { name: "Interest Signals" }).click();
     await expect(page).toHaveURL(/\/app\/dash\/signals$/);
     await expect(storyBar(page)).toContainText("4 of 6");
-    await page.locator(".a-web-nav .nav-link", { hasText: "Leads" }).click();
+    await section(page, "Leads").click();
     await expect(page).toHaveURL(/\/app\/leads$/);
     await expect(storyBar(page)).toContainText("Day 14 · The member, two weeks in");
     await nextLink(page).click();
@@ -362,6 +367,10 @@ test.describe("the Pilot Preview", () => {
     await expectPlainBar(null);
     await openStop(page, stop(1));
     await expectPlainBar("Community manager for ECCP");
+    await openStop(page, stop(2));
+    // The Company's own bar, before it has claimed: its logo leads home, with no Seat label.
+    await expect(banner(page).getByRole("button", { name: "ComLinked home" })).toBeVisible();
+    await expect(banner(page)).not.toContainText(/Community manager|read-only/);
     await openStop(page, stop(5));
     await expectPlainBar("ECCP, read-only");
     await openStop(page, stop(6));
@@ -857,7 +866,7 @@ test.describe("Stop 2, the message from ECCP", () => {
     await page.getByRole("button", { name: "Go to my ComDash" }).click();
     await tabRow(page).getByRole("link", { name: "Profile", exact: true }).click();
     await page.getByRole("switch", { name: "AI Assistant" }).click();
-    await page.locator(".a-web-nav .nav-link", { hasText: "Leads" }).click();
+    await section(page, "Leads").click();
     await page.locator('[data-lead="nordhavn"] .a-pick').click();
     await page
       .locator("#lead-detail")
@@ -1027,7 +1036,7 @@ test.describe("exploring after Stop 6", () => {
     await expect(viewAs(page)).toHaveCount(0);
     await expect(page.locator(".cd-cards > .cd-panel")).toHaveCount(3);
     await expect(guideButton(page)).toHaveCount(0);
-    await page.locator(".a-web-nav .nav-link", { hasText: "Leads" }).click();
+    await section(page, "Leads").click();
     await expect(page).toHaveURL(/\/app\/leads$/);
     await expect(storyBar(page)).toContainText(EXPLORING);
     await expect(guideButton(page)).toHaveCount(0);
@@ -1212,7 +1221,7 @@ test.describe("Stop 5, ECCP's Activity View", () => {
       .getByText(/^\d+\. /)
       .allTextContents();
     await openStop(page, stop(4));
-    await page.locator(".a-web-nav .nav-link", { hasText: "Wins" }).click();
+    await section(page, "Wins").click();
     await expect(page).toHaveURL(/\/app\/wins$/);
     await expect(page.getByRole("article")).toHaveText(wall);
     await expect(page.locator("#monthly").getByText(/^\d+\. /)).toHaveText(top);
@@ -1537,5 +1546,65 @@ test.describe("the Activity View's layout and accessibility", () => {
     await expectAccessible(page);
     await openStop(page, stop(1));
     await expectAccessible(page);
+  });
+});
+
+test.describe("the Run of Show", () => {
+  // docs/presentations/2026-11-17-pilot-preview-run-of-show.md: every click it names, in its order.
+  test("every click it names is on screen, Stop by Stop", async ({ page }) => {
+    await page.goto(OPENING);
+    await page.getByRole("link", { name: "Start", exact: true }).click();
+
+    await expectStop(page, stop(1));
+    await page.getByRole("button", { name: "Run the import again" }).click();
+    await page.getByRole("button", { name: "Build profiles", exact: true }).click();
+    await expect(memberImport(page).getByText(IMPORT_RESULT)).toBeVisible({ timeout: 15_000 });
+    await memberRow(page, "Maple Bay Grocers").getByRole("button").click();
+    await expect(mainHeading(page)).toHaveText("Draft profile");
+    await page.getByRole("button", { name: "Back to chamber tools" }).click();
+    await nextLink(page).click();
+
+    await expectStop(page, stop(2));
+    await claimMessage(page).getByRole("button", { name: "Claim your profile" }).click();
+    await claimFromFirstScreen(page);
+    await page.getByRole("button", { name: /^Nordhavn Freight Forwarders/ }).click();
+    await page.getByRole("button", { name: "Message", exact: true }).click();
+    await page.getByRole("button", { name: "Send", exact: true }).click();
+    // Sent: the conversation now leads with the message.
+    await expect(
+      page.getByRole("button", { name: /^Nordhavn Freight Forwarders Hello Nordhavn/ }),
+    ).toBeVisible();
+    await nextLink(page).click();
+
+    await expectStop(page, stop(3));
+    await nextLink(page).click();
+
+    await expectStop(page, stop(4));
+    await tabRow(page).getByRole("link", { name: "Interest Signals" }).click();
+    await section(page, "ComMail").click();
+    await page
+      .getByRole("button", { name: /^Nordhavn Freight Forwarders.*We did business/ })
+      .click();
+    await expect(page.getByRole("button", { name: "We did business", exact: true })).toBeVisible();
+    await section(page, "Wins").click();
+    await expect(page).toHaveURL(/\/app\/wins$/);
+    await nextLink(page).click();
+
+    await expectStop(page, stop(5));
+    await statusFilter(page).getByRole("button", { name: "Needs an intro 4" }).click();
+    await sideStep(page).click();
+    await page.getByRole("button", { name: "Send introduction" }).click();
+    await backToView(page).click();
+    await nextLink(page).click();
+
+    await expectStop(page, stop(6));
+    await expect(page.getByText("ECCP gives two things")).toBeVisible();
+    await expect(emailLink(page)).toBeVisible();
+
+    await presenterGuide(page);
+    await expect(
+      guideDialog(page).getByRole("button", { name: "Possible future pricing", exact: true }),
+    ).toBeVisible();
+    await closeGuide(page);
   });
 });
