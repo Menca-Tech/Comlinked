@@ -2359,43 +2359,52 @@
   border-color: var(--color-accent-strong);
   box-shadow: inset 0 0 0 1px var(--color-accent-strong);
 }
-/* Shared ComDash pieces at the prototype's sizes, on the Interest Signals tab only. */
+/* Shared ComDash pieces at the prototype's sizes, on the Interest Signals tab and the chamber's
+   Activity View. */
 .cl-product .cd-signals {
   display: flex;
   flex-direction: column;
   gap: 16px;
   min-width: 0;
 }
-.cl-product .cd-signals .cd-panel {
+.cl-product .cd-signals .cd-panel,
+.cl-product .av .cd-panel {
   border-radius: 12px;
   box-shadow: none;
   padding: 16px;
   gap: 10px;
 }
-.cl-product .cd-signals .cd-ph {
+.cl-product .cd-signals .cd-ph,
+.cl-product .av .cd-ph {
   gap: 8px;
 }
-.cl-product .cd-signals .cd-ph .a-h2 {
+.cl-product .cd-signals .cd-ph .a-h2,
+.cl-product .av .cd-ph .a-h2 {
   font-size: 15.5px;
   line-height: 1.3;
 }
-.cl-product .cd-signals .cd-ph .cd-note {
+.cl-product .cd-signals .cd-ph .cd-note,
+.cl-product .av .cd-ph .cd-note {
   font-size: 12.5px;
 }
-.cl-product .cd-signals .cd-tile {
+.cl-product .cd-signals .cd-tile,
+.cl-product .av .cd-tile {
   gap: 4px;
 }
-.cl-product .cd-signals .cd-k {
+.cl-product .cd-signals .cd-k,
+.cl-product .av .cd-k {
   min-height: 2.6em;
   font: 400 12.5px/1.3 var(--font-text);
 }
-.cl-product .cd-signals .cd-v {
+.cl-product .cd-signals .cd-v,
+.cl-product .av .cd-v {
   font: 700 28px/1.1 var(--font-title);
 }
 .cl-product .cd-signals .cd-d {
   font: 600 12px/1.4 var(--font-text);
 }
-.cl-product .cd-signals .cd-co strong {
+.cl-product .cd-signals .cd-co strong,
+.cl-product .av .cd-co strong {
   font-size: 14.5px;
 }
 .cl-product .cd-signals .cd-level {
@@ -3174,6 +3183,117 @@
   .cl-product .cd-row3 {
     grid-template-columns: minmax(0, 1fr) 320px;
     align-items: start;
+  }
+}
+
+/* The chamber's Activity View: ComDash's tiles, panels, chips and table at the Interest Signals
+   tab's sizes. On a phone the Community Manager's tools come first, then the figures and the
+   members, then the wins and Monthly Top Companies. On a laptop the tools head the side column. */
+.cl-product .av,
+.cl-product .av-main,
+.cl-product .av-side,
+.cl-product .av-tools {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+.cl-product .av-grid {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+.cl-product .av-of {
+  font: 400 15px/1 var(--font-text);
+  color: var(--color-muted);
+}
+.cl-product .av .mi {
+  background: var(--color-surface);
+  border: 1px solid var(--hair);
+  border-radius: 12px;
+  box-shadow: none;
+  padding: 16px;
+  gap: 10px;
+}
+.cl-product .av .mi > .a-h2 {
+  font-size: 15.5px;
+  line-height: 1.3;
+}
+.cl-product .av-member {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.cl-product .av-member .a-mono {
+  width: 32px;
+  height: 32px;
+  font-size: 12.5px;
+}
+.cl-product span.cd-co {
+  cursor: auto;
+}
+.cl-product span.cd-co:hover strong {
+  color: var(--color-ink);
+}
+.cl-product .cd-level.av-active {
+  background: var(--color-accent-tint);
+  color: var(--color-accent-strong);
+}
+.cl-product .cd-level.av-quiet {
+  background: var(--color-sunken);
+  color: var(--color-ink-2);
+}
+.cl-product .cd-level.av-intro {
+  background: var(--color-error-tint);
+  color: var(--color-error);
+}
+.cl-product .cd-level.av-unclaimed {
+  color: var(--color-muted);
+  box-shadow: inset 0 0 0 1px var(--hair);
+}
+.cl-product .a-story-step {
+  align-self: flex-start;
+  margin-top: 6px;
+}
+@media (min-width: 761px) {
+  .cl-product .cd-tiles.av-tiles {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+@media (min-width: 900px) {
+  .cl-product .av {
+    gap: 20px;
+  }
+}
+@media (min-width: 1101px) {
+  .cl-product .av-grid {
+    grid-template-columns: minmax(0, 1fr) 320px;
+    grid-template-rows: auto 1fr;
+    align-items: start;
+  }
+  .cl-product .av-main {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+  }
+  .cl-product .av-tools {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .cl-product .av-side {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+  .cl-product .av-tools ~ .av-side {
+    grid-row: 2;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cl-product .av *,
+  .cl-product .av *::before,
+  .cl-product .av *::after {
+    transition: none !important;
+    animation: none !important;
   }
 }
 

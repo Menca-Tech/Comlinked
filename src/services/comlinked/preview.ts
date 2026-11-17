@@ -54,6 +54,11 @@ const STOPS: Omit<PreviewStop, "number" | "href">[] = [
     seat: "chamber-contact",
     screen: paths.product.chamber,
     state: "two-weeks",
+    sideStep: {
+      seat: "community-manager",
+      open: "See the community manager’s side",
+      back: `Back to ${CHAMBER_NAME}’s view`,
+    },
   },
   {
     day: null,

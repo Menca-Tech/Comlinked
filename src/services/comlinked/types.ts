@@ -30,8 +30,70 @@ export interface Company {
 export type PublicView = Pick<Company, "id" | "name" | "ini" | "ind" | "city" | "website"> &
   ({ claimed: true; description: string; offer: string[]; seek: string[] } | { claimed: false });
 
+/** How a Company uses ComLinked once it has claimed: fixed data held with the Company, so its
+ * status in the Activity View never depends on another Company's dealings. */
+export interface ActivityRecord {
+  /** Whether it had a Lead on the day it claimed. Without one it needs an Intro. */
+  firstDayLead: boolean;
+  /** The days between the days it acts, counted from its claim day, or null when it acts only on
+   * that day. */
+  actsEvery: number | null;
+}
+
+/** A Company in the chamber's network, with its activity record. */
+export interface Member extends Company {
+  activity: ActivityRecord;
+}
+
 /** One example Company as its data file holds it. The network adds the rest in data.ts. */
-export type MemberRow = Omit<Company, "website" | "rival">;
+export type MemberRow = Omit<Member, "website" | "rival">;
+
+/** A member's one status in the Activity View, in the order the filters list them. */
+export type MemberStatus = "Active" | "Quiet" | "Needs an intro" | "Not yet claimed";
+
+/** One member on the Activity View: its name and status, and whether a message is waiting for it
+ * to claim. Nothing else about the member, and never who is waiting. */
+export interface ActivityRow {
+  id: string;
+  name: string;
+  ini: string;
+  status: MemberStatus;
+  waiting: boolean;
+}
+
+/** One of the Activity View's figures. `of` is the whole it counts out of, where it has one. */
+export interface ActivityTile {
+  key: "claimed" | "active" | "needIntro" | "deals" | "wins";
+  label: string;
+  value: number;
+  of: number | null;
+}
+
+/** What the chamber's Activity View shows on a day: its figures, how many members it has, the
+ * count for each status, and the members in the order the list shows them. */
+export interface ActivityViewData {
+  day: number;
+  tiles: ActivityTile[];
+  memberCount: number;
+  counts: { status: MemberStatus; count: number }[];
+  rows: ActivityRow[];
+}
+
+/** A member the Community Manager can introduce: one that has claimed. */
+export type IntroChoice = Pick<ActivityRow, "id" | "name">;
+
+/** The members an Intro can name, those needing one apart from the rest. */
+export interface IntroChoices {
+  needIntro: IntroChoice[];
+  others: IntroChoice[];
+}
+
+/** An Intro between two Companies, on the day it was made. */
+export interface Intro {
+  a: string;
+  b: string;
+  day: number;
+}
 
 /** The message a member receives from its chamber, inviting it to claim its profile. The chamber
  * approves the real wording. */
@@ -416,12 +478,9 @@ export interface AgentStep {
 }
 
 export interface TeamRecord {
-  i: number;
   claimDay: number | null;
-  dayOne: boolean;
   ai: boolean;
   period: number;
-  tier: number;
 }
 
 export interface TeamRow {
@@ -487,7 +546,8 @@ export interface SimState {
   invites: Invite[];
   reps: string[];
   announcements: { text: string; day: number }[];
-  intros: { a: string; b: string }[];
+  /** Every Intro made, by the Community Manager or by staff, newest first. */
+  intros: Intro[];
   digest: Digest | null;
   rankAtMorning: number | null;
   cm: {
@@ -510,7 +570,6 @@ export interface SimState {
     reminded: Record<string, number>;
     /** Claims that followed a staff reminder this session, by day. Read with claimDayOf(). */
     claimed: Record<string, number>;
-    helped: Record<string, number>;
     spikes: Record<string, string>;
     log: { day: number; text: string }[];
     agentRuns: number;
@@ -532,6 +591,8 @@ export interface SimState {
   /** Whether the viewer has left the Pilot Preview's last Stop to look around the member's side
    * on their own. */
   exploring: boolean;
+  /** Whether the Stop's side step is open, showing the same screen in another Seat. */
+  sideStepShown: boolean;
   laterItems: LaterItems;
 }
 
@@ -549,6 +610,13 @@ export type Seat = "community-manager" | "company" | "chamber-contact";
 /** How a Stop's state is prepared. The simulation builds each one. */
 export type StopState = "opening" | "member-list" | "before-claim" | "next-morning" | "two-weeks";
 
+/** A way from a Stop to the same screen in another Seat, and the words of the way there and back. */
+export interface SideStep {
+  seat: Seat;
+  open: string;
+  back: string;
+}
+
 /** The Pilot Preview's Opening (number 0) or one of its Stops. */
 export interface PreviewStop {
   number: number;
@@ -561,6 +629,8 @@ export interface PreviewStop {
   /** Its own address: the screen, marked with the Stop. */
   href: string;
   state: StopState;
+  /** The side step a Stop offers, if any. */
+  sideStep?: SideStep;
 }
 
 export interface ToastAction {

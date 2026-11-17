@@ -1,8 +1,10 @@
 // Example data for the ComLinked product simulation, copied from the HTML mockup.
 import { EUROPEAN_EDGES, EUROPEAN_MEMBERS } from "@/services/comlinked/european-members";
 import type {
+  ActivityRecord,
   Company,
   Deal,
+  Member,
   MyCompany,
   PlanView,
   PlanViewRules,
@@ -32,6 +34,8 @@ type RawCompany = [
   seek: string[],
   /** The day the Company claims its profile, or null when it never does. */
   claimDay: number | null,
+  /** How it uses ComLinked once it has claimed. */
+  activity: ActivityRecord,
 ];
 /** Every example company is invented, and so is its website, on a reserved example domain. */
 function websiteOf(id: string) {
@@ -49,6 +53,7 @@ const RAW: RawCompany[] = [
     ["Grocery retail", "Shelf placement"],
     ["Filipino snacks", "Frozen foods", "Private label"],
     1,
+    { firstDayLead: true, actsEvery: 2 },
   ],
   [
     "pack",
@@ -61,6 +66,7 @@ const RAW: RawCompany[] = [
     ["Food-grade pouches", "Printed boxes"],
     ["Food manufacturers", "Exporters"],
     1,
+    { firstDayLead: true, actsEvery: 3 },
   ],
   [
     "north",
@@ -73,6 +79,7 @@ const RAW: RawCompany[] = [
     ["Chilled delivery", "Cold-chain freight"],
     ["Food manufacturers", "Grocers"],
     null,
+    { firstDayLead: true, actsEvery: 7 },
   ],
   [
     "luntian",
@@ -85,6 +92,7 @@ const RAW: RawCompany[] = [
     ["Distribution", "Retail accounts"],
     ["Filipino snacks", "Organic lines"],
     1,
+    { firstDayLead: true, actsEvery: 2 },
   ],
   [
     "tala",
@@ -97,6 +105,7 @@ const RAW: RawCompany[] = [
     ["Food labels", "Short runs"],
     ["Food brands"],
     1,
+    { firstDayLead: true, actsEvery: 14 },
   ],
   [
     "bayan",
@@ -109,6 +118,7 @@ const RAW: RawCompany[] = [
     ["Frozen storage"],
     ["Exporters", "Frozen foods"],
     15,
+    { firstDayLead: false, actsEvery: 6 },
   ],
   [
     "sari",
@@ -121,6 +131,7 @@ const RAW: RawCompany[] = [
     ["Wholesale", "Store delivery"],
     ["Packaged snacks"],
     2,
+    { firstDayLead: true, actsEvery: 13 },
   ],
   [
     "hapag",
@@ -133,6 +144,7 @@ const RAW: RawCompany[] = [
     ["Restaurant accounts"],
     ["Frozen foods", "Lumpia"],
     1,
+    { firstDayLead: true, actsEvery: 16 },
   ],
   [
     "kainan",
@@ -145,6 +157,7 @@ const RAW: RawCompany[] = [
     ["Event catering"],
     ["Frozen foods"],
     4,
+    { firstDayLead: true, actsEvery: 3 },
   ],
   [
     "malaya",
@@ -157,6 +170,7 @@ const RAW: RawCompany[] = [
     ["Export handling"],
     ["Shelf-stable snacks"],
     1,
+    { firstDayLead: true, actsEvery: 20 },
   ],
   [
     "tibay",
@@ -169,6 +183,7 @@ const RAW: RawCompany[] = [
     ["Export pallets"],
     ["Exporters"],
     18,
+    { firstDayLead: true, actsEvery: 7 },
   ],
   [
     "sinag",
@@ -181,6 +196,7 @@ const RAW: RawCompany[] = [
     ["Rooftop solar"],
     ["Food plants"],
     null,
+    { firstDayLead: true, actsEvery: 7 },
   ],
   [
     "agos",
@@ -193,6 +209,7 @@ const RAW: RawCompany[] = [
     ["Water testing"],
     ["Food plants"],
     null,
+    { firstDayLead: true, actsEvery: 7 },
   ],
   [
     "lakbay",
@@ -205,6 +222,7 @@ const RAW: RawCompany[] = [
     ["Hotel accounts"],
     ["Local snacks"],
     1,
+    { firstDayLead: false, actsEvery: 5 },
   ],
   [
     "buhay",
@@ -217,6 +235,7 @@ const RAW: RawCompany[] = [
     ["Retail counters"],
     ["Healthy snacks"],
     8,
+    { firstDayLead: true, actsEvery: 3 },
   ],
   [
     "tanim",
@@ -229,6 +248,7 @@ const RAW: RawCompany[] = [
     ["Bananas", "Ube"],
     ["Food manufacturers"],
     1,
+    { firstDayLead: true, actsEvery: 4 },
   ],
   [
     "hilaga",
@@ -241,6 +261,7 @@ const RAW: RawCompany[] = [
     ["Spice blends"],
     ["Snack producers"],
     1,
+    { firstDayLead: true, actsEvery: null },
   ],
   [
     "daloy",
@@ -253,6 +274,7 @@ const RAW: RawCompany[] = [
     ["Van rental"],
     ["Distributors"],
     null,
+    { firstDayLead: true, actsEvery: 7 },
   ],
   [
     "alon",
@@ -265,6 +287,7 @@ const RAW: RawCompany[] = [
     ["Product photos"],
     ["Food brands"],
     24,
+    { firstDayLead: true, actsEvery: 5 },
   ],
   [
     "pandayan",
@@ -277,6 +300,7 @@ const RAW: RawCompany[] = [
     ["Machine servicing"],
     ["Snack plants"],
     28,
+    { firstDayLead: true, actsEvery: 9 },
   ],
   [
     "bukas",
@@ -289,6 +313,7 @@ const RAW: RawCompany[] = [
     ["Office canteens"],
     ["Packaged snacks"],
     2,
+    { firstDayLead: true, actsEvery: 16 },
   ],
   [
     "bigas",
@@ -301,6 +326,7 @@ const RAW: RawCompany[] = [
     ["Milled rice"],
     ["Grocery retailers", "Packaging"],
     1,
+    { firstDayLead: false, actsEvery: 3 },
   ],
   [
     "kapwa",
@@ -313,6 +339,7 @@ const RAW: RawCompany[] = [
     ["Corn chips"],
     ["Grocery retailers", "Packaging"],
     1,
+    { firstDayLead: true, actsEvery: 1 },
   ],
   [
     "lasa",
@@ -325,6 +352,7 @@ const RAW: RawCompany[] = [
     ["Frozen siomai"],
     ["Cold-chain freight", "Grocery retailers"],
     1,
+    { firstDayLead: true, actsEvery: 2 },
   ],
   [
     "ginhawa",
@@ -337,6 +365,7 @@ const RAW: RawCompany[] = [
     ["Baking ingredients"],
     ["Grocery retailers"],
     1,
+    { firstDayLead: true, actsEvery: null },
   ],
   [
     "masagana",
@@ -349,6 +378,7 @@ const RAW: RawCompany[] = [
     ["Fresh dairy"],
     ["Cold-chain freight", "Grocery retailers"],
     1,
+    { firstDayLead: true, actsEvery: 18 },
   ],
   [
     "sariwa",
@@ -361,6 +391,7 @@ const RAW: RawCompany[] = [
     ["Fresh produce"],
     ["Grocery retailers", "Cold-chain freight"],
     1,
+    { firstDayLead: true, actsEvery: null },
   ],
   [
     "dagat",
@@ -373,6 +404,7 @@ const RAW: RawCompany[] = [
     ["Frozen seafood"],
     ["Cold-chain freight", "Restaurants"],
     1,
+    { firstDayLead: true, actsEvery: 21 },
   ],
   [
     "tamis",
@@ -385,6 +417,7 @@ const RAW: RawCompany[] = [
     ["Filipino sweets"],
     ["Grocery retailers", "Packaging"],
     1,
+    { firstDayLead: true, actsEvery: 3 },
   ],
   [
     "palengke",
@@ -397,6 +430,7 @@ const RAW: RawCompany[] = [
     ["Online grocery"],
     ["Filipino snacks", "Frozen foods"],
     1,
+    { firstDayLead: false, actsEvery: 4 },
   ],
   [
     "paaralan",
@@ -409,6 +443,7 @@ const RAW: RawCompany[] = [
     ["School canteens"],
     ["Packaged snacks"],
     3,
+    { firstDayLead: true, actsEvery: 14 },
   ],
   [
     "tindahan",
@@ -421,6 +456,7 @@ const RAW: RawCompany[] = [
     ["Convenience retail"],
     ["Packaged snacks"],
     5,
+    { firstDayLead: true, actsEvery: 12 },
   ],
   [
     "biyahe",
@@ -433,6 +469,7 @@ const RAW: RawCompany[] = [
     ["Same-day delivery"],
     ["Food manufacturers"],
     20,
+    { firstDayLead: true, actsEvery: 4 },
   ],
   [
     "kahon",
@@ -445,6 +482,7 @@ const RAW: RawCompany[] = [
     ["Shipping cartons"],
     ["Food manufacturers"],
     15,
+    { firstDayLead: true, actsEvery: 6 },
   ],
   [
     "selyo",
@@ -457,6 +495,7 @@ const RAW: RawCompany[] = [
     ["Product registration"],
     ["Food manufacturers"],
     22,
+    { firstDayLead: true, actsEvery: 10 },
   ],
   [
     "sulit",
@@ -469,6 +508,7 @@ const RAW: RawCompany[] = [
     ["Bookkeeping"],
     ["Small manufacturers"],
     null,
+    { firstDayLead: true, actsEvery: 7 },
   ],
   [
     "himig",
@@ -481,6 +521,7 @@ const RAW: RawCompany[] = [
     ["Corporate events"],
     ["Local snacks"],
     null,
+    { firstDayLead: true, actsEvery: 7 },
   ],
   [
     "gabay",
@@ -493,6 +534,7 @@ const RAW: RawCompany[] = [
     ["Export advice"],
     ["Food manufacturers"],
     null,
+    { firstDayLead: false, actsEvery: 7 },
   ],
   [
     "kalye",
@@ -505,9 +547,12 @@ const RAW: RawCompany[] = [
     ["Food carts"],
     ["Frozen foods"],
     null,
+    { firstDayLead: true, actsEvery: 7 },
   ],
 ];
-export const POOL: Company[] = RAW.map(function (r) {
+/** The chamber's network, Kalayaan Foods aside: the original Companies, then the European-style
+ * members. */
+export const POOL: Member[] = RAW.map(function (r) {
   return {
     id: r[0],
     name: r[1],
@@ -524,6 +569,7 @@ export const POOL: Company[] = RAW.map(function (r) {
     pts: 0,
     website: websiteOf(r[0]),
     claimDay: r[9],
+    activity: r[10],
   };
 });
 POOL.find(function (c) {

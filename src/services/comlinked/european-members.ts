@@ -23,6 +23,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["foodmfg", "snacks", "export", "manufacturing"],
     pts: 96,
     claimDay: 1,
+    activity: { firstDayLead: true, actsEvery: 2 },
   },
   {
     id: "vanderhoek",
@@ -38,6 +39,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["gourmet", "wine", "export"],
     pts: 64,
     claimDay: 16,
+    activity: { firstDayLead: true, actsEvery: 5 },
   },
   {
     id: "albaport",
@@ -53,6 +55,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["gourmet", "manufacturing"],
     pts: 52,
     claimDay: null,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
   {
     id: "kestrel",
@@ -68,6 +71,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["pharma", "manufacturing"],
     pts: 40,
     claimDay: null,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
   {
     id: "mareva",
@@ -83,6 +87,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["export", "beverages"],
     pts: 34,
     claimDay: null,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
   {
     id: "albrecht",
@@ -98,6 +103,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["materials", "automation"],
     pts: 88,
     claimDay: 7,
+    activity: { firstDayLead: true, actsEvery: 15 },
   },
   {
     id: "vossberg",
@@ -113,6 +119,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["manufacturing"],
     pts: 72,
     claimDay: null,
+    activity: { firstDayLead: false, actsEvery: 7 },
   },
   {
     id: "lindqvist",
@@ -128,6 +135,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["water", "construction"],
     pts: 46,
     claimDay: null,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
   {
     id: "caravel",
@@ -143,6 +151,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["engineering", "construction"],
     pts: 58,
     claimDay: null,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
   {
     id: "heliotek",
@@ -158,6 +167,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["manufacturing", "hotels", "property"],
     pts: 80,
     claimDay: 10,
+    activity: { firstDayLead: true, actsEvery: 4 },
   },
   {
     id: "windbrook",
@@ -173,6 +183,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["engineering", "manufacturing"],
     pts: 38,
     claimDay: null,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
   {
     id: "aquaterra",
@@ -188,6 +199,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["hotels", "manufacturing"],
     pts: 54,
     claimDay: null,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
   {
     id: "montclair",
@@ -203,6 +215,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["construction", "hotels"],
     pts: 62,
     claimDay: 26,
+    activity: { firstDayLead: true, actsEvery: 8 },
   },
   {
     id: "strand",
@@ -218,6 +231,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["materials", "design"],
     pts: 90,
     claimDay: 4,
+    activity: { firstDayLead: true, actsEvery: null },
   },
   {
     id: "orbis",
@@ -233,6 +247,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["manufacturing", "facilities"],
     pts: 30,
     claimDay: null,
+    activity: { firstDayLead: false, actsEvery: 7 },
   },
   {
     id: "brightlane",
@@ -248,6 +263,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["manufacturing", "pharma"],
     pts: 104,
     claimDay: 3,
+    activity: { firstDayLead: true, actsEvery: 13 },
   },
   {
     id: "kovacs",
@@ -263,6 +279,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["finance", "health"],
     pts: 66,
     claimDay: null,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
   {
     id: "telvero",
@@ -278,6 +295,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["hotels", "consulting"],
     pts: 48,
     claimDay: null,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
   {
     id: "datavia",
@@ -293,6 +311,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["health", "manufacturing"],
     pts: 36,
     claimDay: null,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
   {
     id: "lumen",
@@ -308,6 +327,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["international", "hr"],
     pts: 84,
     claimDay: 9,
+    activity: { firstDayLead: true, actsEvery: 2 },
   },
   {
     id: "hartmann",
@@ -323,6 +343,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["international", "translation"],
     pts: 92,
     claimDay: 3,
+    activity: { firstDayLead: true, actsEvery: null },
   },
   {
     id: "eastbridge",
@@ -338,6 +359,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["international", "manufacturing"],
     pts: 70,
     claimDay: 19,
+    activity: { firstDayLead: true, actsEvery: 6 },
   },
   {
     id: "sterling",
@@ -353,6 +375,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["shipping", "construction"],
     pts: 60,
     claimDay: 30,
+    activity: { firstDayLead: false, actsEvery: 5 },
   },
   {
     id: "meridia",
@@ -368,6 +391,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["export", "gourmet"],
     pts: 76,
     claimDay: 8,
+    activity: { firstDayLead: true, actsEvery: 5 },
   },
   {
     id: "talentia",
@@ -383,6 +407,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["international", "hotels"],
     pts: 58,
     claimDay: 21,
+    activity: { firstDayLead: true, actsEvery: 10 },
   },
   {
     id: "keystone",
@@ -398,6 +423,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["international", "legal"],
     pts: 82,
     claimDay: 14,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
   {
     id: "polyglot",
@@ -413,6 +439,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["legal", "export"],
     pts: 26,
     claimDay: null,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
   {
     id: "veritas",
@@ -428,6 +455,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["consulting", "construction"],
     pts: 44,
     claimDay: null,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
   {
     id: "crestline",
@@ -443,6 +471,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["gourmet", "hotels"],
     pts: 50,
     claimDay: null,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
   {
     id: "academia",
@@ -458,6 +487,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["manufacturing", "health"],
     pts: 34,
     claimDay: null,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
   {
     id: "medivant",
@@ -473,6 +503,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["health", "aviation"],
     pts: 86,
     claimDay: 6,
+    activity: { firstDayLead: false, actsEvery: 2 },
   },
   {
     id: "sanavita",
@@ -488,6 +519,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["insurance", "consulting"],
     pts: 64,
     claimDay: null,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
   {
     id: "ortomed",
@@ -503,6 +535,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["health"],
     pts: 42,
     claimDay: null,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
   {
     id: "kalinga",
@@ -518,6 +551,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["medical", "pharma", "facilities"],
     pts: 74,
     claimDay: 17,
+    activity: { firstDayLead: true, actsEvery: 9 },
   },
   {
     id: "azurbay",
@@ -533,6 +567,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["textiles", "gourmet", "water"],
     pts: 78,
     claimDay: 5,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
   {
     id: "regalia",
@@ -548,6 +583,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["coffee", "wine", "hr"],
     pts: 68,
     claimDay: 2,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
   {
     id: "vinoteca",
@@ -563,6 +599,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["hotels", "restaurants"],
     pts: 56,
     claimDay: 2,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
   {
     id: "montagna",
@@ -578,6 +615,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["hotels", "bakery"],
     pts: 46,
     claimDay: null,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
   {
     id: "fromagerie",
@@ -593,6 +631,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["hotels", "storage"],
     pts: 40,
     claimDay: null,
+    activity: { firstDayLead: false, actsEvery: 7 },
   },
   {
     id: "ardenne",
@@ -608,6 +647,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["hotels", "grocery"],
     pts: 52,
     claimDay: null,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
   {
     id: "travelnova",
@@ -623,6 +663,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["international", "hotels"],
     pts: 38,
     claimDay: null,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
   {
     id: "eventhaus",
@@ -638,6 +679,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["international", "hotels"],
     pts: 60,
     claimDay: null,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
   {
     id: "bakkerij",
@@ -653,6 +695,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["ingredients", "coffee"],
     pts: 48,
     claimDay: null,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
   {
     id: "olivia",
@@ -668,6 +711,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["grocery", "restaurants"],
     pts: 66,
     claimDay: 29,
+    activity: { firstDayLead: true, actsEvery: 4 },
   },
   {
     id: "brauhaus",
@@ -683,6 +727,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["hotels", "events"],
     pts: 44,
     claimDay: null,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
   {
     id: "salumeria",
@@ -698,6 +743,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["storage", "hotels"],
     pts: 30,
     claimDay: null,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
   {
     id: "dolomiti",
@@ -713,6 +759,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["dairy", "hotels"],
     pts: 36,
     claimDay: null,
+    activity: { firstDayLead: false, actsEvery: 7 },
   },
   {
     id: "alpenmill",
@@ -728,6 +775,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["bakery", "restaurants"],
     pts: 54,
     claimDay: null,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
   {
     id: "frutaviva",
@@ -743,6 +791,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["produce", "shipping"],
     pts: 62,
     claimDay: null,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
   {
     id: "maisonblanc",
@@ -758,6 +807,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["hotels", "health"],
     pts: 50,
     claimDay: 5,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
   {
     id: "vela",
@@ -773,6 +823,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["hotels", "grocery"],
     pts: 42,
     claimDay: null,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
   {
     id: "haus",
@@ -788,6 +839,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["construction", "hotels"],
     pts: 56,
     claimDay: null,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
   {
     id: "velomotor",
@@ -803,6 +855,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["shipping", "insurance"],
     pts: 44,
     claimDay: null,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
   {
     id: "klarwerk",
@@ -818,6 +871,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["health", "chemicals"],
     pts: 70,
     claimDay: 23,
+    activity: { firstDayLead: true, actsEvery: 3 },
   },
   {
     id: "sentinel",
@@ -833,6 +887,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["storage", "property"],
     pts: 48,
     claimDay: null,
+    activity: { firstDayLead: false, actsEvery: 7 },
   },
   {
     id: "arcadia",
@@ -848,6 +903,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["international", "construction"],
     pts: 84,
     claimDay: 12,
+    activity: { firstDayLead: true, actsEvery: 3 },
   },
   {
     id: "brightwater",
@@ -863,6 +919,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["facilities", "catering"],
     pts: 40,
     claimDay: null,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
   {
     id: "greenfield",
@@ -878,6 +935,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["produce", "finance"],
     pts: 32,
     claimDay: null,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
   {
     id: "portside",
@@ -893,6 +951,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["shipping", "materials"],
     pts: 28,
     claimDay: null,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
   {
     id: "aerolux",
@@ -908,6 +967,7 @@ export const EUROPEAN_MEMBERS: MemberRow[] = [
     wants: ["travel", "insurance"],
     pts: 34,
     claimDay: null,
+    activity: { firstDayLead: true, actsEvery: 7 },
   },
 ];
 

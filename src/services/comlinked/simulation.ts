@@ -26,12 +26,15 @@ import {
   RULES,
   SEARCH_TERMS,
   STRONG_FIT,
+  TEAM_SPIKES,
   TEMPLATES,
   TOTAL,
   TRADE_WORDS,
 } from "@/services/comlinked/data";
 import { PREVIEW_CLOSING, previewStop } from "@/services/comlinked/preview";
 import type {
+  ActivityRow,
+  ActivityViewData,
   AgentCandidate,
   AgentRun,
   AgentStep,
@@ -48,8 +51,11 @@ import type {
   InterestedCompany,
   InterestLevel,
   InterestRow,
+  IntroChoices,
   LaterItem,
+  Member,
   MemberListEntry,
+  MemberStatus,
   Message,
   NextAction,
   NoteGroup,
@@ -132,10 +138,16 @@ export function setHandlers(next: Partial<typeof handlers>) {
 export const cap = function (s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1);
 };
+/** Every Company Kalayaan Foods can meet: the chamber's network and the Companies it invited. */
+function allCompanies(): Company[] {
+  return [...POOL, ...S.extra];
+}
 export const co = function (id: string): Company {
-  return POOL.concat(S.extra).find(function (c) {
+  const found = allCompanies().find(function (c) {
     return c.id === id;
-  }) as Company;
+  });
+  if (!found) throw new Error("No company with the id " + id);
+  return found;
 };
 export const monthOf = function (d: number) {
   return Math.ceil(d / 30);
@@ -322,7 +334,6 @@ function fresh(): SimState {
       tab: "pilot",
       reminded: {},
       claimed: {},
-      helped: {},
       spikes: {},
       log: [],
       agentRuns: 0,
@@ -358,6 +369,7 @@ function fresh(): SimState {
     replied: [],
     preview: null,
     exploring: false,
+    sideStepShown: false,
     laterItems: { pricing: true, previews: true },
   };
 }
@@ -1004,7 +1016,7 @@ export function seedTwoWeeks() {
   earlierAsk.later = [];
   S.asks.unshift(earlierAsk);
   S.announcements.unshift({ text: "Our next member meeting is on Friday at 3:00 p.m.", day: 12 });
-  S.intros.unshift({ a: "me", b: "malaya" });
+  S.intros.unshift({ a: "me", b: "malaya", day: 12 });
   importFinished();
   S.flags = {
     claimed: true,
@@ -1315,57 +1327,161 @@ export function groupText(g: NoteGroup) {
     names.slice(0, 2).join(", ") + (names.length > 2 ? " and " + (names.length - 2) + " more" : "");
   return who + " " + (GROUPED_NOTES[g.type] ?? "");
 }
-type MemberState = "Not claimed" | "Active" | "Claimed";
-interface MemberStanding {
-  state: MemberState;
-  /** Whether the community manager should make it an introduction. */
-  intro: boolean;
+/* ---------- The chamber's Activity View ---------- */
+/** A member's statuses, in the order the Activity View's filters and list show them. */
+export const MEMBER_STATUSES: readonly MemberStatus[] = [
+  "Active",
+  "Quiet",
+  "Needs an intro",
+  "Not yet claimed",
+];
+/** How far back acting counts as acting lately: the day itself and the 6 days before it. */
+const ACTIVE_DAYS = 7;
+/** Why the Team Dashboard queues a member, by its status: what staff can do, and where it sorts.
+ * Claim reminders come before quiet members, so they show among the first rows. */
+const QUEUE_REASONS: Partial<Record<MemberStatus, Pick<TeamQueueItem, "why" | "act" | "order">>> = {
+  "Needs an intro": { why: "No lead yet", act: "intro", order: 0 },
+  "Not yet claimed": { why: "Hasn’t claimed its profile", act: "remind", order: 1 },
+  Quiet: { why: "Quiet for 7 days", act: "intro", order: 2 },
+};
+
+/** The chamber's members in the network's order: Kalayaan Foods first, then the rest. */
+function networkMembers(): Pick<Company, "id" | "name" | "ini">[] {
+  return [{ id: "me", name: S.me.name, ini: S.me.ini }, ...POOL];
 }
-/** Where a Company stands for the community manager, and whether it still needs an intro. */
-function memberStanding(c: Company): MemberStanding {
-  const r = teamRec(c),
-    claimed = hasClaimed(c.id),
-    recent = [0, 1, 2, 3, 4, 5, 6].some(function (n) {
-      return activeOn(c, r, Math.max(1, S.day - n));
-    });
-  return {
-    state: !claimed ? "Not claimed" : S.conn[c.id] === "connected" || recent ? "Active" : "Claimed",
-    intro: claimed && !r.dayOne && !S.team.helped[c.id],
-  };
-}
-function myStanding(): MemberStanding {
-  const claimed = hasClaimed("me");
-  return {
-    state: claimed ? "Active" : "Not claimed",
-    intro:
-      claimed &&
-      !connected().length &&
-      !S.intros.some(function (i) {
-        return i.a === "me" || i.b === "me";
-      }),
-  };
-}
-/** The latest members the chamber tools list: Kalayaan Foods, then the first 11 of the network. */
-export function members() {
-  const list = POOL.slice(0, 11).map(function (c) {
-    return { id: c.id, name: c.name, ...memberStanding(c) };
+function member(id: string): Member | undefined {
+  return POOL.find(function (c) {
+    return c.id === id;
   });
-  list.unshift({ id: "me", name: S.me.name, ...myStanding() });
-  return list;
 }
-/** Counts across the whole network for the chamber tools, not only the members listed. */
-export function memberTotals() {
-  const standings = POOL.map(memberStanding).concat(myStanding());
-  return {
-    members: NETWORK,
-    claimed: claimedCount(),
-    active: standings.filter(function (x) {
-      return x.state === "Active";
-    }).length,
-    needIntro: standings.filter(function (x) {
-      return x.state !== "Not claimed" && x.intro;
-    }).length,
+/** Whether an Intro naming a Company was made from one day to another, both included. Intros made
+ * by the Community Manager and by staff are both recorded in S.intros. */
+function introducedBetween(id: string, from: number, to: number) {
+  return S.intros.some(function (i) {
+    return (i.a === id || i.b === id) && i.day >= from && i.day <= to;
+  });
+}
+/** Whether a Company that has claimed had a Lead by a day: from its claim day when it had one on
+ * its first day, and otherwise from its first Intro. Kalayaan Foods gets its day-one Matches when
+ * it claims. */
+function hadLead(id: string, day: number) {
+  return id === "me" || member(id)?.activity.firstDayLead === true || introducedBetween(id, 0, day);
+}
+/** How many days a Company acted in the ACTIVE_DAYS up to a day. Every Company acts on the day it
+ * claims. After that, Kalayaan Foods acts on the days it earns points, and every other Company on
+ * the days its own activity record sets, never on account of its dealings with Kalayaan Foods. */
+function daysActed(id: string, day: number) {
+  const claimDay = claimDayOf(id);
+  if (claimDay === null) return 0;
+  const every = member(id)?.activity.actsEvery ?? null;
+  const actedOn = function (d: number) {
+    if (d === claimDay) return true;
+    if (id === "me")
+      return S.ledger.some(function (l) {
+        return l.day === d;
+      });
+    return every !== null && (d - claimDay) % every === 0;
   };
+  let n = 0;
+  for (let d = Math.max(claimDay, day - ACTIVE_DAYS + 1); d <= day; d++) if (actedOn(d)) n++;
+  return n;
+}
+/** A member's one status on a day, today unless one is given, by this order: Not yet claimed;
+ * Needs an intro while it has claimed and has no Lead; Active when it acted lately; Quiet
+ * otherwise. The Activity View, the Community Manager's tools and the Team Dashboard all read it. */
+export function memberStatus(id: string, day = S.day): MemberStatus {
+  if (!hasClaimed(id, day)) return "Not yet claimed";
+  if (!hadLead(id, day)) return "Needs an intro";
+  return daysActed(id, day) > 0 ? "Active" : "Quiet";
+}
+/** How many members had a status on a day. */
+function countWith(status: MemberStatus, day: number) {
+  return networkMembers().filter(function (m) {
+    return memberStatus(m.id, day) === status;
+  }).length;
+}
+/** The chamber's Activity View today: five figures, the count for each status, and each member
+ * with its status alone. The list follows the statuses' order and the network's order, with the
+ * members not yet claimed that have a message waiting first among their group. */
+export function activityView(): ActivityViewData {
+  const day = S.day;
+  const rows: ActivityRow[] = networkMembers().map(function (m) {
+    const status = memberStatus(m.id, day);
+    return {
+      id: m.id,
+      name: m.name,
+      ini: m.ini,
+      status: status,
+      waiting: status === "Not yet claimed" && waitingForClaim(m.id),
+    };
+  });
+  const place = function (r: ActivityRow) {
+    return MEMBER_STATUSES.indexOf(r.status) * 2 + (r.waiting ? 0 : 1);
+  };
+  rows.sort(function (a, b) {
+    return place(a) - place(b);
+  });
+  const tally = function (status: MemberStatus) {
+    return rows.filter(function (r) {
+      return r.status === status;
+    }).length;
+  };
+  return {
+    day: day,
+    tiles: [
+      { key: "claimed", label: "Claimed", value: claimedCount(day), of: NETWORK },
+      { key: "active", label: "Active", value: tally("Active"), of: null },
+      { key: "needIntro", label: "Need an intro", value: tally("Needs an intro"), of: null },
+      { key: "deals", label: "Deals confirmed", value: dealsConfirmed(day), of: null },
+      { key: "wins", label: "Wins posted", value: successWall(day).length, of: null },
+    ],
+    memberCount: rows.length,
+    counts: MEMBER_STATUSES.map(function (status) {
+      return { status: status, count: tally(status) };
+    }),
+    rows: rows,
+  };
+}
+/** The members an Intro can name, in the network's order: those that have claimed, the ones
+ * needing an Intro apart from the rest. */
+export function introChoices(): IntroChoices {
+  const choices: IntroChoices = { needIntro: [], others: [] };
+  networkMembers().forEach(function (m) {
+    const status = memberStatus(m.id);
+    if (status === "Not yet claimed") return;
+    (status === "Needs an intro" ? choices.needIntro : choices.others).push({
+      id: m.id,
+      name: m.name,
+    });
+  });
+  return choices;
+}
+/** Whom an Intro for a Company would pair it with: its first neighbour in the network that has
+ * claimed and has a Lead, or else the first such member. */
+function introPartner(id: string): string | null {
+  const ready = function (other: string) {
+    return other !== id && hasClaimed(other) && hadLead(other, S.day);
+  };
+  return (
+    (NEIGHBORS[id] ?? []).find(ready) ??
+    networkMembers()
+      .map(function (m) {
+        return m.id;
+      })
+      .find(ready) ??
+    null
+  );
+}
+/** The Company whose unusual points the Community Manager reviews. Staff review the rest. */
+const MANAGER_SPIKE = "tala";
+/** The unusual points the Community Manager reviews, with what was decided, once the Company that
+ * earned them has claimed. */
+export function managerSpike() {
+  const spike = TEAM_SPIKES.find(function (x) {
+    return x.id === MANAGER_SPIKE;
+  });
+  if (!spike || !hasClaimed(spike.id)) return null;
+  return { name: co(spike.id).name, pts: spike.pts, state: S.cm.spike };
 }
 /** The Member List a chamber hands over: each Company's name and website, and no contact
  * details. Kalayaan Foods comes first, then the rest of the network. */
@@ -1713,19 +1829,13 @@ export function agentBook(A: AgentRun) {
   );
   toast("Meeting booked with " + c.name + ". The handoff package is in ComMail.");
 }
-export function teamRec(c: Company): TeamRecord {
+export function teamRec(c: Member): TeamRecord {
   const i = POOL.indexOf(c);
   return {
-    i: i,
     claimDay: claimDayOf(c.id),
-    dayOne: i % 8 !== 5,
     ai: i % 5 !== 1,
     period: 8 + ((i * 7) % 27),
-    tier: 1 + Math.round(c.pts / 25),
   };
-}
-export function activeOn(c: Company, r: TeamRecord, d: number) {
-  return r.claimDay != null && d >= r.claimDay && (d * 7 + r.i * 11) % 10 < r.tier;
 }
 export function teamData(): TeamData {
   const D = Math.min(S.day, 90),
@@ -1737,31 +1847,15 @@ export function teamData(): TeamData {
       return x.r.claimDay != null && x.r.claimDay <= day;
     });
   };
-  const activeDays = function (x: { c: Company; r: TeamRecord }, day: number) {
-    let n = 0;
-    for (let d = Math.max(1, day - 6); d <= day; d++) if (activeOn(x.c, x.r, d)) n++;
-    return n;
-  };
-  const meIn = function (day: number, days: number) {
-    return (
-      S.claimed &&
-      S.ledger.some(function (l) {
-        return l.day > day - days && l.day <= day;
-      })
-    );
-  };
+  // Weekly active Companies are the Activity View's Active members, so the two screens agree.
   const wacAt = function (day: number) {
-    return (
-      claimedBy(day).filter(function (x) {
-        return activeDays(x, day) > 0;
-      }).length + (meIn(day, 7) ? 1 : 0)
-    );
+    return countWith("Active", day);
   };
   const claimed = claimedBy(D),
     base = claimed.length + (S.claimed ? 1 : 0),
     wac = wacAt(D),
     activeBase = claimed.filter(function (x) {
-      return activeDays(x, D) > 0;
+      return memberStatus(x.c.id, D) === "Active";
     });
   const pace = function (target: number) {
       return (target * D) / 90;
@@ -1774,10 +1868,7 @@ export function teamData(): TeamData {
         return x.r.claimDay! <= 14;
       }).length + (S.claimed ? 1 : 0),
     claimPct = pct(inFourteen, NETWORK);
-  const firstLead =
-      claimed.filter(function (x) {
-        return x.r.dayOne || S.team.helped[x.c.id];
-      }).length + (S.claimed ? 1 : 0),
+  const firstLead = base - countWith("Needs an intro", D),
     firstPct = pct(firstLead, base);
   const myListDays = new Set(
     S.ledger
@@ -1790,7 +1881,7 @@ export function teamData(): TeamData {
   ).size;
   const habit = wac
     ? (activeBase.reduce(function (a, x) {
-        return a + activeDays(x, D);
+        return a + daysActed(x.c.id, D);
       }, 0) +
         myListDays) /
       wac
@@ -1805,7 +1896,7 @@ export function teamData(): TeamData {
   }, 0);
   const mails = wac
     ? (activeBase.reduce(function (a, x) {
-        return a + activeDays(x, D) * 0.8;
+        return a + daysActed(x.c.id, D) * 0.8;
       }, 0) +
         myMails) /
       wac
@@ -1929,38 +2020,14 @@ export function teamData(): TeamData {
       growth >= 0.2,
     ),
   ];
-  const queue: TeamQueueItem[] = [];
-  if (
-    S.claimed &&
-    !connected().length &&
-    !S.intros.some(function (i) {
-      return i.a === "me" || i.b === "me";
-    })
-  )
-    queue.push({
-      id: "me",
-      name: S.me.name,
-      why: "No connection or intro yet",
-      act: "intro",
-      order: 0,
-    });
-  recs.forEach(function (x) {
-    const id = x.c.id;
-    if (S.team.helped[id]) return;
-    if (x.r.claimDay == null || x.r.claimDay > D) {
-      queue.push({
-        id: id,
-        name: x.c.name,
-        why: "Hasn’t claimed its profile",
-        act: "remind",
-        order: 2,
-      });
-      return;
-    }
-    if (!x.r.dayOne)
-      queue.push({ id: id, name: x.c.name, why: "No lead yet", act: "intro", order: 0 });
-    else if (D - x.r.claimDay >= 7 && activeDays(x, D) === 0)
-      queue.push({ id: id, name: x.c.name, why: "Quiet for 7 days", act: "intro", order: 1 });
+  // The queue reads each member's status, as the Activity View does. A quiet member introduced
+  // lately is not waiting on anyone, and Kalayaan Foods claims in its own story, not on a reminder.
+  const queue: TeamQueueItem[] = networkMembers().flatMap(function (m) {
+    const status = memberStatus(m.id, D);
+    const reason = QUEUE_REASONS[status];
+    if (!reason || (m.id === "me" && status === "Not yet claimed")) return [];
+    if (status === "Quiet" && introducedBetween(m.id, D - ACTIVE_DAYS + 1, D)) return [];
+    return [{ id: m.id, name: m.name, ...reason }];
   });
   queue.sort(function (a, b) {
     return a.order - b.order;
@@ -2047,7 +2114,7 @@ export function teamLog(text: string) {
   S.team.log.length = Math.min(S.team.log.length, 30);
 }
 export function spikeState(id: string) {
-  return id === "tala" ? S.cm.spike : S.team.spikes[id];
+  return id === MANAGER_SPIKE ? S.cm.spike : S.team.spikes[id];
 }
 
 /** Sends a message the person wrote or approved: points, ask answers and the reply that follows. */
@@ -2240,28 +2307,25 @@ const ACT = {
           return !S.conn[c.id] && hasClaimed(c.id) && !c.silent;
         }),
       )[0]!;
-      S.intros.unshift({ a: "me", b: p.id });
+      S.intros.unshift({ a: "me", b: p.id, day: S.day });
       signal(p.id, "intro");
       teamLog("Introduced " + S.me.name + " to " + p.name);
       toast("Introduction sent to " + S.me.name + " and " + p.name + ".");
     } else {
-      const p = co(
-        (NEIGHBORS[id] || []).find(function (n) {
-          return hasClaimed(n);
-        }) || "maple",
-      );
-      S.intros.unshift({ a: id, b: p.id });
-      S.team.helped[id] = S.day;
+      const partner = introPartner(id);
+      if (!partner) return;
+      const p = co(partner);
+      S.intros.unshift({ a: id, b: p.id, day: S.day });
       teamLog("Introduced " + co(id).name + " to " + p.name);
       toast("Introduction sent to " + co(id).name + " and " + p.name + ".");
     }
     emit();
   },
   teamSpike: function (a: string) {
-    const p = a.split("|");
-    if (p[0]! === "tala") S.cm.spike = p[1]!;
-    else S.team.spikes[p[0]!] = p[1]!;
-    teamLog((p[1]! === "ok" ? "Cleared" : "Flagged") + " unusual points for " + co(p[0]!).name);
+    const [id = "", decision = ""] = a.split("|");
+    if (id === MANAGER_SPIKE) S.cm.spike = decision;
+    else S.team.spikes[id] = decision;
+    teamLog((decision === "ok" ? "Cleared" : "Flagged") + " unusual points for " + co(id).name);
     emit();
   },
   agentType: function (k: string) {
@@ -2694,17 +2758,25 @@ const ACT = {
   },
   makeIntro: function () {
     const f = S.forms;
+    if (!hasClaimed(f.introA) || !hasClaimed(f.introB)) {
+      toast("Choose two members that have claimed their profiles.");
+      return;
+    }
     if (f.introA === f.introB) {
       toast("Choose two different companies.");
       return;
     }
-    S.intros.unshift({ a: f.introA, b: f.introB });
+    S.intros.unshift({ a: f.introA, b: f.introB, day: S.day });
     const other = f.introA === "me" ? f.introB : f.introB === "me" ? f.introA : null;
     if (other) signal(other, "intro");
     toast("Introduction sent to both companies.");
     emit();
   },
   broadcast: function () {
+    if (!claimedCount()) {
+      toast("No member has claimed yet, so an announcement would reach nobody.");
+      return;
+    }
     const v = S.forms.broadcast.trim();
     if (!v) {
       toast("Write the announcement first.");
@@ -2719,6 +2791,23 @@ const ACT = {
   spike: function (a: string) {
     S.cm.spike = a;
     emit();
+  },
+  /** Opens the Stop's side step, with an Intro ready between the first member needing one and a
+   * member it would suit. */
+  sideStepOpen: function () {
+    if (!currentStop()?.sideStep) return;
+    S.sideStepShown = true;
+    const needing = introChoices().needIntro[0];
+    const partner = needing ? introPartner(needing.id) : null;
+    if (needing && partner) {
+      S.forms.introA = needing.id;
+      S.forms.introB = partner;
+    }
+  },
+  /** Returns to the Stop's own Seat, closing any draft profile the side step opened. */
+  sideStepClose: function () {
+    S.sideStepShown = false;
+    S.cm.draft = null;
   },
   addGap: function (term: string) {
     if (!S.addedTerms.includes(term)) S.addedTerms.push(term);
@@ -2900,11 +2989,16 @@ export function currentStop(): PreviewStop | null {
 export function exploring() {
   return S.exploring;
 }
-/** Whose view the screens show: a Stop's Seat, and a Company's in the full Demo and while
- * exploring. Nobody's on the Opening and the closing Stop. */
+/** Whether the Stop's side step is open. */
+export function onSideStep() {
+  return S.sideStepShown;
+}
+/** Whose view the screens show: a Stop's Seat, or its side step's while that is open, and a
+ * Company's in the full Demo and while exploring. Nobody's on the Opening and the closing Stop. */
 export function currentSeat(): Seat | null {
   const stop = currentStop();
-  return !stop || S.exploring ? "company" : stop.seat;
+  if (!stop || S.exploring) return "company";
+  return S.sideStepShown && stop.sideStep ? stop.sideStep.seat : stop.seat;
 }
 /** A Stop's line on the Story Bar and the Opening: its day and title, or its title alone. */
 export function stopLine(stop: PreviewStop) {
@@ -3160,22 +3254,21 @@ export function searchRows(): SearchRow[] | null {
     if (tags.join(" ").toLowerCase().indexOf(q) >= 0) return 85;
     return 0;
   };
-  const rows: { me: boolean; c: Company | null; r: number; b: number; val: number }[] = POOL.concat(
-    S.extra,
-  )
-    .map(function (c) {
-      // A search reads what the searcher may see: the draft of a Company that has not claimed
-      // stays out of it.
-      const view = publicView(c);
-      const r = view.claimed
-        ? score1(view.name, view.ind + " " + view.description, view.offer.concat(view.seek))
-        : score1(view.name, view.ind, []);
-      const b = c.joinedDay ? (S.day - c.joinedDay < 30 ? NEW_BOOST : 0) : compBoost(pointsOf(c));
-      return { me: false, c: c, r: r, b: b, val: r * (1 + b) };
-    })
-    .filter(function (x) {
-      return x.r > 0;
-    });
+  const rows: { me: boolean; c: Company | null; r: number; b: number; val: number }[] =
+    allCompanies()
+      .map(function (c) {
+        // A search reads what the searcher may see: the draft of a Company that has not claimed
+        // stays out of it.
+        const view = publicView(c);
+        const r = view.claimed
+          ? score1(view.name, view.ind + " " + view.description, view.offer.concat(view.seek))
+          : score1(view.name, view.ind, []);
+        const b = c.joinedDay ? (S.day - c.joinedDay < 30 ? NEW_BOOST : 0) : compBoost(pointsOf(c));
+        return { me: false, c: c, r: r, b: b, val: r * (1 + b) };
+      })
+      .filter(function (x) {
+        return x.r > 0;
+      });
   const mr = score1(S.me.name, S.me.ind + " " + S.me.about, S.me.offer.concat(S.me.seek));
   if (mr > 0) rows.push({ me: true, c: null, r: mr, b: boost(), val: mr * (1 + boost()) });
   rows.sort(function (a, b) {

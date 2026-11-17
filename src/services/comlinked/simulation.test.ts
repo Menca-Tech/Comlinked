@@ -67,9 +67,13 @@ import {
   markDashSeen,
   markDigestRead,
   markNotesRead,
-  members,
-  memberTotals,
+  activityView,
+  introChoices,
+  managerSpike,
+  MEMBER_STATUSES,
+  memberStatus,
   monthlyTop,
+  onSideStep,
   mutualText,
   nextAction,
   networkLayout,
@@ -331,7 +335,7 @@ describe("a full demo", () => {
     setForm("broadcast", "Meeting on Friday");
     act.broadcast();
     act.spike("flag");
-    expect(members().length).toBe(12);
+    expect(activityView().rows).toHaveLength(NETWORK);
 
     markDashSeen();
     act.morning("1");
@@ -1214,10 +1218,10 @@ describe("claiming as one fact", () => {
         .map((c) => c.id)
         .sort(),
     );
-    const listed = members().filter((m) => m.id !== "me");
-    expect(listed.length).toBeGreaterThan(0);
+    const listed = activityView().rows.filter((m) => m.id !== "me");
+    expect(listed).toHaveLength(POOL.length);
     listed.forEach((m) =>
-      expect([m.id, m.state === "Not claimed"]).toEqual([m.id, !hasClaimed(m.id)]),
+      expect([m.id, m.status === "Not yet claimed"]).toEqual([m.id, !hasClaimed(m.id)]),
     );
     const candidates = Object.entries(AGENT_TYPES).flatMap(
       ([type, mandate]) => agentRunFor(type, mandate.need).cands,
@@ -1676,17 +1680,324 @@ describe("the chamber's name and its counts", () => {
     );
   });
 
-  it("counts the whole network for the chamber tools, not only the members listed", () => {
+  it("refuses an announcement while no member has claimed, since it would reach nobody", () => {
+    openStop(1);
+    const toast = vi.fn();
+    setHandlers({ toast });
+    setForm("broadcast", "Our next member meeting is on Friday.");
+    act.broadcast();
+    expect(getState().announcements).toEqual([]);
+    expect(toast).toHaveBeenCalledWith(
+      "No member has claimed yet, so an announcement would reach nobody.",
+      undefined,
+      undefined,
+    );
+  });
+});
+
+/** The Activity View's figure for members needing an intro, and one member's status in it. */
+const needIntro = () => activityView().tiles.find((t) => t.key === "needIntro")?.value;
+const statusOf = (id: string) => activityView().rows.find((r) => r.id === id)?.status;
+
+describe("ECCP's Activity View", () => {
+  const tiles = () => activityView().tiles.map((t) => [t.label, t.value, t.of]);
+  const count = (status: string) =>
+    activityView().counts.find((c) => c.status === status)?.count ?? 0;
+  const send = (id: string, text: string) => {
+    act.message(id);
+    const thread = need(
+      getState().threads.find((t) => t.co === id),
+      "thread with " + id,
+    );
+    setDraft(thread.id, text);
+    act.send(thread.id);
+  };
+
+  it("reads 40 of 100 claimed, 20 active, 4 needing an intro, 3 deals and 2 wins on Day 14", () => {
+    openStop(5);
+    expect(tiles()).toEqual([
+      ["Claimed", 40, 100],
+      ["Active", 20, null],
+      ["Need an intro", 4, null],
+      ["Deals confirmed", 3, null],
+      ["Wins posted", 2, null],
+    ]);
+    expect(activityView().counts).toEqual([
+      { status: "Active", count: 20 },
+      { status: "Quiet", count: 16 },
+      { status: "Needs an intro", count: 4 },
+      { status: "Not yet claimed", count: 60 },
+    ]);
+    expect(MEMBER_STATUSES).toEqual(["Active", "Quiet", "Needs an intro", "Not yet claimed"]);
+  });
+
+  it("gives the full Demo's Two weeks in the same figures as Stop 5", () => {
+    openStop(5);
+    const stop = activityView();
     act.demoActive();
-    const totals = memberTotals();
-    expect(totals.members).toBe(100);
-    expect(totals.claimed).toBe(40);
-    expect(totals.active).toBeGreaterThan(members().filter((m) => m.state === "Active").length);
-    expect(totals.active).toBeLessThanOrEqual(totals.claimed);
-    expect(totals.needIntro).toBeGreaterThan(0);
-    expect(totals.needIntro).toBeLessThan(totals.claimed);
-    getState().day = 0;
-    expect(memberTotals()).toEqual({ members: 100, claimed: 0, active: 0, needIntro: 0 });
+    expect(activityView()).toEqual(stop);
+  });
+
+  it("shows Kalayaan Foods and Nordhavn Freight Forwarders as Active on Day 14", () => {
+    openStop(5);
+    expect(statusOf("me")).toBe("Active");
+    expect(statusOf("nordhavn")).toBe("Active");
+    expect(activityView().rows.find((r) => r.id === "me")?.name).toBe("Kalayaan Foods Inc.");
+  });
+
+  it("lists the four members needing an intro, each claimed and with no Lead yet", () => {
+    openStop(5);
+    const waiting = activityView()
+      .rows.filter((r) => r.status === "Needs an intro")
+      .map((r) => r.id);
+    expect(waiting).toEqual(["lakbay", "bigas", "palengke", "medivant"]);
+    waiting.forEach((id) => expect([id, hasClaimed(id)]).toEqual([id, true]));
+  });
+
+  it("gives every member exactly one status on every day from Day 0 to Day 30, adding up to the network", () => {
+    act.demoActive();
+    for (let day = 0; day <= 30; day++) {
+      getState().day = day;
+      const view = activityView();
+      expect([day, view.rows.length]).toEqual([day, NETWORK]);
+      expect([day, new Set(view.rows.map((r) => r.id)).size]).toEqual([day, NETWORK]);
+      view.rows.forEach((r) =>
+        expect([day, r.id, MEMBER_STATUSES.includes(r.status)]).toEqual([day, r.id, true]),
+      );
+      expect([day, view.counts.map((c) => c.status)]).toEqual([day, MEMBER_STATUSES]);
+      const sum = view.counts.reduce((total, c) => total + c.count, 0);
+      expect([day, sum]).toEqual([day, NETWORK]);
+      view.counts.forEach((c) =>
+        expect([day, c.status, c.count]).toEqual([
+          day,
+          c.status,
+          view.rows.filter((r) => r.status === c.status).length,
+        ]),
+      );
+      expect([day, view.tiles[0]?.value]).toEqual([day, claimedCount(day)]);
+    }
+  });
+
+  it("orders the status rules: not yet claimed, then needs an intro, then active, then quiet", () => {
+    openStop(5);
+    // Northline Logistics never claims.
+    expect(memberStatus("north")).toBe("Not yet claimed");
+    // Kahon Corrugated claims on Day 15: not yet claimed on Day 14, whatever else it does.
+    expect([memberStatus("kahon", 14), memberStatus("kahon", 15)]).toEqual([
+      "Not yet claimed",
+      "Active",
+    ]);
+    // Lakbay Hotels acted on Day 11, but has no Lead: needing an intro wins.
+    expect(memberStatus("lakbay")).toBe("Needs an intro");
+    // Nordhavn acted in the last 7 days; Tala Print and Label last acted on Day 1.
+    expect(memberStatus("nordhavn")).toBe("Active");
+    expect([memberStatus("tala", 7), memberStatus("tala", 8)]).toEqual(["Active", "Quiet"]);
+    // A Company is Active on the day it claims.
+    expect(memberStatus("keystone", 14)).toBe("Active");
+  });
+
+  it("has nobody claimed on Day 0, and every member not yet claimed", () => {
+    openStop(1);
+    expect(tiles().map(([, value]) => value)).toEqual([0, 0, 0, 0, 0]);
+    expect(activityView().rows.every((r) => r.status === "Not yet claimed")).toBe(true);
+    expect(count("Not yet claimed")).toBe(NETWORK);
+  });
+
+  it("never changes a member's status for its dealings with Kalayaan Foods", () => {
+    openStop(5);
+    const before = activityView().rows;
+    act.connect("hapag");
+    vi.advanceTimersByTime(5000);
+    act.connect("lindqvist");
+    act.withdraw("tala");
+    send("hapag", "Hello, could we supply your restaurants?");
+    send("sari", "Hello, could we supply your stores?");
+    const others = (rows: typeof before) => rows.filter((r) => r.id !== "me");
+    expect(others(activityView().rows)).toEqual(others(before));
+  });
+
+  it("clears needing an intro with an introduction, and the Team Dashboard's queue agrees", () => {
+    openStop(5);
+    const queued = () =>
+      teamData()
+        .queue.filter((q) => q.why === "No lead yet")
+        .map((q) => q.id);
+    expect(queued()).toEqual(["lakbay", "bigas", "palengke", "medivant"]);
+    setForm("introA", "lakbay");
+    setForm("introB", "maple");
+    act.makeIntro();
+    expect(needIntro()).toBe(3);
+    expect(statusOf("lakbay")).toBe("Active");
+    expect(queued()).toEqual(["bigas", "palengke", "medivant"]);
+    act.teamIntro("bigas");
+    expect(needIntro()).toBe(2);
+    expect(statusOf("bigas")).not.toBe("Needs an intro");
+    expect(queued()).toEqual(["palengke", "medivant"]);
+  });
+
+  it("queues on the Team Dashboard each member its status says needs help, with that reason", () => {
+    act.demoActive();
+    const why: Partial<Record<string, string>> = {
+      "Needs an intro": "No lead yet",
+      Quiet: "Quiet for 7 days",
+      "Not yet claimed": "Hasn’t claimed its profile",
+    };
+    const fromView = activityView()
+      .rows.filter((r) => why[r.status])
+      .map((r) => [r.id, why[r.status]]);
+    const queue = teamData().queue.map((q) => [q.id, q.why]);
+    // Malaya Export Traders is quiet, but was introduced on Day 12, so it is not waiting on anyone.
+    expect(queue.sort()).toEqual(fromView.filter(([id]) => id !== "malaya").sort());
+    expect(statusOf("malaya")).toBe("Quiet");
+  });
+
+  it("gives the Team Dashboard's weekly active figure the Active count on every day", () => {
+    act.demoActive();
+    const d = teamData();
+    expect(d.wac).toBe(count("Active"));
+    for (let day = 1; day <= 14; day++) {
+      getState().day = day;
+      expect([day, d.wacAt(day)]).toEqual([day, count("Active")]);
+    }
+  });
+
+  it("puts a not-yet-claimed member with a message waiting first among its group, saying nothing of who", () => {
+    openStop(5);
+    const unclaimed = () => activityView().rows.filter((r) => r.status === "Not yet claimed");
+    // Two weeks in, Kalayaan Foods' message to Northline Logistics is waiting for it to claim.
+    expect(unclaimed()[0]).toEqual({
+      id: "north",
+      name: "Northline Logistics",
+      ini: "NL",
+      status: "Not yet claimed",
+      waiting: true,
+    });
+    expect(unclaimed().filter((r) => r.waiting)).toHaveLength(1);
+    send("kahon", "Hello, could we talk about shipping cartons?");
+    const waiting = unclaimed().map((r) => r.waiting);
+    expect(
+      unclaimed()
+        .slice(0, 2)
+        .map((r) => r.id),
+    ).toEqual(["north", "kahon"]);
+    expect(waiting).toEqual(waiting.map((_, i) => i < 2));
+    unclaimed().forEach((r) => {
+      expect(Object.keys(r).sort()).toEqual(["id", "ini", "name", "status", "waiting"]);
+      expect(JSON.stringify(r)).not.toMatch(/Kalayaan|"me"/);
+    });
+  });
+
+  it("lists the members by status in the filters' order, Kalayaan Foods first among the active", () => {
+    openStop(5);
+    const order = activityView().rows.map((r) => MEMBER_STATUSES.indexOf(r.status));
+    expect(order).toEqual([...order].sort((a, b) => a - b));
+    expect(activityView().rows[0]?.id).toBe("me");
+  });
+
+  it("has the Monthly Top Companies of Day 14 all active", () => {
+    openStop(5);
+    const byName = new Map(activityView().rows.map((r) => [r.name, r.status]));
+    monthlyTop().top.forEach((t) => expect([t.n, byName.get(t.n)]).toEqual([t.n, "Active"]));
+  });
+
+  it("offers an introduction only between members that have claimed, those needing one first", () => {
+    openStop(5);
+    const { needIntro, others } = introChoices();
+    expect(needIntro.map((c) => c.id)).toEqual(["lakbay", "bigas", "palengke", "medivant"]);
+    expect(others).toHaveLength(36);
+    expect(others[0]).toEqual({ id: "me", name: "Kalayaan Foods Inc." });
+    [...needIntro, ...others].forEach((c) =>
+      expect([c.id, hasClaimed(c.id)]).toEqual([c.id, true]),
+    );
+    openStop(1);
+    expect(introChoices()).toEqual({ needIntro: [], others: [] });
+  });
+
+  it("refuses an introduction to a member that has not claimed, or to the same member twice", () => {
+    act.demoActive();
+    const toast = vi.fn();
+    setHandlers({ toast });
+    const before = getState().intros.length;
+    setForm("introA", "lakbay");
+    setForm("introB", "north");
+    act.makeIntro();
+    setForm("introB", "lakbay");
+    act.makeIntro();
+    expect(getState().intros).toHaveLength(before);
+    expect(toast.mock.calls.map((c) => c[0])).toEqual([
+      "Choose two members that have claimed their profiles.",
+      "Choose two different companies.",
+    ]);
+    expect(statusOf("lakbay")).toBe("Needs an intro");
+  });
+
+  it("sends the announcement to as many members as have claimed", () => {
+    openStop(5);
+    const toast = vi.fn();
+    setHandlers({ toast });
+    setForm("broadcast", "Our next member meeting is on Friday.");
+    act.broadcast();
+    expect(toast).toHaveBeenCalledWith(
+      `Sent to ${activityView().tiles[0]?.value} members who have claimed.`,
+      undefined,
+      undefined,
+    );
+  });
+
+  it("shows the unusual points only once the member that earned them has claimed", () => {
+    openStop(1);
+    expect(managerSpike()).toBeNull();
+    openStop(5);
+    expect(managerSpike()).toEqual({ name: "Tala Print and Label", pts: 68, state: null });
+  });
+});
+
+describe("the side step from Stop 5", () => {
+  beforeEach(() => openStop(5));
+
+  it("opens the same day in the community manager's Seat, with an introduction ready", () => {
+    expect([currentSeat(), onSideStep()]).toEqual(["chamber-contact", false]);
+    act.sideStepOpen();
+    expect([currentSeat(), onSideStep(), getState().day]).toEqual(["community-manager", true, 14]);
+    const { introA, introB } = getState().forms;
+    expect(introA).toBe("lakbay");
+    expect(memberStatus(introB)).not.toBe("Needs an intro");
+    expect(memberStatus(introB)).not.toBe("Not yet claimed");
+  });
+
+  it("sends the prepared introduction, leaving one fewer member needing one, then returns", () => {
+    const toast = vi.fn();
+    setHandlers({ toast });
+    act.sideStepOpen();
+    act.makeIntro();
+    expect(toast).toHaveBeenCalledWith(
+      "Introduction sent to both companies.",
+      undefined,
+      undefined,
+    );
+    act.sideStepClose();
+    expect(currentSeat()).toBe("chamber-contact");
+    expect(needIntro()).toBe(3);
+    expect(statusOf("lakbay")).not.toBe("Needs an intro");
+  });
+
+  it("closes a draft profile opened in the side step on the way back to the read-only Seat", () => {
+    act.sideStepOpen();
+    act.viewDraft("maple");
+    expect(getState().cm.draft).toBe("maple");
+    act.sideStepClose();
+    expect(getState().cm.draft).toBeNull();
+    expect(currentSeat()).toBe("chamber-contact");
+  });
+
+  it("is declared on Stop 5 only, and starts closed whenever a Stop opens", () => {
+    expect(PREVIEW_STOPS.filter((s) => s.sideStep).map((s) => s.number)).toEqual([5]);
+    act.sideStepOpen();
+    openStop(5);
+    expect(onSideStep()).toBe(false);
+    openStop(4);
+    act.sideStepOpen();
+    expect([onSideStep(), currentSeat()]).toEqual([false, "company"]);
   });
 });
 
@@ -2400,9 +2711,8 @@ describe("Day 0, before any Claim", () => {
   });
 
   it("counts no member as claimed, active or needing an intro", () => {
-    expect(memberTotals()).toEqual({ members: 100, claimed: 0, active: 0, needIntro: 0 });
-    expect(members().every((m) => m.state === "Not claimed")).toBe(true);
-    expect(members().filter((m) => m.intro)).toEqual([]);
+    expect(activityView().tiles.map((t) => t.value)).toEqual([0, 0, 0, 0, 0]);
+    expect(activityView().rows.every((m) => m.status === "Not yet claimed")).toBe(true);
   });
 
   it("works out every figure a screen reads without failing", () => {

@@ -3,11 +3,14 @@
 import Link from "next/link";
 
 import { useSimulation } from "@/components/product/use-simulation";
-import type { PreviewStop } from "@/services/comlinked";
+import type { PreviewStop, SideStep } from "@/services/comlinked";
 import {
+  act,
+  currentSeat,
   currentStop,
   exploring,
   nextStop,
+  onSideStep,
   PREVIEW_CLOSING,
   PREVIEW_OPENING,
   PREVIEW_STOPS,
@@ -19,9 +22,11 @@ import {
 /** What the Story Bar says once the viewer has left the last Stop to look around. */
 const EXPLORING_LINE = "Pilot Preview · exploring";
 
-/** The line naming whose view a Stop shows, or null for a Stop with no Seat. */
-function seatLine(stop: PreviewStop) {
-  return stop.seat ? SEAT_LINES[stop.seat] : null;
+/** The line naming whose view the Stop shows, its side step's Seat while that is open, or null
+ * for a Stop with no Seat. */
+function seatLine() {
+  const seat = currentSeat();
+  return seat ? SEAT_LINES[seat] : null;
 }
 
 /** The Stop the simulation is on, or null in the full Demo and on the Opening. */
@@ -46,20 +51,36 @@ function ExploringBar() {
   );
 }
 
+/** The way into a Stop's side step, and back out of it. */
+function SideStepButton({ step }: { step: SideStep }) {
+  const open = onSideStep();
+  return (
+    <button
+      type="button"
+      className="a-btn o sm a-story-step"
+      onClick={() => (open ? act.sideStepClose() : act.sideStepOpen())}
+    >
+      {open ? step.back : step.open}
+    </button>
+  );
+}
+
 /** The strip under the top bar on every screen of a Stop: the day and what is happening, whose
- * Seat is shown, how far through the walk this is, and Back and Next. */
+ * Seat is shown, the way into its side step if it has one, how far through the walk this is, and
+ * Back and Next. */
 export function StoryBar() {
   const stop = useStop();
   if (!stop) return null;
   if (exploring()) return <ExploringBar />;
   const next = nextStop(stop.number);
-  const seat = seatLine(stop);
+  const seat = seatLine();
   return (
     <section className="a-story" aria-label="Pilot Preview">
       <div className="a-story-in">
         <div className="a-story-t">
           <p className="a-story-title">{stopLine(stop)}</p>
           {seat ? <p className="a-story-seat">{seat}</p> : null}
+          {stop.sideStep ? <SideStepButton step={stop.sideStep} /> : null}
         </div>
         <div className="a-story-nav">
           <span className="a-story-pos">
@@ -81,7 +102,7 @@ export function StoryBar() {
  * they leave the last one. It stays in the page while Stops change, so each change is announced. */
 export function StoryAnnouncer() {
   const stop = useStop();
-  const said = !stop ? [] : exploring() ? [EXPLORING_LINE] : [`${stopLine(stop)}.`, seatLine(stop)];
+  const said = !stop ? [] : exploring() ? [EXPLORING_LINE] : [`${stopLine(stop)}.`, seatLine()];
   return (
     <p className="sr-only" aria-live="polite">
       {said.filter(Boolean).join(" ")}
