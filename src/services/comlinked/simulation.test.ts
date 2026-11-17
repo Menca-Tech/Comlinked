@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
   act,
@@ -89,6 +89,19 @@ import {
   trendPoints,
   unreadCount,
   waitingForClaim,
+  laterItemShown,
+  memberRows,
+  nextStop,
+  openStop,
+  PREVIEW_OPENING,
+  PREVIEW_STOPS,
+  previewStop,
+  previousStop,
+  rememberStop,
+  SEAT_LINES,
+  stopAfterReload,
+  stopForAddress,
+  stopLine,
 } from "@/services/comlinked";
 import type { ConnectionItem } from "@/services/comlinked";
 
@@ -2157,5 +2170,377 @@ describe("contacting a Company that has not claimed", () => {
     );
     expect(draft.text).not.toContain(co("north").why);
     expect(getState().threads.find((t) => t.co === "north")?.msgs).toEqual([]);
+  });
+});
+
+/* ---------- The Pilot Preview ---------- */
+
+/** The simulation's whole state, as text, so two states can be compared exactly. */
+const snapshot = () => JSON.stringify(getState());
+
+/** The state with the Pilot Preview's own flags set aside. */
+function withoutPreviewFlags() {
+  const { preview: _preview, laterItems: _laterItems, ...rest } = getState();
+  return rest;
+}
+
+describe("the Pilot Preview's Opening and Stops", () => {
+  it("declares the Opening and six Stops with their days, titles, Seats and addresses", () => {
+    expect(PREVIEW_OPENING).toMatchObject({
+      number: 0,
+      day: null,
+      title: "A preview for ECCP",
+      seat: null,
+      href: "/app/preview",
+    });
+    expect(PREVIEW_STOPS.map((s) => [s.number, s.day, s.title, s.seat, s.href])).toEqual([
+      [1, 0, "ECCP’s member list becomes profiles", "community-manager", "/app/chamber?stop=1"],
+      [2, 1, "A member claims its profile", "company", "/app/claim?stop=2"],
+      [3, 2, "The next morning", "company", "/app/digest?stop=3"],
+      [4, 14, "The member, two weeks in", "company", "/app/dash?stop=4"],
+      [5, 14, "ECCP’s view", "chamber-contact", "/app/chamber?stop=5"],
+      [6, null, "What a pilot asks of ECCP", null, "/app/preview/ask?stop=6"],
+    ]);
+  });
+
+  it("names the chamber in its titles from the one setting", () => {
+    const named = [PREVIEW_OPENING, ...PREVIEW_STOPS].filter((s) =>
+      s.title.includes(CHAMBER.shortName),
+    );
+    expect(named.map((s) => s.number)).toEqual([0, 1, 5, 6]);
+  });
+
+  it("gives each Seat its line", () => {
+    expect(SEAT_LINES).toEqual({
+      "community-manager": "You’re seeing ComLinked’s community manager, working for ECCP.",
+      company: "You’re seeing Kalayaan Foods, an ECCP member.",
+      "chamber-contact": "You’re seeing ECCP’s own view. It is read-only.",
+    });
+  });
+
+  it("writes each Stop's line with its day, or with its title alone when it has none", () => {
+    expect(PREVIEW_STOPS.map(stopLine)).toEqual([
+      "Day 0 · ECCP’s member list becomes profiles",
+      "Day 1 · A member claims its profile",
+      "Day 2 · The next morning",
+      "Day 14 · The member, two weeks in",
+      "Day 14 · ECCP’s view",
+      "What a pilot asks of ECCP",
+    ]);
+  });
+
+  it("walks forward from the Opening through the six Stops, then starts again", () => {
+    const walk = [0];
+    for (let i = 0; i < 7; i++) walk.push(nextStop(walk.at(-1) ?? 0).number);
+    expect(walk).toEqual([0, 1, 2, 3, 4, 5, 6, 0]);
+  });
+
+  it("walks back one Stop at a time, with Back from Stop 1 opening the Opening", () => {
+    expect(PREVIEW_STOPS.map((s) => previousStop(s.number).number)).toEqual([0, 1, 2, 3, 4, 5]);
+  });
+
+  it("treats a number outside the list as the Opening", () => {
+    expect(previewStop(9)).toBe(PREVIEW_OPENING);
+    expect(previewStop(-1)).toBe(PREVIEW_OPENING);
+  });
+});
+
+describe("a Pilot Preview address", () => {
+  it("names a Stop by its marker", () => {
+    PREVIEW_STOPS.forEach((s) => {
+      const [path = "", query = ""] = s.href.split("?");
+      expect(stopForAddress(path, new URLSearchParams(query).get("stop"))).toBe(s);
+    });
+  });
+
+  it("names the Opening at the Opening's own address", () => {
+    expect(stopForAddress("/app/preview", null)).toBe(PREVIEW_OPENING);
+  });
+
+  it("names the Opening for a Stop that does not exist", () => {
+    ["9", "0", "-1", "04", "2.5", "two", ""].forEach((marker) =>
+      expect([marker, stopForAddress("/app/chamber", marker)]).toEqual([marker, PREVIEW_OPENING]),
+    );
+  });
+
+  it("names no Stop when it carries no marker, so the full Demo opens", () => {
+    ["/app/claim", "/app/dash", "/app/dash/signals", "/app/preview/ask"].forEach((path) =>
+      expect([path, stopForAddress(path, null)]).toEqual([path, null]),
+    );
+  });
+});
+
+describe("the browser tab's memory of the Stop", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+    window.sessionStorage.clear();
+  });
+
+  it("reopens the remembered Stop after a reload", () => {
+    rememberStop(4);
+    expect(stopAfterReload()).toBe(previewStop(4));
+  });
+
+  it("reopens nothing once the tab has left the Pilot Preview", () => {
+    rememberStop(4);
+    rememberStop(null);
+    expect(stopAfterReload()).toBeNull();
+  });
+
+  it("reopens the Opening when the remembered Stop does not exist", () => {
+    rememberStop(9);
+    expect(stopAfterReload()).toBe(PREVIEW_OPENING);
+  });
+
+  it("carries on without the memory when the browser blocks it, and a reload shows the Opening", () => {
+    vi.spyOn(window, "sessionStorage", "get").mockImplementation(() => {
+      throw new DOMException("The tab's memory is blocked.", "SecurityError");
+    });
+    expect(() => rememberStop(3)).not.toThrow();
+    expect(() => rememberStop(null)).not.toThrow();
+    expect(stopAfterReload()).toBe(PREVIEW_OPENING);
+  });
+});
+
+describe("opening a Stop", () => {
+  it("opens each Stop on its day, with Kalayaan Foods claimed only from Stop 3", () => {
+    const claimedFrom = 3;
+    PREVIEW_STOPS.forEach((stop) => {
+      openStop(stop.number);
+      const S = getState();
+      expect([stop.number, S.preview]).toEqual([stop.number, stop.number]);
+      expect([stop.number, previewStop(S.preview ?? -1).seat]).toEqual([stop.number, stop.seat]);
+      expect([stop.number, S.claimed]).toEqual([stop.number, stop.number >= claimedFrom]);
+      if (stop.day !== null) expect([stop.number, S.day]).toEqual([stop.number, stop.day]);
+    });
+  });
+
+  it("marks the Opening as in the Pilot Preview, with no Stop's state built", () => {
+    openStop(0);
+    expect(getState().preview).toBe(0);
+    const opening = withoutPreviewFlags();
+    act.demoNew();
+    expect(opening).toEqual(withoutPreviewFlags());
+  });
+
+  it("builds the same state every time, whatever was done before", () => {
+    [PREVIEW_OPENING, ...PREVIEW_STOPS].forEach((stop) => {
+      act.demoNew();
+      openStop(stop.number);
+      const clean = snapshot();
+      newCompany();
+      act.connect("maple");
+      act.morning("3");
+      act.toggleLaterItem("pricing");
+      act.setView("pro");
+      openStop(stop.number === 5 ? 1 : 5);
+      act.toggleLaterItem("previews");
+      openStop(stop.number);
+      expect([stop.number, snapshot()]).toEqual([stop.number, clean]);
+    });
+  });
+
+  it("builds each state at once, with nothing left for a timer and no toast", () => {
+    const toast = vi.fn();
+    setHandlers({ toast });
+    [PREVIEW_OPENING, ...PREVIEW_STOPS].forEach((stop) => {
+      openStop(stop.number);
+      const built = snapshot();
+      vi.advanceTimersByTime(60_000);
+      expect([stop.number, snapshot()]).toEqual([stop.number, built]);
+    });
+    expect(toast).not.toHaveBeenCalled();
+  });
+
+  it("builds Stop 4 from the same seed as Two weeks in, and Stops 5 and 6 see that same state", () => {
+    act.demoActive();
+    const twoWeeksIn = withoutPreviewFlags();
+    [4, 5, 6].forEach((n) => {
+      openStop(n);
+      expect([n, withoutPreviewFlags()]).toEqual([n, twoWeeksIn]);
+    });
+  });
+});
+
+describe("Day 0, before any Claim", () => {
+  beforeEach(() => openStop(1));
+
+  it("holds no activity, no claimed Company and no points", () => {
+    const S = getState();
+    expect(S.day).toBe(0);
+    expect(claimedCount()).toBe(0);
+    expect(hasClaimed("me")).toBe(false);
+    expect(POOL.filter((c) => hasClaimed(c.id) || pointsOf(c) > 0)).toEqual([]);
+    expect(S.ledger).toEqual([]);
+    expect(score()).toBe(0);
+    expect(S.signals).toEqual([]);
+    expect(S.otherSignals).toEqual([]);
+    expect(S.threads).toEqual([]);
+    expect(S.asks).toEqual([]);
+    expect(S.incoming).toEqual([]);
+    expect(S.updates).toEqual([]);
+    expect(S.notes).toEqual([]);
+    expect(S.lists).toEqual({});
+    expect(S.digest).toBeNull();
+    expect(successWall()).toEqual([]);
+    expect(monthlyTop().top.filter((t) => !t.me)).toEqual([]);
+  });
+
+  it("has ECCP's member list already imported", () => {
+    const S = getState();
+    expect(S.cm).toMatchObject({ stage: "done", imported: true, built: memberRows().length });
+  });
+
+  it("counts no member as claimed, active or needing an intro", () => {
+    expect(memberTotals()).toEqual({ members: 100, claimed: 0, active: 0, needIntro: 0 });
+    expect(members().every((m) => m.state === "Not claimed")).toBe(true);
+    expect(members().filter((m) => m.intro)).toEqual([]);
+  });
+
+  it("works out every figure a screen reads without failing", () => {
+    const figures = () => [
+      rank(),
+      score(),
+      nextAction(),
+      interestedCompanies(),
+      topNumbers(),
+      visibilityByDay(),
+      visibilityNote(),
+      interestFunnel(),
+      comDashAlerts(),
+      searcherRoles(),
+      industryGroups(),
+      searchTerms(),
+      profileGaps(),
+      profileCompleteness(),
+      connectionSummary(),
+      connectionList(),
+      connectionItems(),
+      invitations(),
+      chamberSuggestions(),
+      buyerSuggestions(),
+      networkRing(),
+      networkLayout(),
+      noteGroups(),
+      unreadCount(),
+      monthlyTop(),
+      teamData(),
+      dealsConfirmed(),
+      searchRows(),
+      firstMatches(),
+    ];
+    expect(figures).not.toThrow();
+  });
+});
+
+describe("Stop 3, the next morning", () => {
+  beforeEach(() => openStop(3));
+
+  it("is Day 2, the morning after Kalayaan Foods claimed on Day 1", () => {
+    expect(getState().day).toBe(2);
+    expect(claimDayOf("me")).toBe(1);
+  });
+
+  it("holds the Morning Digest for Day 2", () => {
+    expect(getState().digest?.day).toBe(2);
+    expect(digestLine()).toMatch(/^\d+ new leads, /);
+  });
+
+  it("is connected with Nordhavn and has sent it a first message, the one Two weeks in starts from", () => {
+    const S = getState();
+    expect(S.conn.nordhavn).toBe("connected");
+    const sent = need(
+      S.threads.find((t) => t.co === "nordhavn"),
+      "thread with Nordhavn",
+    ).msgs;
+    expect(sent.map((m) => [m.from, m.day])).toEqual([["me", 1]]);
+    act.demoActive();
+    const twoWeeks = need(
+      getState().threads.find((t) => t.co === "nordhavn"),
+      "Nordhavn thread two weeks in",
+    ).msgs;
+    expect(sent[0]?.text).toBe(twoWeeks[0]?.text);
+  });
+});
+
+describe("moving between screens", () => {
+  it("never claims Kalayaan Foods inside the Pilot Preview", () => {
+    [1, 2].forEach((n) => {
+      openStop(n);
+      ["dash", "leads", "mail", "wins", "chamber", "digest", "matches", "company"].forEach((r) =>
+        enterRoute(r),
+      );
+      expect([n, getState().claimed]).toEqual([n, false]);
+    });
+  });
+
+  it("claims Kalayaan Foods on the first screen after the claim screen in the full Demo, as before", () => {
+    expect(enterRoute("claim")).toBe("claim");
+    expect(getState().claimed).toBe(false);
+    expect(enterRoute("dash")).toBe("dash");
+    expect(getState().claimed).toBe(true);
+  });
+});
+
+describe("the later items", () => {
+  const AFTER_MVP = ["agent", "team", "engine"];
+
+  it("are both on in each of the full Demo's starts", () => {
+    const on = { pricing: true, previews: true };
+    expect(getState().laterItems).toEqual(on);
+    act.demoActive();
+    expect(getState().laterItems).toEqual(on);
+    openStop(4);
+    act.reset();
+    expect(getState().laterItems).toEqual(on);
+    expect(getState().preview).toBeNull();
+  });
+
+  it("are both off whenever the Opening or a Stop opens", () => {
+    [PREVIEW_OPENING, ...PREVIEW_STOPS].forEach((stop) => {
+      act.demoActive();
+      openStop(stop.number);
+      expect([stop.number, getState().laterItems]).toEqual([
+        stop.number,
+        { pricing: false, previews: false },
+      ]);
+    });
+  });
+
+  it("each switch on and off alone", () => {
+    openStop(4);
+    act.toggleLaterItem("previews");
+    expect(getState().laterItems).toEqual({ pricing: false, previews: true });
+    expect(laterItemShown("previews")).toBe(true);
+    act.toggleLaterItem("pricing");
+    act.toggleLaterItem("previews");
+    expect(getState().laterItems).toEqual({ pricing: true, previews: false });
+    expect(laterItemShown("pricing")).toBe(true);
+    act.toggleLaterItem("not-an-item");
+    act.toggleLaterItem("toString");
+    expect(getState().laterItems).toEqual({ pricing: true, previews: false });
+  });
+
+  it("with the previews hidden, open the ComDash Overview at the after-MVP screens' addresses", () => {
+    openStop(4);
+    AFTER_MVP.forEach((r) => expect([r, enterRoute(r)]).toEqual([r, "dash"]));
+    act.toggleLaterItem("previews");
+    AFTER_MVP.forEach((r) => expect([r, enterRoute(r)]).toEqual([r, r]));
+  });
+
+  it("open the after-MVP screens in the full Demo, as before", () => {
+    act.demoActive();
+    AFTER_MVP.forEach((r) => expect([r, enterRoute(r)]).toEqual([r, r]));
+  });
+
+  it("with pricing hidden, keep ComDash on the Free view", () => {
+    act.demoActive();
+    act.setView("pro");
+    expect(getState().view).toBe("pro");
+    act.toggleLaterItem("pricing");
+    expect(getState().view).toBe("free");
+    act.toggleLaterItem("pricing");
+    act.setView("growth");
+    expect(getState().view).toBe("growth");
   });
 });

@@ -497,6 +497,37 @@ export interface SimState {
   updates: ProfileUpdate[];
   replyDrafts: Record<string, Draft>;
   replied: string[];
+  /** The Pilot Preview Stop the simulation is on, 0 being the Opening, or null in the full Demo. */
+  preview: number | null;
+  laterItems: LaterItems;
+}
+
+/** The two switches for what is not in the MVP: possible future pricing, and the after-MVP
+ * previews (the AI Lead Agent, the Team Dashboard and the Engine). */
+export interface LaterItems {
+  pricing: boolean;
+  previews: boolean;
+}
+export type LaterItem = keyof LaterItems;
+
+/** Whose view a Pilot Preview Stop shows. */
+export type Seat = "community-manager" | "company" | "chamber-contact";
+
+/** How a Stop's state is prepared. The simulation builds each one. */
+export type StopState = "opening" | "member-list" | "before-claim" | "next-morning" | "two-weeks";
+
+/** The Pilot Preview's Opening (number 0) or one of its Stops. */
+export interface PreviewStop {
+  number: number;
+  /** The simulation day it is set on, or null for the Opening and the closing Stop. */
+  day: number | null;
+  title: string;
+  seat: Seat | null;
+  /** The screen it opens on. */
+  screen: string;
+  /** Its own address: the screen, marked with the Stop. */
+  href: string;
+  state: StopState;
 }
 
 export interface ToastAction {

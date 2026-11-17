@@ -30,6 +30,7 @@ import {
   TOTAL,
   TRADE_WORDS,
 } from "@/services/comlinked/data";
+import { previewStop } from "@/services/comlinked/preview";
 import type {
   AgentCandidate,
   AgentRun,
@@ -46,10 +47,12 @@ import type {
   InterestedCompany,
   InterestLevel,
   InterestRow,
+  LaterItem,
   Message,
   NextAction,
   NoteGroup,
   PlanView,
+  PreviewStop,
   ProfileField,
   PublicView,
   RuleKey,
@@ -57,6 +60,7 @@ import type {
   Signal,
   SignalKind,
   SimState,
+  StopState,
   Suggestion,
   TeamData,
   TeamQueueItem,
@@ -75,6 +79,8 @@ let gen = 0;
 let S: SimState;
 let current = "home";
 let guideOpen = false;
+/** True while a Pilot Preview Stop's state is being built, which raises no toast. */
+let preparingStop = false;
 
 /* ---------- Store ---------- */
 let version = 0;
@@ -224,7 +230,7 @@ export function pct(x: number) {
   return Math.round(x * 100) + "%";
 }
 function toast(msg: string, kicker?: string, action?: ToastAction) {
-  handlers.toast(msg, kicker, action);
+  if (!preparingStop) handlers.toast(msg, kicker, action);
 }
 
 function fresh(): SimState {
@@ -346,6 +352,8 @@ function fresh(): SimState {
     updates: [],
     replyDrafts: {},
     replied: [],
+    preview: null,
+    laterItems: { pricing: true, previews: true },
   };
 }
 export function score() {
@@ -770,6 +778,15 @@ export function finishClaim() {
 /** The day "Two weeks in" lands on, and the day before it, when the first deal was confirmed. */
 const TWO_WEEKS_IN = 14,
   FIRST_DEAL_DAY = 13;
+/** Kalayaan Foods' first message to Nordhavn Freight Forwarders, sent on the day it claims. */
+const FIRST_MESSAGE_TO_NORDHAVN =
+  "Hello Nordhavn Freight Forwarders team. We make banana chips and are planning our first shipment to Europe. Could we talk about sea freight?";
+/** The member import, finished: every profile on the member list built. */
+function importFinished() {
+  S.cm.stage = "done";
+  S.cm.built = memberRows().length;
+  S.cm.imported = true;
+}
 /** What Kalayaan Foods earned in its first two weeks, newest first. Each row is one award the
  * rules allow on its day. */
 const TWO_WEEKS_LEDGER: [day: number, key: RuleKey, co?: string][] = [
@@ -894,10 +911,7 @@ export function seedTwoWeeks() {
       metDone: 1,
       dealDone: 1,
       msgs: [
-        me(
-          "Hello Nordhavn Freight Forwarders team. We make banana chips and are planning our first shipment to Europe. Could we talk about sea freight?",
-          1,
-        ),
+        me(FIRST_MESSAGE_TO_NORDHAVN, 1),
         them("Thanks for the note. What are you shipping, and to which port?", 1),
         me("One pallet of banana chips to Rotterdam, to start. Our product list is attached.", 2),
         them(
@@ -978,9 +992,7 @@ export function seedTwoWeeks() {
   S.asks.unshift(earlierAsk);
   S.announcements.unshift({ text: "Our next member meeting is on Friday at 3:00 p.m.", day: 12 });
   S.intros.unshift({ a: "me", b: "malaya" });
-  S.cm.stage = "done";
-  S.cm.built = 12;
-  S.cm.imported = true;
+  importFinished();
   S.flags = {
     claimed: true,
     dashSeen: true,
@@ -1309,9 +1321,11 @@ function memberStanding(c: Company): MemberStanding {
   };
 }
 function myStanding(): MemberStanding {
+  const claimed = hasClaimed("me");
   return {
-    state: hasClaimed("me") ? "Active" : "Not claimed",
+    state: claimed ? "Active" : "Not claimed",
     intro:
+      claimed &&
       !connected().length &&
       !S.intros.some(function (i) {
         return i.a === "me" || i.b === "me";
@@ -2711,6 +2725,12 @@ const ACT = {
   setView: function (view: string) {
     if (isPlanView(view)) S.view = view;
   },
+  /** The Presenter Guide's switches. With pricing hidden, ComDash stays on the Free view. */
+  toggleLaterItem: function (item: string) {
+    if (!isLaterItem(item)) return;
+    S.laterItems[item] = !S.laterItems[item];
+    if (!S.laterItems.pricing) S.view = "free";
+  },
   startReply: function (itemId: string) {
     const item = connectionItems().find(function (i) {
       return i.id === itemId;
@@ -2761,6 +2781,9 @@ function startOver() {
   handlers.clearToasts();
 }
 
+/** Screens planned for after the MVP. The after-MVP previews switch shows or hides them. */
+const AFTER_MVP_SCREENS = ["agent", "team", "engine"];
+
 /** Applies the mockup's route() logic and returns the route to show. */
 export function enterRoute(route: string) {
   if (route !== current) {
@@ -2768,13 +2791,83 @@ export function enterRoute(route: string) {
     S.cm.draft = null;
   }
   current = route;
-  if (route !== "claim" && route !== "whats-next" && route !== "home" && !S.claimed) finishClaim();
+  const claimsHere = route !== "claim" && route !== "whats-next" && route !== "home";
+  // Inside the Pilot Preview, the Stop's state decides whether Kalayaan Foods has claimed.
+  if (claimsHere && S.preview === null && !S.claimed) finishClaim();
   if (route === "claim" && S.claimed) current = "dash";
+  if (!S.laterItems.previews && AFTER_MVP_SCREENS.includes(route)) current = "dash";
   return current;
 }
+
 function go(name: string) {
   handlers.go(enterRoute(name));
   emit();
+}
+
+/* ---------- The Pilot Preview ---------- */
+/** Day 0, the day before any Company claims: the member list imported and nothing else. The asks
+ * that open the Demo are posted on Day 1, by Companies that have claimed by then. */
+function memberListImported() {
+  S.day = 0;
+  S.asks = [];
+  importFinished();
+}
+/** Day 2: Kalayaan Foods claimed on Day 1, connected with Nordhavn Freight Forwarders and sent it
+ * a first message, and the next morning's digest has arrived. */
+function morningAfterClaim() {
+  finishClaim();
+  S.leadAct.nordhavn = "connect";
+  actList();
+  linkUp("nordhavn", true);
+  ensureThread("nordhavn").msgs.push({
+    from: "me",
+    text: FIRST_MESSAGE_TO_NORDHAVN,
+    day: S.day,
+    ai: false,
+  });
+  S.flags.sent = true;
+  nextMorning(1);
+}
+/** How each kind of Stop state is built, from the simulation's own building blocks. The fresh
+ * state is already the Opening's and Stop 2's: Day 1, before Kalayaan Foods claims. */
+const STOP_STATES: Record<StopState, () => void> = {
+  opening: function () {},
+  "member-list": memberListImported,
+  "before-claim": function () {},
+  "next-morning": morningAfterClaim,
+  "two-weeks": seedTwoWeeks,
+};
+/** Opens a Pilot Preview Stop, 0 being the Opening: starts the simulation over, marks it as on
+ * that Stop with both later items hidden, and builds the Stop's state. The state is the same
+ * every time, whatever came before, and is built at once, with no timer and no toast. */
+export function openStop(n: number) {
+  const stop = previewStop(n);
+  startOver();
+  S.preview = stop.number;
+  S.laterItems = { pricing: false, previews: false };
+  preparingStop = true;
+  try {
+    STOP_STATES[stop.state]();
+  } finally {
+    preparingStop = false;
+  }
+  emit();
+}
+/** The Pilot Preview Stop the simulation is on, the Opening included, or null in the full Demo. */
+export function currentStop(): PreviewStop | null {
+  return S.preview === null ? null : previewStop(S.preview);
+}
+/** A Stop's line on the Story Bar and the Opening: its day and title, or its title alone. */
+export function stopLine(stop: PreviewStop) {
+  return stop.day === null ? stop.title : dayLabel(stop.day) + " · " + stop.title;
+}
+/** Whether a later item shows: on in the full Demo, and off in the Pilot Preview until the
+ * presenter switches it on. */
+export function laterItemShown(item: LaterItem) {
+  return S.laterItems[item];
+}
+function isLaterItem(item: string): item is LaterItem {
+  return Object.hasOwn(S.laterItems, item);
 }
 
 /** Every action a screen can trigger. Each one notifies subscribers when it finishes. */

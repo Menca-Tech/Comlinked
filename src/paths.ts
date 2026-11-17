@@ -1,3 +1,6 @@
+/** The address parameter that names a Pilot Preview Stop. */
+const STOP_PARAM = "stop";
+
 export const paths = {
   home: "/",
   marketing: {
@@ -47,6 +50,14 @@ export const paths = {
     /** Interest Signals with one Company's timeline drawer open. */
     signalsFor: (companyId: string) => `/app/dash/signals?company=${encodeURIComponent(companyId)}`,
   },
+  /** The Pilot Preview: its Opening, its closing screen, and each Stop's own address. */
+  preview: {
+    opening: "/app/preview",
+    ask: "/app/preview/ask",
+    stopParam: STOP_PARAM,
+    /** A Stop's address: the screen it opens on, marked with the Stop. */
+    stop: (screen: string, stop: number | string) => `${screen}?${STOP_PARAM}=${stop}`,
+  },
   dashboard: {
     overview: "/dashboard",
     blank: "/dashboard/blank",
@@ -66,3 +77,6 @@ export const paths = {
     },
   },
 } as const;
+
+/** A product screen, by the name its address starts with under /app. */
+export type ProductRoute = keyof typeof paths.product;
