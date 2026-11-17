@@ -2,6 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 
+import { ClaimMessage } from "@/components/product/screens/claim-message";
 import { Btn, Mono, OfferSeek } from "@/components/product/shared";
 import { useSimulation } from "@/components/product/use-simulation";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -37,11 +38,13 @@ function Welcome({
   );
 }
 
-// A2 A3: the personal claim link, the profile check and easy sign-in.
+// A2 A3: the personal claim link, the profile check and easy sign-in. On the Pilot Preview's
+// claim Stop, the message carrying that link comes first.
 export function Claim() {
   const S = useSimulation();
   const [authorized, setAuthorized] = useState(false);
   const m = S.me;
+  if (S.claimMessageShown) return <ClaimMessage />;
   if (S.claimStep === 0) {
     return (
       <Welcome title="Your company is already here" sub="3 companies are already a match." named>

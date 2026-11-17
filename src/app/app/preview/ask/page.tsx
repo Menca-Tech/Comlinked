@@ -1,5 +1,5 @@
-import { PreviewClosing } from "@/components/product/screens/preview-closing";
+import { PreviewAsk } from "@/components/product/screens/preview-ask";
 
 export default function Page() {
-  return <PreviewClosing />;
+  return <PreviewAsk />;
 }

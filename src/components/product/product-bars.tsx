@@ -15,8 +15,8 @@ import {
 
 import { useSimulation } from "@/components/product/use-simulation";
 import type { ProductRoute } from "@/paths";
-import type { PreviewStop, Seat } from "@/services/comlinked";
-import { act, CHAMBER, currentStop, offersMe, unreadCount } from "@/services/comlinked";
+import type { Seat } from "@/services/comlinked";
+import { act, CHAMBER, currentSeat, offersMe, unreadCount } from "@/services/comlinked";
 
 const LOGO = "/assets/comlinked-logo.png";
 const DEMO_TAG = <span className="a-demo-tag">Example data</span>;
@@ -42,11 +42,10 @@ const SEAT_BARS: Record<Seat, Bar> = {
   "chamber-contact": { kind: "plain", label: `${CHAMBER.shortName}, read-only` },
 };
 
-/** The full Demo shows a Company's bar. A Stop shows its Seat's bar, and the Opening and a Stop
- * with no Seat a plain bar with no label. */
-function barFor(stop: PreviewStop | null): Bar {
-  if (!stop) return SEAT_BARS.company;
-  return stop.seat ? SEAT_BARS[stop.seat] : { kind: "plain", label: null };
+/** The bar for whose view is showing: the Seat's own, and a plain bar with no label on the
+ * Opening and a Stop with no Seat. */
+function barFor(seat: Seat | null): Bar {
+  return seat ? SEAT_BARS[seat] : { kind: "plain", label: null };
 }
 
 const logo = <Image src={LOGO} alt="ComLinked" width={140} height={28} priority unoptimized />;
@@ -174,7 +173,7 @@ export function TopBar({ route }: { route: string }) {
       </PlainBar>
     );
   }
-  const bar = barFor(currentStop());
+  const bar = barFor(currentSeat());
   if (bar.kind === "plain") {
     return <PlainBar>{bar.label ? <span className="a-seat">{bar.label}</span> : null}</PlainBar>;
   }
@@ -185,7 +184,7 @@ export function TopBar({ route }: { route: string }) {
 export function BottomTabs({ route }: { route: string }) {
   useSimulation();
   const sections = useSections();
-  if (NO_TABS.has(route) || barFor(currentStop()).kind !== "company") return null;
+  if (NO_TABS.has(route) || barFor(currentSeat()).kind !== "company") return null;
   return (
     <nav className="a-tabs" aria-label="Product">
       {sections.map(([name, label, count, Icon]) => (
