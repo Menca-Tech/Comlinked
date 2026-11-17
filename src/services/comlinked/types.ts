@@ -33,6 +33,33 @@ export type PublicView = Pick<Company, "id" | "name" | "ini" | "ind" | "city" | 
 /** One example Company as its data file holds it. The network adds the rest in data.ts. */
 export type MemberRow = Omit<Company, "website" | "rival">;
 
+/** The message a member receives from its chamber, inviting it to claim its profile. The chamber
+ * approves the real wording. */
+export interface ClaimMessageContent {
+  from: string;
+  to: string;
+  subject: string;
+  greeting: string;
+  /** What the chamber is piloting, then what has been drafted for this Company. */
+  paragraphs: string[];
+  /** What the member is told under the button that opens the Claim. */
+  assurance: string;
+  /** The line under the message saying whose wording it is. */
+  note: string;
+}
+
+/** How a visitor reaches the person who presented the Pilot Preview. */
+export interface PresenterContact {
+  firstName: string;
+  address: string;
+  /** Opens a new message to the address, with the subject filled in. */
+  mailto: string;
+}
+
+/** One row of a Member List: a Company's name and website, with the id the simulation knows it
+ * by. A Member List holds no contact details. */
+export type MemberListEntry = Pick<Company, "id" | "name" | "website">;
+
 export interface MyCompany {
   name: string;
   ini: string;
@@ -431,6 +458,9 @@ export interface SimState {
   claimed: boolean;
   claimStep: number;
   claimSub: string | null;
+  /** Whether the chamber's claim message shows before the first claim screen. Only Stop 2 of the
+   * Pilot Preview opens on it. */
+  claimMessageShown: boolean;
   me: MyCompany;
   ai: boolean;
   aiLog: { day: number; on: boolean; note: string }[];
@@ -499,6 +529,9 @@ export interface SimState {
   replied: string[];
   /** The Pilot Preview Stop the simulation is on, 0 being the Opening, or null in the full Demo. */
   preview: number | null;
+  /** Whether the viewer has left the Pilot Preview's last Stop to look around the member's side
+   * on their own. */
+  exploring: boolean;
   laterItems: LaterItems;
 }
 

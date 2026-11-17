@@ -30,13 +30,14 @@ import {
   TOTAL,
   TRADE_WORDS,
 } from "@/services/comlinked/data";
-import { previewStop } from "@/services/comlinked/preview";
+import { PREVIEW_CLOSING, previewStop } from "@/services/comlinked/preview";
 import type {
   AgentCandidate,
   AgentRun,
   AgentStep,
   AiField,
   Ask,
+  ClaimMessageContent,
   Company,
   ConnectionItem,
   ConnectionItemKind,
@@ -48,6 +49,7 @@ import type {
   InterestLevel,
   InterestRow,
   LaterItem,
+  MemberListEntry,
   Message,
   NextAction,
   NoteGroup,
@@ -57,6 +59,7 @@ import type {
   PublicView,
   RuleKey,
   SearchTerm,
+  Seat,
   Signal,
   SignalKind,
   SimState,
@@ -238,6 +241,7 @@ function fresh(): SimState {
     claimed: false,
     claimStep: 0,
     claimSub: null,
+    claimMessageShown: false,
     me: {
       name: "Kalayaan Foods Inc.",
       ini: "KF",
@@ -353,6 +357,7 @@ function fresh(): SimState {
     replyDrafts: {},
     replied: [],
     preview: null,
+    exploring: false,
     laterItems: { pricing: true, previews: true },
   };
 }
@@ -781,11 +786,19 @@ const TWO_WEEKS_IN = 14,
 /** Kalayaan Foods' first message to Nordhavn Freight Forwarders, sent on the day it claims. */
 const FIRST_MESSAGE_TO_NORDHAVN =
   "Hello Nordhavn Freight Forwarders team. We make banana chips and are planning our first shipment to Europe. Could we talk about sea freight?";
-/** The member import, finished: every profile on the member list built. */
+/** How long the member import takes to build every profile, whatever the list's length. */
+const IMPORT_BUILD_MS = 4000;
+/** The member import, finished: every profile on the Member List built. */
 function importFinished() {
   S.cm.stage = "done";
-  S.cm.built = memberRows().length;
+  S.cm.built = memberList().length;
   S.cm.imported = true;
+}
+/** What the member import ends with. The chamber sends the claim links from its own address, so
+ * they are ready for it, and nothing says a link has gone out. */
+export function importResult() {
+  const n = memberList().length;
+  return n + " profiles built. " + n + " claim links ready for " + CHAMBER.shortName + " to send.";
 }
 /** What Kalayaan Foods earned in its first two weeks, newest first. Each row is one award the
  * rules allow on its day. */
@@ -1354,11 +1367,12 @@ export function memberTotals() {
     }).length,
   };
 }
-export function memberRows() {
-  const src = ["Company website", "Facebook page", "Public directory listing"];
-  return [{ id: "me", name: S.me.name, ind: S.me.ind, city: S.me.city, source: src[0]! }].concat(
-    POOL.slice(0, 11).map(function (c, i) {
-      return { id: c.id, name: c.name, ind: c.ind, city: c.city, source: src[(i + 1) % 3]! };
+/** The Member List a chamber hands over: each Company's name and website, and no contact
+ * details. Kalayaan Foods comes first, then the rest of the network. */
+export function memberList(): MemberListEntry[] {
+  return [{ id: "me", name: S.me.name, website: S.me.website }].concat(
+    POOL.map(function (c) {
+      return { id: c.id, name: c.name, website: c.website };
     }),
   );
 }
@@ -2097,6 +2111,12 @@ const ACT = {
     guideOpen = false;
     nextMorning(Number(a));
   },
+  /** The claim message's button: puts the message away and opens the first claim screen. */
+  claimOpen: function () {
+    S.claimMessageShown = false;
+    emit();
+    handlers.top();
+  },
   claimNext: function () {
     S.claimStep = 1;
     emit();
@@ -2649,17 +2669,16 @@ const ACT = {
     emit();
   },
   importBuild: function () {
-    const n = memberRows().length;
+    const n = memberList().length;
     S.cm.stage = "building";
     S.cm.built = 0;
     emit();
     for (let i = 1; i <= n; i++)
-      later(260 * i, function () {
+      later(Math.round((IMPORT_BUILD_MS * i) / n), function () {
         S.cm.built = i;
         if (i === n) {
-          S.cm.stage = "done";
-          S.cm.imported = true;
-          toast(n + " profiles built and " + n + " claim links sent.");
+          importFinished();
+          toast(importResult());
         }
         emit();
       });
@@ -2783,7 +2802,20 @@ function startOver() {
 
 /** Screens planned for after the MVP. The after-MVP previews switch shows or hides them. */
 const AFTER_MVP_SCREENS = ["agent", "team", "engine"];
+/** The route of the Pilot Preview's own screens: the Opening and the closing screen. */
+const PREVIEW_ROUTE = "preview";
 
+/** Leaving the closing Stop's own screen is exploring on the member's side, and coming back to
+ * it ends that. Exploring starts at the top of the screen, where the way back shows. */
+function setExploring(away: boolean) {
+  if (away && !S.exploring) handlers.top();
+  S.exploring = away;
+}
+/** The screen to show at a route: the ComDash Overview in place of an after-MVP screen while the
+ * previews are hidden, and the route's own screen otherwise. It enters nothing. */
+export function shownRoute(route: string) {
+  return !S.laterItems.previews && AFTER_MVP_SCREENS.includes(route) ? "dash" : route;
+}
 /** Applies the mockup's route() logic and returns the route to show. */
 export function enterRoute(route: string) {
   if (route !== current) {
@@ -2794,8 +2826,9 @@ export function enterRoute(route: string) {
   const claimsHere = route !== "claim" && route !== "whats-next" && route !== "home";
   // Inside the Pilot Preview, the Stop's state decides whether Kalayaan Foods has claimed.
   if (claimsHere && S.preview === null && !S.claimed) finishClaim();
+  if (S.preview === PREVIEW_CLOSING.number) setExploring(route !== PREVIEW_ROUTE);
   if (route === "claim" && S.claimed) current = "dash";
-  if (!S.laterItems.previews && AFTER_MVP_SCREENS.includes(route)) current = "dash";
+  current = shownRoute(current);
   return current;
 }
 
@@ -2828,12 +2861,18 @@ function morningAfterClaim() {
   S.flags.sent = true;
   nextMorning(1);
 }
+/** Day 1, before Kalayaan Foods claims: the chamber's claim message has arrived, and shows in
+ * front of the first claim screen. */
+function claimMessageArrived() {
+  S.claimMessageShown = true;
+}
 /** How each kind of Stop state is built, from the simulation's own building blocks. The fresh
- * state is already the Opening's and Stop 2's: Day 1, before Kalayaan Foods claims. */
+ * state is already the Opening's, and Stop 2's but for its message: Day 1, before Kalayaan Foods
+ * claims. */
 const STOP_STATES: Record<StopState, () => void> = {
   opening: function () {},
   "member-list": memberListImported,
-  "before-claim": function () {},
+  "before-claim": claimMessageArrived,
   "next-morning": morningAfterClaim,
   "two-weeks": seedTwoWeeks,
 };
@@ -2856,6 +2895,16 @@ export function openStop(n: number) {
 /** The Pilot Preview Stop the simulation is on, the Opening included, or null in the full Demo. */
 export function currentStop(): PreviewStop | null {
   return S.preview === null ? null : previewStop(S.preview);
+}
+/** Whether the viewer has left the last Stop to look around the member's side on their own. */
+export function exploring() {
+  return S.exploring;
+}
+/** Whose view the screens show: a Stop's Seat, and a Company's in the full Demo and while
+ * exploring. Nobody's on the Opening and the closing Stop. */
+export function currentSeat(): Seat | null {
+  const stop = currentStop();
+  return !stop || S.exploring ? "company" : stop.seat;
 }
 /** A Stop's line on the Story Bar and the Opening: its day and title, or its title alone. */
 export function stopLine(stop: PreviewStop) {
@@ -3004,12 +3053,37 @@ export function selectedLead(ids: string[]) {
   };
   return S.sel && ids.includes(S.sel) && open(S.sel) ? S.sel : ids.find(open) || null;
 }
+/** How many Matches a new Company is shown on the day it claims. */
+const FIRST_MATCHES = 3;
 export function firstMatches() {
   return byFit(
     POOL.filter(function (c) {
       return !S.conn[c.id];
     }),
-  ).slice(0, 3);
+  ).slice(0, FIRST_MATCHES);
+}
+/** The message a member receives from its chamber, inviting it to claim its profile. It says how
+ * many members already match only when the Claim will show a full set of Matches. */
+export function claimMessage(): ClaimMessageContent {
+  const m = S.me,
+    chamber = CHAMBER.shortName,
+    matches = firstMatches().length;
+  const drafted = "A profile for " + m.name + " has been drafted from your website.";
+  return {
+    from: CHAMBER.senderName,
+    to: m.rep + ", " + m.name,
+    subject: "Your company profile on ComLinked is ready",
+    greeting: "Dear " + m.rep.split(" ")[0] + ",",
+    paragraphs: [
+      chamber +
+        " is piloting ComLinked, a network where member companies find leads among each other. It is free for members.",
+      matches < FIRST_MATCHES
+        ? drafted
+        : drafted + " " + matches + " " + chamber + " members already match what you offer.",
+    ],
+    assurance: "Other members see your description only after you have checked it.",
+    note: "Example wording. " + chamber + " approves the real message.",
+  };
 }
 /** The Success Wall on a day, newest first: the Testimonials the chamber's Companies had posted
  * by then, and the ones posted this session. No win shows before its day. */

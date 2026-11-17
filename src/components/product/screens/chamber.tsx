@@ -2,6 +2,7 @@
 
 import { AlertCircle, Check, Clock } from "lucide-react";
 
+import { MemberImport } from "@/components/product/chamber/member-import";
 import { Back, Btn, Mono, OfferSeek, PageHead, Panel, St } from "@/components/product/shared";
 import { useSimulation } from "@/components/product/use-simulation";
 import {
@@ -19,7 +20,7 @@ import {
   CHAMBER,
   co,
   currentStop,
-  memberRows,
+  hasClaimed,
   members,
   memberTotals,
   POOL,
@@ -30,119 +31,17 @@ const check = <Check className="a-ic" aria-hidden="true" />;
 const clock = <Clock className="a-ic" aria-hidden="true" />;
 const alert = <AlertCircle className="a-ic" aria-hidden="true" />;
 
-function ImportCard() {
+function DraftProfile({ id }: { id: string }) {
   const S = useSimulation();
-  const cm = S.cm;
-  const rows = memberRows();
-  if (cm.stage === "idle") {
-    return (
-      <section className="a-card">
-        <h2 className="a-h2">Member import</h2>
-        <p className="a-why">
-          Upload your member list. We build each company’s profile and send it a claim link.
-        </p>
-        <p className="a-small">This mockup always uses the sample list.</p>
-        <Btn cls="w-fit" onClick={() => act.importPick()}>
-          Choose sample file
-        </Btn>
-      </section>
-    );
-  }
-  if (cm.stage === "preview") {
-    return (
-      <section className="a-card">
-        <h2 className="a-h2">Member import</h2>
-        <St kind="good" icon={check}>
-          members-sample.csv: {rows.length} companies found
-        </St>
-        <div className="a-list">
-          {rows.map((r) => (
-            <div className="a-li" key={r.id}>
-              <span className="a-li-m">
-                <strong>{r.name}</strong>
-                <small>
-                  {r.ind}, {r.city}
-                </small>
-              </span>
-              <span className="a-li-r">{r.source}</span>
-            </div>
-          ))}
-        </div>
-        <div className="a-row">
-          <Btn onClick={() => act.importBuild()}>Build profiles and send claim links</Btn>
-          <Btn cls="g" onClick={() => act.importCancel()}>
-            Cancel
-          </Btn>
-        </div>
-      </section>
-    );
-  }
-  if (cm.stage === "building") {
-    return (
-      <section className="a-card">
-        <h2 className="a-h2">Member import</h2>
-        <St icon={clock}>
-          Building profiles: {cm.built} of {rows.length}
-        </St>
-        <div className="a-meter">
-          <i style={{ width: `${(cm.built / rows.length) * 100}%` }} />
-        </div>
-        <div className="a-list">
-          {rows.map((r, i) => {
-            const done = i < cm.built;
-            const state = done
-              ? "Draft ready"
-              : i === cm.built
-                ? `Reading ${r.source.toLowerCase()}`
-                : "Waiting";
-            const inner = (
-              <>
-                <span className="a-li-m">
-                  <strong>{r.name}</strong>
-                  <small>From {r.source.toLowerCase()}</small>
-                </span>
-                <span className="a-li-r">{state}</span>
-              </>
-            );
-            return done ? (
-              <button type="button" className="a-li" key={r.id} onClick={() => act.viewDraft(r.id)}>
-                {inner}
-              </button>
-            ) : (
-              <div className="a-li" key={r.id}>
-                {inner}
-              </div>
-            );
-          })}
-        </div>
-      </section>
-    );
-  }
-  return (
-    <section className="a-sec">
-      <h2 className="a-h2">Member import</h2>
-      <St kind="good" icon={check}>
-        {rows.length} profiles built. {rows.length} claim links sent.
-      </St>
-      <Btn cls="g sm a-flush" onClick={() => act.importPick()}>
-        Run the import again
-      </Btn>
-    </section>
-  );
-}
-
-function DraftProfile() {
-  const S = useSimulation();
-  const r = memberRows().find((x) => x.id === S.cm.draft)!;
-  const mine = r.id === "me";
-  const c = mine ? S.me : co(r.id);
-  const about = mine ? `${cap(S.me.about)}.` : `${c.name} ${co(r.id).why}`;
+  const mine = id === "me";
+  const c = mine ? S.me : co(id);
+  const about = mine ? `${cap(S.me.about)}.` : `${c.name} ${co(id).why}`;
   return (
     <div className="w-read">
       <Back label="Back to chamber tools" onClick={() => act.closeDraft()} />
       <PageHead
         title="Draft profile"
-        sub={<p className="a-why">AI drafted this from the company’s {r.source.toLowerCase()}.</p>}
+        sub={<p className="a-why">AI drafted this from the company’s website.</p>}
       />
       <Panel>
         <div className="a-co a-static">
@@ -158,8 +57,14 @@ function DraftProfile() {
         <OfferSeek c={c} />
         <section className="a-sec a-rule">
           <h2 className="a-h2">Claim status</h2>
-          <St icon={clock}>Claim link sent</St>
-          <p className="a-small">Source: {r.source}</p>
+          {hasClaimed(id) ? (
+            <St kind="good" icon={check}>
+              Claimed
+            </St>
+          ) : (
+            <St icon={clock}>Claim link ready for {CHAMBER.shortName} to send</St>
+          )}
+          <p className="a-small">Source: {c.website}</p>
         </section>
       </Panel>
     </div>
@@ -188,7 +93,7 @@ function CompanySelect({ id, field, value }: { id: string; field: TextField; val
 // A1 L4: the Community Manager's tools. The Chamber Contact sees the members without them.
 export function Chamber() {
   const S = useSimulation();
-  if (S.cm.draft) return <DraftProfile />;
+  if (S.cm.draft) return <DraftProfile id={S.cm.draft} />;
   const showsTools = currentStop()?.seat !== "chamber-contact";
   const list = members();
   const f = S.forms;
@@ -206,7 +111,7 @@ export function Chamber() {
     return (
       <>
         {head}
-        {showsTools ? <ImportCard /> : null}
+        {showsTools ? <MemberImport /> : null}
         <p className="a-empty">
           Import the member list to see who has claimed, who is active and who needs an intro.
         </p>
@@ -246,7 +151,7 @@ export function Chamber() {
               ))}
             </div>
           </section>
-          {showsTools ? <ImportCard /> : null}
+          {showsTools ? <MemberImport /> : null}
         </div>
         {showsTools ? (
           <div className="w-col a-surface">

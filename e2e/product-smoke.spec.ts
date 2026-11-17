@@ -184,7 +184,7 @@ test.describe("on a phone", () => {
 
     await guide(page, /^Open the chamber tools/);
     await tap(page, "Choose sample file");
-    await tap(page, "Build profiles and send claim links");
+    await tap(page, "Build profiles");
     await expect(page.getByRole("button", { name: "Send introduction" })).toBeVisible({
       timeout: 10_000,
     });

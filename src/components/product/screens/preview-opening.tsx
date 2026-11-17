@@ -22,7 +22,7 @@ export function PreviewOpening() {
         <h2 id="pv-stops" className="a-h2">
           The {PREVIEW_STOPS.length} stops
         </h2>
-        <ol className="pv-stops">
+        <ol className="pv-list">
           {PREVIEW_STOPS.map((stop) => (
             <li key={stop.number}>{stopLine(stop)}</li>
           ))}

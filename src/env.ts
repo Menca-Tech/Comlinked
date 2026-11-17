@@ -39,6 +39,9 @@ const envSchema = z.object({
   NEXT_PUBLIC_POSTHOG_KEY: optionalEnv(z.string().min(1).optional()),
   NEXT_PUBLIC_POSTHOG_HOST: optionalEnv(z.string().url().optional()),
   NEXT_PUBLIC_POSTHOG_REQUIRE_CONSENT: optionalEnv(z.enum(["true", "false"]).optional()),
+  // The Pilot Preview's presenter (optional; unset ⇒ its last screen offers no email button).
+  // Set it on the deployment only: a real person's address is never written into the repository.
+  NEXT_PUBLIC_PREVIEW_PRESENTER_EMAIL: optionalEnv(z.string().email().optional()),
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
 });
 
@@ -75,5 +78,6 @@ export const env = parseEnv({
   NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
   NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
   NEXT_PUBLIC_POSTHOG_REQUIRE_CONSENT: process.env.NEXT_PUBLIC_POSTHOG_REQUIRE_CONSENT,
+  NEXT_PUBLIC_PREVIEW_PRESENTER_EMAIL: process.env.NEXT_PUBLIC_PREVIEW_PRESENTER_EMAIL,
   NODE_ENV: process.env.NODE_ENV,
 });

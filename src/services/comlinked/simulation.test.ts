@@ -16,21 +16,26 @@ import {
   NETWORK,
   agentSteps,
   claimDayOf,
+  claimMessage,
   hasClaimed,
   buyerSuggestions,
   chamberSuggestions,
   connectionItems,
   connectionList,
   connectionStatus,
+  currentSeat,
+  currentStop,
   INTEREST_LEVELS,
   companyLine,
   dayLabel,
   pointsTotal,
+  presenterContact,
   intentScore,
   interestForView,
   invitations,
   setHandlers,
   setReplyDraft,
+  shownRoute,
   comDashAlerts,
   connectionSummary,
   industryGroups,
@@ -53,6 +58,7 @@ import {
   degreeLabel,
   digestLine,
   enterRoute,
+  exploring,
   firstMatches,
   fit,
   fitReasons,
@@ -89,10 +95,12 @@ import {
   trendPoints,
   unreadCount,
   waitingForClaim,
+  importResult,
   laterItemShown,
-  memberRows,
+  memberList,
   nextStop,
   openStop,
+  PREVIEW_CLOSING,
   PREVIEW_OPENING,
   PREVIEW_STOPS,
   previewStop,
@@ -2388,7 +2396,7 @@ describe("Day 0, before any Claim", () => {
 
   it("has ECCP's member list already imported", () => {
     const S = getState();
-    expect(S.cm).toMatchObject({ stage: "done", imported: true, built: memberRows().length });
+    expect(S.cm).toMatchObject({ stage: "done", imported: true, built: memberList().length });
   });
 
   it("counts no member as claimed, active or needing an intro", () => {
@@ -2533,6 +2541,15 @@ describe("the later items", () => {
     AFTER_MVP.forEach((r) => expect([r, enterRoute(r)]).toEqual([r, r]));
   });
 
+  it("with the previews hidden, name the ComDash Overview as the screen to show, without entering it", () => {
+    openStop(2);
+    expect(["agent", "team", "engine"].map(shownRoute)).toEqual(["dash", "dash", "dash"]);
+    expect(["leads", "claim", "chamber"].map(shownRoute)).toEqual(["leads", "claim", "chamber"]);
+    expect(getState().claimed).toBe(false);
+    act.toggleLaterItem("previews");
+    expect(["agent", "team", "engine"].map(shownRoute)).toEqual(["agent", "team", "engine"]);
+  });
+
   it("with pricing hidden, keep ComDash on the Free view", () => {
     act.demoActive();
     act.setView("pro");
@@ -2542,5 +2559,222 @@ describe("the later items", () => {
     act.toggleLaterItem("pricing");
     act.setView("growth");
     expect(getState().view).toBe("growth");
+  });
+});
+
+/* ---------- Stops 1, 2 and 6: the Member List, the claim message and the ask ---------- */
+
+describe("the Member List", () => {
+  it("holds all 100 Companies, each as its name and website and nothing else", () => {
+    const list = memberList();
+    expect(list).toHaveLength(100);
+    expect(list).toHaveLength(NETWORK);
+    expect(new Set(list.map((row) => row.id)).size).toBe(100);
+    list.forEach((row) => expect(Object.keys(row).sort()).toEqual(["id", "name", "website"]));
+    expect(list[0]).toEqual({
+      id: "me",
+      name: "Kalayaan Foods Inc.",
+      website: "kalayaanfoods.example",
+    });
+    expect(list.filter((row) => !row.name || !row.website.endsWith(".example"))).toEqual([]);
+  });
+});
+
+describe("the member import", () => {
+  it("ends with computed counts of profiles built and claim links ready for ECCP to send", () => {
+    expect(importResult()).toBe("100 profiles built. 100 claim links ready for ECCP to send.");
+    expect(importResult()).toContain(`${memberList().length} profiles built`);
+    expect(importResult()).not.toMatch(/\bsent\b/i);
+  });
+
+  it("is already finished when Stop 1 opens", () => {
+    openStop(1);
+    expect(getState().cm).toMatchObject({ stage: "done", imported: true, built: 100 });
+  });
+
+  it("run again, previews the list, builds every profile in about four seconds and ends the same", () => {
+    const toast = vi.fn();
+    setHandlers({ toast });
+    openStop(1);
+    act.importPick();
+    expect(getState().cm.stage).toBe("preview");
+    act.importBuild();
+    expect(getState().cm).toMatchObject({ stage: "building", built: 0 });
+    vi.advanceTimersByTime(2000);
+    expect(getState().cm).toMatchObject({ stage: "building", built: 50 });
+    vi.advanceTimersByTime(2000);
+    expect(getState().cm).toMatchObject({ stage: "done", imported: true, built: 100 });
+    expect(toast).toHaveBeenCalledTimes(1);
+    expect(toast.mock.calls[0]?.[0]).toBe(importResult());
+  });
+
+  it("cancelled during the preview, returns to the finished result", () => {
+    openStop(1);
+    act.importPick();
+    act.importCancel();
+    expect(getState().cm).toMatchObject({ stage: "done", imported: true, built: 100 });
+  });
+});
+
+describe("the claim message", () => {
+  it("is what Stop 2 opens on, and no other Stop or start of the Demo", () => {
+    openStop(2);
+    expect(getState().claimMessageShown).toBe(true);
+    [PREVIEW_OPENING, ...PREVIEW_STOPS]
+      .filter((stop) => stop.number !== 2)
+      .forEach((stop) => {
+        openStop(stop.number);
+        expect([stop.number, getState().claimMessageShown]).toEqual([stop.number, false]);
+      });
+    act.demoNew();
+    expect(getState().claimMessageShown).toBe(false);
+    act.demoActive();
+    expect(getState().claimMessageShown).toBe(false);
+  });
+
+  it("comes from ECCP's sender to Ana Reyes of Kalayaan Foods, in the agreed wording", () => {
+    openStop(2);
+    expect(claimMessage()).toEqual({
+      from: "ECCP Membership",
+      to: "Ana Reyes, Kalayaan Foods Inc.",
+      subject: "Your company profile on ComLinked is ready",
+      greeting: "Dear Ana,",
+      paragraphs: [
+        "ECCP is piloting ComLinked, a network where member companies find leads among each other. It is free for members.",
+        "A profile for Kalayaan Foods Inc. has been drafted from your website. 3 ECCP members already match what you offer.",
+      ],
+      assurance: "Other members see your description only after you have checked it.",
+      note: "Example wording. ECCP approves the real message.",
+    });
+  });
+
+  it("names the chamber, its sender, the representative and the Company from their one source", () => {
+    openStop(2);
+    const S = getState();
+    const message = claimMessage();
+    expect(message.from).toBe(CHAMBER.senderName);
+    expect(message.to).toBe(`${S.me.rep}, ${S.me.name}`);
+    expect(message.paragraphs[0]?.startsWith(`${CHAMBER.shortName} is piloting`)).toBe(true);
+    expect(message.note).toContain(`${CHAMBER.shortName} approves`);
+  });
+
+  it("counts the Matches the Claim then shows", () => {
+    openStop(2);
+    expect(firstMatches().map((c) => c.id)).toEqual(["maple", "nordhavn", "pack"]);
+    expect(claimMessage().paragraphs[1]).toContain("3 ECCP members already match what you offer.");
+  });
+
+  it("leaves out the line about matches when fewer than three exist", () => {
+    openStop(2);
+    POOL.slice(2).forEach((c) => {
+      getState().conn[c.id] = "connected";
+    });
+    expect(firstMatches()).toHaveLength(2);
+    expect(claimMessage().paragraphs[1]).toBe(
+      "A profile for Kalayaan Foods Inc. has been drafted from your website.",
+    );
+  });
+
+  it("and the Claim work with the AI Assistant off", () => {
+    openStop(2);
+    act.toggleAi();
+    expect(getState().ai).toBe(false);
+    expect(claimMessage().paragraphs[1]).toContain("3 ECCP members already match");
+    act.claimOpen();
+    act.claimNext();
+    act.claimConfirm("yes");
+    act.claimFinish();
+    expect(getState().claimed).toBe(true);
+    expect(firstMatches()).toHaveLength(3);
+  });
+
+  it("opens the first claim screen from its button, and the Claim then runs as before", () => {
+    openStop(2);
+    act.claimOpen();
+    expect(getState()).toMatchObject({ claimMessageShown: false, claimStep: 0, claimed: false });
+    act.claimNext();
+    act.claimConfirm("yes");
+    act.claimFinish();
+    expect(getState().claimed).toBe(true);
+    expect(getState().preview).toBe(2);
+    expect(firstMatches().map((c) => c.id)).toContain("nordhavn");
+  });
+});
+
+describe("the presenter's contact", () => {
+  it("is nothing when no address is set", () => {
+    expect(presenterContact(undefined)).toBeNull();
+  });
+
+  it("is the presenter's first name, the address, and a link that opens a new message with the subject filled in", () => {
+    expect(presenterContact("presenter@comlinked.example")).toEqual({
+      firstName: CHAMBER.presenterFirstName,
+      address: "presenter@comlinked.example",
+      mailto: "mailto:presenter@comlinked.example?subject=ECCP%20pilot%20on%20ComLinked",
+    });
+  });
+
+  it("encodes an address that carries characters a link cannot hold as they are", () => {
+    expect(presenterContact("first+pilot&x@comlinked.example")?.mailto).toBe(
+      "mailto:first%2Bpilot%26x@comlinked.example?subject=ECCP%20pilot%20on%20ComLinked",
+    );
+  });
+});
+
+describe("exploring after the last Stop", () => {
+  it("starts when the viewer leaves the ask for the member's side, two weeks in", () => {
+    openStop(6);
+    expect(exploring()).toBe(false);
+    expect(currentSeat()).toBeNull();
+    expect(enterRoute("dash")).toBe("dash");
+    expect(exploring()).toBe(true);
+    expect(currentSeat()).toBe("company");
+    expect(getState()).toMatchObject({ day: 14, claimed: true });
+  });
+
+  it("opens at the top of the screen once, so the way back is in view", () => {
+    const top = vi.fn();
+    setHandlers({ top });
+    openStop(6);
+    enterRoute("preview");
+    expect(top).not.toHaveBeenCalled();
+    enterRoute("dash");
+    expect(top).toHaveBeenCalledTimes(1);
+    enterRoute("leads");
+    expect(top).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps the Pilot Preview and the hidden later items", () => {
+    openStop(6);
+    enterRoute("dash");
+    expect(currentStop()).toBe(PREVIEW_CLOSING);
+    expect([laterItemShown("pricing"), laterItemShown("previews")]).toEqual([false, false]);
+    expect(enterRoute("team")).toBe("dash");
+    expect(enterRoute("leads")).toBe("leads");
+    expect(exploring()).toBe(true);
+    expect(getState().preview).toBe(6);
+  });
+
+  it("ends when its way back opens Stop 6", () => {
+    openStop(6);
+    enterRoute("dash");
+    const back = stopForAddress(PREVIEW_CLOSING.screen, String(PREVIEW_CLOSING.number));
+    expect(back).toBe(PREVIEW_CLOSING);
+    openStop(PREVIEW_CLOSING.number);
+    expect(exploring()).toBe(false);
+    expect(getState().preview).toBe(6);
+  });
+
+  it("does not start inside any other Stop, or in the full Demo", () => {
+    PREVIEW_STOPS.filter((stop) => stop !== PREVIEW_CLOSING).forEach((stop) => {
+      openStop(stop.number);
+      enterRoute("leads");
+      expect([stop.number, exploring()]).toEqual([stop.number, false]);
+      expect([stop.number, currentSeat()]).toEqual([stop.number, stop.seat]);
+    });
+    act.demoActive();
+    enterRoute("leads");
+    expect(exploring()).toBe(false);
+    expect(currentSeat()).toBe("company");
   });
 });
