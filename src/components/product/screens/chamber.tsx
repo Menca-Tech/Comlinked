@@ -18,6 +18,7 @@ import {
   cap,
   CHAMBER,
   co,
+  currentStop,
   memberRows,
   members,
   memberTotals,
@@ -184,10 +185,11 @@ function CompanySelect({ id, field, value }: { id: string; field: TextField; val
   );
 }
 
-// A1 L4: the Community Manager's tools.
+// A1 L4: the Community Manager's tools. The Chamber Contact sees the members without them.
 export function Chamber() {
   const S = useSimulation();
   if (S.cm.draft) return <DraftProfile />;
+  const showsTools = currentStop()?.seat !== "chamber-contact";
   const list = members();
   const f = S.forms;
   const cm = S.cm;
@@ -204,7 +206,7 @@ export function Chamber() {
     return (
       <>
         {head}
-        <ImportCard />
+        {showsTools ? <ImportCard /> : null}
         <p className="a-empty">
           Import the member list to see who has claimed, who is active and who needs an intro.
         </p>
@@ -244,75 +246,77 @@ export function Chamber() {
               ))}
             </div>
           </section>
-          <ImportCard />
+          {showsTools ? <ImportCard /> : null}
         </div>
-        <div className="w-col a-surface">
-          <section className="a-card">
-            <h2 className="a-h2">Make an introduction</h2>
-            <div>
-              <label className="a-label" htmlFor="f-a">
-                First company
-              </label>
-              <CompanySelect id="f-a" field="introA" value={f.introA} />
-            </div>
-            <div>
-              <label className="a-label" htmlFor="f-b">
-                Second company
-              </label>
-              <CompanySelect id="f-b" field="introB" value={f.introB} />
-            </div>
-            <Btn cls="block" onClick={() => act.makeIntro()}>
-              Send introduction
-            </Btn>
-          </section>
-          <section className="a-card">
-            <h2 className="a-h2">Announcement to members</h2>
-            <div>
-              <label className="a-label" htmlFor="f-b2">
-                Message
-              </label>
-              <Textarea
-                className="a-input"
-                id="f-b2"
-                rows={3}
-                placeholder="Our next member meeting is on Friday."
-                value={f.broadcast}
-                onChange={(event) => setForm("broadcast", event.target.value)}
-              />
-            </div>
-            <Btn cls="o block" onClick={() => act.broadcast()}>
-              Send to {totals.claimed} claimed members
-            </Btn>
-          </section>
-          <section className="a-sec">
-            <h2 className="a-h2">Unusual points</h2>
-            {cm.spike ? (
-              cm.spike === "ok" ? (
-                <St kind="good" icon={check}>
-                  Marked as normal
-                </St>
+        {showsTools ? (
+          <div className="w-col a-surface">
+            <section className="a-card">
+              <h2 className="a-h2">Make an introduction</h2>
+              <div>
+                <label className="a-label" htmlFor="f-a">
+                  First company
+                </label>
+                <CompanySelect id="f-a" field="introA" value={f.introA} />
+              </div>
+              <div>
+                <label className="a-label" htmlFor="f-b">
+                  Second company
+                </label>
+                <CompanySelect id="f-b" field="introB" value={f.introB} />
+              </div>
+              <Btn cls="block" onClick={() => act.makeIntro()}>
+                Send introduction
+              </Btn>
+            </section>
+            <section className="a-card">
+              <h2 className="a-h2">Announcement to members</h2>
+              <div>
+                <label className="a-label" htmlFor="f-b2">
+                  Message
+                </label>
+                <Textarea
+                  className="a-input"
+                  id="f-b2"
+                  rows={3}
+                  placeholder="Our next member meeting is on Friday."
+                  value={f.broadcast}
+                  onChange={(event) => setForm("broadcast", event.target.value)}
+                />
+              </div>
+              <Btn cls="o block" onClick={() => act.broadcast()}>
+                Send to {totals.claimed} claimed members
+              </Btn>
+            </section>
+            <section className="a-sec">
+              <h2 className="a-h2">Unusual points</h2>
+              {cm.spike ? (
+                cm.spike === "ok" ? (
+                  <St kind="good" icon={check}>
+                    Marked as normal
+                  </St>
+                ) : (
+                  <St kind="bad" icon={alert}>
+                    Flagged for ComLinked staff
+                  </St>
+                )
               ) : (
-                <St kind="bad" icon={alert}>
-                  Flagged for ComLinked staff
-                </St>
-              )
-            ) : (
-              <>
-                <p className="a-why">
-                  <b>Tala Print and Label</b> earned 68 points in one day.
-                </p>
-                <div className="a-row">
-                  <Btn cls="o sm" onClick={() => act.spike("ok")}>
-                    Looks normal
-                  </Btn>
-                  <Btn cls="o sm" onClick={() => act.spike("flag")}>
-                    Flag it
-                  </Btn>
-                </div>
-              </>
-            )}
-          </section>
-        </div>
+                <>
+                  <p className="a-why">
+                    <b>Tala Print and Label</b> earned 68 points in one day.
+                  </p>
+                  <div className="a-row">
+                    <Btn cls="o sm" onClick={() => act.spike("ok")}>
+                      Looks normal
+                    </Btn>
+                    <Btn cls="o sm" onClick={() => act.spike("flag")}>
+                      Flag it
+                    </Btn>
+                  </div>
+                </>
+              )}
+            </section>
+          </div>
+        ) : null}
       </div>
     </>
   );

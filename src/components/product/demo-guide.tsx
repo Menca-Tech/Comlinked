@@ -3,23 +3,30 @@
 import Link from "next/link";
 import { Check } from "lucide-react";
 
-import { COMDASH_TABS } from "@/components/product/comdash/tabs";
+import { comDashTabs } from "@/components/product/comdash/tabs";
 import { Btn } from "@/components/product/shared";
 import { useIsDesktop, useSimulation } from "@/components/product/use-simulation";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import type { LaterItem, PreviewStop } from "@/services/comlinked";
 import {
   act,
   activityBoost,
   boost,
   co,
+  currentStop,
   isGuideOpen,
   isNew,
+  laterItemShown,
   NEW_BOOST,
+  openStop,
   pct,
+  PREVIEW_OPENING,
+  PREVIEW_STOPS,
   rank,
   score,
   setGuideOpen,
+  stopLine,
   TAGS,
   TOTAL,
 } from "@/services/comlinked";
@@ -33,7 +40,41 @@ function KeyValue({ label, value }: { label: string; value: string | number }) {
   );
 }
 
-/** The presenter's panel: demo presets, the walk through the loop, and time travel. */
+/** The Presenter Guide's switches for what is not in the MVP. */
+const LATER_ITEMS: { item: LaterItem; label: string; note: string }[] = [
+  {
+    item: "pricing",
+    label: "Possible future pricing",
+    note: "The Free, Growth and Pro switcher on ComDash.",
+  },
+  {
+    item: "previews",
+    label: "After-MVP previews",
+    note: "The AI Lead Agent, the Team Dashboard and the Engine.",
+  },
+];
+
+/** Jumps to the Opening or a Stop. Its address opens the Stop afresh; already there, it reopens
+ * the Stop at once. */
+function StopLink({ stop }: { stop: PreviewStop }) {
+  const here = currentStop() === stop;
+  return (
+    <Link
+      href={stop.href}
+      className="g-step"
+      aria-current={here ? "step" : undefined}
+      onClick={() => {
+        setGuideOpen(false);
+        if (window.location.pathname + window.location.search === stop.href) openStop(stop.number);
+      }}
+    >
+      {stop === PREVIEW_OPENING ? "Opening" : `${stop.number}. ${stopLine(stop)}`}
+    </Link>
+  );
+}
+
+/** The presenter's panel: the Pilot Preview, demo presets, the walk through the loop, and time
+ * travel. */
 export function DemoGuide({ route }: { route: string }) {
   const S = useSimulation();
   const isWeb = useIsDesktop();
@@ -63,8 +104,40 @@ export function DemoGuide({ route }: { route: string }) {
         <div className="cl-sheet-body">
           <p className="a-small">
             Press G to open or close this guide. Every company and figure is example data, and AI
-            text is pre-written. Reloading the page starts over.
+            text is pre-written. Reloading the page starts over, except in the Pilot Preview, where
+            it reopens the stop.
           </p>
+          <div className="g-sec">
+            <h3>Pilot Preview</h3>
+            <nav aria-label="Jump to a Pilot Preview stop">
+              {[PREVIEW_OPENING, ...PREVIEW_STOPS].map((stop) => (
+                <StopLink key={stop.number} stop={stop} />
+              ))}
+            </nav>
+          </div>
+          <div className="g-sec">
+            <h3>Later items</h3>
+            <p className="a-small">Off in the Pilot Preview and on in the full demo.</p>
+            {LATER_ITEMS.map(({ item, label, note }) => (
+              <button
+                key={item}
+                type="button"
+                className="g-switch"
+                aria-label={label}
+                aria-pressed={laterItemShown(item)}
+                aria-describedby={`g-later-${item}`}
+                onClick={() => act.toggleLaterItem(item)}
+              >
+                <span className="g-switch-t">
+                  <b>{label}</b>
+                  <small id={`g-later-${item}`}>{note}</small>
+                </span>
+                <span className="g-switch-s" aria-hidden="true">
+                  {laterItemShown(item) ? "On" : "Off"}
+                </span>
+              </button>
+            ))}
+          </div>
           <div className="g-sec">
             <h3>Start a demo</h3>
             <div className="g-btns">
@@ -79,7 +152,7 @@ export function DemoGuide({ route }: { route: string }) {
           <div className="g-sec">
             <h3>ComDash tabs</h3>
             <nav aria-label="Jump to a ComDash tab">
-              {COMDASH_TABS.map((tab) => (
+              {comDashTabs().map((tab) => (
                 <Link
                   key={tab.href}
                   href={tab.href}

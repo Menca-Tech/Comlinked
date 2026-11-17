@@ -1,44 +1,139 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
-import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
-import {
-  Bell,
-  House,
-  ListChecks,
-  Mail,
-  MessageCircleQuestion,
-  Search,
-  Trophy,
-  type LucideIcon,
-} from "lucide-react";
+import { Suspense, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
 import { DemoGuide } from "@/components/product/demo-guide";
+import { BottomTabs, TopBar } from "@/components/product/product-bars";
 import { CompanyView } from "@/components/product/screens/company-view";
+import { StoryAnnouncer, StoryBar } from "@/components/product/story-bar";
 import { useSimulation } from "@/components/product/use-simulation";
-import { paths } from "@/paths";
-import { act, emit, enterRoute, offersMe, setHandlers, unreadCount } from "@/services/comlinked";
+import { paths, type ProductRoute } from "@/paths";
+import type { PreviewStop } from "@/services/comlinked";
+import {
+  act,
+  currentStop,
+  emit,
+  enterRoute,
+  laterItemShown,
+  openStop,
+  rememberStop,
+  setHandlers,
+  stopAfterReload,
+  stopForAddress,
+} from "@/services/comlinked";
 
-type Route = keyof typeof paths.product;
-
-const LOGO = "/assets/comlinked-logo.png";
-const DEMO_TAG = <span className="a-demo-tag">Example data</span>;
-const NO_TABS = new Set(["claim", "chamber", "matches", "whats-next", "engine", "agent", "team"]);
-
+const isRoute = (name: string): name is ProductRoute => Object.hasOwn(paths.product, name);
 const isDesktop = () => window.matchMedia("(min-width: 900px)").matches;
 
-export function ProductShell({ children }: { children: ReactNode }) {
+/** Whether this page was loaded by the browser reloading the address it now shows. */
+function reloadedHere() {
+  return performance
+    .getEntriesByType("navigation")
+    .some(
+      (entry) =>
+        entry instanceof PerformanceNavigationTiming &&
+        entry.type === "reload" &&
+        entry.name === window.location.href,
+    );
+}
+
+/** Moves focus to the screen's main heading, so a keyboard or a screen reader starts there. */
+function focusMainHeading() {
+  const target =
+    document.querySelector<HTMLElement>("main h1") ?? document.querySelector<HTMLElement>("main");
+  if (!target) return;
+  target.tabIndex = -1;
+  target.focus();
+}
+
+function ProductRoot({ children }: { children?: ReactNode }) {
+  return (
+    <div className="cl-product">
+      <div className="phone">{children}</div>
+      <StoryAnnouncer />
+    </div>
+  );
+}
+
+/** Enters each address the shell shows, and returns whether its screen is ready to show. A Stop's
+ * address opens that Stop afresh, however it was reached. A reload of an address with no Stop in
+ * it reopens the Stop the tab remembers. Anything else enters the screen as before. The tab
+ * remembers the Stop it is on, and opening a Stop moves focus to the screen's main heading. */
+function useAddressEntry(route: string) {
   const pathname = usePathname();
+  const marker = useSearchParams().get(paths.preview.stopParam);
   const router = useRouter();
   const S = useSimulation();
   const [mounted, setMounted] = useState(false);
-  const route = pathname.split("/")[2] ?? "claim";
+  /** The Stop address whose Stop is open, so its screen shows only once the Stop is ready. */
+  const [openedAt, setOpenedAt] = useState<string | null>(null);
+  const lastOpened = useRef<string | null>(null);
+  /** The Stop a reload reopens, read once, before anything changes the tab's memory. */
+  const reopenAfterReload = useRef<PreviewStop | null | undefined>(undefined);
+  const entered = useRef(false);
+  const focusOnOpen = useRef(false);
+  const address = marker === null ? pathname : paths.preview.stop(pathname, marker);
+  const previewsShown = laterItemShown("previews");
+
+  // Runs before paint, so no screen shows in the wrong state, and again when the after-MVP
+  // previews switch changes, so a screen the switch hides gives way to the Overview.
+  useLayoutEffect(() => {
+    reopenAfterReload.current ??= reloadedHere() ? stopAfterReload() : null;
+    const stop = stopForAddress(pathname, marker);
+    if (stop) {
+      reopenAfterReload.current = null;
+      if (address !== stop.href) {
+        router.replace(stop.href);
+        return;
+      }
+      if (lastOpened.current !== address) {
+        lastOpened.current = address;
+        openStop(stop.number);
+        focusOnOpen.current = entered.current;
+      }
+      setOpenedAt(address);
+    } else if (reopenAfterReload.current) {
+      router.replace(reopenAfterReload.current.href);
+      return;
+    } else {
+      lastOpened.current = null;
+      setOpenedAt(null);
+    }
+    const shown = enterRoute(route);
+    if (shown !== route && isRoute(shown)) router.replace(paths.product[shown]);
+    emit();
+    entered.current = true;
+    setMounted(true);
+  }, [address, marker, pathname, previewsShown, route, router]);
+
+  useEffect(() => {
+    if (!openedAt || !focusOnOpen.current) return;
+    focusOnOpen.current = false;
+    focusMainHeading();
+  }, [openedAt]);
+
+  useEffect(() => {
+    if (mounted) rememberStop(S.preview);
+  }, [mounted, S.preview]);
+
+  const arrivingAtStop = stopForAddress(pathname, marker) !== null && openedAt !== address;
+  return mounted && !arrivingAtStop;
+}
+
+function Shell({ children }: { children: ReactNode }) {
+  const router = useRouter();
+  const route = usePathname().split("/")[2] ?? "claim";
+  const ready = useAddressEntry(route);
+  const S = useSimulation();
 
   useEffect(() => {
     setHandlers({
-      go: (next) => router.push(next === "home" ? paths.home : paths.product[next as Route]),
+      go: (next) => {
+        if (next === "home") router.push(paths.home);
+        else if (isRoute(next)) router.push(paths.product[next]);
+      },
       toast: (message, kicker, action) => {
         const run = action
           ? () =>
@@ -58,13 +153,6 @@ export function ProductShell({ children }: { children: ReactNode }) {
   }, [router]);
 
   useEffect(() => {
-    const shown = enterRoute(route);
-    if (shown !== route) router.replace(paths.product[shown as Route]);
-    emit();
-    setMounted(true);
-  }, [route, router]);
-
-  useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.key !== "g" && event.key !== "G") return;
       if (event.metaKey || event.ctrlKey || event.altKey) return;
@@ -76,122 +164,14 @@ export function ProductShell({ children }: { children: ReactNode }) {
     return () => document.removeEventListener("keydown", onKey);
   }, []);
 
-  const productRoot = (content: ReactNode) => (
-    <div className="cl-product">
-      <div className="phone">{content}</div>
-    </div>
-  );
-  if (!mounted) return productRoot(null);
-
-  const leadsLeft = (S.lists[S.day] ?? []).filter((id) => !S.leadAct[id]).length;
-  const unreadMail = S.threads.filter((t) => t.unread).length;
-  const matchingAsks = S.asks.filter((a) => a.day === S.day && !a.answered && offersMe(a)).length;
-  const tabs: [Route, string, number, LucideIcon][] = [
-    ["dash", "ComDash", 0, House],
-    ["leads", "Leads", leadsLeft, ListChecks],
-    ["mail", "ComMail", unreadMail, Mail],
-    ["asks", "Asks", matchingAsks, MessageCircleQuestion],
-    ["wins", "Wins", S.pendingT.length, Trophy],
-  ];
-  const noTabs = NO_TABS.has(route);
-  const unread = unreadCount();
-  const logo = <Image src={LOGO} alt="ComLinked" width={140} height={28} priority unoptimized />;
-  const current = (name: string) => (route === name ? ("page" as const) : undefined);
-
-  const top =
-    route === "team" ? (
-      <header className="a-top">
-        <div className="a-top-in">
-          <div className="a-brand">
-            <span className="a-logo">{logo}</span>
-            {DEMO_TAG}
-          </div>
-          <div className="a-top-r">
-            <span className="a-team">ComLinked team</span>
-            <button type="button" className="a-link" onClick={() => act.nav("dash")}>
-              Back
-            </button>
-          </div>
-        </div>
-      </header>
-    ) : (
-      <header className="a-top">
-        <div className="a-top-in">
-          <div className="a-brand">
-            <button
-              type="button"
-              className="a-logo"
-              aria-label="ComLinked home"
-              onClick={() => (S.claimed ? act.nav("dash") : act.siteHome())}
-            >
-              {logo}
-            </button>
-            {DEMO_TAG}
-          </div>
-          {S.claimed && !noTabs ? (
-            <nav className="a-web-nav" aria-label="Product main">
-              {tabs.map(([name, label, count]) => (
-                <button
-                  key={name}
-                  type="button"
-                  className="nav-link"
-                  aria-current={current(name)}
-                  onClick={() => act.nav(name)}
-                >
-                  {label}
-                  {count ? <b className="a-count">{count}</b> : null}
-                </button>
-              ))}
-            </nav>
-          ) : null}
-          <div className="a-top-r">
-            {S.claimed ? (
-              <>
-                <button
-                  type="button"
-                  className="a-link"
-                  aria-label={`Notifications${unread ? `, ${unread} new` : ""}`}
-                  aria-current={current("notifications")}
-                  onClick={() => act.nav("notifications")}
-                >
-                  <span className="a-n-l">Notifications</span>
-                  <span className="a-n-s">
-                    <Bell className="a-ic" aria-hidden="true" />
-                  </span>
-                  {unread ? <b className="a-count">{unread}</b> : null}
-                </button>
-                <button
-                  type="button"
-                  className="a-link"
-                  aria-label="Search"
-                  aria-current={current("search")}
-                  onClick={() => act.nav("search")}
-                >
-                  <span className="a-n-l">Search</span>
-                  <span className="a-n-s">
-                    <Search className="a-ic" aria-hidden="true" />
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  className="a-mono sm me"
-                  aria-label="Your company"
-                  onClick={() => act.nav("company")}
-                >
-                  {S.me.ini}
-                </button>
-              </>
-            ) : null}
-          </div>
-        </div>
-      </header>
-    );
+  if (!ready) return <ProductRoot />;
 
   const showCompany = Boolean(S.viewCo) && route !== "claim" && route !== "whats-next";
 
-  return productRoot(
-    <>
-      {top}
+  return (
+    <ProductRoot>
+      <TopBar route={route} />
+      <StoryBar />
       <main
         className={
           route === "claim"
@@ -203,35 +183,29 @@ export function ProductShell({ children }: { children: ReactNode }) {
       >
         {showCompany ? <CompanyView /> : children}
       </main>
-      {noTabs ? null : (
-        <nav className="a-tabs" aria-label="Product">
-          {tabs.map(([name, label, count, Icon]) => (
-            <button
-              key={name}
-              type="button"
-              className="a-tab"
-              aria-current={current(name)}
-              onClick={() => act.nav(name)}
-            >
-              <span className="a-tab-i">
-                <Icon className="a-ic" aria-hidden="true" />
-                {count ? <b>{count}</b> : null}
-              </span>
-              {label}
-            </button>
-          ))}
-        </nav>
-      )}
-      <button
-        type="button"
-        className="demo-guide"
-        aria-label="Demo guide"
-        onClick={() => act.guide()}
-      >
-        <span className="a-n-l">Demo guide</span>
-        <span className="a-n-s">?</span>
-      </button>
+      <BottomTabs route={route} />
+      {currentStop() === null ? (
+        <button
+          type="button"
+          className="demo-guide"
+          aria-label="Demo guide"
+          onClick={() => act.guide()}
+        >
+          <span className="a-n-l">Demo guide</span>
+          <span className="a-n-s">?</span>
+        </button>
+      ) : null}
       <DemoGuide route={route} />
-    </>,
+    </ProductRoot>
+  );
+}
+
+/** Wraps every /app screen: the top bar, the Story Bar on a Pilot Preview Stop, the bottom tabs
+ * and the Presenter Guide. It reads the Stop from the address, which needs a Suspense boundary. */
+export function ProductShell({ children }: { children: ReactNode }) {
+  return (
+    <Suspense fallback={<ProductRoot />}>
+      <Shell>{children}</Shell>
+    </Suspense>
   );
 }
