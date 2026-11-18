@@ -387,6 +387,17 @@ const SCREENS: Screen[] = [
     },
   },
   {
+    name: "Privacy and contact details",
+    at: paths.product.privacy,
+    open: async (page) => {
+      await fullDemoTwoWeeksIn(page);
+      await fromAccountMenu(page, "Privacy and contact details");
+      await expect(
+        page.getByRole("heading", { name: "Privacy and contact details", level: 1 }),
+      ).toBeVisible();
+    },
+  },
+  {
     name: "Search before anything is typed",
     at: paths.product.search,
     open: async (page) => {

@@ -3813,3 +3813,23 @@
 .cl-product .pp-row .a-row {
   margin-top: var(--space-1);
 }
+
+/* The privacy page: the name choice as two native radio buttons, each a 44px target. */
+.cl-product .pv-fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+.cl-product .pv-choice {
+  align-items: center;
+  min-height: var(--space-11);
+  overflow-wrap: anywhere;
+}
+.cl-product .pv-choice input {
+  width: var(--space-5);
+  height: var(--space-5);
+  margin: 0;
+  flex: none;
+  accent-color: var(--color-accent-strong);
+}

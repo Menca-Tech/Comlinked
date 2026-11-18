@@ -3,6 +3,7 @@
 import { Check, Clock } from "lucide-react";
 
 import { ClaimMark } from "@/components/product/claim-mark";
+import { PeopleSection } from "@/components/product/people-section";
 import {
   Back,
   Btn,
@@ -75,6 +76,7 @@ function ClaimedProfile({ c, view }: { c: Company; view: Extract<PublicView, { c
         {degree ? ` · ${degree} degree` : ""}. Only the count and mutual connections are shared.
       </p>
       <OfferSeek c={view} />
+      <PeopleSection companyId={c.id} />
       {wins.length ? (
         <section className="a-sec a-rule">
           <h2 className="a-h2">Testimonials</h2>

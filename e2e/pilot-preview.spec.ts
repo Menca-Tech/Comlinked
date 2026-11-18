@@ -2572,3 +2572,25 @@ test.describe("the chamber of 1,000, with 100 named examples", () => {
     await closeGuide(page);
   });
 });
+
+test.describe("the account menu in the Pilot Preview", () => {
+  test("at Stop 4 the mark opens the account menu, the people page and the privacy page", async ({
+    page,
+  }) => {
+    await openStop(page, stop(4));
+    const openMenu = () => page.getByRole("button", { name: "Open the account menu" }).click();
+    await openMenu();
+    await page.getByRole("menuitem", { name: "Admins and authorized users" }).click();
+    await expect(
+      page.getByRole("heading", { name: "Admins and authorized users", level: 1 }),
+    ).toBeVisible();
+    await expect(page.locator("main li")).toHaveCount(4);
+    await openMenu();
+    await page.getByRole("menuitem", { name: "Privacy and contact details" }).click();
+    await expect(
+      page.getByRole("heading", { name: "Privacy and contact details", level: 1 }),
+    ).toBeVisible();
+    await expect(page.getByText("Nordhavn Freight Forwarders", { exact: true })).toBeVisible();
+    await expect(page.getByText("Example data")).toBeVisible();
+  });
+});

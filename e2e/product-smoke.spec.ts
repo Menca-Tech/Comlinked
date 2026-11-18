@@ -2500,6 +2500,7 @@ test.describe("the later screens and the Presenter Guide, on the scale and the s
 
 const MENU_HEADER = "Primary admin · Kalayaan Foods Inc.";
 const PEOPLE_HEADING = "Admins and authorized users";
+const PRIVACY_HEADING = "Privacy and contact details";
 const personRow = (page: Page, name: string) => page.locator("main li", { hasText: name });
 
 /** Axe on a part of the page, such as the account menu, which renders outside the product. */
@@ -2541,7 +2542,12 @@ test.describe("the account menu, on a phone", () => {
     await expect(sheet.getByText("Ana Reyes", { exact: true })).toBeVisible();
     await expect(sheet.getByText(MENU_HEADER)).toBeVisible();
     const items = sheet.getByRole("navigation", { name: "Account menu" }).getByRole("button");
-    await expect(items).toHaveText(["View company profile", PEOPLE_HEADING, "Sign out"]);
+    await expect(items).toHaveText([
+      "View company profile",
+      PEOPLE_HEADING,
+      PRIVACY_HEADING,
+      "Sign out",
+    ]);
     await expect(sheet.getByRole("group", { name: "Manage" })).toBeVisible();
     // It rises from the bottom edge of the screen.
     const box = await sheet.boundingBox();
@@ -2652,6 +2658,7 @@ test.describe("the account menu, on a laptop", () => {
     await expect(menu.getByRole("menuitem")).toHaveText([
       "View company profile",
       PEOPLE_HEADING,
+      PRIVACY_HEADING,
       "Sign out",
     ]);
     // A dropdown under the mark, its right edge at the mark's.
@@ -2708,5 +2715,161 @@ test.describe("the account menu, on a laptop", () => {
     await expect(personRow(page, "Marco Dizon")).toContainText("Primary admin");
     await page.getByRole("button", { name: "Remove Paolo Villanueva" }).click();
     await expect(page.locator("main li")).toHaveCount(3);
+  });
+});
+
+/** Opens the privacy page from the account menu, two weeks in. */
+async function openPrivacy(page: Page) {
+  await twoWeeksIn(page);
+  await accountMark(page).click();
+  await menuEntry(page, PRIVACY_HEADING).click();
+  await expect(heading(page, PRIVACY_HEADING)).toBeVisible();
+}
+const previewCard = (page: Page) =>
+  page
+    .locator("section")
+    .filter({ has: page.getByRole("heading", { name: "How connected companies see you" }) });
+const waitingSection = (page: Page) =>
+  page.locator("section").filter({ has: page.getByRole("heading", { name: "Waiting for you" }) });
+const peopleSection = (page: Page) =>
+  page
+    .locator("section")
+    .filter({ has: page.getByRole("heading", { name: "People", exact: true }) });
+
+for (const [device, viewport] of [
+  ["phone", { width: 390, height: 844 }],
+  ["laptop", { width: 1280, height: 900 }],
+] as const) {
+  test.describe(`privacy and the people of connected companies, on a ${device}`, () => {
+    test.use({ viewport });
+
+    test("the privacy page previews how connected companies see Ana, and Share answers Nordhavn", async ({
+      page,
+    }) => {
+      await openPrivacy(page);
+      await expect(previewCard(page)).toContainText("Ana Reyes");
+      await expect(previewCard(page)).toContainText("Owner · Primary admin");
+      await expect(page.getByRole("radio", { name: "Ana Reyes" })).toBeChecked();
+      await expect(page.getByRole("switch", { name: "Job title" })).toBeChecked();
+      await expect(
+        page.getByText("Shared only with companies you approve, one request at a time."),
+      ).toBeVisible();
+      await expect(
+        page.getByText("Companies you aren’t connected to see no people at all."),
+      ).toBeVisible();
+      // Every target is 44 pixels tall on a phone; a laptop's small buttons may be shorter.
+      if (device === "phone") await expectTargets(page.locator("main"));
+      await noSidewaysScroll(page);
+      await expectAccessible(page);
+
+      await page.getByRole("radio", { name: "Ana R." }).check();
+      await expect(previewCard(page).getByText("Ana R.", { exact: true })).toBeVisible();
+      await page.getByRole("switch", { name: "Job title" }).click();
+      await expect(page.getByRole("switch", { name: "Job title" })).not.toBeChecked();
+      await expect(previewCard(page)).not.toContainText("Owner");
+      await expect(previewCard(page)).toContainText("Primary admin");
+
+      await expect(waitingSection(page)).toContainText("Nordhavn Freight Forwarders");
+      await waitingSection(page)
+        .getByRole("button", { name: "Share with Nordhavn Freight Forwarders" })
+        .click();
+      await expect(
+        page.getByText("Nordhavn Freight Forwarders can now see your email and phone."),
+      ).toBeVisible();
+      await expect(waitingSection(page)).toContainText("Nothing is waiting.");
+      await expect(page.getByText("Shared with Nordhavn Freight Forwarders.")).toBeVisible();
+    });
+
+    test("Decline is quiet, and the request leaves the list", async ({ page }) => {
+      await openPrivacy(page);
+      await waitingSection(page)
+        .getByRole("button", { name: "Decline Nordhavn Freight Forwarders" })
+        .click();
+      await expect(
+        page.getByText("Declined. Nordhavn Freight Forwarders won’t be told."),
+      ).toBeVisible();
+      await expect(waitingSection(page)).toContainText("Nothing is waiting.");
+      await expect(page.getByText("Shared with no company yet.")).toBeVisible();
+    });
+
+    test("Marco's waiting request shows on his row, with no Share or Decline for Ana", async ({
+      page,
+    }) => {
+      await openPeople(page);
+      const marco = personRow(page, "Marco Dizon");
+      await expect(marco).toContainText(
+        "A Contact Request from Maple Bay Grocers is waiting. Only Marco Dizon can answer it.",
+      );
+      await expect(marco.getByRole("button", { name: /Share|Decline/ })).toHaveCount(0);
+      // Removing Marco removes his request with him.
+      await page.getByRole("button", { name: "Remove Marco Dizon" }).click();
+      await expect(page.getByText(/is waiting\. Only/)).toHaveCount(0);
+    });
+
+    test("a connected profile lists its people, and an ask is answered the next morning", async ({
+      page,
+    }) => {
+      await twoWeeksIn(page);
+      await openProfile(page, "Nordhavn Freight Forwarders");
+      const people = peopleSection(page);
+      await expect(people.locator("li")).toHaveCount(2);
+      await expect(people).toContainText("Mette Lindholm");
+      await expect(people).toContainText("Managing director · Primary admin");
+      await expect(people).toContainText("Jonas Brandt");
+      await expect(people).toContainText("Export sales manager · Authorized user · Sales");
+      await expect(people).not.toContainText("@");
+      await noSidewaysScroll(page);
+      await expectAccessible(page);
+      await people.getByRole("button", { name: "Ask for contact details: Mette Lindholm" }).click();
+      await expect(people.getByText("Asked. Mette decides.")).toBeVisible();
+      // It can't be sent twice: the button is gone until Mette answers.
+      await expect(
+        people.getByRole("button", { name: "Ask for contact details: Mette Lindholm" }),
+      ).toHaveCount(0);
+      await fromGuide(page, "Next morning");
+      await openProfile(page, "Nordhavn Freight Forwarders");
+      await expect(peopleSection(page)).toContainText("mette@nordhavn.example");
+      await expect(peopleSection(page)).toContainText("+63 2 0000 0011");
+      await expect(peopleSection(page).getByText("Asked. Mette decides.")).toHaveCount(0);
+      await page.getByRole("button", { name: /^Notifications/ }).click();
+      await expect(page.getByText("Mette Lindholm shared their contact details.")).toBeVisible();
+    });
+
+    test("a Company not connected, or pending, shows no people, and an unclaimed one stays basics only", async ({
+      page,
+    }) => {
+      await twoWeeksIn(page);
+      await openProfile(page, "Hapag Kitchen Group");
+      await expect(peopleSection(page)).toContainText("People show once you’re connected.");
+      await expect(peopleSection(page).locator("li")).toHaveCount(0);
+      await openProfile(page, "Buhay");
+      await expect(page.getByText("Connection Request sent")).toBeVisible();
+      await expect(peopleSection(page)).toContainText("People show once you’re connected.");
+      await openProfile(page, "Northline Logistics");
+      await expect(peopleSection(page)).toHaveCount(0);
+      await expect(page.getByRole("button", { name: /Ask for contact details/ })).toHaveCount(0);
+    });
+
+    test("a connected Company with no people listed says so", async ({ page }) => {
+      await twoWeeksIn(page);
+      await openProfile(page, "Lakbay Hotels");
+      await expect(peopleSection(page)).toContainText("People show once you’re connected.");
+      await page.getByRole("button", { name: "Accept", exact: true }).click();
+      await expect(page.getByText("Connected to your company")).toBeVisible();
+      await expect(peopleSection(page)).toContainText("No people listed yet.");
+    });
+  });
+}
+
+test.describe("privacy and people at 360 pixels", () => {
+  test.use({ viewport: { width: 360, height: 800 } });
+
+  test("the privacy page and a connected profile fit with no sideways scroll", async ({ page }) => {
+    await openPrivacy(page);
+    await noSidewaysScroll(page);
+    await openProfile(page, "Nordhavn Freight Forwarders");
+    await expect(peopleSection(page)).toBeVisible();
+    await noSidewaysScroll(page);
+    await expectTargets(peopleSection(page));
   });
 });

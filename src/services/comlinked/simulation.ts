@@ -536,7 +536,7 @@ export function peopleRows(): PersonRow[] {
 }
 /* ---------- What a Company may see of another's people ---------- */
 /** A person's alias: their first name and the initial of their last, such as "Ana R.". */
-function aliasOf(name: string) {
+export function aliasOf(name: string) {
   const last = name.split(" ").slice(1).pop();
   return last ? firstName(name) + " " + last.charAt(0) + "." : name;
 }

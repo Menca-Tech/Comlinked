@@ -21,6 +21,12 @@ function PersonItem({ row }: { row: PersonRow }) {
           {p.title} · {row.role}
         </small>
         <p className="a-small">{row.line}</p>
+        {row.waitingFrom.length ? (
+          <p className="a-small">
+            A Contact Request from {row.waitingFrom.join(" and ")} is waiting. Only {p.name} can
+            answer it.
+          </p>
+        ) : null}
         {row.canMakePrimary || row.canRemove ? (
           <div className="a-row">
             {row.canMakePrimary ? (

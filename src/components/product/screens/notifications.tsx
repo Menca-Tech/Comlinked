@@ -37,6 +37,8 @@ function NoteRow({ g, isNew }: { g: NoteGroup; isNew: boolean }) {
     onClick = () => act.nav("asks");
   } else if (single && first.type === "digest") {
     onClick = () => act.nav("digest");
+  } else if (single && first.type === "contact-request") {
+    onClick = () => act.nav("privacy");
   } else if (single && first.co) {
     const id = first.co;
     onClick = () => act.viewCo(id);

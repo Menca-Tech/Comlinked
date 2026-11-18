@@ -26,7 +26,10 @@ interface Entry {
 }
 
 const PROFILE: Entry = { label: "View company profile", go: () => act.nav("company") };
-const MANAGE: Entry[] = [{ label: "Admins and authorized users", go: () => act.nav("people") }];
+const MANAGE: Entry[] = [
+  { label: "Admins and authorized users", go: () => act.nav("people") },
+  { label: "Privacy and contact details", go: () => act.nav("privacy") },
+];
 const SIGN_OUT: Entry = { label: "Sign out", go: () => act.siteHome() };
 
 /** Who is signed in: the company mark, their name, their role and the Company. */

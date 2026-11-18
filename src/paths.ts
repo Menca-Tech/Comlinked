@@ -40,6 +40,7 @@ export const paths = {
     agent: "/app/agent",
     team: "/app/team",
     people: "/app/people",
+    privacy: "/app/privacy",
   },
   /** ComDash tabs. The Overview is ComDash itself. */
   dashTabs: {
