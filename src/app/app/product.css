@@ -762,6 +762,9 @@
   .a-li-m {
     min-width: 0;
     flex: 1;
+    font-size: var(--body);
+    line-height: var(--leading-title);
+    color: var(--color-ink);
   }
   .a-li-m strong {
     display: block;

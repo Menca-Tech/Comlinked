@@ -1211,6 +1211,15 @@ test.describe("the chamber's network of 100", () => {
     await expect(top).toContainText("Kalayaan Foods Inc.");
     // Northline Logistics holds enough points for the list, but it has not claimed its profile.
     await expect(top).not.toContainText("Northline Logistics");
+    // The ten names read as a ranking: regular weight, in ink, at the body size.
+    const names = await top.locator(".a-list > * > :first-child").evaluateAll((els) =>
+      els.map((el) => {
+        const style = getComputedStyle(el);
+        return `${style.fontWeight} ${style.fontSize}`;
+      }),
+    );
+    expect(names).toEqual(Array.from({ length: 10 }, () => "400 16px"));
+    await expect(top.locator(".a-list > *").first()).toHaveText("1. Kalayaan Foods Inc.123 points");
   });
 
   test("the Team Dashboard names the ECCP pilot and reads 40% claimed within 14 days", async ({

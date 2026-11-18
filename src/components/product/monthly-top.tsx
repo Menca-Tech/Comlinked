@@ -4,7 +4,8 @@ import { useSimulation } from "@/components/product/use-simulation";
 import { CHAMBER, monthlyTop } from "@/services/comlinked";
 
 /** The chamber's Monthly Top Companies under its name, or a calm note before any member has
- * claimed. Wins and the chamber's Activity View both show it. */
+ * claimed. Wins and the chamber's Activity View both show it. The ten names are in regular
+ * weight, so the list reads as a ranking and not as ten headings. */
 export function MonthlyTopList() {
   useSimulation();
   const { month, top } = monthlyTop();
@@ -18,9 +19,7 @@ export function MonthlyTopList() {
           {top.map((t, i) => (
             <div className="a-li" key={t.n}>
               <span className="a-li-m">
-                <strong>
-                  {i + 1}. {t.n}
-                </strong>
+                {i + 1}. {t.n}
               </span>
               <span className="a-li-r">{t.p} points</span>
             </div>
