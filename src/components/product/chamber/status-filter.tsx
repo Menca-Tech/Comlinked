@@ -4,8 +4,9 @@ import { statusKey } from "@/components/product/chamber/status-key";
 import { FilterChips, type FilterChip } from "@/components/product/comdash/level-filter";
 import type { ActivityViewData, StatusChoice } from "@/services/comlinked";
 
-/** All members, then each status with its colour from the split bar and how many members it
- * holds: the bar's key, and the member list's filter. `chosen` is set on the chosen chip. */
+/** All the chamber's members, then each status with its colour from the split bar and how many of
+ * the chamber's members it holds: the bar's key, and the member list's filter. `chosen` is set on
+ * the chosen chip. */
 export function StatusFilter({
   data,
   value,

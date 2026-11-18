@@ -4,6 +4,7 @@ import { SplitBar } from "@/components/product/chamber/split-bar";
 import { StatusFilter } from "@/components/product/chamber/status-filter";
 import { DashPanel } from "@/components/product/comdash/dash-panel";
 import type { ActivityTile, ActivityViewData, StatusChoice } from "@/services/comlinked";
+import { formatCount } from "@/services/comlinked";
 
 /** The results shown beside the claimed figure, in this order. */
 const RESULTS: ActivityTile["key"][] = ["deals", "wins"];
@@ -31,7 +32,10 @@ export function ClaimedFigure({
           <div className="cd-stat">
             <span className="cd-k">{claimed.label}</span>
             <span className="av-fig">
-              {claimed.value} <span className="av-of">of {claimed.of}</span>
+              {formatCount(claimed.value)}{" "}
+              {claimed.of === null ? null : (
+                <span className="av-of">of {formatCount(claimed.of)}</span>
+              )}
             </span>
           </div>
         ) : null}
@@ -42,7 +46,7 @@ export function ClaimedFigure({
         {results.map((t) => (
           <div className="cd-stat" key={t.key}>
             <span className="cd-k">{t.label}</span>
-            <span className="cd-v">{t.value}</span>
+            <span className="cd-v">{formatCount(t.value)}</span>
           </div>
         ))}
       </div>

@@ -62,6 +62,7 @@ export function ActivityView({
           <ClaimedFigure data={data} choice={choice} onChoose={setChoice} chosenChip={chosenChip} />
           <MemberList
             memberCount={data.memberCount}
+            exampleCount={data.exampleCount}
             groups={memberGroups(choice)}
             onOpen={onOpenMember}
             onShowAll={showAll}

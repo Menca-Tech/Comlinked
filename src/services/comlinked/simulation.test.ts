@@ -1893,6 +1893,19 @@ describe("the Chamber Size", () => {
     );
   });
 
+  it("keeps a status the unnamed members hold once no example holds it, with nobody named", () => {
+    openStop(5);
+    const intro = (a: string) => {
+      setForm("introA", a);
+      setForm("introB", "maple");
+      act.makeIntro();
+    };
+    ["lakbay", "bigas", "palengke", "medivant"].forEach(intro);
+    const group = memberGroups("All").find((g) => g.status === "Needs an intro");
+    expect(group).toMatchObject({ count: 36, examples: 0, members: [], more: 0 });
+    expect(memberGroups("Needs an intro")).toEqual([group]);
+  });
+
   it("gives the Team Dashboard the chamber's claimed and weekly active figures", () => {
     act.demoActive();
     const d = teamData();

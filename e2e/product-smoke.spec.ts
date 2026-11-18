@@ -1183,7 +1183,7 @@ test.describe("ComDash", () => {
   });
 });
 
-test.describe("the chamber's network of 100", () => {
+test.describe("the chamber of 1,000, with its 100 Example Companies", () => {
   test.use({ viewport: { width: 1280, height: 900 } });
 
   test("search reaches European-style and existing members", async ({ page }) => {
@@ -1205,20 +1205,21 @@ test.describe("the chamber's network of 100", () => {
     }
   });
 
-  test("the chamber tools name ECCP and count the whole network", async ({ page }) => {
+  test("the chamber tools name ECCP and count the whole chamber of 1,000", async ({ page }) => {
     await twoWeeksIn(page);
     await fromGuide(page, /^Open the chamber tools/);
     await expect(page.getByText("ECCP on ComLinked")).toBeVisible();
-    await expect(page.getByRole("heading", { name: "100 members" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "1,000 members" })).toBeVisible();
+    await expect(page.getByText("Showing the 100 example members of 1,000")).toBeVisible();
     await expect(
       page
         .getByRole("region", { name: "The pilot in figures" })
         .getByText("Claimed", { exact: true })
         .locator(".."),
-    ).toHaveText("Claimed40 of 100");
+    ).toHaveText("Claimed400 of 1,000");
     await page.locator("#f-b2").fill("Our next member meeting is on Friday.");
-    await tap(page, "Send to 40 claimed members");
-    await expect(page.getByText("Sent to 40 members who have claimed.")).toBeVisible();
+    await tap(page, "Send to 400 claimed members");
+    await expect(page.getByText("Sent to 400 members who have claimed.")).toBeVisible();
     await tap(page, "Back to company view");
     await page.getByRole("button", { name: /Notifications/ }).click();
     await expect(page.getByText("ECCP sent an announcement")).toBeVisible();
@@ -1275,14 +1276,16 @@ test.describe("the chamber's network of 100", () => {
     await expect(northline).toHaveCount(0);
   });
 
-  test("the Engine map draws all 100 companies", async ({ page }) => {
+  test("the Engine map draws all 100 example companies, and calls them examples", async ({
+    page,
+  }) => {
     await twoWeeksIn(page);
     await fromGuide(page, "Engine");
-    await expect(page.getByText("calculated from a network of 100 companies")).toBeVisible();
+    await expect(page.getByText("calculated from the 100 example companies")).toBeVisible();
     await expect(page.locator(".e-map .e-n")).toHaveCount(100);
     await expect(page.locator(".e-map")).toHaveAttribute(
       "aria-label",
-      /^Network map of 100 companies/,
+      /^Network map of the 100 example companies/,
     );
   });
 
@@ -1313,7 +1316,7 @@ test.describe("the chamber's network of 100", () => {
       await page.setViewportSize({ width, height: 844 });
       await twoWeeksIn(page);
       await fromGuide(page, /^Open the chamber tools/);
-      await expect(page.getByRole("heading", { name: "100 members" })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "1,000 members" })).toBeVisible();
       await noSidewaysScroll(page);
       await tap(page, "Back to company view");
       await openSection(page, "Wins");
@@ -2219,7 +2222,9 @@ test.describe("the later screens and the Presenter Guide, on the scale and the s
     await openFromGuide(page, "Engine", "Engine");
     await expect(focusPanel(page)).toHaveCount(1);
     await expect(focusPanel(page).getByRole("heading", { name: "Your network" })).toBeVisible();
-    const map = focusPanel(page).getByRole("img", { name: /^Network map of 100 companies/ });
+    const map = focusPanel(page).getByRole("img", {
+      name: /^Network map of the 100 example companies/,
+    });
     await expect(map).toBeVisible();
     expect(await surfaceShadow(map)).not.toBe("none");
     for (const title of ["How rank is set", "Why today’s leads scored what they did"]) {

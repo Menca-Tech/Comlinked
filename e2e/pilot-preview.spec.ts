@@ -91,7 +91,11 @@ const guideDialog = (page: Page) => page.getByRole("dialog");
 const announcer = (page: Page) => page.locator(".cl-product > [aria-live='polite']");
 const FIRST_CLAIM_SCREEN = "Your company is already here";
 const EXAMPLE_WORDING = "Example wording. ECCP approves the real message.";
-const IMPORT_RESULT = "100 profiles built. 100 claim links ready for ECCP to send.";
+const IMPORT_RESULT = "1,000 profiles built. 1,000 claim links ready for ECCP to send.";
+/** The line under the member list's heading, saying it names only the examples. */
+const EXAMPLE_LINE = "Showing the 100 example members of 1,000";
+/** The line after the Member List's named rows, counting the rest of the chamber. */
+const REST_LINE = "and 900 more from the Member List";
 /** The presenter's address the test server is started with, in playwright.config.ts. */
 const PRESENTER_ADDRESS = "presenter@comlinked.example";
 const EXPLORING = "Pilot Preview · exploring";
@@ -100,6 +104,11 @@ const EXPLORING = "Pilot Preview · exploring";
 const memberImport = (page: Page) =>
   page.locator("section", { has: page.getByRole("heading", { name: "Member import" }) }).last();
 const memberListBox = (page: Page) => page.getByRole("group", { name: "Member List" });
+/** The Member List's named rows: each Company's name and website. */
+const namedRows = (page: Page) =>
+  memberListBox(page)
+    .locator(".a-li")
+    .filter({ has: page.locator("strong") });
 const claimMessage = (page: Page) =>
   page.getByRole("article", { name: "Your company profile on ComLinked is ready" });
 const emailLink = (page: Page) => page.getByRole("link", { name: "Email Richard", exact: true });
@@ -116,7 +125,7 @@ const figure = (page: Page, label: string) =>
 const splitSegments = (page: Page) => figures(page).locator(".av-split > *");
 const statusFilter = (page: Page) => page.getByRole("group", { name: "Filter by status" });
 const chip = (page: Page, status: string) =>
-  statusFilter(page).getByRole("button", { name: new RegExp(`^${status} \\d+$`) });
+  statusFilter(page).getByRole("button", { name: new RegExp(`^${status} [\\d,]+$`) });
 const STATUSES = ["Active", "Quiet", "Needs an intro", "Not yet claimed"];
 const STATUS_NAME = /^(Active|Quiet|Needs an intro|Not yet claimed)$/;
 /** The member list's groups: one for each status that has members, under its heading. */
@@ -131,9 +140,9 @@ const statusOf = (page: Page, name: string) =>
   groups(page).filter({ hasText: name }).getByRole("heading");
 /** The panel holding the member list, under its count of members. */
 const membersPanel = (page: Page) =>
-  page.locator("section", { has: page.getByRole("heading", { name: /^\d+ members$/ }) });
-const showAll = (page: Page, count: number) =>
-  page.getByRole("button", { name: `Show all ${count}`, exact: true });
+  page.locator("section", { has: page.getByRole("heading", { name: /^[\d,]+ members$/ }) });
+const showAll = (page: Page, examples: number) =>
+  page.getByRole("button", { name: `Show all ${examples} examples`, exact: true });
 /** The titles of the panels on a screen, in order. */
 const panelTitles = (page: Page) => page.locator("main").getByRole("heading", { level: 2 });
 const sideColumn = (page: Page) =>
@@ -163,16 +172,18 @@ async function expectStop(page: Page, s: Stop) {
 /** Day 0 as the chamber screen shows it: nobody claimed, no results, and every member not yet
  * claimed, under the one heading. */
 async function expectDayZero(page: Page) {
-  await expect(figure(page, "Claimed")).toHaveText("Claimed0 of 100");
+  await expect(figure(page, "Claimed")).toHaveText("Claimed0 of 1,000");
   await expect(figure(page, "Deals confirmed")).toHaveText("Deals confirmed0");
   await expect(figure(page, "Wins posted")).toHaveText("Wins posted0");
   await expect(statusFilter(page).getByRole("button")).toHaveText([
-    "All 100",
+    "All 1,000",
     "Active 0",
     "Quiet 0",
     "Needs an intro 0",
-    "Not yet claimed 100",
+    "Not yet claimed 1,000",
   ]);
+  await expect(page.getByRole("heading", { name: "1,000 members" })).toBeVisible();
+  await expect(membersPanel(page)).toContainText(EXAMPLE_LINE);
   await expect(groupHeadings(page)).toHaveText(["Not yet claimed"]);
 }
 
@@ -340,7 +351,7 @@ test.describe("the Pilot Preview", () => {
     await openStop(page, stop(4));
     await nextLink(page).click();
     await expectStop(page, stop(5));
-    await expect(figure(page, "Claimed")).toHaveText("Claimed40 of 100");
+    await expect(figure(page, "Claimed")).toHaveText("Claimed400 of 1,000");
     for (const tool of [
       "Member import",
       "Make an introduction",
@@ -382,7 +393,7 @@ test.describe("the Pilot Preview", () => {
     const fresh = await context.newPage();
     await fresh.goto(stop(5).path);
     await expectStop(fresh, stop(5));
-    await expect(figure(fresh, "Claimed")).toHaveText("Claimed40 of 100");
+    await expect(figure(fresh, "Claimed")).toHaveText("Claimed400 of 1,000");
   });
 
   test("Stop 4 shows four ComDash tabs, three Overview cards and no View as switcher", async ({
@@ -624,6 +635,10 @@ test.describe("the Pilot Preview when something goes wrong", () => {
     await chip(page, "Not yet claimed").click();
     await expect(groupHeadings(page)).toHaveText(["Not yet claimed"]);
     await expect(memberRows(page)).toHaveCount(100);
+    await expect(membersPanel(page)).toContainText(EXAMPLE_LINE);
+    // A status with no members shows its one empty line.
+    await chip(page, "Active").click();
+    await expect(page.getByText("No members with this status.")).toBeVisible();
     await presenterGuide(page);
     await guideDialog(page)
       .getByRole("button", { name: /^See who’s interested/ })
@@ -761,14 +776,15 @@ test.describe("Stop 1, the Member List and its import", () => {
     await expect(page.locator("main")).not.toContainText(/\bsent\b/i);
   });
 
-  test("run again, the Member List shows 100 rows of name and website, and the build ends the same", async ({
+  test("run again, the Member List finds 1,000, names the 100 examples by name and website, and the build ends the same", async ({
     page,
   }) => {
     await openStop(page, stop(1));
     await page.getByRole("button", { name: "Run the import again" }).click();
-    await expect(page.getByText("members-sample.csv: 100 companies found")).toBeVisible();
-    const rows = memberListBox(page).locator(".a-li");
+    await expect(page.getByText("members-sample.csv: 1,000 companies found")).toBeVisible();
+    const rows = namedRows(page);
     await expect(rows).toHaveCount(100);
+    await expect(memberListBox(page).getByText(REST_LINE, { exact: true })).toBeVisible();
     const shown = await rows.evaluateAll((els) =>
       els.map((el) => ({
         whole: el.textContent ?? "",
@@ -789,7 +805,9 @@ test.describe("Stop 1, the Member List and its import", () => {
     await expectAccessible(page);
 
     await page.getByRole("button", { name: "Build profiles", exact: true }).click();
-    await expect(memberImport(page).getByText(/^Building profiles: \d+ of 100$/)).toBeVisible();
+    await expect(
+      memberImport(page).getByText(/^Building profiles: (\d+|\d,\d{3}) of 1,000$/),
+    ).toBeVisible();
     await expect(memberImport(page).getByText(IMPORT_RESULT)).toBeVisible({ timeout: 15_000 });
     await expect(page.locator("main")).not.toContainText(/\bsent\b/i);
     await expect(storyBar(page)).toContainText("1 of 6");
@@ -856,7 +874,7 @@ test.describe("Stop 1, the Member List and its import", () => {
       await page.setViewportSize({ width, height: 844 });
       await openStop(page, stop(1));
       await page.getByRole("button", { name: "Run the import again" }).click();
-      await expect(memberListBox(page).locator(".a-li")).toHaveCount(100);
+      await expect(namedRows(page)).toHaveCount(100);
       await noSidewaysScroll(page);
       await page.getByRole("button", { name: "Build profiles", exact: true }).click();
       await expect(memberImport(page).getByText(/^Building profiles/)).toBeVisible();
@@ -1177,7 +1195,7 @@ async function openChamberTools(page: Page) {
 }
 
 test.describe("Stop 5, ECCP's Activity View", () => {
-  test("names ECCP and Day 14 of the pilot, and leads with 40 of 100 claimed beside 3 deals and 2 wins", async ({
+  test("names ECCP and Day 14 of the pilot, and leads with 400 of 1,000 claimed beside 3 deals and 2 wins", async ({
     page,
   }) => {
     await openStop(page, stop(5));
@@ -1190,12 +1208,12 @@ test.describe("Stop 5, ECCP's Activity View", () => {
     await expect(figures(page)).toHaveAttribute("data-focus-panel", "");
     // Each figure is read as its label, then what it says.
     const asShown = { useInnerText: true };
-    await expect(figure(page, "Claimed")).toHaveText("Claimed 40 of 100", asShown);
+    await expect(figure(page, "Claimed")).toHaveText("Claimed 400 of 1,000", asShown);
     await expect(figure(page, "Deals confirmed")).toHaveText("Deals confirmed 3", asShown);
     await expect(figure(page, "Wins posted")).toHaveText("Wins posted 2", asShown);
   });
 
-  test("the bar splits in proportion to 20, 16, 4 and 60, and is hidden from assistive technology", async ({
+  test("the bar splits in proportion to 200, 160, 40 and 600, and is hidden from assistive technology", async ({
     page,
   }) => {
     await openStop(page, stop(5));
@@ -1214,42 +1232,44 @@ test.describe("Stop 5, ECCP's Activity View", () => {
     await expect(splitSegments(page).first().locator("..")).toHaveAttribute("aria-hidden", "true");
   });
 
-  test("the status filter starts on All 100, where each status shows its count and six members, and a chip shows its whole group", async ({
+  test("the status filter starts on All 1,000, where each status shows its chamber-wide count and six examples, and a chip shows its whole group of examples", async ({
     page,
   }) => {
     await openStop(page, stop(5));
-    await expect(page.getByRole("heading", { name: "100 members" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "1,000 members" })).toBeVisible();
+    await expect(membersPanel(page)).toContainText(EXAMPLE_LINE);
     await expect(statusFilter(page).getByRole("button")).toHaveText([
-      "All 100",
-      "Active 20",
-      "Quiet 16",
-      "Needs an intro 4",
-      "Not yet claimed 60",
+      "All 1,000",
+      "Active 200",
+      "Quiet 160",
+      "Needs an intro 40",
+      "Not yet claimed 600",
     ]);
-    await expect(statusFilter(page).getByRole("button", { name: "All 100" })).toHaveAttribute(
+    await expect(statusFilter(page).getByRole("button", { name: "All 1,000" })).toHaveAttribute(
       "aria-pressed",
       "true",
     );
     const held = [
-      ["Active", 20, 6],
-      ["Quiet", 16, 6],
-      ["Needs an intro", 4, 4],
-      ["Not yet claimed", 60, 6],
+      ["Active", 200, 20, 6],
+      ["Quiet", 160, 16, 6],
+      ["Needs an intro", 40, 4, 4],
+      ["Not yet claimed", 600, 60, 6],
     ] as const;
     await expect(groupHeadings(page)).toHaveText(STATUSES);
-    for (const [status, count, shown] of held) {
+    for (const [status, count, examples, shown] of held) {
       await expect(group(page, status).getByRole("listitem")).toHaveCount(shown);
       await expect(group(page, status).getByText(String(count), { exact: true })).toBeVisible();
-      // "Show all" is offered only where a group holds more than it lists.
-      await expect(group(page, status).getByRole("button", { name: /^Show all/ })).toHaveCount(
-        count > shown ? 1 : 0,
-      );
+      // "Show all" is offered only where a group holds more examples than it lists, and names them.
+      await expect(
+        group(page, status).getByRole("button", { name: `Show all ${examples} examples` }),
+      ).toHaveCount(examples > shown ? 1 : 0);
     }
-    for (const [status, count] of held) {
+    for (const [status, , examples] of held) {
       await chip(page, status).click();
       await expect(chip(page, status)).toHaveAttribute("aria-pressed", "true");
       await expect(groupHeadings(page)).toHaveText([status]);
-      await expect(memberRows(page)).toHaveCount(count);
+      await expect(memberRows(page)).toHaveCount(examples);
+      await expect(membersPanel(page)).toContainText(EXAMPLE_LINE);
       await expect(page.getByRole("button", { name: /^Show all/ })).toHaveCount(0);
     }
     await chip(page, "All").click();
@@ -1257,7 +1277,7 @@ test.describe("Stop 5, ECCP's Activity View", () => {
     await expect(memberRows(page)).toHaveCount(22);
   });
 
-  test("Show all 20 under Active chooses the Active chip, and moves focus to it", async ({
+  test("Show all 20 examples under Active chooses the Active chip, and moves focus to it", async ({
     page,
   }) => {
     await openStop(page, stop(5));
@@ -1266,6 +1286,8 @@ test.describe("Stop 5, ECCP's Activity View", () => {
     await expect(chip(page, "Active")).toBeFocused();
     await expect(groupHeadings(page)).toHaveText(["Active"]);
     await expect(memberRows(page)).toHaveCount(20);
+    await expect(group(page, "Active").getByText("200", { exact: true })).toBeVisible();
+    await expect(membersPanel(page)).toContainText(EXAMPLE_LINE);
     await chip(page, "All").click();
     await expect(showAll(page, 20)).toBeVisible();
   });
@@ -1366,14 +1388,14 @@ test.describe("Stop 5, ECCP's Activity View", () => {
       );
     // "Show all" chooses its status's chip, so it is the filter by another name.
     await expect(controls).toHaveText([
-      "All 100",
-      "Active 20",
-      "Quiet 16",
-      "Needs an intro 4",
-      "Not yet claimed 60",
-      "Show all 20",
-      "Show all 16",
-      "Show all 60",
+      "All 1,000",
+      "Active 200",
+      "Quiet 160",
+      "Needs an intro 40",
+      "Not yet claimed 600",
+      "Show all 20 examples",
+      "Show all 16 examples",
+      "Show all 60 examples",
     ]);
     for (const tool of ["Send introduction", "Run the import again", "Flag it"]) {
       await expect(page.getByRole("button", { name: tool })).toHaveCount(0);
@@ -1463,10 +1485,10 @@ test.describe("the side step from Stop 5", () => {
     }
     await expect(page.locator("#f-a")).toHaveText("Lakbay Hotels");
     await expect(page.locator("#f-b")).toHaveText("Maple Bay Grocers");
-    await expect(page.getByRole("button", { name: "Send to 40 claimed members" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Send to 400 claimed members" })).toBeVisible();
   });
 
-  test("sending the introduction confirms, and ECCP's view then shows 3 needing an intro", async ({
+  test("sending the introduction confirms, and ECCP's view then shows 39 needing an intro", async ({
     page,
   }) => {
     await openStop(page, stop(5));
@@ -1476,8 +1498,8 @@ test.describe("the side step from Stop 5", () => {
     await backToView(page).click();
     await expect(storyBar(page)).toContainText("You’re seeing ECCP’s own view. It is read-only.");
     await expect(banner(page)).toContainText("ECCP, read-only");
-    await expect(chip(page, "Needs an intro")).toHaveText("Needs an intro 3");
-    await expect(chip(page, "Active")).toHaveText("Active 21");
+    await expect(chip(page, "Needs an intro")).toHaveText("Needs an intro 39");
+    await expect(chip(page, "Active")).toHaveText("Active 201");
     await expect(group(page, "Needs an intro").getByRole("listitem")).toHaveCount(3);
     await chip(page, "Active").click();
     await expect(statusOf(page, "Lakbay Hotels")).toHaveText("Active");
@@ -1530,7 +1552,7 @@ test.describe("the side step from Stop 5", () => {
     await page.getByRole("button", { name: "Send introduction" }).click();
     await expect(page.getByText("Choose two different companies.")).toBeVisible();
     await backToView(page).click();
-    await expect(chip(page, "Needs an intro")).toHaveText("Needs an intro 4");
+    await expect(chip(page, "Needs an intro")).toHaveText("Needs an intro 40");
   });
 
   test("from the keyboard, the side step, the filters and the tools come in order with visible focus", async ({
@@ -1544,7 +1566,7 @@ test.describe("the side step from Stop 5", () => {
     await page.keyboard.press("Tab");
     await expect(nextLink(page)).toBeFocused();
     await page.keyboard.press("Tab");
-    await expect(statusFilter(page).getByRole("button", { name: "All 100" })).toBeFocused();
+    await expect(statusFilter(page).getByRole("button", { name: "All 1,000" })).toBeFocused();
     await expectVisibleFocus(page);
     await page.keyboard.press("Tab");
     await expect(chip(page, "Active")).toBeFocused();
@@ -1656,7 +1678,7 @@ test.describe("ECCP's view in the full Demo", () => {
     page,
   }) => {
     await demoChamberTools(page);
-    await expect(chip(page, "Active")).toHaveText("Active 20");
+    await expect(chip(page, "Active")).toHaveText("Active 200");
     await chip(page, "Needs an intro").click();
     await expect(memberRows(page)).toHaveCount(4);
     // In the community manager's view each member's name is a button that opens its draft.
@@ -1665,7 +1687,7 @@ test.describe("ECCP's view in the full Demo", () => {
     await guideDialog(page)
       .getByRole("button", { name: "ComLinked team dashboard", exact: true })
       .click();
-    await expect(page.locator("#t-trend")).toHaveAttribute("aria-label", /now 20 of 100/);
+    await expect(page.locator("#t-trend")).toHaveAttribute("aria-label", /now 200 of 1,000/);
     await page.getByRole("tab", { name: "Companies needing help" }).click();
     const queued = page.locator(".a-li.stack", { hasText: "No lead yet" }).locator("strong");
     await expect(queued).toHaveText(needing);
@@ -2480,7 +2502,7 @@ test.describe("the Run of Show", () => {
     await nextLink(page).click();
 
     await expectStop(page, stop(5));
-    await statusFilter(page).getByRole("button", { name: "Needs an intro 4" }).click();
+    await statusFilter(page).getByRole("button", { name: "Needs an intro 40" }).click();
     await sideStep(page).click();
     await page.getByRole("button", { name: "Send introduction" }).click();
     await backToView(page).click();
@@ -2494,6 +2516,55 @@ test.describe("the Run of Show", () => {
     await expect(
       guideDialog(page).getByRole("button", { name: "Possible future pricing", exact: true }),
     ).toBeVisible();
+    await closeGuide(page);
+  });
+});
+
+test.describe("the chamber of 1,000, with 100 named examples", () => {
+  for (const width of [360, 390]) {
+    test(`at ${width} pixels, 1,000 and the example line fit on Stop 1 and Stop 5 with no sideways scroll`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width, height: 844 });
+      for (const s of [stop(1), stop(5)]) {
+        await openStop(page, s);
+        const line = membersPanel(page).getByText(EXAMPLE_LINE, { exact: true });
+        await expect(line).toBeVisible();
+        const rightOf = (part: typeof line) =>
+          part.evaluate((el) => el.getBoundingClientRect().right);
+        expect(await rightOf(line)).toBeLessThanOrEqual(width);
+        expect(await rightOf(figure(page, "Claimed"))).toBeLessThanOrEqual(width);
+        await noSidewaysScroll(page);
+      }
+    });
+  }
+
+  test("no screen in a Company's Seat says the chamber has 100 companies", async ({ page }) => {
+    for (const s of [stop(2), stop(3), stop(4)]) {
+      await openStop(page, s);
+      await expect(page.locator("main")).not.toContainText(
+        /\b100 (member )?(companies|members)\b/i,
+      );
+    }
+  });
+
+  test("the Pilot Preview opens with both later items off, whatever the full Demo had on", async ({
+    page,
+  }) => {
+    await openStop(page, stop(4));
+    await guideAction(page, "Two weeks in");
+    await flipSwitch(page, "Possible future pricing", true);
+    await expect(viewAs(page)).toBeVisible();
+    await page.goto(stop(4).path);
+    await expectStop(page, stop(4));
+    await expect(viewAs(page)).toHaveCount(0);
+    await presenterGuide(page);
+    for (const name of ["Possible future pricing", "After-MVP previews"]) {
+      await expect(guideDialog(page).getByRole("button", { name, exact: true })).toHaveAttribute(
+        "aria-pressed",
+        "false",
+      );
+    }
     await closeGuide(page);
   });
 });

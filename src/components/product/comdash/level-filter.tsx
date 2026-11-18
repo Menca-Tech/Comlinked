@@ -3,7 +3,7 @@
 import type { ReactNode, Ref } from "react";
 
 import { LevelTag } from "@/components/product/comdash/level-tag";
-import { INTEREST_LEVELS, type InterestLevel } from "@/services/comlinked";
+import { formatCount, INTEREST_LEVELS, type InterestLevel } from "@/services/comlinked";
 
 export type LevelChoice = "All" | InterestLevel;
 
@@ -40,7 +40,7 @@ export function FilterChips<T extends string>({
           aria-pressed={value === chip.value}
           onClick={() => onChange(chip.value)}
         >
-          {chip.label} <b>{chip.count}</b>
+          {chip.label} <b>{formatCount(chip.count)}</b>
         </button>
       ))}
     </div>

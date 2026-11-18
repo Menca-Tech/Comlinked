@@ -326,7 +326,7 @@ const SCREENS: Screen[] = [
     open: async (page) => {
       await openAt(page, paths.preview.stop(paths.product.chamber, 1), "Day 0 of the pilot");
       await press(page, "Run the import again");
-      await expect(page.getByText("members-sample.csv: 100 companies found")).toBeVisible();
+      await expect(page.getByText("members-sample.csv: 1,000 companies found")).toBeVisible();
     },
   },
   {

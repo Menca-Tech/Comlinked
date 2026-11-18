@@ -5,8 +5,16 @@ import { Check, Clock } from "lucide-react";
 
 import { Btn, St } from "@/components/product/shared";
 import { useSimulation } from "@/components/product/use-simulation";
-import type { MemberListEntry } from "@/services/comlinked";
-import { act, CHAMBER, importResult, memberList } from "@/services/comlinked";
+import type { ImportProgress, MemberListEntry } from "@/services/comlinked";
+import {
+  act,
+  CHAMBER,
+  formatCount,
+  importProgress,
+  importResult,
+  memberList,
+  UNNAMED_MEMBERS,
+} from "@/services/comlinked";
 
 const check = <Check className="a-ic" aria-hidden="true" />;
 const clock = <Clock className="a-ic" aria-hidden="true" />;
@@ -24,11 +32,13 @@ function MemberListRow({ row, state }: { row: MemberListEntry; state?: ReactNode
   );
 }
 
-/** The Member List in a box that scrolls, so a long list does not push the page down. */
+/** The Member List in a box that scrolls, so a long list does not push the page down. It names
+ * the Example Companies, then counts the rest of the chamber's members. */
 function MemberListBox({ children }: { children: ReactNode }) {
   return (
     <div className="a-list mi-rows" role="group" aria-label="Member List" tabIndex={0}>
       {children}
+      <p className="a-li cd-note">and {formatCount(UNNAMED_MEMBERS)} more from the Member List</p>
     </div>
   );
 }
@@ -39,7 +49,7 @@ function ListPreview({ rows }: { rows: MemberListEntry[] }) {
     <section className="a-card mi">
       <h2 className="a-h2">Member import</h2>
       <St kind="good" icon={check}>
-        members-sample.csv: {rows.length} companies found
+        members-sample.csv: {formatCount(CHAMBER.size)} companies found
       </St>
       <div className="a-row">
         <Btn onClick={() => act.importBuild()}>Build profiles</Btn>
@@ -58,20 +68,21 @@ function ListPreview({ rows }: { rows: MemberListEntry[] }) {
   );
 }
 
-/** The build under way: each profile opens as a draft once it is ready. */
-function BuildProgress({ rows, built }: { rows: MemberListEntry[]; built: number }) {
+/** The build under way: the chamber's profiles counted up, and each named one opening as a draft
+ * once it is ready. */
+function BuildProgress({ rows, progress }: { rows: MemberListEntry[]; progress: ImportProgress }) {
   return (
     <section className="a-card mi">
       <h2 className="a-h2">Member import</h2>
       <St icon={clock}>
-        Building profiles: {built} of {rows.length}
+        Building profiles: {formatCount(progress.built)} of {formatCount(progress.of)}
       </St>
       <div className="a-meter" aria-hidden="true">
-        <i style={{ width: `${(built / rows.length) * 100}%` }} />
+        <i style={{ width: `${(progress.built / progress.of) * 100}%` }} />
       </div>
       <MemberListBox>
         {rows.map((row, i) =>
-          i < built ? (
+          i < progress.rows ? (
             <button
               type="button"
               className="a-li"
@@ -82,7 +93,10 @@ function BuildProgress({ rows, built }: { rows: MemberListEntry[]; built: number
             </button>
           ) : (
             <div className="a-li" key={row.id}>
-              <MemberListRow row={row} state={i === built ? "Reading website" : "Waiting"} />
+              <MemberListRow
+                row={row}
+                state={i === progress.rows ? "Reading website" : "Waiting"}
+              />
             </div>
           ),
         )}
@@ -97,7 +111,7 @@ export function MemberImport() {
   const S = useSimulation();
   const rows = memberList();
   if (S.cm.stage === "preview") return <ListPreview rows={rows} />;
-  if (S.cm.stage === "building") return <BuildProgress rows={rows} built={S.cm.built} />;
+  if (S.cm.stage === "building") return <BuildProgress rows={rows} progress={importProgress()} />;
   if (S.cm.stage === "done") {
     return (
       <section className="a-card mi">
