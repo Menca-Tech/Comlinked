@@ -315,7 +315,7 @@ test.describe("the Pilot Preview", () => {
     await expect(
       claimMessage(page).getByRole("button", { name: "Claim your profile" }),
     ).toBeVisible();
-    await expect(page.getByRole("button", { name: "Your company" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Open the account menu" })).toHaveCount(0);
   });
 
   test("Next from Stop 2 without claiming opens Stop 3 with the Morning Digest filled in", async ({
@@ -411,7 +411,7 @@ test.describe("the Pilot Preview", () => {
   });
 
   test("the top bar follows the Seat", async ({ page }) => {
-    const companyControls = ["Your company", "Search", /^Notifications/];
+    const companyControls = ["Open the account menu", "Search", /^Notifications/];
     const expectPlainBar = async (label: string | null) => {
       if (label) await expect(banner(page)).toContainText(label);
       await expect(banner(page)).toContainText("Example data");
@@ -433,7 +433,9 @@ test.describe("the Pilot Preview", () => {
     await openStop(page, stop(6));
     await expectPlainBar(null);
     await openStop(page, stop(4));
-    await expect(banner(page).getByRole("button", { name: "Your company" })).toHaveText("KF");
+    await expect(banner(page).getByRole("button", { name: "Open the account menu" })).toHaveText(
+      "KF",
+    );
     await expect(banner(page)).not.toContainText("read-only");
   });
 
@@ -741,7 +743,7 @@ test.describe("starting the Demo over from inside the Pilot Preview", () => {
     await expect(claimMessage(page)).toHaveCount(0);
     await expect(storyBar(page)).toHaveCount(0);
     await expect(guideButton(page)).toBeVisible();
-    await expect(page.getByRole("button", { name: "Your company" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Open the account menu" })).toHaveCount(0);
   });
 
   test("New company from Stop 1, where nobody has claimed, also starts unclaimed", async ({
@@ -1108,7 +1110,9 @@ test.describe("exploring after Stop 6", () => {
         .filter({ has: page.getByRole("heading", { name: "Interest Signals" }) })
         .getByRole("link", { name: "Hapag Kitchen Group", exact: true }),
     ).toBeVisible();
-    await expect(banner(page).getByRole("button", { name: "Your company" })).toHaveText("KF");
+    await expect(banner(page).getByRole("button", { name: "Open the account menu" })).toHaveText(
+      "KF",
+    );
     await expect(banner(page)).toContainText("Example data");
     await wayBack(page).click();
     await expectStop(page, stop(6));

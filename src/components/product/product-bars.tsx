@@ -13,7 +13,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-import { Mono } from "@/components/product/shared";
+import { AccountMenu } from "@/components/product/account-menu";
 import { useSimulation } from "@/components/product/use-simulation";
 import type { ProductRoute } from "@/paths";
 import type { Seat } from "@/services/comlinked";
@@ -145,14 +145,7 @@ function CompanyBar({ route }: { route: string }) {
                   <Search className="a-ic" aria-hidden="true" />
                 </span>
               </button>
-              <button
-                type="button"
-                className="a-own"
-                aria-label="Your company"
-                onClick={() => act.nav("company")}
-              >
-                <Mono c={S.me} own cls="sm" />
-              </button>
+              <AccountMenu />
             </>
           ) : null}
         </div>

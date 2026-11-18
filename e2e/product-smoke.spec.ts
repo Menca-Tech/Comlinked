@@ -139,6 +139,24 @@ async function expectAccessible(page: Page) {
   expect(blocking, JSON.stringify(blocking)).toEqual([]);
 }
 
+const MENU_BUTTON = "Open the account menu";
+const accountMark = (page: Page) => page.getByRole("button", { name: MENU_BUTTON });
+/** One of the account menu's items: a menu item in the laptop's dropdown, a button in the phone's
+ * sheet. */
+const menuEntry = (page: Page, name: string) =>
+  page
+    .getByRole("menuitem", { name, exact: true })
+    .or(
+      page.getByRole("dialog", { name: "Account menu" }).getByRole("button", { name, exact: true }),
+    );
+
+/** Opens Kalayaan Foods' own Company page from the account menu on its mark. */
+async function openOwnProfile(page: Page) {
+  await accountMark(page).click();
+  await menuEntry(page, "View company profile").click();
+  await expect(page).toHaveURL(/\/app\/company$/);
+}
+
 test.describe("on a phone", () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
@@ -184,7 +202,7 @@ test.describe("on a phone", () => {
     await tap(page, "Post ask");
     await expect(page.locator(".a-ask").first()).toContainText("label printer");
 
-    await page.getByRole("button", { name: "Your company" }).click();
+    await openOwnProfile(page);
     await page.locator("#f-products").fill("Banana chips, ube spread, frozen lumpia");
     await tap(page, "Add products");
     await page.locator("#f-invite").fill("Example Partner Co.");
@@ -1458,7 +1476,7 @@ test.describe("Kalayaan's first export shipment, and basics only before a Claim"
     await expect(lead(page, "north").getByText("Not yet claimed", { exact: true })).toBeVisible();
     await expect(lead(page, "maple").getByText("Not yet claimed")).toHaveCount(0);
     // Your own company's mark stays solid navy, with white initials.
-    const own = page.getByRole("button", { name: "Your company" }).locator("[aria-hidden='true']");
+    const own = accountMark(page).locator("[aria-hidden='true']");
     expect(await own.evaluate((el) => getComputedStyle(el).color)).toBe("rgb(255, 255, 255)");
     expect(await own.evaluate((el) => getComputedStyle(el).borderTopStyle)).toBe("none");
     await noSidewaysScroll(page);
@@ -1758,15 +1776,12 @@ test.describe("the member's daily screens, each led by one Focus panel", () => {
     await expect(focus.getByRole("button")).toHaveCount(0);
   });
 
-  test("Profile: Profile strength leads, on the tab and on Your company", async ({ page }) => {
+  test("Profile: Profile strength leads, on the tab and on the Company page", async ({ page }) => {
     await twoWeeksIn(page);
     await openTab(page, "Profile");
     const focus = focusPanel(page);
-    for (const way of ["the tab", "Your company"]) {
-      if (way === "Your company") {
-        await page.getByRole("button", { name: "Your company" }).click();
-        await expect(page).toHaveURL(/\/app\/company$/);
-      }
+    for (const way of ["the tab", "the Company page"]) {
+      if (way === "the Company page") await openOwnProfile(page);
       await expect(focus).toHaveCount(1);
       await expect(focus).not.toHaveCSS("box-shadow", "none");
       await expect(focus.getByRole("heading", { name: "Profile strength" })).toBeVisible();
@@ -2480,5 +2495,218 @@ test.describe("the later screens and the Presenter Guide, on the scale and the s
     await expectStill(page, ".cl-guide, .cl-guide *, [data-slot='sheet-overlay']");
     await page.keyboard.press("Escape");
     await expect(presenterGuide(page)).toBeHidden();
+  });
+});
+
+const MENU_HEADER = "Primary admin · Kalayaan Foods Inc.";
+const PEOPLE_HEADING = "Admins and authorized users";
+const personRow = (page: Page, name: string) => page.locator("main li", { hasText: name });
+
+/** Axe on a part of the page, such as the account menu, which renders outside the product. */
+async function expectAccessibleIn(page: Page, part: string) {
+  const { violations } = await new AxeBuilder({ page }).include(part).analyze();
+  const blocking = violations
+    .filter((v) => BLOCKING_IMPACTS.has(v.impact ?? ""))
+    .map((v) => ({ id: v.id, nodes: v.nodes.length }));
+  expect(blocking, JSON.stringify(blocking)).toEqual([]);
+}
+
+/** Opens the people page from the account menu, two weeks in. */
+async function openPeople(page: Page) {
+  await twoWeeksIn(page);
+  await accountMark(page).click();
+  await menuEntry(page, PEOPLE_HEADING).click();
+  await expect(heading(page, PEOPLE_HEADING)).toBeVisible();
+}
+
+/** Every button and link in a part of the page is at least 44 pixels tall. */
+async function expectTargets(part: Locator) {
+  const heights = await part
+    .locator("button:visible, a:visible, [role='menuitem']:visible")
+    .evaluateAll((els) => els.map((el) => el.getBoundingClientRect().height));
+  expect(heights.length).toBeGreaterThan(0);
+  expect(Math.min(...heights)).toBeGreaterThanOrEqual(44);
+}
+
+test.describe("the account menu, on a phone", () => {
+  test.use({ viewport: { width: 390, height: 844 } });
+
+  test("the mark opens a sheet from the bottom with Ana, her role, the profile, Manage and Sign out", async ({
+    page,
+  }) => {
+    await twoWeeksIn(page);
+    await accountMark(page).click();
+    const sheet = page.getByRole("dialog", { name: "Account menu" });
+    await expect(sheet).toBeVisible();
+    await expect(sheet.getByText("Ana Reyes", { exact: true })).toBeVisible();
+    await expect(sheet.getByText(MENU_HEADER)).toBeVisible();
+    const items = sheet.getByRole("navigation", { name: "Account menu" }).getByRole("button");
+    await expect(items).toHaveText(["View company profile", PEOPLE_HEADING, "Sign out"]);
+    await expect(sheet.getByRole("group", { name: "Manage" })).toBeVisible();
+    // It rises from the bottom edge of the screen.
+    const box = await sheet.boundingBox();
+    expect(Math.round((box?.y ?? 0) + (box?.height ?? 0))).toBe(844);
+    await expectTargets(sheet.getByRole("navigation"));
+    await noSidewaysScroll(page);
+    await expectAccessibleIn(page, "[role='dialog']");
+    await page.keyboard.press("Escape");
+    await expect(sheet).toBeHidden();
+    await expect(accountMark(page)).toBeFocused();
+  });
+
+  test("the people page lists the four with their roles and lines, and the swap and Remove work", async ({
+    page,
+  }) => {
+    await openPeople(page);
+    const rows = page.locator("main li");
+    await expect(rows).toHaveCount(4);
+    await expect(personRow(page, "Ana Reyes")).toContainText("Owner · Primary admin");
+    await expect(personRow(page, "Marco Dizon")).toContainText("Operations manager · Backup admin");
+    await expect(personRow(page, "Liza Manalo")).toContainText(
+      "Sales lead · Authorized user · Sales",
+    );
+    await expect(personRow(page, "Paolo Villanueva")).toContainText(
+      "Purchasing officer · Authorized user · Procurement",
+    );
+    await expect(personRow(page, "Ana Reyes")).toContainText(
+      "Sends and accepts connection requests, and manages people. The only one who can remove the backup admin.",
+    );
+    await expect(personRow(page, "Marco Dizon")).toContainText("Covers for the primary admin.");
+    await expect(personRow(page, "Liza Manalo")).toContainText(
+      "Sends connection requests to possible customers. An admin accepts requests.",
+    );
+    await expect(personRow(page, "Paolo Villanueva")).toContainText(
+      "Sends connection requests to possible suppliers. An admin accepts requests.",
+    );
+    await expect(page.getByText(/^Connections belong to Kalayaan Foods/)).toContainText(
+      "not to any one person.",
+    );
+    // No one removes themselves.
+    await expect(personRow(page, "Ana Reyes").getByRole("button")).toHaveCount(0);
+    await expectTargets(page.locator("main ul"));
+    await noSidewaysScroll(page);
+    await expectAccessible(page);
+
+    await personRow(page, "Marco Dizon")
+      .getByRole("button", { name: "Make primary admin" })
+      .click();
+    await expect(personRow(page, "Marco Dizon")).toContainText("Primary admin");
+    await expect(personRow(page, "Ana Reyes")).toContainText("Owner · Backup admin");
+    // As the backup, Ana can't remove Marco, the primary.
+    await expect(personRow(page, "Marco Dizon").getByRole("button")).toHaveCount(0);
+    await accountMark(page).click();
+    await expect(
+      page
+        .getByRole("dialog", { name: "Account menu" })
+        .getByText("Backup admin · Kalayaan Foods Inc."),
+    ).toBeVisible();
+    await page.keyboard.press("Escape");
+
+    await page.getByRole("button", { name: "Remove Liza Manalo" }).click();
+    await expect(personRow(page, "Liza Manalo")).toHaveCount(0);
+    await expect(rows).toHaveCount(3);
+    await expect(
+      page.getByText(
+        "Liza Manalo no longer has access. All 4 connections stayed with your company.",
+      ),
+    ).toBeVisible();
+  });
+
+  test("at 360 pixels the sheet and the people page fit, and long names wrap", async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 800 });
+    await openPeople(page);
+    await noSidewaysScroll(page);
+    await accountMark(page).click();
+    await expect(page.getByRole("dialog", { name: "Account menu" })).toBeVisible();
+    await noSidewaysScroll(page);
+  });
+
+  test("a full page load brings back the four people and their roles", async ({ page }) => {
+    await openPeople(page);
+    await personRow(page, "Marco Dizon")
+      .getByRole("button", { name: "Make primary admin" })
+      .click();
+    await page.getByRole("button", { name: "Remove Liza Manalo" }).click();
+    await page.reload();
+    await expect(heading(page, PEOPLE_HEADING)).toBeVisible();
+    await expect(page.locator("main li")).toHaveCount(4);
+    await expect(personRow(page, "Ana Reyes")).toContainText("Owner · Primary admin");
+  });
+});
+
+test.describe("the account menu, on a laptop", () => {
+  test.use({ viewport: { width: 1280, height: 900 } });
+
+  test("the mark opens a dropdown under it, worked from the keyboard, and Escape returns focus", async ({
+    page,
+  }) => {
+    await twoWeeksIn(page);
+    const mark = accountMark(page);
+    // Measured while it is closed: an open menu hides the rest of the page from assistive tech.
+    const markBox = await mark.boundingBox();
+    await mark.focus();
+    await page.keyboard.press("Enter");
+    const menu = page.getByRole("menu", { name: "Account menu" });
+    await expect(menu).toBeVisible();
+    await expect(menu.getByText(MENU_HEADER)).toBeVisible();
+    await expect(menu.getByRole("menuitem")).toHaveText([
+      "View company profile",
+      PEOPLE_HEADING,
+      "Sign out",
+    ]);
+    // A dropdown under the mark, its right edge at the mark's.
+    const menuBox = await menu.boundingBox();
+    expect(menuBox!.y).toBeGreaterThanOrEqual(markBox!.y + markBox!.height);
+    expect(Math.abs(menuBox!.x + menuBox!.width - (markBox!.x + markBox!.width))).toBeLessThan(2);
+    await expectTargets(menu);
+    await expectAccessibleIn(page, "[role='menu']");
+    // The arrow keys move through the items.
+    await page.keyboard.press("ArrowDown");
+    await expect(menu.getByRole("menuitem", { name: "View company profile" })).toBeFocused();
+    await page.keyboard.press("ArrowDown");
+    await expect(menu.getByRole("menuitem", { name: PEOPLE_HEADING })).toBeFocused();
+    await page.keyboard.press("Escape");
+    await expect(menu).toBeHidden();
+    await expect(mark).toBeFocused();
+    // Space opens it too, and nothing in it moves with reduced motion.
+    await page.keyboard.press("Space");
+    await expect(menu).toBeVisible();
+    await expectStill(page, ".acct-menu, .acct-menu *");
+    await page.keyboard.press("Escape");
+    await expect(mark).toBeFocused();
+  });
+
+  test("View company profile opens the Company page, whose people row opens the people page", async ({
+    page,
+  }) => {
+    await twoWeeksIn(page);
+    await openOwnProfile(page);
+    await expect(page.getByRole("button", { name: "Assign new rep" })).toHaveCount(0);
+    await page.getByRole("button", { name: /^Admins and authorized users/ }).click();
+    await expect(heading(page, PEOPLE_HEADING)).toBeVisible();
+    await expect(page).toHaveURL(/\/app\/people$/);
+    await noSidewaysScroll(page);
+    await expectAccessible(page);
+  });
+
+  test("Sign out opens the website's homepage", async ({ page }) => {
+    await twoWeeksIn(page);
+    await accountMark(page).click();
+    await menuEntry(page, "Sign out").click();
+    await expect(page).toHaveURL(/\/$/);
+  });
+
+  test("with the AI Assistant off, the swap and Remove work the same", async ({ page }) => {
+    await twoWeeksIn(page);
+    await openOwnProfile(page);
+    await page.getByRole("switch", { name: "AI Assistant" }).click();
+    await expect(page.getByRole("heading", { name: "AI Assistant: Off" })).toBeVisible();
+    await page.getByRole("button", { name: /^Admins and authorized users/ }).click();
+    await personRow(page, "Marco Dizon")
+      .getByRole("button", { name: "Make primary admin" })
+      .click();
+    await expect(personRow(page, "Marco Dizon")).toContainText("Primary admin");
+    await page.getByRole("button", { name: "Remove Paolo Villanueva" }).click();
+    await expect(page.locator("main li")).toHaveCount(3);
   });
 });

@@ -137,6 +137,18 @@ async function claimAsFarAs(page: Page, heading: string) {
 
 const press = (page: Page, name: string) => page.getByRole("button", { name, exact: true }).click();
 
+/** Chooses an item from the account menu on the company mark: a menu item in the laptop's
+ * dropdown, a button in the phone's sheet. */
+async function fromAccountMenu(page: Page, name: string) {
+  await press(page, "Open the account menu");
+  await page
+    .getByRole("menuitem", { name, exact: true })
+    .or(
+      page.getByRole("dialog", { name: "Account menu" }).getByRole("button", { name, exact: true }),
+    )
+    .click();
+}
+
 const SCREENS: Screen[] = [
   {
     name: "the Opening",
@@ -359,8 +371,19 @@ const SCREENS: Screen[] = [
     at: paths.product.company,
     open: async (page) => {
       await stopFour(page);
-      await press(page, "Your company");
+      await fromAccountMenu(page, "View company profile");
       await expect(page.getByRole("heading", { name: "Profile strength" })).toBeVisible();
+    },
+  },
+  {
+    name: "Admins and authorized users",
+    at: paths.product.people,
+    open: async (page) => {
+      await fullDemoTwoWeeksIn(page);
+      await fromAccountMenu(page, "Admins and authorized users");
+      await expect(
+        page.getByRole("heading", { name: "Admins and authorized users", level: 1 }),
+      ).toBeVisible();
     },
   },
   {

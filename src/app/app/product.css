@@ -3735,3 +3735,81 @@
   font: 600 var(--text-13) / 1 var(--font-text);
   color: var(--color-ink);
 }
+
+/* The account menu on the company mark. It renders outside the product root, so it carries
+   .cl-guide for the Demo's scale and App Mode parts, like the Presenter Guide. A dropdown under the
+   mark on a laptop, a sheet from the bottom on a phone. */
+.cl-guide.acct-menu {
+  width: min(calc(var(--space-14) * 6), calc(100vw - var(--space-8)));
+  padding: var(--space-2);
+  border: 1px solid var(--color-rule);
+  border-radius: var(--radius-panel);
+  background: var(--color-surface);
+}
+.cl-guide .acct-body {
+  gap: var(--space-2);
+}
+.cl-guide .acct-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  overflow-wrap: anywhere;
+}
+.cl-guide .acct-profile {
+  justify-content: center;
+  width: 100%;
+  min-height: var(--space-11);
+  margin: var(--space-1) 0;
+}
+.cl-guide .acct-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: var(--space-11);
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: var(--radius-control);
+  background: none;
+  color: var(--color-ink);
+  font: 400 var(--body) / var(--leading-title) var(--font-text);
+  text-align: left;
+  cursor: pointer;
+}
+.cl-guide .acct-item:hover,
+.cl-guide .acct-item:focus-visible,
+.cl-guide .acct-item[data-highlighted] {
+  background: var(--color-accent-tint);
+  color: var(--color-accent-strong);
+}
+.cl-guide .acct-item:focus-visible {
+  outline: var(--stroke-2) solid var(--color-accent);
+  outline-offset: calc(var(--stroke-2) * -1);
+}
+.cl-guide .acct-group {
+  margin: 0;
+  padding: var(--space-2) var(--space-3) var(--space-1);
+  font: 600 var(--text-13) / var(--leading-text) var(--font-text);
+  color: var(--color-muted);
+}
+.cl-guide .acct-sep {
+  height: 0;
+  margin: var(--space-1) 0;
+  border: 0;
+  border-top: 1px solid var(--hair);
+  background: none;
+}
+
+/* The people page: one row per person, with their role's plain line and the actions allowed. */
+.cl-product .pp-row {
+  align-items: flex-start;
+}
+.cl-product .pp-row .a-li-m {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  overflow-wrap: anywhere;
+}
+.cl-product .pp-row .a-row {
+  margin-top: var(--space-1);
+}

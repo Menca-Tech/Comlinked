@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { Check } from "lucide-react";
+import { Check, ChevronRight } from "lucide-react";
 
 import { focusPanel } from "@/components/product/focus-panel";
 import { AiChip, Btn, Mono, ProfileHead, St } from "@/components/product/shared";
@@ -13,7 +13,6 @@ import type { ProfileField } from "@/services/comlinked";
 import {
   act,
   AI_LIMIT,
-  backupAdmin,
   co,
   connected,
   dayName,
@@ -196,14 +195,13 @@ export function CompanyProfile({ focus }: { focus?: ProfileField }) {
                 })}
               </div>
               <PendingRows />
-              <div className="a-between a-rule">
-                <span className="a-why">
-                  Authorized rep: <b>{primaryAdmin().name}</b>
+              <button type="button" className="a-li a-rule" onClick={() => act.nav("people")}>
+                <span className="a-li-m">
+                  <strong>Admins and authorized users</strong>
+                  <small>Primary admin: {primaryAdmin().name}</small>
                 </span>
-                <Btn cls="o sm" onClick={() => act.makePrimary(backupAdmin()?.id ?? "")}>
-                  Assign new rep
-                </Btn>
-              </div>
+                <ChevronRight className="a-ic" aria-hidden="true" />
+              </button>
             </section>
             {mine.length ? (
               <section className="a-sec">
