@@ -13,7 +13,7 @@ import {
   AI_LIMIT,
   CHAMBER,
   co,
-  NETWORK,
+  formatCount,
   spikeState,
   TEAM_SPIKES,
   teamData,
@@ -61,8 +61,8 @@ function MetricRows({ rows }: { rows: TeamRow[] }) {
   );
 }
 
-/** Five grid lines from none to the whole network; every other one is labelled. */
-const GRID_LINES = [0, 1, 2, 3, 4].map((step) => (NETWORK * step) / 4);
+/** Five grid lines from none to the whole chamber; every other one is labelled. */
+const gridLines = (top: number) => [0, 1, 2, 3, 4].map((step) => (top * step) / 4);
 
 /** The width an element is drawn at, and the ref that hands the element over. The width is 0 until
  * the element is on screen, and is measured afresh whenever it appears. */
@@ -91,19 +91,19 @@ function TrendChart({ d }: { d: TeamData }) {
   // Drawn at the width it is given, so the axis text keeps its size on any screen.
   const W = width || (isWeb ? 640 : 360);
   const H = 200;
-  const L = 32;
+  const L = 44;
   const R = 40;
   const T = 14;
   const B = 28;
   const sx = (i: number) => L + ((W - L - R) * i) / (pts.length - 1);
-  const sy = (v: number) => T + (H - T - B) * (1 - v / NETWORK);
+  const sy = (v: number) => T + (H - T - B) * (1 - v / d.of);
   const mid = Math.floor(pts.length / 2);
   const ticks = [0, mid, pts.length - 1].filter((v, i, a) => a.indexOf(v) === i);
   const path = pts
     .map((p, i) => `${i ? "L" : "M"}${sx(i).toFixed(1)} ${sy(p.v).toFixed(1)}`)
     .join(" ");
   const last = pts[pts.length - 1]!;
-  const targetV = Math.ceil(d.base * 0.5);
+  const targetV = Math.ceil(d.claimed * 0.5);
   const ty = sy(targetV);
   const point = hover === null ? null : pts[hover];
   return (
@@ -113,7 +113,7 @@ function TrendChart({ d }: { d: TeamData }) {
           id="t-trend"
           viewBox={`0 0 ${W} ${H}`}
           role="img"
-          aria-label={`Weekly active companies by day, now ${last.v} of ${NETWORK}, target ${targetV}`}
+          aria-label={`Weekly active companies by day, now ${formatCount(last.v)} of ${formatCount(d.of)}, target ${formatCount(targetV)}`}
           onPointerMove={(event) => {
             const box = event.currentTarget.getBoundingClientRect();
             const px = ((event.clientX - box.left) / box.width) * W;
@@ -127,7 +127,7 @@ function TrendChart({ d }: { d: TeamData }) {
           }}
           onPointerLeave={() => setHover(null)}
         >
-          {GRID_LINES.map((v, i) => (
+          {gridLines(d.of).map((v, i) => (
             <g key={v}>
               <line
                 className="t-gridl"
@@ -138,7 +138,7 @@ function TrendChart({ d }: { d: TeamData }) {
               />
               {i % 2 === 0 ? (
                 <text className="t-axis" x={L - 8} y={sy(v).toFixed(1)} dy=".32em" textAnchor="end">
-                  {v}
+                  {formatCount(v)}
                 </text>
               ) : null}
             </g>
@@ -151,7 +151,7 @@ function TrendChart({ d }: { d: TeamData }) {
           <line className="t-target" x1={L} x2={W - R} y1={ty.toFixed(1)} y2={ty.toFixed(1)} />
           <path className="t-line" d={path} />
           <text className="t-axis t-tl" x={L + 6} y={(ty - 6).toFixed(1)}>
-            Target {targetV}
+            Target {formatCount(targetV)}
           </text>
           <circle
             className="t-end"
@@ -165,7 +165,7 @@ function TrendChart({ d }: { d: TeamData }) {
             y={sy(last.v).toFixed(1)}
             dy=".32em"
           >
-            {last.v}
+            {formatCount(last.v)}
           </text>
           {hover !== null ? (
             <line className="t-cross" x1={sx(hover)} x2={sx(hover)} y1={T} y2={H - B} />
@@ -177,7 +177,7 @@ function TrendChart({ d }: { d: TeamData }) {
             className="t-tip"
             style={{ left: `${Math.min(82, Math.max(4, (sx(hover) / W) * 100))}%` }}
           >
-            Day {point.day}: {point.v} companies
+            Day {point.day}: {formatCount(point.v)} companies
           </div>
         ) : null}
       </div>
@@ -195,7 +195,7 @@ function TrendChart({ d }: { d: TeamData }) {
               {pts.slice(-8).map((p) => (
                 <tr key={p.day}>
                   <td>{p.day}</td>
-                  <td className="num">{p.v}</td>
+                  <td className="num">{formatCount(p.v)}</td>
                 </tr>
               ))}
             </tbody>

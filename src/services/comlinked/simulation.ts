@@ -16,7 +16,7 @@ import {
   METRO,
   MODERATE_FIT,
   NEIGHBORS,
-  NETWORK,
+  EXAMPLE_COMPANIES,
   NEW_BOOST,
   OTHER_CHAMBER_COMPANIES,
   PLAN_VIEWS,
@@ -51,6 +51,7 @@ import type {
   InterestedCompany,
   InterestLevel,
   InterestRow,
+  ImportProgress,
   IntroChoices,
   LaterItem,
   Member,
@@ -72,6 +73,7 @@ import type {
   Signal,
   SignalKind,
   SimState,
+  StatusCount,
   StatusChoice,
   StopState,
   Suggestion,
@@ -179,14 +181,6 @@ export function hasClaimed(id: string, day = S.day) {
   const claimDay = claimDayOf(id);
   return claimDay !== null && claimDay <= day;
 }
-/** How many Companies in the network, Kalayaan Foods included, had claimed by a day. */
-export function claimedCount(day = S.day) {
-  return (
-    POOL.filter(function (c) {
-      return hasClaimed(c.id, day);
-    }).length + (hasClaimed("me", day) ? 1 : 0)
-  );
-}
 /** What Kalayaan Foods may see of another Company: always its name, industry, city and website,
  * and whether it has claimed. Its description, offers and needs show only once it has claimed.
  * Every screen that shows a Company's profile reads it from here. */
@@ -249,10 +243,17 @@ export const dayName = function (d: number) {
 export function pct(x: number) {
   return Math.round(x * 100) + "%";
 }
+const COUNT_FORMAT = new Intl.NumberFormat("en-US");
+/** A count as the screens write it, with a thousands separator: "1,000". */
+export function formatCount(n: number) {
+  return COUNT_FORMAT.format(n);
+}
 function toast(msg: string, kicker?: string, action?: ToastAction) {
   if (!preparingStop) handlers.toast(msg, kicker, action);
 }
 
+/** The day Kalayaan Foods claims in its story, which the Demo starts on. */
+const STORY_CLAIM_DAY = 1;
 function fresh(): SimState {
   return {
     claimed: false,
@@ -284,8 +285,8 @@ function fresh(): SimState {
     aiLog: [{ day: 1, on: true, note: "On by default for new companies" }],
     aiUsed: {},
     sel: null,
-    day: 1,
-    joined: 1,
+    day: STORY_CLAIM_DAY,
+    joined: STORY_CLAIM_DAY,
     ledger: [],
     lists: {},
     leadAct: {},
@@ -817,10 +818,21 @@ function importFinished() {
   S.cm.built = memberList().length;
   S.cm.imported = true;
 }
-/** What the member import ends with. The chamber sends the claim links from its own address, so
- * they are ready for it, and nothing says a link has gone out. */
+/** How far the member import has got. It builds the named rows one by one, and the chamber's
+ * profiles keep pace with them, so the last row ends on the Chamber Size. */
+export function importProgress(): ImportProgress {
+  const rows = S.cm.built;
+  return {
+    built: Math.round((CHAMBER.size * rows) / memberList().length),
+    of: CHAMBER.size,
+    rows: rows,
+  };
+}
+/** What the member import ends with: a profile and a claim link for every member of the chamber.
+ * The chamber sends the claim links from its own address, so they are ready for it, and nothing
+ * says a link has gone out. */
 export function importResult() {
-  const n = memberList().length;
+  const n = formatCount(CHAMBER.size);
   return n + " profiles built. " + n + " claim links ready for " + CHAMBER.shortName + " to send.";
 }
 /** What Kalayaan Foods earned in its first two weeks, newest first. Each row is one award the
@@ -868,7 +880,7 @@ export function seedTwoWeeks() {
   };
   const [asksForList = "", proposesMeeting = ""] = REPLIES;
   S.claimed = true;
-  S.joined = 1;
+  S.joined = STORY_CLAIM_DAY;
   // Day 1's Daily Lead List, built as the Claim builds it, before anything else has happened.
   buildList();
   m.products = "Banana chips, ube spread, frozen lumpia";
@@ -1378,24 +1390,36 @@ function introducedBetween(id: string, from: number, to: number) {
 function hadLead(id: string, day: number) {
   return id === "me" || member(id)?.activity.firstDayLead === true || introducedBetween(id, 0, day);
 }
+/** How many days a Company that claimed on `claimDay` acted in the ACTIVE_DAYS up to a day: the
+ * claim day itself, and every day `actedOn` names. */
+function daysActedSince(claimDay: number, day: number, actedOn: (d: number) => boolean) {
+  let n = 0;
+  for (let d = Math.max(claimDay, day - ACTIVE_DAYS + 1); d <= day; d++)
+    if (d === claimDay || actedOn(d)) n++;
+  return n;
+}
+/** Whether an activity record has a Company that claimed on `claimDay` acting on a day. */
+function actsOnRecord(every: number | null, claimDay: number) {
+  return function (d: number) {
+    return every !== null && (d - claimDay) % every === 0;
+  };
+}
 /** How many days a Company acted in the ACTIVE_DAYS up to a day. Every Company acts on the day it
  * claims. After that, Kalayaan Foods acts on the days it earns points, and every other Company on
  * the days its own activity record sets, never on account of its dealings with Kalayaan Foods. */
 function daysActed(id: string, day: number) {
   const claimDay = claimDayOf(id);
   if (claimDay === null) return 0;
-  const every = member(id)?.activity.actsEvery ?? null;
-  const actedOn = function (d: number) {
-    if (d === claimDay) return true;
-    if (id === "me")
-      return S.ledger.some(function (l) {
-        return l.day === d;
-      });
-    return every !== null && (d - claimDay) % every === 0;
+  const earnedPointsOn = function (d: number) {
+    return S.ledger.some(function (l) {
+      return l.day === d;
+    });
   };
-  let n = 0;
-  for (let d = Math.max(claimDay, day - ACTIVE_DAYS + 1); d <= day; d++) if (actedOn(d)) n++;
-  return n;
+  return daysActedSince(
+    claimDay,
+    day,
+    id === "me" ? earnedPointsOn : actsOnRecord(member(id)?.activity.actsEvery ?? null, claimDay),
+  );
 }
 /** A member's one status on a day, today unless one is given, by this order: Not yet claimed;
  * Needs an intro while it has claimed and has no Lead; Active when it acted lately; Quiet
@@ -1405,15 +1429,71 @@ export function memberStatus(id: string, day = S.day): MemberStatus {
   if (!hadLead(id, day)) return "Needs an intro";
   return daysActed(id, day) > 0 ? "Active" : "Quiet";
 }
-/** How many members had a status on a day. */
+/** How many Example Companies had a status on a day. */
 function countWith(status: MemberStatus, day: number) {
   return networkMembers().filter(function (m) {
     return memberStatus(m.id, day) === status;
   }).length;
 }
-/** The chamber's Activity View today: five figures, the count for each status, and each member
- * with its status alone. The list follows the statuses' order and the network's order, with the
- * members not yet claimed that have a message waiting first among their group. */
+/** An Example Company's status on a day by its schedule alone: Kalayaan Foods claims on its
+ * story's day and acts every day after; every other Company follows the claim day and activity
+ * record in its data. Nothing done in the session changes it. */
+function scheduledStatus(id: string, day: number): MemberStatus {
+  if (id === "me") return day >= STORY_CLAIM_DAY ? "Active" : "Not yet claimed";
+  const m = member(id);
+  if (!m || m.claimDay === null || m.claimDay > day) return "Not yet claimed";
+  if (!m.activity.firstDayLead) return "Needs an intro";
+  const acted = daysActedSince(m.claimDay, day, actsOnRecord(m.activity.actsEvery, m.claimDay));
+  return acted > 0 ? "Active" : "Quiet";
+}
+/** The members beyond the Example Companies, who are counted but never named. */
+export const UNNAMED_MEMBERS = CHAMBER.size - EXAMPLE_COMPANIES;
+/** How many Example Companies each status holds on a day, by a rule, in the statuses' order. */
+function examplesBy(statusOn: (id: string) => MemberStatus) {
+  return MEMBER_STATUSES.map(function (status) {
+    return networkMembers().filter(function (m) {
+      return statusOn(m.id) === status;
+    }).length;
+  });
+}
+/** The chamber-wide count for each status on a day, adding up to the Chamber Size. Each count is
+ * the Example Companies' live count, with all that happened in the session, plus the unnamed
+ * members, who follow the Example Companies' schedule: UNNAMED_MEMBERS shared out as the schedule
+ * alone shares out the Example Companies that day. Every chamber-wide figure reads it. */
+export function chamberCounts(day = S.day): StatusCount[] {
+  const live = examplesBy(function (id) {
+    return memberStatus(id, day);
+  });
+  const scheduled = examplesBy(function (id) {
+    return scheduledStatus(id, day);
+  });
+  // Shared out by running totals, so the unnamed counts are whole and always add up.
+  let scheduledSoFar = 0,
+    unnamedSoFar = 0;
+  return MEMBER_STATUSES.map(function (status, i) {
+    scheduledSoFar += scheduled[i] ?? 0;
+    const unnamedUpTo = Math.round((UNNAMED_MEMBERS * scheduledSoFar) / EXAMPLE_COMPANIES);
+    const unnamed = unnamedUpTo - unnamedSoFar;
+    unnamedSoFar = unnamedUpTo;
+    return { status: status, count: (live[i] ?? 0) + unnamed };
+  });
+}
+/** A status's count among the chamber-wide counts. */
+function countIn(counts: StatusCount[], status: MemberStatus) {
+  return (
+    counts.find(function (c) {
+      return c.status === status;
+    })?.count ?? 0
+  );
+}
+/** How many of the chamber's members had claimed by a day, today unless one is given. */
+export function chamberClaimed(day = S.day) {
+  return CHAMBER.size - countIn(chamberCounts(day), "Not yet claimed");
+}
+/** The chamber's Activity View today: five figures and the count for each status, chamber-wide,
+ * and each Example Company with its status alone. The list follows the statuses' order and the
+ * network's order, with the members not yet claimed that have a message waiting first among their
+ * group. Deals and wins are the named ones, so they are not scaled. */
 export function activityView(): ActivityViewData {
   const day = S.day;
   const rows: ActivityRow[] = networkMembers().map(function (m) {
@@ -1432,44 +1512,47 @@ export function activityView(): ActivityViewData {
   rows.sort(function (a, b) {
     return place(a) - place(b);
   });
-  const tally = function (status: MemberStatus) {
-    return rows.filter(function (r) {
-      return r.status === status;
-    }).length;
-  };
+  const counts = chamberCounts(day);
   return {
     day: day,
     tiles: [
-      { key: "claimed", label: "Claimed", value: claimedCount(day), of: NETWORK },
-      { key: "active", label: "Active", value: tally("Active"), of: null },
-      { key: "needIntro", label: "Need an intro", value: tally("Needs an intro"), of: null },
+      { key: "claimed", label: "Claimed", value: chamberClaimed(day), of: CHAMBER.size },
+      { key: "active", label: "Active", value: countIn(counts, "Active"), of: null },
+      {
+        key: "needIntro",
+        label: "Need an intro",
+        value: countIn(counts, "Needs an intro"),
+        of: null,
+      },
       { key: "deals", label: "Deals confirmed", value: dealsConfirmed(day), of: null },
       { key: "wins", label: "Wins posted", value: successWall(day).length, of: null },
     ],
-    memberCount: rows.length,
-    counts: MEMBER_STATUSES.map(function (status) {
-      return { status: status, count: tally(status) };
-    }),
+    memberCount: CHAMBER.size,
+    exampleCount: rows.length,
+    counts: counts,
     rows: rows,
   };
 }
 /** How many members each status lists while the status filter shows them all. */
 export const GROUP_PREVIEW = 6;
 /** The Activity View's members for a choice of the status filter, in the list's own order. "All"
- * gives every status that has members, each with its full count and its first GROUP_PREVIEW
- * members. A status gives that whole group, and nothing when no member has it. */
+ * gives every status the chamber has members in, each with its chamber-wide count and its first
+ * GROUP_PREVIEW Example Companies. A status gives all of its Example Companies, and nothing when
+ * no member of the chamber has it. Only Example Companies are ever listed. */
 export function memberGroups(choice: StatusChoice): MemberGroup[] {
-  const rows = activityView().rows;
+  const view = activityView();
   const groups: MemberGroup[] = [];
   (choice === "All" ? MEMBER_STATUSES : [choice]).forEach(function (status) {
-    const all = rows.filter(function (r) {
+    const count = countIn(view.counts, status);
+    if (!count) return;
+    const all = view.rows.filter(function (r) {
       return r.status === status;
     });
-    if (!all.length) return;
     const members = choice === "All" ? all.slice(0, GROUP_PREVIEW) : all;
     groups.push({
       status: status,
-      count: all.length,
+      count: count,
+      examples: all.length,
       members: members,
       more: all.length - members.length,
     });
@@ -1881,13 +1964,16 @@ export function teamData(): TeamData {
       return x.r.claimDay != null && x.r.claimDay <= day;
     });
   };
-  // Weekly active Companies are the Activity View's Active members, so the two screens agree.
-  const wacAt = function (day: number) {
-    return countWith("Active", day);
+  // Chamber-wide figures are the Activity View's, so the two screens agree.
+  const chamberActiveAt = function (day: number) {
+    return countIn(chamberCounts(day), "Active");
   };
+  const chamberActive = chamberActiveAt(D),
+    claimedInChamber = chamberClaimed(D);
+  // Averages per company read the Example Companies, whose activity the simulation holds.
   const claimed = claimedBy(D),
     base = claimed.length + (S.claimed ? 1 : 0),
-    wac = wacAt(D),
+    wac = countWith("Active", D),
     activeBase = claimed.filter(function (x) {
       return memberStatus(x.c.id, D) === "Active";
     });
@@ -1897,11 +1983,7 @@ export function teamData(): TeamData {
     pct = function (a: number, b: number) {
       return b ? Math.round((a / b) * 100) : 0;
     };
-  const inFourteen =
-      claimed.filter(function (x) {
-        return x.r.claimDay! <= 14;
-      }).length + (S.claimed ? 1 : 0),
-    claimPct = pct(inFourteen, NETWORK);
+  const claimPct = pct(chamberClaimed(Math.min(D, 14)), CHAMBER.size);
   const firstLead = base - countWith("Needs an intro", D),
     firstPct = pct(firstLead, base);
   const myListDays = new Set(
@@ -2000,10 +2082,10 @@ export function teamData(): TeamData {
     row(
       "Engagement",
       "Weekly active companies, of claimed profiles",
-      pct(wac, base) + "%",
+      pct(chamberActive, claimedInChamber) + "%",
       "50%",
-      pct(wac, base) / 50,
-      pct(wac, base) >= 50,
+      pct(chamberActive, claimedInChamber) / 50,
+      pct(chamberActive, claimedInChamber) >= 50,
     ),
     row(
       "Communication",
@@ -2077,7 +2159,7 @@ export function teamData(): TeamData {
   const engRate = pct(meetings, engagements),
     optRate = pct(optOuts, engagements),
     claimRate = pct(emailClaims, emails),
-    adopt = pct(base - optOuts, NETWORK);
+    adopt = pct(base - optOuts, EXAMPLE_COMPANIES);
   const agent = [
     row(
       "Engagement to meeting",
@@ -2130,9 +2212,10 @@ export function teamData(): TeamData {
   ];
   return {
     D: D,
-    base: base,
-    wac: wac,
-    wacAt: wacAt,
+    claimed: claimedInChamber,
+    of: CHAMBER.size,
+    wac: chamberActive,
+    wacAt: chamberActiveAt,
     rows: rows,
     queue: queue,
     optOuts: optOuts,
@@ -2807,7 +2890,8 @@ const ACT = {
     emit();
   },
   broadcast: function () {
-    if (!claimedCount()) {
+    const claimed = chamberClaimed();
+    if (!claimed) {
       toast("No member has claimed yet, so an announcement would reach nobody.");
       return;
     }
@@ -2819,7 +2903,7 @@ const ACT = {
     S.announcements.unshift({ text: v, day: S.day });
     S.forms.broadcast = "";
     notify("announce", null, CHAMBER.shortName + " sent an announcement");
-    toast("Sent to " + claimedCount() + " members who have claimed.");
+    toast("Sent to " + formatCount(claimed) + " members who have claimed.");
     emit();
   },
   spike: function (a: string) {

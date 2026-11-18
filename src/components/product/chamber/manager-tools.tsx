@@ -17,7 +17,14 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import type { IntroChoices, TextField } from "@/services/comlinked";
-import { act, claimedCount, introChoices, managerSpike, setForm } from "@/services/comlinked";
+import {
+  act,
+  chamberClaimed,
+  formatCount,
+  introChoices,
+  managerSpike,
+  setForm,
+} from "@/services/comlinked";
 
 const check = <Check className="a-ic" aria-hidden="true" />;
 const alert = <AlertCircle className="a-ic" aria-hidden="true" />;
@@ -92,10 +99,10 @@ function Introduction() {
   );
 }
 
-/** A message to every member that has claimed, saying how many that is. */
+/** A message to every member of the chamber that has claimed, saying how many that is. */
 function Announcement() {
   const S = useSimulation();
-  const audience = claimedCount();
+  const audience = chamberClaimed();
   return (
     <DashPanel title="Announcement to all members">
       {audience ? (
@@ -114,7 +121,7 @@ function Announcement() {
             />
           </div>
           <Btn cls="o block" onClick={() => act.broadcast()}>
-            Send to {audience} claimed {audience === 1 ? "member" : "members"}
+            Send to {formatCount(audience)} claimed {audience === 1 ? "member" : "members"}
           </Btn>
         </>
       ) : (

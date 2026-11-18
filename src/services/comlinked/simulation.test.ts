@@ -7,13 +7,17 @@ import {
   CAT,
   CHAMBER,
   CHAMBER_DEALS,
-  claimedCount,
+  chamberClaimed,
+  chamberCounts,
+  formatCount,
+  importProgress,
+  UNNAMED_MEMBERS,
   dealsConfirmed,
   EUROPEAN_EDGES,
   EUROPEAN_MEMBERS,
   INDUSTRY,
   NEIGHBORS,
-  NETWORK,
+  EXAMPLE_COMPANIES,
   PLAN_VIEWS,
   agentSteps,
   claimDayOf,
@@ -343,7 +347,7 @@ describe("a full demo", () => {
     setForm("broadcast", "Meeting on Friday");
     act.broadcast();
     act.spike("flag");
-    expect(activityView().rows).toHaveLength(NETWORK);
+    expect(activityView().rows).toHaveLength(EXAMPLE_COMPANIES);
 
     markDashSeen();
     act.morning("1");
@@ -1528,12 +1532,12 @@ const EUROPEAN_IDS = EUROPEAN_MEMBERS.map((c) => c.id);
 const ORIGINAL_IDS = POOL.map((c) => c.id).filter((id) => !EUROPEAN_IDS.includes(id));
 const isEuropean = (id: string) => EUROPEAN_IDS.includes(id);
 
-describe("the network of 100", () => {
+describe("the 100 Example Companies", () => {
   it("holds Kalayaan Foods, the 39 original companies and 60 European-style members", () => {
     expect(EUROPEAN_IDS).toHaveLength(60);
     expect(ORIGINAL_IDS).toHaveLength(39);
     expect(new Set(POOL.map((c) => c.id)).size).toBe(99);
-    expect(NETWORK).toBe(100);
+    expect(EXAMPLE_COMPANIES).toBe(100);
     expect(co("nordhavn").name).toBe("Nordhavn Freight Forwarders");
     expect(co("maple").name).toBe("Maple Bay Grocers");
   });
@@ -1628,7 +1632,7 @@ describe("the network of 100", () => {
   });
 });
 
-describe("Kalayaan Foods' story with 100 Companies", () => {
+describe("Kalayaan Foods' story with the 100 Example Companies", () => {
   it("makes Nordhavn a day-one Match, with Palengke Online and Northline completing Day 1's list", () => {
     expect(firstMatches().map((c) => c.id)).toEqual(["maple", "nordhavn", "pack"]);
     newCompany();
@@ -1689,9 +1693,12 @@ describe("Kalayaan Foods' story with 100 Companies", () => {
 });
 
 describe("the claim schedule", () => {
+  /** How many of the Example Companies had claimed by a day. */
+  const examplesClaimed = (day: number) => memberList().filter((m) => hasClaimed(m.id, day)).length;
+
   it("has nobody claimed before Day 1", () => {
     expect(POOL.filter((c) => hasClaimed(c.id, 0)).map((c) => c.id)).toEqual([]);
-    expect(claimedCount(0)).toBe(0);
+    expect(examplesClaimed(0)).toBe(0);
   });
 
   it("has at least eight others claimed when Kalayaan Foods claims, with everyone it meets that day", () => {
@@ -1717,11 +1724,11 @@ describe("the claim schedule", () => {
 
   it("has exactly 40 of the 100 claimed on Day 14, mixing both kinds of member", () => {
     act.demoActive();
-    expect(claimedCount(14)).toBe(40);
+    expect(examplesClaimed(14)).toBe(40);
     expect(hasClaimed("me", 14)).toBe(true);
     expect(EUROPEAN_IDS.filter((id) => hasClaimed(id, 14)).length).toBeGreaterThanOrEqual(15);
     expect(ORIGINAL_IDS.filter((id) => hasClaimed(id, 14)).length).toBeGreaterThanOrEqual(15);
-    expect(claimedCount(13)).toBeLessThan(40);
+    expect(examplesClaimed(13)).toBeLessThan(40);
   });
 
   it("has every Company that acts in Kalayaan Foods' two-weeks story claimed by Day 14", () => {
@@ -1782,6 +1789,7 @@ describe("the chamber's name and its counts", () => {
       fullName: "European Chamber of Commerce of the Philippines",
       senderName: "ECCP Membership",
       presenterFirstName: "Richard",
+      size: 1000,
     });
     newCompany();
     expect(getState().me.chamber).toBe(CHAMBER.shortName);
@@ -1790,15 +1798,15 @@ describe("the chamber's name and its counts", () => {
     expect(getState().notes[0]?.text).toBe(CHAMBER.shortName + " sent an announcement");
   });
 
-  it("sends an announcement to the Companies that have claimed, and says how many", () => {
+  it("sends an announcement to the Companies that have claimed, and says how many of the chamber", () => {
     act.demoActive();
     const toast = vi.fn();
     setHandlers({ toast });
     setForm("broadcast", "Our next member meeting is on Friday.");
     act.broadcast();
-    expect(claimedCount()).toBe(40);
+    expect(chamberClaimed()).toBe(400);
     expect(toast).toHaveBeenCalledWith(
-      "Sent to 40 members who have claimed.",
+      "Sent to 400 members who have claimed.",
       undefined,
       undefined,
     );
@@ -1819,6 +1827,89 @@ describe("the chamber's name and its counts", () => {
   });
 });
 
+describe("the Chamber Size", () => {
+  const counts = (day?: number) => chamberCounts(day).map((c) => c.count);
+  const total = (day?: number) => counts(day).reduce((sum, n) => sum + n, 0);
+  const named = () =>
+    MEMBER_STATUSES.map((status) => activityView().rows.filter((r) => r.status === status).length);
+
+  it("is held once, with the chamber setting, beside the 100 Example Companies", () => {
+    expect(CHAMBER.size).toBe(1000);
+    expect(EXAMPLE_COMPANIES).toBe(100);
+    expect(UNNAMED_MEMBERS).toBe(CHAMBER.size - EXAMPLE_COMPANIES);
+  });
+
+  it("adds up to 1,000 on Day 0, on Day 1 before and after the Claim, and on Day 14", () => {
+    openStop(1);
+    expect(total()).toBe(1000);
+    openStop(2);
+    expect(total()).toBe(1000);
+    const before = chamberClaimed();
+    newCompany();
+    expect(total()).toBe(1000);
+    expect(chamberClaimed()).toBe(before + 1);
+    openStop(5);
+    expect(total()).toBe(1000);
+  });
+
+  it("reads ten times the Example Companies on Day 14 with no session actions: 400 claimed of 1,000", () => {
+    openStop(5);
+    expect(counts()).toEqual([200, 160, 40, 600]);
+    expect(counts()).toEqual(named().map((n) => n * 10));
+    expect(chamberClaimed()).toBe(400);
+    expect(chamberCounts().map((c) => c.status)).toEqual(MEMBER_STATUSES);
+  });
+
+  it("moves needs an intro by one for one Intro, since the unnamed members keep to their schedule", () => {
+    openStop(5);
+    setForm("introA", "lakbay");
+    setForm("introB", "maple");
+    act.makeIntro();
+    expect(counts()).toEqual([201, 160, 39, 600]);
+    expect(total()).toBe(1000);
+  });
+
+  it("leaves deals and wins at the named ones", () => {
+    openStop(5);
+    const tile = (key: string) => activityView().tiles.find((t) => t.key === key)?.value;
+    expect([tile("deals"), tile("wins")]).toEqual([dealsConfirmed(14), successWall(14).length]);
+    expect([tile("deals"), tile("wins")]).toEqual([3, 2]);
+  });
+
+  it("gives a status with no example members on Day 0 a count of 0 too", () => {
+    openStop(1);
+    expect(counts()).toEqual([0, 0, 0, 1000]);
+    expect(chamberClaimed()).toBe(0);
+  });
+
+  it("lists only Example Companies in the groups, under the chamber-wide counts", () => {
+    openStop(5);
+    const groups = memberGroups("All");
+    expect(groups.map((g) => g.count)).toEqual([200, 160, 40, 600]);
+    expect(groups.map((g) => g.examples)).toEqual([20, 16, 4, 60]);
+    const examples = new Set(memberList().map((m) => m.id));
+    groups.forEach((g) =>
+      g.members.forEach((m) => expect([m.id, examples.has(m.id)]).toEqual([m.id, true])),
+    );
+  });
+
+  it("gives the Team Dashboard the chamber's claimed and weekly active figures", () => {
+    act.demoActive();
+    const d = teamData();
+    expect([d.claimed, d.of]).toEqual([400, 1000]);
+    expect(d.wacAt(14)).toBe(200);
+  });
+
+  it("writes every count with a thousands separator", () => {
+    expect([formatCount(0), formatCount(40), formatCount(1000), formatCount(12345)]).toEqual([
+      "0",
+      "40",
+      "1,000",
+      "12,345",
+    ]);
+  });
+});
+
 /** The Activity View's figure for members needing an intro, and one member's status in it. */
 const needIntro = () => activityView().tiles.find((t) => t.key === "needIntro")?.value;
 const statusOf = (id: string) => activityView().rows.find((r) => r.id === id)?.status;
@@ -1828,19 +1919,21 @@ describe("the Activity View's members, grouped by status", () => {
   const withStatus = (status: string) => activityView().rows.filter((r) => r.status === status);
   const ids = (rows: { id: string }[]) => rows.map((r) => r.id);
 
-  it("splits the network 20, 16, 4 and 60 on Day 14, adding up to its size", () => {
+  it("splits the chamber 200, 160, 40 and 600 on Day 14, adding up to its size", () => {
     openStop(5);
-    expect(counts()).toEqual([20, 16, 4, 60]);
-    expect(counts().reduce((sum, n) => sum + n, 0)).toBe(NETWORK);
+    expect(counts()).toEqual([200, 160, 40, 600]);
+    expect(counts().reduce((sum, n) => sum + n, 0)).toBe(CHAMBER.size);
   });
 
-  it("splits it 0, 0, 0 and 100 on Day 0, when All holds the one group", () => {
+  it("splits it 0, 0, 0 and 1,000 on Day 0, when All holds the one group of every example", () => {
     openStop(1);
-    expect(counts()).toEqual([0, 0, 0, NETWORK]);
+    expect(counts()).toEqual([0, 0, 0, CHAMBER.size]);
     const groups = memberGroups("All");
-    expect(groups.map((g) => [g.status, g.count])).toEqual([["Not yet claimed", NETWORK]]);
+    expect(groups.map((g) => [g.status, g.count, g.examples])).toEqual([
+      ["Not yet claimed", CHAMBER.size, EXAMPLE_COMPANIES],
+    ]);
     expect(groups[0]?.members).toHaveLength(GROUP_PREVIEW);
-    expect(groups[0]?.more).toBe(NETWORK - GROUP_PREVIEW);
+    expect(groups[0]?.more).toBe(EXAMPLE_COMPANIES - GROUP_PREVIEW);
   });
 
   it("groups All by status in the filters' order, each with its full count and its first six", () => {
@@ -1855,7 +1948,8 @@ describe("the Activity View's members, grouped by status", () => {
         g.status,
         ids(withStatus(g.status).slice(0, GROUP_PREVIEW)),
       ]);
-      expect([g.status, g.more]).toEqual([g.status, g.count - g.members.length]);
+      expect([g.status, g.examples]).toEqual([g.status, withStatus(g.status).length]);
+      expect([g.status, g.more]).toEqual([g.status, g.examples - g.members.length]);
     });
     // Kalayaan Foods leads the active, and the member with a message waiting leads its group.
     expect(groups[0]?.members[0]?.id).toBe("me");
@@ -1875,7 +1969,7 @@ describe("the Activity View's members, grouped by status", () => {
       const groups = memberGroups(status);
       expect([status, groups.map((g) => g.status)]).toEqual([status, [status]]);
       expect([status, ids(groups[0]?.members ?? [])]).toEqual([status, ids(withStatus(status))]);
-      expect([status, groups[0]?.count, groups[0]?.more]).toEqual([
+      expect([status, groups[0]?.examples, groups[0]?.more]).toEqual([
         status,
         withStatus(status).length,
         0,
@@ -1883,7 +1977,7 @@ describe("the Activity View's members, grouped by status", () => {
     });
     openStop(1);
     expect(memberGroups("Active")).toEqual([]);
-    expect(memberGroups("Not yet claimed")[0]?.members).toHaveLength(NETWORK);
+    expect(memberGroups("Not yet claimed")[0]?.members).toHaveLength(EXAMPLE_COMPANIES);
   });
 
   it("moves a member out of Needs an intro in the split and the groups when it is introduced", () => {
@@ -1891,14 +1985,14 @@ describe("the Activity View's members, grouped by status", () => {
     setForm("introA", "lakbay");
     setForm("introB", "maple");
     act.makeIntro();
-    expect(counts()).toEqual([21, 16, 3, 60]);
+    expect(counts()).toEqual([201, 160, 39, 600]);
     expect(ids(memberGroups("Needs an intro")[0]?.members ?? [])).toEqual([
       "bigas",
       "palengke",
       "medivant",
     ]);
     const intro = memberGroups("All").find((g) => g.status === "Needs an intro");
-    expect([intro?.count, intro?.more]).toEqual([3, 0]);
+    expect([intro?.count, intro?.examples, intro?.more]).toEqual([39, 3, 0]);
     expect(ids(memberGroups("Active")[0]?.members ?? [])).toContain("lakbay");
   });
 });
@@ -1917,21 +2011,22 @@ describe("ECCP's Activity View", () => {
     act.send(thread.id);
   };
 
-  it("reads 40 of 100 claimed, 20 active, 4 needing an intro, 3 deals and 2 wins on Day 14", () => {
+  it("reads 400 of 1,000 claimed, 200 active, 40 needing an intro, 3 deals and 2 wins on Day 14", () => {
     openStop(5);
     expect(tiles()).toEqual([
-      ["Claimed", 40, 100],
-      ["Active", 20, null],
-      ["Need an intro", 4, null],
+      ["Claimed", 400, 1000],
+      ["Active", 200, null],
+      ["Need an intro", 40, null],
       ["Deals confirmed", 3, null],
       ["Wins posted", 2, null],
     ]);
     expect(activityView().counts).toEqual([
-      { status: "Active", count: 20 },
-      { status: "Quiet", count: 16 },
-      { status: "Needs an intro", count: 4 },
-      { status: "Not yet claimed", count: 60 },
+      { status: "Active", count: 200 },
+      { status: "Quiet", count: 160 },
+      { status: "Needs an intro", count: 40 },
+      { status: "Not yet claimed", count: 600 },
     ]);
+    expect([activityView().memberCount, activityView().exampleCount]).toEqual([1000, 100]);
     expect(MEMBER_STATUSES).toEqual(["Active", "Quiet", "Needs an intro", "Not yet claimed"]);
   });
 
@@ -1958,27 +2053,24 @@ describe("ECCP's Activity View", () => {
     waiting.forEach((id) => expect([id, hasClaimed(id)]).toEqual([id, true]));
   });
 
-  it("gives every member exactly one status on every day from Day 0 to Day 30, adding up to the network", () => {
+  it("gives every example exactly one status on every day from Day 0 to Day 30, the chamber adding up to its size", () => {
     act.demoActive();
     for (let day = 0; day <= 30; day++) {
       getState().day = day;
       const view = activityView();
-      expect([day, view.rows.length]).toEqual([day, NETWORK]);
-      expect([day, new Set(view.rows.map((r) => r.id)).size]).toEqual([day, NETWORK]);
+      expect([day, view.rows.length]).toEqual([day, EXAMPLE_COMPANIES]);
+      expect([day, new Set(view.rows.map((r) => r.id)).size]).toEqual([day, EXAMPLE_COMPANIES]);
       view.rows.forEach((r) =>
         expect([day, r.id, MEMBER_STATUSES.includes(r.status)]).toEqual([day, r.id, true]),
       );
       expect([day, view.counts.map((c) => c.status)]).toEqual([day, MEMBER_STATUSES]);
       const sum = view.counts.reduce((total, c) => total + c.count, 0);
-      expect([day, sum]).toEqual([day, NETWORK]);
-      view.counts.forEach((c) =>
-        expect([day, c.status, c.count]).toEqual([
-          day,
-          c.status,
-          view.rows.filter((r) => r.status === c.status).length,
-        ]),
-      );
-      expect([day, view.tiles[0]?.value]).toEqual([day, claimedCount(day)]);
+      expect([day, sum]).toEqual([day, CHAMBER.size]);
+      view.counts.forEach((c) => {
+        const named = view.rows.filter((r) => r.status === c.status).length;
+        expect([day, c.status, c.count >= named]).toEqual([day, c.status, true]);
+      });
+      expect([day, view.tiles[0]?.value]).toEqual([day, chamberClaimed(day)]);
     }
   });
 
@@ -2004,7 +2096,7 @@ describe("ECCP's Activity View", () => {
     openStop(1);
     expect(tiles().map(([, value]) => value)).toEqual([0, 0, 0, 0, 0]);
     expect(activityView().rows.every((r) => r.status === "Not yet claimed")).toBe(true);
-    expect(count("Not yet claimed")).toBe(NETWORK);
+    expect(count("Not yet claimed")).toBe(CHAMBER.size);
   });
 
   it("never changes a member's status for its dealings with Kalayaan Foods", () => {
@@ -2030,11 +2122,11 @@ describe("ECCP's Activity View", () => {
     setForm("introA", "lakbay");
     setForm("introB", "maple");
     act.makeIntro();
-    expect(needIntro()).toBe(3);
+    expect(needIntro()).toBe(39);
     expect(statusOf("lakbay")).toBe("Active");
     expect(queued()).toEqual(["bigas", "palengke", "medivant"]);
     act.teamIntro("bigas");
-    expect(needIntro()).toBe(2);
+    expect(needIntro()).toBe(38);
     expect(statusOf("bigas")).not.toBe("Needs an intro");
     expect(queued()).toEqual(["palengke", "medivant"]);
   });
@@ -2181,7 +2273,7 @@ describe("the side step from Stop 5", () => {
     );
     act.sideStepClose();
     expect(currentSeat()).toBe("chamber-contact");
-    expect(needIntro()).toBe(3);
+    expect(needIntro()).toBe(39);
     expect(statusOf("lakbay")).not.toBe("Needs an intro");
   });
 
@@ -2891,7 +2983,7 @@ describe("Day 0, before any Claim", () => {
   it("holds no activity, no claimed Company and no points", () => {
     const S = getState();
     expect(S.day).toBe(0);
-    expect(claimedCount()).toBe(0);
+    expect(chamberClaimed()).toBe(0);
     expect(hasClaimed("me")).toBe(false);
     expect(POOL.filter((c) => hasClaimed(c.id) || pointsOf(c) > 0)).toEqual([]);
     expect(S.ledger).toEqual([]);
@@ -3089,10 +3181,11 @@ describe("the later items", () => {
 /* ---------- Stops 1, 2 and 6: the Member List, the claim message and the ask ---------- */
 
 describe("the Member List", () => {
-  it("holds all 100 Companies, each as its name and website and nothing else", () => {
+  it("names the 100 Example Companies, each as its name and website and nothing else, and counts the rest", () => {
     const list = memberList();
     expect(list).toHaveLength(100);
-    expect(list).toHaveLength(NETWORK);
+    expect(list).toHaveLength(EXAMPLE_COMPANIES);
+    expect(UNNAMED_MEMBERS).toBe(900);
     expect(new Set(list.map((row) => row.id)).size).toBe(100);
     list.forEach((row) => expect(Object.keys(row).sort()).toEqual(["id", "name", "website"]));
     expect(list[0]).toEqual({
@@ -3106,14 +3199,15 @@ describe("the Member List", () => {
 
 describe("the member import", () => {
   it("ends with computed counts of profiles built and claim links ready for ECCP to send", () => {
-    expect(importResult()).toBe("100 profiles built. 100 claim links ready for ECCP to send.");
-    expect(importResult()).toContain(`${memberList().length} profiles built`);
+    expect(importResult()).toBe("1,000 profiles built. 1,000 claim links ready for ECCP to send.");
+    expect(importResult()).toContain(`${formatCount(CHAMBER.size)} profiles built`);
     expect(importResult()).not.toMatch(/\bsent\b/i);
   });
 
   it("is already finished when Stop 1 opens", () => {
     openStop(1);
-    expect(getState().cm).toMatchObject({ stage: "done", imported: true, built: 100 });
+    expect(getState().cm).toMatchObject({ stage: "done", imported: true });
+    expect(importProgress()).toEqual({ built: 1000, of: 1000, rows: 100 });
   });
 
   it("run again, previews the list, builds every profile in about four seconds and ends the same", () => {
@@ -3123,11 +3217,14 @@ describe("the member import", () => {
     act.importPick();
     expect(getState().cm.stage).toBe("preview");
     act.importBuild();
-    expect(getState().cm).toMatchObject({ stage: "building", built: 0 });
+    expect(getState().cm.stage).toBe("building");
+    expect(importProgress()).toEqual({ built: 0, of: 1000, rows: 0 });
     vi.advanceTimersByTime(2000);
-    expect(getState().cm).toMatchObject({ stage: "building", built: 50 });
+    expect(getState().cm.stage).toBe("building");
+    expect(importProgress()).toEqual({ built: 500, of: 1000, rows: 50 });
     vi.advanceTimersByTime(2000);
-    expect(getState().cm).toMatchObject({ stage: "done", imported: true, built: 100 });
+    expect(getState().cm).toMatchObject({ stage: "done", imported: true });
+    expect(importProgress()).toEqual({ built: 1000, of: 1000, rows: 100 });
     expect(toast).toHaveBeenCalledTimes(1);
     expect(toast.mock.calls[0]?.[0]).toBe(importResult());
   });
@@ -3136,7 +3233,8 @@ describe("the member import", () => {
     openStop(1);
     act.importPick();
     act.importCancel();
-    expect(getState().cm).toMatchObject({ stage: "done", imported: true, built: 100 });
+    expect(getState().cm).toMatchObject({ stage: "done", imported: true });
+    expect(importProgress().built).toBe(1000);
   });
 });
 

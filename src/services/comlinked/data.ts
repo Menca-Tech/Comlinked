@@ -1041,8 +1041,10 @@ export const NEXT_UP: [string, string, string][] = [
   ["Events and member posts", "Event listings, a news feed and member posts.", "If chambers ask"],
 ];
 export const APP = Object.keys(TAGS);
+/** The Example Companies: the named Companies of the chamber, Kalayaan Foods and the pool. The
+ * chamber itself is larger; see CHAMBER.size. */
+export const EXAMPLE_COMPANIES = POOL.length + 1;
 export const TOTAL = Object.keys(RIVAL_PTS).length + 1,
-  NETWORK = POOL.length + 1,
   AI_LIMIT = 30,
   FULL_BOOST_AT = 200,
   MAX_BOOST = 0.3,

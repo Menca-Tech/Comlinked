@@ -8,9 +8,9 @@ import {
   attention,
   boost,
   co,
+  EXAMPLE_COMPANIES,
   fit,
   MODERATE_FIT,
-  NETWORK,
   networkLayout,
   pct,
   rank,
@@ -60,7 +60,7 @@ function NetworkMap() {
         className="e-map"
         viewBox="0 0 700 700"
         role="img"
-        aria-label={`Network map of ${NETWORK} companies, with ${map.counts[1]} at 1st degree and ${map.counts[2]} at 2nd degree`}
+        aria-label={`Network map of the ${EXAMPLE_COMPANIES} example companies, with ${map.counts[1]} at 1st degree and ${map.counts[2]} at 2nd degree`}
       >
         {map.lines.map((l, i) => (
           <line
@@ -110,8 +110,8 @@ export function Engine() {
         back={<Back label="Back to ComDash" onClick={() => act.nav("dash")} />}
         sub={
           <p className="a-why">
-            Leads, requests and overnight activity are calculated from a network of {NETWORK}{" "}
-            companies. Each demo runs the same way.
+            Leads, requests and overnight activity are calculated from the {EXAMPLE_COMPANIES}{" "}
+            example companies. Each demo runs the same way.
           </p>
         }
       />

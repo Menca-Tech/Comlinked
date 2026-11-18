@@ -12,6 +12,9 @@ export const CHAMBER = {
   senderName: SHORT_NAME + " Membership",
   /** The person presenting the Pilot Preview. */
   presenterFirstName: "Richard",
+  /** The Chamber Size: how many member Companies the chamber has. Every chamber-wide figure counts
+   * out of it; only the Example Companies are named. */
+  size: 1000,
 } as const;
 
 /** How to reach the presenter from the Pilot Preview's last screen: their first name, their

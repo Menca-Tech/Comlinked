@@ -69,26 +69,44 @@ export interface ActivityTile {
   of: number | null;
 }
 
-/** What the chamber's Activity View shows on a day: its figures, how many members it has, the
- * count for each status, and the members in the order the list shows them. */
+/** How many of the chamber's members had a status on a day. */
+export interface StatusCount {
+  status: MemberStatus;
+  count: number;
+}
+
+/** What the chamber's Activity View shows on a day: its figures, how many members the chamber has
+ * (the Chamber Size) and how many of them are named examples, the chamber-wide count for each
+ * status, and the Example Companies in the order the list shows them. */
 export interface ActivityViewData {
   day: number;
   tiles: ActivityTile[];
   memberCount: number;
-  counts: { status: MemberStatus; count: number }[];
+  exampleCount: number;
+  counts: StatusCount[];
   rows: ActivityRow[];
 }
 
 /** What the status filter can choose: every member, or the members of one status. */
 export type StatusChoice = "All" | MemberStatus;
 
-/** The members of one status as the Activity View lists them: how many members the status holds,
- * the ones listed, and how many more of them there are to show. */
+/** The members of one status as the Activity View lists them: how many of the chamber's members
+ * the status holds, how many of those are Example Companies, the examples listed, and how many
+ * more examples there are to show. */
 export interface MemberGroup {
   status: MemberStatus;
   count: number;
+  examples: number;
   members: ActivityRow[];
   more: number;
+}
+
+/** The member import's progress: profiles built out of the Chamber Size, and how many rows of the
+ * Member List's named examples are built. */
+export interface ImportProgress {
+  built: number;
+  of: number;
+  rows: number;
 }
 
 /** A member the Community Manager can introduce: one that has claimed. */
@@ -552,7 +570,10 @@ export interface TeamQueueItem {
 
 export interface TeamData {
   D: number;
-  base: number;
+  /** The chamber's claimed members today, out of `of`, the Chamber Size. */
+  claimed: number;
+  of: number;
+  /** The chamber's weekly active members today, and on any day. */
   wac: number;
   wacAt: (day: number) => number;
   rows: TeamRow[];
