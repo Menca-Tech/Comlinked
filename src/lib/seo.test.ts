@@ -23,4 +23,9 @@ describe("buildRobots", () => {
     expect(robots.rules).toMatchObject({ userAgent: "*", disallow: "/dashboard/" });
     expect(robots.sitemap).toBe("https://example.com/sitemap.xml");
   });
+
+  it("keeps the whole demo deployment out of search engines", () => {
+    const robots = buildRobots("https://example.com/", { demo: true });
+    expect(robots.rules).toEqual({ userAgent: "*", disallow: "/" });
+  });
 });

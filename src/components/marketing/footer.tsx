@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { DemoNotice } from "@/components/demo-notice";
 import { paths } from "@/paths";
 
 export function Footer() {
@@ -148,6 +149,7 @@ export function Footer() {
           </div>
           <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 px-0 pt-5.5 pb-7 font-sans text-[14px] leading-[17px] font-bold tracking-normal text-cl-muted">
             <span>© 2026 Rimenca Inc., Toronto, Ontario</span>{" "}
+            <DemoNotice className="m-0 font-normal" />
             <span>Company-to-company network</span>{" "}
             <a className="cl-navl px-0 py-2 text-cl-muted no-underline" href="#top">
               Back to top ↑

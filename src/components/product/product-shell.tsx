@@ -4,6 +4,7 @@ import { Suspense, useEffect, useLayoutEffect, useRef, useState, type ReactNode 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
+import { DemoNotice } from "@/components/demo-notice";
 import { DemoGuide } from "@/components/product/demo-guide";
 import { BottomTabs, TopBar } from "@/components/product/product-bars";
 import { CompanyView } from "@/components/product/screens/company-view";
@@ -57,6 +58,7 @@ function showInstead(router: ReturnType<typeof useRouter>, route: string, shown:
 function ProductRoot({ children }: { children?: ReactNode }) {
   return (
     <div className="cl-product">
+      <DemoNotice className="a-demo-notice" />
       <div className="phone">{children}</div>
       <StoryAnnouncer />
     </div>
