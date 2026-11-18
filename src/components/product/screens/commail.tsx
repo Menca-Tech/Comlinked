@@ -3,6 +3,7 @@
 import { useLayoutEffect } from "react";
 
 import { ClaimMark } from "@/components/product/claim-mark";
+import { focusPanel } from "@/components/product/focus-panel";
 import { Mono, NewMark, PageHead, Panel } from "@/components/product/shared";
 import { Thread } from "@/components/product/screens/thread";
 import { useIsDesktop, useSimulation } from "@/components/product/use-simulation";
@@ -44,7 +45,8 @@ function MailList() {
   );
 }
 
-// C2 C3 C4: company-to-company messaging.
+// C2 C3 C4: company-to-company messaging. The thread list is flat, and the open conversation
+// with its reply box is the Focus panel.
 export function ComMail() {
   const S = useSimulation();
   const isWeb = useIsDesktop();
@@ -54,9 +56,9 @@ export function ComMail() {
   if (!isWeb) {
     if (S.openThread) {
       return (
-        <Panel>
+        <div className="a-surface" {...focusPanel(true)}>
           <Thread t={th(S.openThread)} />
-        </Panel>
+        </div>
       );
     }
     return (
@@ -75,7 +77,7 @@ export function ComMail() {
         <div className="w-col a-surface">
           <MailList />
         </div>
-        <div className="w-col a-surface">
+        <div className="w-col a-surface" {...focusPanel(true)}>
           {S.openThread ? <Thread t={th(S.openThread)} /> : <p className="a-empty">{NO_THREADS}</p>}
         </div>
       </div>

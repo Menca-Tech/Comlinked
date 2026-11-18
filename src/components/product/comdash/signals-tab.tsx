@@ -10,10 +10,11 @@ import { SignalDrawer } from "@/components/product/comdash/signal-drawer";
 import { TopNumbers } from "@/components/product/comdash/top-numbers";
 import { VisibilityChart } from "@/components/product/comdash/visibility-chart";
 
-/** The Interest Signals tab, in the prototype's order: numbers, trends, companies and insights. */
+/** The Interest Signals tab, in the prototype's order: numbers, trends, companies and insights. It
+ * is all data panels, so the whole tab takes the compact density. */
 export function SignalsTab() {
   return (
-    <div className="cd-signals">
+    <div className="cd-signals" data-density="compact">
       <TopNumbers />
       <div className="cd-row2">
         <VisibilityChart />

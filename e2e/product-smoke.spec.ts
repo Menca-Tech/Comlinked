@@ -1,6 +1,8 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
+import { arrival, expectStill, focusPanel, surfaceShadow, tabTo, WHITE } from "./demo-helpers";
+
 // The product runs on a browser-held simulation, and a full page load resets it by
 // design, so these tests navigate by clicking rather than with page.goto.
 const BLOCKING_IMPACTS = new Set(["serious", "critical"]);
@@ -304,20 +306,20 @@ test.describe("ComDash", () => {
       "Profile views",
       "Profile saves",
     ]);
-    await expect(page.locator(".cd-tile.star")).toHaveCount(1);
-    await expect(page.locator(".cd-tile.star .cd-k")).toHaveText("Messages");
+    // Messages is the tab's Focus panel: the one raised tile among the six.
+    await expect(page.locator("[data-focus-panel]")).toHaveCount(1);
+    await expect(page.locator(".cd-tile[data-focus-panel] .cd-k")).toHaveText("Messages");
     await expect(page.locator(".cd-tile .cd-d")).toHaveCount(6);
     const messages = page.locator(".cd-tile", { hasText: "Messages" }).locator(".cd-d");
     await expect(messages).toContainText("▲");
     await expect(messages).toContainText("1 more than before");
     const chart = panel(page, "Visibility by day");
-    await expect(chart.locator(".cd-chart")).toBeVisible();
-    await expect(chart.locator(".cd-area")).toHaveCount(1);
-    await expect(chart.locator(".cd-series polyline")).toHaveCount(2);
-    await expect(chart.locator(".cd-end")).toHaveCount(2);
-    await expect(chart.locator(".cd-legend li")).toHaveText([
-      "Search appearances",
-      "Recommendations",
+    // One bar or tick for each of the 14 days, and a legend that also reads the latest day.
+    await expect(chart.locator(".db-day")).toHaveCount(14);
+    await expect(chart.locator(".db-legend li")).toHaveText([
+      "Search appearances 1",
+      "Recommendations 0",
+      "Day 14",
     ]);
     await expect(chart.locator(".cd-ph")).toContainText("Since you claimed your profile on Day 1");
     await expect(page.locator(".cd-fstep")).toHaveCount(5);
@@ -333,9 +335,133 @@ test.describe("ComDash", () => {
       "Food service and hospitality",
     );
     await expect(panel(page, "Search terms that found you")).toContainText("polvoron");
-    await expect(page.locator(".cd-panel")).toHaveCount(7);
+    await expect(panelTitles(page)).toHaveText([
+      "Visibility by day",
+      "Interest funnel",
+      TWO_WEEKS_HEADING,
+      "Alerts",
+      "Found you as a…",
+      "Who’s interested, by industry",
+      "Search terms that found you",
+    ]);
     await expectAccessible(page);
   });
+
+  test("Interest Signals leads with the Messages tile, in the compact density and the shared parts", async ({
+    page,
+  }) => {
+    await twoWeeksIn(page);
+    await openTab(page, "Interest Signals");
+    const focus = page.locator("[data-focus-panel]");
+    await expect(focus).toHaveCount(1);
+    await expect(focus).toContainText("Messages");
+    // It is raised, and the other five tiles are flat.
+    const raised = await page
+      .locator(".cd-tile")
+      .evaluateAll((tiles) => tiles.map((tile) => getComputedStyle(tile).boxShadow !== "none"));
+    expect(raised).toEqual([false, false, true, false, false, false]);
+    // Figures are in the sans face, and table headers in sentence case.
+    const figure = page.locator(".cd-tile .cd-v").first();
+    expect(await figure.evaluate((el) => getComputedStyle(el).fontFamily)).not.toContain("Serif");
+    const headers = page.getByRole("columnheader");
+    await expect(headers).toHaveText(["Company", "Interest Level", "Latest signal", "Action"]);
+    const cases = await headers.evaluateAll((cells) =>
+      cells.map((cell) => getComputedStyle(cell).textTransform),
+    );
+    expect(cases).toEqual(["none", "none", "none", "none"]);
+    // Each Company in the table carries its mark, and so does its timeline drawer.
+    await expect(companyRow(page, "hapag").locator("[aria-hidden='true']").first()).toHaveText(
+      "HK",
+    );
+    await rowButton(page, "hapag").click();
+    await expect(
+      drawer(page, "Hapag Kitchen Group").locator("[aria-hidden='true']").first(),
+    ).toHaveText("HK");
+  });
+
+  for (const width of [1440, 390]) {
+    test(`Visibility by day stacks both series in one bar a day, with no toggle, at ${width} pixels`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width, height: 900 });
+      await twoWeeksIn(page);
+      await openTab(page, "Interest Signals");
+      const chart = panel(page, "Visibility by day");
+      // The text list gives each day's two values to a screen reader.
+      const said = await chart.getByRole("listitem").allTextContents();
+      expect(said).toHaveLength(14);
+      expect(said[0]).toBe("Day 1: 0 search appearances, 0 recommendations");
+      expect(said[4]).toBe("Day 5: 1 search appearances, 1 recommendations");
+      // One bar or tick for each day, and nothing to choose between the series.
+      const days = chart.locator(".db-day");
+      await expect(days).toHaveCount(14);
+      await expect(page.getByRole("group", { name: "Chart series" })).toHaveCount(0);
+      // Hovering a segment names the day, the count and the series. Together the segments say
+      // what the list says.
+      const hovers = await chart
+        .locator("[data-series][title]")
+        .evaluateAll((segments) => segments.map((segment) => segment.getAttribute("title")));
+      const expected = said.flatMap((line) => {
+        const [, day, searches, recommendations] =
+          /^(Day \d+): (\d+) search appearances, (\d+) recommendations$/.exec(line) ?? [];
+        return [
+          Number(searches) ? `${day}: ${searches} search appearances` : null,
+          Number(recommendations) ? `${day}: ${recommendations} recommendations` : null,
+        ].filter(Boolean);
+      });
+      expect(hovers).toEqual(expected);
+      expect(hovers).toContain("Day 5: 1 recommendations");
+      // On Day 5 recommendations sit on top of search appearances in the one bar, in another colour.
+      const stacked = await days
+        .nth(4)
+        .locator("[data-series]")
+        .evaluateAll((segments) =>
+          segments.map((segment) => {
+            const box = segment.getBoundingClientRect();
+            return {
+              x: box.x,
+              top: box.top,
+              bottom: box.bottom,
+              colour: getComputedStyle(segment).backgroundColor,
+            };
+          }),
+        );
+      const [searches, recommendations] = stacked;
+      if (!searches || !recommendations) throw new Error("Day 5 has no two segments.");
+      expect(stacked).toHaveLength(2);
+      expect(recommendations.x).toBe(searches.x);
+      expect(recommendations.bottom).toBeLessThanOrEqual(searches.top + 0.5);
+      expect(recommendations.colour).not.toBe(searches.colour);
+      // A day with nothing shows a short tick, not a gap.
+      await expect(days.first().locator("[data-series]")).toHaveCount(0);
+      const tick = await days.first().locator("span").first().boundingBox();
+      expect(tick?.height).toBeGreaterThan(0);
+      expect(tick?.height).toBeLessThanOrEqual(2);
+      // The grid's scale, a label under every other day, and the latest day's two values as text.
+      await expect(chart.locator(".db-grid li")).toHaveText(["4", "3", "2", "1", "0"]);
+      await expect(chart.locator(".db-tick")).toHaveText([
+        "Day 1",
+        "Day 3",
+        "Day 5",
+        "Day 7",
+        "Day 9",
+        "Day 11",
+        "Day 14",
+      ]);
+      await expect(chart.locator(".db-legend li")).toHaveText([
+        "Search appearances 1",
+        "Recommendations 0",
+        "Day 14",
+      ]);
+      // Its labels keep their size from the scale at this width.
+      const sizes = await chart
+        .locator(".db-tick, .db-grid li")
+        .evaluateAll((labels) => labels.map((label) => getComputedStyle(label).fontSize));
+      expect([...new Set(sizes)]).toEqual(["12px"]);
+      await expect(chart.locator(".cd-ph")).toContainText("Search appearances are rising.");
+      await noSidewaysScroll(page);
+    });
+  }
 
   test("level filters show counts, narrow the table and say when a level is empty", async ({
     page,
@@ -796,6 +922,18 @@ test.describe("ComDash", () => {
     await expect(page.getByText("Name hidden on the free plan")).toHaveCount(6);
     await expect(table).not.toContainText("Hapag Kitchen Group");
     await expect(table.locator("tr[data-company]")).toHaveCount(0);
+    // A hidden row keeps its mark, with no initials in it.
+    const marks = await table
+      .locator("tbody tr")
+      .evaluateAll((rows) =>
+        rows.map((row) => row.querySelector("[aria-hidden='true']")?.textContent),
+      );
+    expect(marks).toEqual(["", "", "", "", "", ""]);
+    // The upgrade box's button is the tab's one solid button; "See who" is outlined.
+    const upgrade = page.getByRole("button", { name: "See who’s interested" });
+    const seeWho = table.getByRole("button", { name: "See who", exact: true }).first();
+    await expect(seeWho).toHaveCSS("background-color", "rgb(255, 255, 255)");
+    await expect(upgrade).not.toHaveCSS("background-color", "rgb(255, 255, 255)");
     await expect(panel(page, "Alerts")).toContainText("weekly, without names");
     await expect(panel(page, "Alerts")).not.toContainText("Hapag Kitchen Group");
     await page.getByRole("button", { name: "See who’s interested" }).click();
@@ -810,6 +948,10 @@ test.describe("ComDash", () => {
     await expect(companyRow(page, "hapag")).toContainText("Intent score");
     await expect(companyRow(page, "oc-bagwis")).toHaveCount(0);
     await expect(table.getByRole("button", { name: "Unlock on Pro" })).toHaveCount(3);
+    // "Send my agent" is outlined on every row, so no tier adds a second solid button.
+    await expect(
+      page.getByRole("button", { name: "Send my agent to Hapag Kitchen Group" }),
+    ).toHaveCSS("background-color", "rgb(255, 255, 255)");
     await page.getByRole("button", { name: "Send my agent to Hapag Kitchen Group" }).click();
     await expect(companyRow(page, "hapag")).toContainText("Agent intro sent for approval");
     await expect(
@@ -820,6 +962,13 @@ test.describe("ComDash", () => {
     await expect(viewButton(page, "Pro")).toHaveAttribute("aria-pressed", "true");
     await expect(page.getByText("Compare Pro")).toHaveCount(0);
     await expect(companyRow(page, "oc-bagwis")).toContainText("other chamber (PCCI–Quezon City)");
+    // A Company in another chamber is no member of this network, so its mark is plain grey.
+    const outside = companyRow(page, "oc-bagwis").locator("[aria-hidden='true']").first();
+    const member = companyRow(page, "hapag").locator("[aria-hidden='true']").first();
+    await expect(outside).toHaveText("BG");
+    const ground = (mark: typeof outside) =>
+      mark.evaluate((el) => getComputedStyle(el).backgroundColor);
+    expect(await ground(outside)).not.toBe(await ground(member));
     await expect(companyRow(page, "hapag").locator(".cd-sc b")).toContainText("11");
     await rowButton(page, "hapag").click();
     const hapag = drawer(page, "Hapag Kitchen Group");
@@ -955,7 +1104,13 @@ test.describe("ComDash", () => {
       .locator(".cd-tiles")
       .evaluate((el) => getComputedStyle(el).gridTemplateColumns.split(" ").length);
     expect(columns).toBe(2);
-    await expect(page.getByRole("group", { name: "Chart series" })).toBeVisible();
+    // Both series show at once: nothing chooses between them.
+    await expect(page.getByRole("group", { name: "Chart series" })).toHaveCount(0);
+    for (const series of ["0", "1"]) {
+      await expect(
+        panel(page, "Visibility by day").locator(`[data-series="${series}"]`).first(),
+      ).toBeVisible();
+    }
     await expect(page.locator(".cd-table thead")).toHaveCSS("position", "absolute");
     await rowButton(page, "hapag").click();
     const width = await drawer(page, "Hapag Kitchen Group").evaluate(
@@ -981,10 +1136,13 @@ test.describe("ComDash", () => {
       .locator(".cd-table thead")
       .evaluate((el) => el.getBoundingClientRect().width);
     expect(headerWidth).toBeLessThanOrEqual(1);
-    await expect(page.getByRole("group", { name: "Chart series" })).toBeVisible();
-    await page.getByRole("button", { name: "Recommendations", exact: true }).click();
-    await expect(page.locator(".cd-series.recommendations")).toBeVisible();
-    await expect(page.locator(".cd-series.searches")).toBeHidden();
+    // The chart shows both series on a phone, with no toggle.
+    await expect(page.getByRole("button", { name: "Recommendations", exact: true })).toHaveCount(0);
+    for (const series of ["0", "1"]) {
+      await expect(
+        panel(page, "Visibility by day").locator(`[data-series="${series}"]`).first(),
+      ).toBeVisible();
+    }
     await rowButton(page, "hapag").click();
     const width = await drawer(page, "Hapag Kitchen Group").evaluate(
       (el) => el.getBoundingClientRect().width,
@@ -1506,4 +1664,386 @@ test.describe("Kalayaan's first export shipment, and basics only before a Claim"
       await noSidewaysScroll(page);
     });
   }
+});
+
+/** Opens one of the Company's sections and waits for its screen, so nothing is clicked on the
+ * screen being left. */
+async function openScreen(page: Page, name: "Leads" | "ComMail" | "Asks" | "Wins") {
+  await openSection(page, name);
+  const title = name === "Leads" ? "Today’s leads" : name;
+  await expect(page.getByRole("heading", { name: title, level: 1 })).toBeVisible();
+}
+
+test.describe("the member's daily screens, each led by one Focus panel", () => {
+  test.use({ viewport: { width: 1280, height: 900 } });
+
+  /** A solid button is filled; an outlined or quiet one sits on white or on nothing. */
+  const solid = (page: Page, name: string) =>
+    expect(page.getByRole("button", { name, exact: true }).first()).not.toHaveCSS(
+      "background-color",
+      /^(rgb\(255, 255, 255\)|rgba\(0, 0, 0, 0\))$/,
+    );
+
+  test("Connections: Invitations leads with Accept, and still leads once it is empty", async ({
+    page,
+  }) => {
+    await twoWeeksIn(page);
+    await openTab(page, "Connections");
+    const focus = focusPanel(page);
+    await expect(focus).toHaveCount(1);
+    await expect(focus).not.toHaveCSS("box-shadow", "none");
+    await expect(focus.getByRole("heading")).toHaveText("Invitations (1)");
+    await solid(page, "Accept Lakbay Hotels");
+    // Every other panel is flat, and Reply and Connect are outlined.
+    for (const title of [
+      "Manage connections",
+      "Companies in your chamber",
+      "From your connections",
+    ]) {
+      expect(await surfaceShadow(page.getByRole("heading", { name: title }))).toBe("none");
+    }
+    await expect(page.getByRole("button", { name: /^Reply to/ }).first()).toHaveCSS(
+      "background-color",
+      WHITE,
+    );
+    await focus.getByRole("button", { name: "Accept Lakbay Hotels" }).click();
+    await expect(focus).toHaveCount(1);
+    await expect(focus.getByRole("heading")).toHaveText("Invitations (0)");
+    await expect(focus).toContainText("No pending invitations.");
+    await expect(focus.getByRole("button")).toHaveCount(0);
+  });
+
+  test("Profile: Profile strength leads, on the tab and on Your company", async ({ page }) => {
+    await twoWeeksIn(page);
+    await openTab(page, "Profile");
+    const focus = focusPanel(page);
+    for (const way of ["the tab", "Your company"]) {
+      if (way === "Your company") {
+        await page.getByRole("button", { name: "Your company" }).click();
+        await expect(page).toHaveURL(/\/app\/company$/);
+      }
+      await expect(focus).toHaveCount(1);
+      await expect(focus).not.toHaveCSS("box-shadow", "none");
+      await expect(focus.getByRole("heading", { name: "Profile strength" })).toBeVisible();
+      await expect(focus).toContainText("90%");
+      // What is still missing is its one solid button.
+      await solid(page, "Add photo");
+      await expect(focus.getByRole("button", { name: "Save description" })).toHaveCSS(
+        "background-color",
+        WHITE,
+      );
+      const connections = page.getByRole("heading", { name: /^Company connections/ });
+      expect(await surfaceShadow(connections)).toBe("none");
+    }
+  });
+
+  test("Leads: the selected company leads beside a flat list, and the finished state takes its place", async ({
+    page,
+  }) => {
+    await twoWeeksIn(page);
+    await openScreen(page, "Leads");
+    const focus = focusPanel(page);
+    await expect(focus).toHaveCount(1);
+    await expect(focus).not.toHaveCSS("box-shadow", "none");
+    const selected = page.locator("[aria-current='true']");
+    await expect(selected).toHaveCount(1);
+    expect(await surfaceShadow(selected)).toBe("none");
+    await expect(focus).toContainText(await selected.locator("strong").innerText());
+    for (let done = 0; done < 5; done++) {
+      await focus.getByRole("button", { name: "Skip", exact: true }).click();
+    }
+    // No lead is left: the Focus panel still shows, holding the one line and the way on.
+    await expect(focus).toHaveCount(1);
+    await expect(focus.getByRole("heading")).toHaveText("Your list is done for today");
+    await expect(focus).toContainText("New leads arrive at 8:00 a.m.");
+    await expect(focus.getByRole("button")).toHaveText(["Go to next morning"]);
+    await solid(page, "Go to next morning");
+  });
+
+  test("ComMail: the open conversation and its reply box lead beside a flat list, with the AI Assistant on or off", async ({
+    page,
+  }) => {
+    await twoWeeksIn(page);
+    await openScreen(page, "ComMail");
+    const focus = focusPanel(page);
+    const threads = page.locator(".a-li");
+    await expect(focus).toHaveCount(1);
+    await expect(focus).not.toHaveCSS("box-shadow", "none");
+    await expect(focus.getByLabel("Your message")).toHaveValue(/Thank you for reaching out/);
+    await solid(page, "Send");
+    expect(await surfaceShadow(threads.first())).toBe("none");
+    await expect(focus.locator(".a-li")).toHaveCount(0);
+
+    // With the AI Assistant off the reply box is empty, shows its templates, and still leads.
+    await backToComDash(page);
+    await openTab(page, "Profile");
+    await page.getByRole("switch", { name: "AI Assistant" }).click();
+    await openScreen(page, "ComMail");
+    await threads.filter({ hasText: "Maple Bay Grocers" }).click();
+    await expect(focus).toHaveCount(1);
+    await expect(focus.getByRole("button", { name: /^Maple Bay Grocers/ })).toBeVisible();
+    await expect(focus.getByLabel("Your message")).toHaveValue("");
+    await expect(focus.getByRole("button", { name: "Quote request" })).toHaveCSS(
+      "background-color",
+      WHITE,
+    );
+    await solid(page, "Send");
+  });
+
+  test("Asks and Wins: the box for posting an Ask and the card for sharing a win lead", async ({
+    page,
+  }) => {
+    await twoWeeksIn(page);
+    await openScreen(page, "Asks");
+    const focus = focusPanel(page);
+    await expect(focus).toHaveCount(1);
+    await expect(focus).not.toHaveCSS("box-shadow", "none");
+    await expect(focus.getByLabel("What does your company need?")).toBeVisible();
+    await solid(page, "Post ask");
+    expect(await surfaceShadow(page.getByRole("heading", { name: "Latest asks" }))).toBe("none");
+    await expect(page.getByRole("button", { name: "Respond" }).first()).toHaveCSS(
+      "background-color",
+      WHITE,
+    );
+
+    await openScreen(page, "Wins");
+    await expect(focus).toHaveCount(1);
+    await expect(focus).not.toHaveCSS("box-shadow", "none");
+    await expect(focus.getByRole("heading")).toHaveText("Share this win");
+    for (const title of ["Success wall", "Monthly top companies"]) {
+      expect(await surfaceShadow(page.getByRole("heading", { name: title }))).toBe("none");
+    }
+    // Nothing is solid until a post is being previewed.
+    await focus.getByRole("button", { name: "Facebook" }).click();
+    await solid(page, "Post to Facebook");
+  });
+
+  test("Wins: a testimonial owed after a deal leads, and the win to share drops below it", async ({
+    page,
+  }) => {
+    await twoWeeksIn(page);
+    await openScreen(page, "ComMail");
+    await page.locator(".a-li", { hasText: "Pacific Pack Solutions" }).click();
+    await tap(page, "We did business");
+    await expect(page.getByText(/1 deal/)).toBeVisible();
+    await openScreen(page, "Wins");
+    const focus = focusPanel(page);
+    await expect(focus).toHaveCount(1);
+    await expect(focus.getByRole("heading")).toHaveText(
+      "You did business with Pacific Pack Solutions",
+    );
+    await solid(page, "Post testimonial");
+    const share = page.getByRole("heading", { name: "Share this win" });
+    await expect(focus.filter({ has: share })).toHaveCount(0);
+    expect(await surfaceShadow(share)).toBe("none");
+    await page.getByRole("button", { name: "Facebook" }).click();
+    await expect(page.getByRole("button", { name: "Post to Facebook" })).toHaveCSS(
+      "background-color",
+      WHITE,
+    );
+  });
+
+  test("on a phone each is one column inset by 16px, with its Focus panel in today's place", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await twoWeeksIn(page);
+    const focus = focusPanel(page);
+    const inset = async () => {
+      await expect(focus).toHaveCount(1);
+      const box = await focus.boundingBox();
+      expect(box?.x).toBe(16);
+      expect(box?.width).toBe(358);
+      await noSidewaysScroll(page);
+    };
+    const above = async (first: string, second: string) => {
+      const a = await page.getByRole("heading", { name: first }).first().boundingBox();
+      const b = await page.getByRole("heading", { name: second }).first().boundingBox();
+      expect(a?.y).toBeLessThan(b?.y ?? 0);
+    };
+    await openTab(page, "Connections");
+    await inset();
+    await above("Manage connections", "Invitations (1)");
+    await above("Invitations (1)", "Companies in your chamber");
+    await openTab(page, "Profile");
+    await inset();
+    await above("Profile strength", "AI Assistant: On");
+
+    await openScreen(page, "Leads");
+    await inset();
+    await expect(focus).toHaveAttribute("data-lead", /.+/);
+    // The list on a phone is flat, with no thread or lead raised but the one chosen.
+    await openScreen(page, "ComMail");
+    await expect(focus).toHaveCount(0);
+    await page.locator(".a-li", { hasText: "Luntian" }).click();
+    await inset();
+    await expect(focus.getByLabel("Your message")).toBeVisible();
+    await tap(page, "Back to ComMail");
+
+    await openScreen(page, "Asks");
+    await inset();
+    await above("Asks", "Latest asks");
+    expect((await focus.boundingBox())?.y).toBeLessThan(
+      (await page.getByRole("heading", { name: "Latest asks" }).boundingBox())?.y ?? 0,
+    );
+    await openScreen(page, "Wins");
+    await inset();
+    await above("Share this win", "Success wall");
+    await above("Success wall", "Monthly top companies");
+  });
+
+  test("from the keyboard each screen's main action is reachable with a visible focus ring", async ({
+    page,
+  }) => {
+    await twoWeeksIn(page);
+    const main = (name: string) =>
+      focusPanel(page).getByRole("button", { name, exact: true }).first();
+    await openTab(page, "Connections");
+    await tabTo(page, main("Accept Lakbay Hotels"));
+    await openTab(page, "Profile");
+    await tabTo(page, main("Add photo"));
+    await openScreen(page, "Leads");
+    await tabTo(page, main("Skip"));
+    await openScreen(page, "ComMail");
+    await tabTo(page, main("Send"));
+    await openScreen(page, "Asks");
+    await tabTo(page, main("Post ask"));
+    await openScreen(page, "Wins");
+    await tabTo(page, main("Facebook"));
+    await page.keyboard.press("Enter");
+    await expect(page.getByRole("heading", { name: "Post preview for Facebook" })).toBeVisible();
+  });
+
+  test("with reduced motion nothing on the member's screens transitions or animates", async ({
+    page,
+  }) => {
+    await twoWeeksIn(page);
+    await openTab(page, "Interest Signals");
+    await levelButton(page, "Hot").click();
+    await expectStill(page);
+    await rowButton(page, "hapag").click();
+    await expect(drawer(page, "Hapag Kitchen Group")).toBeVisible();
+    await expectStill(page);
+    await page.keyboard.press("Escape");
+    await openTab(page, "Connections");
+    await page.getByRole("button", { name: "Connect with Kapwa Snack Foods" }).click();
+    await expect(page.locator(".cd-scard", { hasText: "Kapwa" })).toContainText(
+      "Invitation pending",
+    );
+    await expectStill(page);
+    await openTab(page, "Profile");
+    await expectStill(page);
+    await openScreen(page, "Leads");
+    await focusPanel(page).getByRole("button", { name: "Skip", exact: true }).click();
+    await expectStill(page);
+    for (const section of ["ComMail", "Asks", "Wins"] as const) {
+      await openScreen(page, section);
+      await expectStill(page);
+    }
+  });
+});
+
+test.describe("what the viewer triggers moves briefly, with motion allowed", () => {
+  test.use({
+    viewport: { width: 1280, height: 900 },
+    contextOptions: { reducedMotion: "no-preference" },
+  });
+
+  /** A state change runs for 150 to 250ms. */
+  function expectBrief(ms: number) {
+    expect(ms).toBeGreaterThanOrEqual(150);
+    expect(ms).toBeLessThanOrEqual(250);
+  }
+
+  test("the timeline drawer slides in when a row opens it, and is simply there when it comes with the tab", async ({
+    page,
+  }) => {
+    await twoWeeksIn(page);
+    await openTab(page, "Interest Signals");
+    await rowButton(page, "hapag").click();
+    const hapag = drawer(page, "Hapag Kitchen Group");
+    await expect(hapag).toBeVisible();
+    const slide = await arrival(hapag);
+    expect(slide.name).not.toBe("none");
+    expectBrief(slide.ms);
+    // It comes to rest against the right edge of the screen.
+    await expect.poll(() => hapag.evaluate((el) => el.getAnimations().length)).toBe(0);
+    const box = await hapag.boundingBox();
+    expect((box?.x ?? 0) + (box?.width ?? 0)).toBe(1280);
+    await page.keyboard.press("Escape");
+    await expect(hapag).toBeHidden();
+
+    // A Hot name on the Overview opens the tab with the drawer already in it: nothing slides.
+    await openTab(page, "Overview");
+    await hotCompany(page, "Hapag Kitchen Group").click();
+    await expect(hapag).toBeVisible();
+    expect((await arrival(hapag)).name).toBe("none");
+  });
+
+  test("a tab's underline moves to the tab that is chosen", async ({ page }) => {
+    await twoWeeksIn(page);
+    const underline = (name: string) =>
+      tabRow(page)
+        .getByRole("link", { name, exact: true })
+        .evaluate((el) => {
+          const style = getComputedStyle(el, "::after");
+          return {
+            drawn: new DOMMatrix(style.transform).a,
+            ms: parseFloat(style.transitionDuration) * 1000,
+          };
+        });
+    expect((await underline("Overview")).drawn).toBe(1);
+    expect((await underline("Connections")).drawn).toBe(0);
+    expectBrief((await underline("Connections")).ms);
+    await tabRow(page).getByRole("link", { name: "Connections", exact: true }).click();
+    await expect.poll(async () => (await underline("Connections")).drawn).toBe(1);
+    await expect.poll(async () => (await underline("Overview")).drawn).toBe(0);
+  });
+
+  test("a status takes a button's place after Connect, Send or Skip, and one already there does not move", async ({
+    page,
+  }) => {
+    await twoWeeksIn(page);
+    await openTab(page, "Connections");
+    const suggestion = (name: string) => page.locator(".cd-scard", { hasText: name });
+    // Buhay Pharmacy Chain's request was sent before the screen opened.
+    const before = suggestion("Buhay Pharmacy Chain").getByText("Invitation pending");
+    expect((await arrival(before)).name).toBe("none");
+    await page.getByRole("button", { name: "Connect with Kapwa Snack Foods" }).click();
+    const pending = suggestion("Kapwa Snack Foods").getByText("Invitation pending");
+    await expect(pending).toBeVisible();
+    const afterConnect = await arrival(pending);
+    expect(afterConnect.name).not.toBe("none");
+    expectBrief(afterConnect.ms);
+
+    const item = page.locator(".cd-moment").first();
+    await item.getByRole("button", { name: /^Reply to/ }).click();
+    await item.getByRole("button", { name: "Send", exact: true }).click();
+    const answered = item.getByText("Answered. Your reply is in ComMail.");
+    await expect(answered).toBeVisible();
+    const afterSend = await arrival(answered);
+    expect(afterSend.name).not.toBe("none");
+    expectBrief(afterSend.ms);
+
+    await openScreen(page, "Leads");
+    const lead = await focusPanel(page).locator("strong").first().innerText();
+    await focusPanel(page).getByRole("button", { name: "Skip", exact: true }).click();
+    const done = page.locator("[data-lead]", { hasText: lead });
+    await expect(done).toContainText("Skipped.");
+    const afterSkip = await arrival(done);
+    expect(afterSkip.name).not.toBe("none");
+    expectBrief(afterSkip.ms);
+  });
+
+  test("a chip being chosen changes over 150ms", async ({ page }) => {
+    await twoWeeksIn(page);
+    await openTab(page, "Interest Signals");
+    const chip = levelButton(page, "Hot");
+    const ms = await chip.evaluate(
+      (el) => parseFloat(getComputedStyle(el).transitionDuration) * 1000,
+    );
+    expectBrief(ms);
+    await chip.click();
+    await expect(chip).toHaveAttribute("aria-pressed", "true");
+  });
 });

@@ -14,7 +14,7 @@ export function VisibilityDays({ days }: { days: VisibilityDay[] }) {
   } since you claimed your profile, with at most ${top} in a day.`;
   return (
     <figure className="cd-viz">
-      <DayBars days={days.map((d, i) => ({ label: dayLabel(d.day), value: values[i] ?? 0 }))} />
+      <DayBars days={days.map((d, i) => ({ label: dayLabel(d.day), values: [values[i] ?? 0] }))} />
       <figcaption className="cd-note">{summary}</figcaption>
     </figure>
   );

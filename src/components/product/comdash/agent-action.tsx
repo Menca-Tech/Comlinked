@@ -2,7 +2,7 @@
 
 import type { MouseEvent } from "react";
 
-import { Btn } from "@/components/product/shared";
+import { Btn, useReplaced } from "@/components/product/shared";
 import { useSimulation } from "@/components/product/use-simulation";
 import { act, type InterestRow, type PlanView } from "@/services/comlinked";
 
@@ -12,9 +12,10 @@ export function AgentAction({ row, view }: { row: InterestRow; view: PlanView })
   const S = useSimulation();
   const status =
     row.status ?? (S.agentSent.includes(row.company.id) ? "Agent intro sent for approval" : null);
+  const replaced = useReplaced(status !== null);
   if (status) {
     return (
-      <span className="cd-status">
+      <span className="cd-status" {...replaced}>
         <span aria-hidden="true">✓ </span>
         {status}
       </span>
@@ -26,7 +27,7 @@ export function AgentAction({ row, view }: { row: InterestRow; view: PlanView })
   };
   return (
     <Btn
-      cls="sm"
+      cls="o sm"
       aria-label={`Send my agent to ${row.company.name}`}
       disabled={S.agentLeft[view] <= 0}
       onClick={send}

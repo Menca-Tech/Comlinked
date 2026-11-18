@@ -38,8 +38,26 @@ async function openSection(page: Page, name: string, heading: string) {
   await expect(page.locator("main h1")).toHaveText(heading);
 }
 
+/** Opens one of ComDash's tabs and waits for something only that tab shows. */
+async function openTab(page: Page, name: string, shows: string | RegExp) {
+  await page
+    .getByRole("navigation", { name: "ComDash sections" })
+    .getByRole("link", { name, exact: true })
+    .click();
+  await expect(page.getByRole("heading", { name: shows })).toBeVisible();
+}
+
 /** Stop 4: Kalayaan Foods two weeks in, with possible future pricing off. */
 const twoWeeksIn = (page: Page) => openAt(page, "/app/dash?stop=4", "Kalayaan Foods Inc.");
+
+/** The full Demo two weeks in, which opens ComDash on the Free member view. */
+async function fullDemoTwoWeeksIn(page: Page) {
+  await page.goto("/app/claim");
+  await page.getByRole("button", { name: "Demo guide" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Two weeks in", exact: true }).click();
+  await expect(page.getByRole("dialog")).toBeHidden();
+  await expect(page.getByRole("group", { name: "View as" })).toBeVisible();
+}
 
 /** Stop 2's claim, as far as the step headed `heading`. */
 async function claimAsFarAs(page: Page, heading: string) {
@@ -114,6 +132,54 @@ const SCREENS: Screen[] = [
     open: (page) => openAt(page, "/app/digest?stop=3", "Morning digest"),
   },
   {
+    name: "Interest Signals, with possible future pricing off",
+    open: async (page) => {
+      await twoWeeksIn(page);
+      await openTab(page, "Interest Signals", "13 interested companies");
+    },
+  },
+  {
+    name: "Interest Signals with a Company's timeline open",
+    open: async (page) => {
+      await twoWeeksIn(page);
+      await openTab(page, "Interest Signals", "13 interested companies");
+      await page.getByRole("button", { name: /^Hapag Kitchen Group/ }).click();
+      await expect(page.getByRole("dialog", { name: "Hapag Kitchen Group" })).toBeVisible();
+    },
+  },
+  {
+    name: "Interest Signals on the Free member view",
+    open: async (page) => {
+      await fullDemoTwoWeeksIn(page);
+      await openTab(page, "Interest Signals", "13 interested companies");
+      await expect(page.getByRole("button", { name: "See who", exact: true })).toHaveCount(6);
+    },
+  },
+  {
+    name: "Interest Signals on the Growth view",
+    open: async (page) => {
+      await fullDemoTwoWeeksIn(page);
+      await press(page, "Growth");
+      await expect(
+        page.getByRole("columnheader", { name: "Intent score and level" }),
+      ).toBeVisible();
+    },
+  },
+  {
+    name: "the Connections tab",
+    open: async (page) => {
+      await twoWeeksIn(page);
+      await openTab(page, "Connections", "Manage connections");
+    },
+  },
+  {
+    name: "the Profile tab",
+    open: async (page) => {
+      await twoWeeksIn(page);
+      await openTab(page, "Profile", "Profile strength");
+    },
+  },
+  {
     name: "Leads",
     open: async (page) => {
       await twoWeeksIn(page);
@@ -130,6 +196,39 @@ const SCREENS: Screen[] = [
         .filter({ has: page.getByRole("button", { name: "Skip" }) });
       await lead.getByRole("button").first().click();
       await expect(page.getByRole("button", { name: "Back", exact: true })).toBeVisible();
+    },
+  },
+  {
+    name: "ComMail",
+    open: async (page) => {
+      await twoWeeksIn(page);
+      await openSection(page, "ComMail", "ComMail");
+    },
+  },
+  {
+    name: "a conversation in ComMail",
+    open: async (page) => {
+      await twoWeeksIn(page);
+      await openSection(page, "ComMail", "ComMail");
+      await page
+        .getByRole("button", { name: /^Nordhavn Freight Forwarders/ })
+        .first()
+        .click();
+      await expect(page.getByLabel("Your message")).toBeVisible();
+    },
+  },
+  {
+    name: "Asks",
+    open: async (page) => {
+      await twoWeeksIn(page);
+      await openSection(page, "Asks", "Asks");
+    },
+  },
+  {
+    name: "Wins",
+    open: async (page) => {
+      await twoWeeksIn(page);
+      await openSection(page, "Wins", "Wins");
     },
   },
 ];

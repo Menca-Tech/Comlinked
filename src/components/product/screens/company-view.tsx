@@ -13,6 +13,7 @@ import {
   ProfileHead,
   ReasonList,
   St,
+  useReplaced,
   WhyMeet,
 } from "@/components/product/shared";
 import { useSimulation } from "@/components/product/use-simulation";
@@ -24,15 +25,18 @@ function ContactActions({ c }: { c: Company }) {
   const S = useSimulation();
   const conn = S.conn[c.id];
   const asked = S.incoming.some((r) => r.co === c.id);
+  const replaced = useReplaced(conn === "connected" || conn === "pending");
   return (
     <div className="a-acts">
       {conn === "connected" ? (
-        <St kind="good" icon={<Check className="a-ic" aria-hidden="true" />}>
+        <St kind="good" icon={<Check className="a-ic" aria-hidden="true" />} {...replaced}>
           Connected to your company
         </St>
       ) : conn === "pending" ? (
         <>
-          <St icon={<Clock className="a-ic" aria-hidden="true" />}>Connection Request sent</St>
+          <St icon={<Clock className="a-ic" aria-hidden="true" />} {...replaced}>
+            Connection Request sent
+          </St>
           <Btn cls="g" onClick={() => act.withdraw(c.id)}>
             Withdraw
           </Btn>

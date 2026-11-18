@@ -2,7 +2,9 @@
 
 import { Check } from "lucide-react";
 
+import { focusPanel } from "@/components/product/focus-panel";
 import { AiChip, Btn, CoBtn, PageHead, St } from "@/components/product/shared";
+import { Tag } from "@/components/product/tag";
 import { useSimulation } from "@/components/product/use-simulation";
 import { Textarea } from "@/components/ui/textarea";
 import type { Ask } from "@/services/comlinked";
@@ -35,7 +37,7 @@ function AskRow({ a }: { a: Ask }) {
           <CoBtn c={co(a.co)} />
           {match ? (
             <div>
-              <span className="a-tag accent">Matches what you offer</span>
+              <Tag tone="accent">Matches what you offer</Tag>
             </div>
           ) : null}
         </>
@@ -59,7 +61,8 @@ function AskRow({ a }: { a: Ask }) {
   );
 }
 
-// L3: the Asks Board.
+// L3: the Asks Board. The box for posting an Ask leads it, as the Focus panel, and the asks are
+// flat rows.
 export function Asks() {
   const S = useSimulation();
   const f = S.forms;
@@ -67,32 +70,30 @@ export function Asks() {
     <>
       <PageHead title="Asks" />
       <div className="rev w-2">
-        <div className="w-col w-sticky a-surface">
-          <section className="a-card">
-            <div className="a-between">
-              <label className="a-label a-flat" htmlFor="f-ask">
-                What does your company need?
-              </label>
-              <AiChip field="ask" on={f.askAi} />
-            </div>
-            <Textarea
-              className="a-input"
-              id="f-ask"
-              rows={3}
-              placeholder="Looking for a packaging supplier in QC"
-              value={f.ask}
-              onChange={(event) => setForm("ask", event.target.value)}
-            />
-            <div className="a-row">
-              <Btn onClick={() => act.postAsk()}>Post ask</Btn>
-              {S.ai ? (
-                <Btn cls="g" onClick={() => act.polishForm("ask")}>
-                  Polish my words
-                </Btn>
-              ) : null}
-            </div>
-          </section>
-        </div>
+        <section className="a-card w-sticky" {...focusPanel(true)}>
+          <div className="a-between">
+            <label className="a-label a-flat" htmlFor="f-ask">
+              What does your company need?
+            </label>
+            <AiChip field="ask" on={f.askAi} />
+          </div>
+          <Textarea
+            className="a-input"
+            id="f-ask"
+            rows={3}
+            placeholder="Looking for a packaging supplier in QC"
+            value={f.ask}
+            onChange={(event) => setForm("ask", event.target.value)}
+          />
+          <div className="a-row">
+            <Btn onClick={() => act.postAsk()}>Post ask</Btn>
+            {S.ai ? (
+              <Btn cls="g" onClick={() => act.polishForm("ask")}>
+                Polish my words
+              </Btn>
+            ) : null}
+          </div>
+        </section>
         <div className="w-col a-surface">
           <section className="a-sec">
             <h2 className="a-h2">Latest asks</h2>

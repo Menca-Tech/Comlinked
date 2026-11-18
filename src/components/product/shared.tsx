@@ -1,6 +1,6 @@
 "use client";
 
-import type { ComponentProps, ReactNode } from "react";
+import { useState, type ComponentProps, type ReactNode } from "react";
 import { Check, ChevronLeft, Minus } from "lucide-react";
 
 import { ClaimMark } from "@/components/product/claim-mark";
@@ -42,6 +42,17 @@ export function Mono(props: MarkOf & { cls?: string }) {
   );
 }
 
+/** The mark of a Company the network holds no claim for, in grey, so it says nothing of whether
+ * the Company has claimed: one in another chamber, with its initials, or one whose name a "View
+ * as" tier hides, with none. */
+export function PlainMark({ ini, cls }: { ini?: string; cls?: string }) {
+  return (
+    <span className={cn("a-mono plain", cls)} aria-hidden="true">
+      {ini}
+    </span>
+  );
+}
+
 /** The line under a Company's name: its industry and city, then its degree once it has claimed,
  * with the count of mutual connections where `mutuals` asks for it. Until then the line ends
  * with its website, the last of the basics other Companies may see. */
@@ -74,17 +85,26 @@ export function St({
   kind = "",
   icon,
   children,
+  ...rest
 }: {
   kind?: string;
   icon: ReactNode;
   children: ReactNode;
-}) {
+} & Omit<ComponentProps<"span">, "className" | "children">) {
   return (
-    <span className={cn("a-st", kind)}>
+    <span className={cn("a-st", kind)} {...rest}>
       {icon}
       {children}
     </span>
   );
+}
+
+/** For a status that takes a button's place once the viewer has acted. It marks the status so it
+ * fades in, but only when it took that place while the viewer watched: one that was already there
+ * when the screen opened does not move. Spread what it returns on the status. */
+export function useReplaced(done: boolean) {
+  const [doneAtFirst] = useState(done);
+  return done && !doneAtFirst ? { "data-replaced": "" } : undefined;
 }
 
 export function NewMark() {

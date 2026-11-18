@@ -1,6 +1,16 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
+import {
+  expectStill,
+  focusPanel,
+  hasVisibleFocus,
+  moving,
+  surfaceShadow,
+  tabTo,
+  WHITE,
+} from "./demo-helpers";
+
 // The Pilot Preview (docs/specs/2026-11-17-pilot-preview.md, tickets 03 and 04). Each Stop has its
 // own address that prepares its state, so unlike the product smoke tests these may open a Stop
 // with page.goto. Moving around inside a Stop is done by clicking, since a full load of an address
@@ -126,7 +136,6 @@ const showAll = (page: Page, count: number) =>
   page.getByRole("button", { name: `Show all ${count}`, exact: true });
 /** The titles of the panels on a screen, in order. */
 const panelTitles = (page: Page) => page.locator("main").getByRole("heading", { level: 2 });
-const focusPanel = (page: Page) => page.locator("[data-focus-panel]");
 const sideColumn = (page: Page) =>
   page.getByRole("complementary", { name: "Wins and top companies" });
 const sideStep = (page: Page) =>
@@ -1167,17 +1176,6 @@ async function openChamberTools(page: Page) {
   await expect(mainHeading(page)).toHaveText("Day 14 of the pilot");
 }
 
-/** Focus shows as an outline, or as a field's ring. */
-async function hasVisibleFocus(page: Page) {
-  const shown = await page.evaluate(() => {
-    const el = document.activeElement;
-    if (!el) return false;
-    const style = getComputedStyle(el);
-    return style.outlineStyle !== "none" || style.boxShadow !== "none";
-  });
-  expect(shown).toBe(true);
-}
-
 test.describe("Stop 5, ECCP's Activity View", () => {
   test("names ECCP and Day 14 of the pilot, and leads with 40 of 100 claimed beside 3 deals and 2 wins", async ({
     page,
@@ -1723,7 +1721,6 @@ test.describe("the Opening and the ask, in two panels", () => {
   const white = (page: Page) => page.locator("[data-focus-panel] + *");
   const background = (panel: Locator) =>
     panel.evaluate((el) => getComputedStyle(el).backgroundColor);
-  const WHITE = "rgb(255, 255, 255)";
 
   async function expectSideBySide(page: Page) {
     const left = await navy(page).boundingBox();
@@ -2080,14 +2077,7 @@ test.describe("the four reference screens from the keyboard and with reduced mot
   test("with reduced motion, nothing on the four reference screens transitions or animates", async ({
     page,
   }) => {
-    const still = async () => {
-      const durations = await page
-        .locator(".cl-product *")
-        .evaluateAll((els) => els.map((el) => getComputedStyle(el).transitionDuration));
-      expect(durations.length).toBeGreaterThan(0);
-      expect(durations.every((d) => d.split(",").every((x) => parseFloat(x) === 0))).toBe(true);
-      expect(await page.evaluate(() => document.getAnimations().length)).toBe(0);
-    };
+    const still = () => expectStill(page);
     await page.goto(OPENING);
     await expectOpening(page);
     await still();
@@ -2100,32 +2090,8 @@ test.describe("the four reference screens from the keyboard and with reduced mot
   });
 });
 
-const WHITE = "rgb(255, 255, 255)";
 const MATCHES_HEADING = "Meet your 3 matches today";
 const matchCards = (page: Page) => page.locator("[data-lead]");
-
-/** The shadow of the white surface an element sits on: "none" for a flat panel. */
-async function surfaceShadow(part: Locator) {
-  return part.evaluate((el) => {
-    let node: Element | null = el;
-    while (node && getComputedStyle(node).backgroundColor !== "rgb(255, 255, 255)") {
-      node = node.parentElement;
-    }
-    return node ? getComputedStyle(node).boxShadow : "no surface";
-  });
-}
-
-/** Presses Tab until the keyboard reaches `target`, which must then show its focus. */
-async function tabTo(page: Page, target: Locator, limit = 40) {
-  for (let presses = 0; presses < limit; presses++) {
-    await page.keyboard.press("Tab");
-    if (await target.evaluate((el) => el === document.activeElement)) {
-      await hasVisibleFocus(page);
-      return;
-    }
-  }
-  throw new Error("The keyboard never reached it.");
-}
 
 /** Notes every arrival the page draws from now on: which Match, when it started and when it
  * ended. The Demo moves between its screens without a page load, so the notes survive the claim. */
@@ -2149,12 +2115,15 @@ const arrivals = (page: Page) =>
         .arrivalsSeen,
   );
 
-/** How many things on the page are moving: transitions and arrivals alike. */
-const moving = (page: Page) => page.evaluate(() => document.getAnimations().length);
-/** How many Matches are still arriving. A button's own transition is not an arrival. */
+/** How many Matches are still arriving. A button's transition, or a status fading in where a
+ * button was, is not an arrival. */
 const arriving = (page: Page) =>
   page.evaluate(
-    () => document.getAnimations().filter((motion) => motion instanceof CSSAnimation).length,
+    () =>
+      document
+        .getAnimations()
+        .filter((motion) => motion instanceof CSSAnimation && motion.animationName === "a-arrive")
+        .length,
   );
 
 /** Stop 2 from the message to the Matches, noting what arrives. */
@@ -2250,6 +2219,17 @@ test.describe("Stop 2, the claim in two panels and the day-one Matches", () => {
     }
     expect(await moving(page)).toBe(0);
     expect(await arrivals(page)).toEqual([]);
+    await expectStill(page);
+  });
+
+  test("with reduced motion nothing on Stop 2's message, the claim steps or Stop 3 moves", async ({
+    page,
+  }) => {
+    await openStop(page, stop(2));
+    await expectStill(page);
+    await eachClaimStep(page, () => expectStill(page));
+    await openStop(page, stop(3));
+    await expectStill(page);
   });
 
   test("the selected Match is the Focus panel, beside a flat list, with Connect as its main action", async ({

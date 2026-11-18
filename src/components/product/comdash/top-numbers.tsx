@@ -1,37 +1,11 @@
 "use client";
 
-import type { ReactNode } from "react";
-
-import { cn } from "@/lib/utils";
+import { focusPanel } from "@/components/product/focus-panel";
 import { useSimulation } from "@/components/product/use-simulation";
 import { topNumbers, type TopNumber } from "@/services/comlinked";
 
 const ARROW = { up: "▲ ", down: "▼ ", same: "" } as const;
 const SPOKEN = { up: "Up ", down: "Down ", same: "" } as const;
-
-/** One number tile: its label, then its figure, then an optional line under it. */
-export interface NumberTile {
-  key: string;
-  label: string;
-  value: ReactNode;
-  star?: boolean;
-  detail?: ReactNode;
-}
-
-/** A row of number tiles, read as label then figure, as ComDash and the Activity View show them. */
-export function NumberTiles({ tiles, className }: { tiles: NumberTile[]; className?: string }) {
-  return (
-    <ul className={cn("cd-tiles", className)}>
-      {tiles.map((t) => (
-        <li key={t.key} className={cn("cd-tile", t.star && "star")}>
-          <span className="cd-k">{t.label}</span>
-          <span className="cd-v">{t.value}</span>
-          {t.detail}
-        </li>
-      ))}
-    </ul>
-  );
-}
 
 function Change({ change, trend }: Pick<TopNumber, "change" | "trend">) {
   if (!change || !trend) return null;
@@ -44,7 +18,8 @@ function Change({ change, trend }: Pick<TopNumber, "change" | "trend">) {
   );
 }
 
-/** The six tiles for the last 7 days, with Messages highlighted. */
+/** The six tiles for the last 7 days, each read as label, figure, then how it changed. The tile
+ * the seam highlights, Messages, is the tab's Focus panel. */
 export function TopNumbers() {
   useSimulation();
   const rows = topNumbers();
@@ -56,15 +31,15 @@ export function TopNumbers() {
           ? "Last 7 days, compared with the 7 days before."
           : "Last 7 days. Comparisons start after your first two weeks."}
       </p>
-      <NumberTiles
-        tiles={rows.map((r) => ({
-          key: r.key,
-          label: r.label,
-          value: r.value,
-          star: r.star,
-          detail: <Change change={r.change} trend={r.trend} />,
-        }))}
-      />
+      <ul className="cd-tiles">
+        {rows.map((r) => (
+          <li key={r.key} className="cd-panel cd-tile" {...focusPanel(r.star)}>
+            <span className="cd-k">{r.label}</span>
+            <span className="cd-v">{r.value}</span>
+            <Change change={r.change} trend={r.trend} />
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }

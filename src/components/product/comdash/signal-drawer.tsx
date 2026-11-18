@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { ConnectAction } from "@/components/product/comdash/connect-action";
 import { InterestAction } from "@/components/product/comdash/interest-action";
+import { SignalMark } from "@/components/product/comdash/interested-companies";
 import { LevelTag } from "@/components/product/comdash/level-tag";
+import { Btn } from "@/components/product/shared";
 import { useSimulation } from "@/components/product/use-simulation";
 import { paths } from "@/paths";
 import {
@@ -30,20 +32,45 @@ function closeDrawer(router: ReturnType<typeof useRouter>, companyId: string) {
   (row ?? filter)?.focus();
 }
 
-function DrawerBody({ row, onClose }: { row: InterestRow; onClose: () => void }) {
+/** The drawer for one Company. `opened` says the viewer opened it on a tab already showing, so it
+ * slides in; a drawer the address opens with the tab is simply there. */
+function DrawerBody({
+  row,
+  opened,
+  onClose,
+}: {
+  row: InterestRow;
+  opened: boolean;
+  onClose: () => void;
+}) {
   const c = row.company;
   const close = useRef<HTMLButtonElement>(null);
   useEffect(() => close.current?.focus(), [c.id]);
+  // How it arrived is settled when it appears, and does not change while it stays open.
+  const [slides] = useState(opened);
   const scored = row.score !== null;
   return (
-    <div className="cd-drawer" role="dialog" aria-modal="false" aria-labelledby="cd-drawer-title">
-      <button ref={close} type="button" className="cd-close" onClick={onClose}>
+    <div
+      className="cd-drawer"
+      role="dialog"
+      aria-modal="false"
+      aria-labelledby="cd-drawer-title"
+      data-opened={slides ? "" : undefined}
+    >
+      <Btn ref={close} cls="o sm cd-close" onClick={onClose}>
         Close
-      </button>
+      </Btn>
       <div className="cd-drawer-head">
         <LevelTag level={row.level} score={row.score} />
-        <h2 id="cd-drawer-title">{c.name}</h2>
-        <span className="cd-when">{companyLine(c, row.chamber)}</span>
+        <div className="cd-cell">
+          <SignalMark row={row} />
+          <div>
+            <h2 id="cd-drawer-title" className="a-h2">
+              {c.name}
+            </h2>
+            <span className="cd-when">{companyLine(c, row.chamber)}</span>
+          </div>
+        </div>
       </div>
       <section aria-labelledby="cd-tl-title">
         <h3 id="cd-tl-title" className="cd-mini">
@@ -81,6 +108,9 @@ export function SignalDrawer() {
   // A Company whose name the tier hides has no drawer.
   const row = interestForView(planShown()).find((r) => r.company.id === id && !r.hidden);
   const openId = row?.company.id;
+  // False while the tab is arriving, so only a drawer opened afterwards slides in.
+  const [tabShown, setTabShown] = useState(false);
+  useEffect(() => setTabShown(true), []);
 
   useEffect(() => {
     if (!openId) return;
@@ -92,5 +122,12 @@ export function SignalDrawer() {
   }, [openId, router]);
 
   if (!row) return null;
-  return <DrawerBody row={row} onClose={() => closeDrawer(router, row.company.id)} />;
+  return (
+    <DrawerBody
+      key={row.company.id}
+      row={row}
+      opened={tabShown}
+      onClose={() => closeDrawer(router, row.company.id)}
+    />
+  );
 }

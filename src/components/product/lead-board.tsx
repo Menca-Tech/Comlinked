@@ -16,6 +16,7 @@ import {
   Panel,
   ReasonList,
   St,
+  useReplaced,
   WhyMeet,
 } from "@/components/product/shared";
 import { useIsDesktop, useSimulation } from "@/components/product/use-simulation";
@@ -135,9 +136,10 @@ function LeadRow({ c, selected, turn }: { c: Company; selected: boolean; turn?: 
   const S = useSimulation();
   const score = <FitMark score={fit(c).score} />;
   const outcome = leadOutcome(c, S.conn[c.id], S.leadAct[c.id]);
+  const replaced = useReplaced(outcome !== null);
   if (outcome) {
     return (
-      <article className="a-lead done" data-lead={c.id} data-turn={turn}>
+      <article className="a-lead done" data-lead={c.id} data-turn={turn} {...replaced}>
         <CoBtn c={c} detail={outcome.result} cls="sm" />
         {score}
         {outcome.tail}

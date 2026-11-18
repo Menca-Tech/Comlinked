@@ -26,10 +26,18 @@ describe("Interest Signals for a company with no signals yet", () => {
     vi.useRealTimers();
   });
 
-  it("shows zero tiles with no change lines", () => {
-    const { container } = render(<TopNumbers />);
-    expect(container.querySelectorAll(".cd-tile")).toHaveLength(6);
-    expect(container.querySelectorAll(".cd-d")).toHaveLength(0);
+  it("shows six tiles reading 0, with no change lines", () => {
+    render(<TopNumbers />);
+    const tiles = screen.getAllByRole("listitem");
+    expect(tiles).toHaveLength(6);
+    expect(tiles.map((tile) => tile.textContent)).toEqual([
+      "Search appearances0",
+      "Recommendations0",
+      "Messages0",
+      "Introductions0",
+      "Profile views0",
+      "Profile saves0",
+    ]);
   });
 
   it("shows calm empty states on the chart, funnel, table and rail", () => {
@@ -44,7 +52,7 @@ describe("Interest Signals for a company with no signals yet", () => {
         <SearchTermsPanel />
       </>,
     );
-    expect(container.querySelector(".cd-chart")).toBeNull();
+    expect(container.querySelector("figure")).toBeNull();
     expect(screen.getByText(/Your visibility appears here/)).toBeInTheDocument();
     expect(screen.getByText(/The funnel fills/)).toBeInTheDocument();
     expect(screen.getByText(/No interested companies yet/)).toBeInTheDocument();

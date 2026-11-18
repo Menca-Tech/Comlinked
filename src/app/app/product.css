@@ -22,6 +22,7 @@
   --radius-panel: 14px;
   --radius-pill: 999px;
   --stroke-2: 2px; /* an underline, a tick, a ring round a small shape */
+  --blur: 5px; /* over a name a "View as" tier hides, as the tier work set it */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -48,12 +49,16 @@
   --detail: var(--text-14);
   --mark: var(--space-10);
   --row: var(--space-11);
-  /* Layout measures: the page, the two-panel frame, a side column and a column of reading. */
+  /* Layout measures: the page, the two-panel frame, a side column, a column of reading, the
+     timeline drawer, the column beside a screen's main one, and ComMail's list. */
   --page-width: 1200px;
   --frame-width: 1040px;
   --frame-height: 520px;
   --side-width: 320px;
   --read-width: 760px;
+  --drawer-width: 420px;
+  --aside-width: 380px;
+  --list-width: 360px;
 
   --font-title: var(--font-source-serif), Georgia, "Times New Roman", serif;
   --color-accent-strong: var(--color-cl-navy);
@@ -156,7 +161,6 @@
   }
 }
 .cl-product {
-  --cd-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
   background: var(--color-paper);
   color: var(--color-ink-2);
   font-family: var(--font-text);
@@ -326,7 +330,7 @@
   .w-mail {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--space-4);
     min-width: 0;
   }
   .w-board {
@@ -462,20 +466,20 @@
   .a-stack {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--space-3);
     min-width: 0;
   }
   .a-row {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-2);
   }
   .a-between {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: var(--space-3);
   }
 
   /* A panel: flat white with a hairline and no shadow. Lists sit inside it on hairline dividers. */
@@ -618,6 +622,12 @@
     background: var(--color-accent-strong);
     color: var(--color-accent-ink);
   }
+  /* The mark of a Company the network holds no claim for: grey, so it says nothing of whether the
+     Company has claimed. */
+  .a-mono.plain {
+    background: var(--color-sunken);
+    color: var(--color-muted);
+  }
   /* The way to your own Company's profile: its mark, as a button. */
   .a-own {
     display: grid;
@@ -638,8 +648,8 @@
   .a-co {
     display: flex;
     align-items: center;
-    gap: 12px;
-    min-height: 44px;
+    gap: var(--space-3);
+    min-height: var(--space-11);
     background: none;
     border: 0;
     padding: 0;
@@ -681,8 +691,8 @@
   .a-ring {
     display: inline-block;
     flex: none;
-    width: 11px;
-    height: 11px;
+    width: var(--space-3);
+    height: var(--space-3);
     border-radius: 50%;
     background: radial-gradient(
       circle,
@@ -819,12 +829,15 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
+    gap: var(--space-4);
   }
+  /* A switch: a 44px target round a track, with a thumb that slides across when it is turned. */
   .a-switch {
+    --track: var(--space-8);
+    --thumb: var(--space-6);
     flex: none;
-    width: 58px;
-    height: 44px;
+    width: var(--space-14);
+    height: var(--space-11);
     border: 0;
     background: none;
     position: relative;
@@ -834,22 +847,22 @@
   .a-switch::before {
     content: "";
     position: absolute;
-    left: 0;
-    right: 0;
-    top: 5px;
-    bottom: 5px;
-    border-radius: 999px;
+    inset: calc((100% - var(--track)) / 2) 0;
+    border-radius: var(--radius-pill);
     border: 1px solid var(--color-grey);
     background: var(--color-sunken);
+    transition:
+      background-color var(--duration-normal) var(--ease-out),
+      border-color var(--duration-normal) var(--ease-out);
   }
   .a-switch [data-slot="switch-thumb"] {
     translate: none;
     display: block;
     position: absolute;
-    top: 9px;
-    left: 4px;
-    width: 26px;
-    height: 26px;
+    top: calc((100% - var(--thumb)) / 2);
+    left: var(--space-1);
+    width: var(--thumb);
+    height: var(--thumb);
     border-radius: 50%;
     background: var(--color-surface);
     border: 1px solid var(--color-grey);
@@ -860,7 +873,7 @@
     border-color: var(--color-accent-strong);
   }
   .a-switch[aria-checked="true"] [data-slot="switch-thumb"] {
-    transform: translateX(24px);
+    transform: translateX(var(--thumb));
     border-color: var(--color-surface);
   }
 
@@ -868,7 +881,7 @@
     align-self: flex-start;
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: var(--space-1);
     margin-left: calc(var(--space-1) * -1);
     background: none;
     border: 0;
@@ -879,23 +892,25 @@
     padding: 0;
   }
   .a-back .a-ic {
-    width: 18px;
-    height: 18px;
+    width: var(--text-18);
+    height: var(--text-18);
   }
   .a-back:hover {
     color: var(--color-accent-strong);
   }
+  /* A conversation: their messages on the left, yours tinted on the right, each under who sent
+     it and when. */
   .a-thread {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: var(--space-2);
   }
   .a-msg {
     max-width: 86%;
-    padding: 10px 14px;
-    border-radius: 16px;
-    font-size: 16px;
-    line-height: 24px;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-panel);
+    font-size: var(--text-16);
+    line-height: var(--leading-text);
     white-space: pre-wrap;
     overflow-wrap: anywhere;
   }
@@ -909,9 +924,10 @@
     background: var(--color-accent-tint);
     color: var(--color-ink);
   }
-  .a-msg-meta {
-    font: 400 14px/20px var(--font-text);
-    color: var(--color-muted);
+  .a-msg-meta,
+  .a-sys {
+    font: 400 var(--text-13) / var(--leading-text) var(--font-text);
+    color: var(--color-quiet);
   }
   .a-msg-meta.me {
     align-self: flex-end;
@@ -919,18 +935,18 @@
   .a-sys {
     align-self: center;
     text-align: center;
-    font: 400 14px/20px var(--font-text);
-    color: var(--color-muted);
-    padding: 2px 8px;
+    padding: 0 var(--space-2);
   }
+  /* A note in the run of a screen: something to know before acting. */
   .a-note {
     background: var(--color-sunken);
     color: var(--color-ink);
-    border-radius: 8px;
-    padding: 10px 12px;
-    font-size: 14px;
-    line-height: 20px;
+    border-radius: var(--radius-control);
+    padding: var(--space-3);
+    font-size: var(--text-14);
+    line-height: var(--leading-text);
   }
+  /* A win as it would be shared: the dark card with the logo rings. */
   .a-share-card {
     background:
       radial-gradient(
@@ -944,28 +960,29 @@
       ),
       var(--color-night);
     color: var(--color-paper);
-    border-radius: 16px;
-    padding: 20px;
+    border-radius: var(--radius-panel);
+    max-width: calc(var(--frame-width) / 2);
+    padding: var(--space-5);
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: var(--space-3);
   }
   .a-share-card q {
-    font: 800 18px/24px var(--font-display);
+    font: 600 var(--text-18) / var(--leading-title) var(--font-text);
     quotes: none;
   }
   .a-share-card small {
-    font-size: 14px;
-    line-height: 20px;
+    font-size: var(--text-14);
+    line-height: var(--leading-text);
     color: var(--color-on-night-72);
   }
   .a-share-card img {
-    height: 22px;
+    height: var(--space-5);
     width: auto;
     align-self: flex-start;
     background: var(--color-paper);
-    padding: 5px 8px;
-    border-radius: 8px;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-mark);
     box-sizing: content-box;
   }
   .a-empty {
@@ -1489,16 +1506,19 @@
     }
     .w-2 {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 380px;
-      gap: 24px;
+      grid-template-columns: minmax(0, 1fr) var(--aside-width);
+      gap: var(--space-6);
       align-items: start;
     }
     .w-2.rev {
-      grid-template-columns: 380px minmax(0, 1fr);
+      grid-template-columns: var(--aside-width) minmax(0, 1fr);
+    }
+    .w-col {
+      gap: var(--panel-gap);
     }
     .w-sticky {
       position: sticky;
-      top: 96px;
+      top: calc(var(--top-bar) + var(--space-6));
     }
     .w-cards {
       display: grid;
@@ -1507,8 +1527,8 @@
     }
     .w-mail {
       display: grid;
-      grid-template-columns: 360px minmax(0, 1fr);
-      gap: 24px;
+      grid-template-columns: var(--list-width) minmax(0, 1fr);
+      gap: var(--space-6);
       align-items: start;
     }
     .w-hide {
@@ -1521,10 +1541,10 @@
     }
     .a-li[aria-current="true"] {
       background: var(--color-accent-tint);
-      border-radius: 10px;
-      margin: 0 -8px;
-      padding: 12px 8px;
-      width: calc(100% + 16px);
+      border-radius: var(--radius-control);
+      margin: 0 calc(var(--space-2) * -1);
+      padding: var(--space-3) var(--space-2);
+      width: calc(100% + var(--space-4));
       border-top-color: transparent;
     }
     .a-li[aria-current="true"] + .a-li {
@@ -1746,10 +1766,11 @@
     flex: none;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    font: 600 14px/20px var(--font-text);
+    gap: var(--space-2);
+    font: 600 var(--text-14) / var(--leading-text) var(--font-text);
     color: var(--color-accent-strong);
   }
+  /* The asks, as flat rows on hairlines. */
   .a-asks {
     display: flex;
     flex-direction: column;
@@ -1757,9 +1778,9 @@
   .a-ask {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    padding: 16px 0;
-    border-top: 1px solid var(--color-rule);
+    gap: var(--space-2);
+    padding: var(--space-4) 0;
+    border-top: 1px solid var(--hair);
     min-width: 0;
   }
   .a-ask:first-child {
@@ -1767,10 +1788,10 @@
     padding-top: 0;
   }
   .a-ask .a-between {
-    min-height: 44px;
+    min-height: var(--control);
   }
   .a-ask .a-btn.g {
-    margin-right: -10px;
+    margin-right: calc(var(--space-3) * -1);
   }
   .a-li.me {
     background: var(--color-accent-tint);
@@ -1793,7 +1814,7 @@
   .a-profile {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--space-3);
     min-width: 0;
   }
   .a-profile-t {
@@ -1822,9 +1843,6 @@
   }
   .e-why .a-li-r {
     max-width: 60%;
-  }
-  .a-share-card {
-    max-width: 520px;
   }
   @media (max-width: 899px) {
     .a-li-r {
@@ -1883,17 +1901,8 @@
     .w-dash .w-col {
       gap: 24px;
     }
-    .w-2 {
-      gap: 24px;
-    }
-    .w-2.rev {
-      gap: 24px;
-    }
     .w-cards {
       gap: 32px;
-    }
-    .w-mail {
-      gap: 24px;
     }
     .ag-grid {
       gap: 24px;
@@ -2274,23 +2283,36 @@
   box-shadow: inset 0 -1px 0 var(--hair);
 }
 .cl-product .cd-tab {
+  position: relative;
   flex: none;
   display: inline-flex;
   align-items: center;
   min-height: var(--space-11);
-  border-bottom: var(--stroke-2) solid transparent;
   font: 400 var(--text-16) / var(--leading-title) var(--font-text);
   color: var(--color-muted);
   text-decoration: none;
   white-space: nowrap;
+  transition: color var(--duration-fast) var(--ease-out);
 }
 .cl-product .cd-tab:hover {
   color: var(--color-ink);
 }
+/* The underline moves: it draws in under the tab that is chosen and out from under the one left. */
+.cl-product .cd-tab::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: var(--stroke-2);
+  background: var(--color-accent-strong);
+  transform: scaleX(0);
+  transition: transform var(--duration-normal) var(--ease-out);
+}
 .cl-product .cd-tab[aria-current="page"] {
   color: var(--color-ink);
   font-weight: 600;
-  border-bottom-color: var(--color-accent-strong);
+}
+.cl-product .cd-tab[aria-current="page"]::after {
+  transform: scaleX(1);
 }
 .cl-product .cd-body,
 .cl-product .cd-overview,
@@ -2332,68 +2354,36 @@
 .cl-product .cd-funnel,
 .cl-product .cd-feed,
 .cl-product .cd-bars,
-.cl-product .cd-terms,
-.cl-product .cd-legend {
+.cl-product .cd-terms {
   list-style: none;
   margin: 0;
   padding: 0;
 }
-/* Interest Signals: the prototype's measurements in App Mode colours and fonts. */
-.cl-product .cd-tiles {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-}
-.cl-product .cd-tile {
-  background: var(--color-surface);
-  border: 1px solid var(--hair);
-  border-radius: 12px;
-  padding: 14px;
-}
-.cl-product .cd-tile.star {
-  border-color: var(--color-accent-strong);
-  box-shadow: inset 0 0 0 1px var(--color-accent-strong);
-}
-/* ComDash pieces at the prototype's sizes, on the Interest Signals tab. */
+/* Interest Signals, in the compact density: numbers, trends, companies and insights. */
 .cl-product .cd-signals {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--panel-gap);
   min-width: 0;
 }
-.cl-product .cd-signals .cd-panel {
-  border-radius: 12px;
-  box-shadow: none;
-  padding: 16px;
-  gap: 10px;
+/* The number tiles: six small panels, two to a row on a phone. The label takes the space above,
+   so the figures line up along a row. */
+.cl-product .cd-tiles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--panel-gap);
 }
-.cl-product .cd-signals .cd-ph {
-  gap: 8px;
+.cl-product .cd-tile {
+  gap: var(--space-1);
 }
-.cl-product .cd-signals .cd-ph .a-h2 {
-  font-size: 15.5px;
-  line-height: 1.3;
+.cl-product .cd-tile .cd-k {
+  flex: 1;
 }
-.cl-product .cd-signals .cd-ph .cd-note {
-  font-size: 12.5px;
+/* A tile that is the Focus panel is raised like any other, and keeps the tiles' padding so the
+   row stays in line. */
+.cl-product .cd-tile[data-focus-panel] {
+  padding: var(--panel-pad);
 }
-.cl-product .cd-signals .cd-tile {
-  gap: 4px;
-}
-.cl-product .cd-signals .cd-k {
-  min-height: 2.6em;
-  font: 400 12.5px/1.3 var(--font-text);
-}
-.cl-product .cd-signals .cd-v {
-  font: 700 28px/1.1 var(--font-title);
-}
-.cl-product .cd-signals .cd-d {
-  font: 600 12px/1.4 var(--font-text);
-}
-.cl-product .cd-signals .cd-co strong {
-  font-size: 14.5px;
-}
-.cl-product .cd-tile,
 .cl-product .cd-stat {
   display: flex;
   flex-direction: column;
@@ -2429,11 +2419,6 @@
   gap: var(--panel-gap);
   min-width: 0;
 }
-.cl-product .cd-toggle {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
 /* A chip: a pill with a border, which can be tapped. The chosen one is tinted. */
 .cl-product .cd-chip,
 .cl-product .cd-band {
@@ -2465,190 +2450,131 @@
   color: var(--color-accent-strong);
   font-weight: 600;
 }
-.cl-product .cd-chart {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-.cl-product .cd-grid {
-  stroke: var(--hair);
-}
-.cl-product .cd-axis {
-  font: 400 11px var(--font-text);
-  fill: var(--color-muted);
-}
-.cl-product .cd-axis.num {
-  font-family: var(--cd-mono);
-}
-.cl-product .cd-area {
-  fill: var(--color-accent-strong);
-  fill-opacity: 0.08;
-}
-.cl-product .cd-end {
-  font: 700 12px var(--font-text);
-  fill: var(--color-ink);
-}
-.cl-product .cd-series polyline {
-  fill: none;
-  stroke-width: 2.5;
-  stroke-linejoin: round;
-}
-.cl-product .cd-series.searches polyline {
-  stroke: var(--color-accent-strong);
-}
-.cl-product .cd-series.recommendations polyline {
-  stroke-width: 2;
-}
-.cl-product .cd-series.searches circle {
-  fill: var(--color-accent-strong);
-}
-.cl-product .cd-series.recommendations polyline {
-  stroke: var(--color-accent);
-  stroke-dasharray: 6 4;
-}
-.cl-product .cd-series.recommendations circle {
-  fill: var(--color-accent);
-}
-.cl-product .cd-legend {
-  display: none;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-top: -4px;
-  font-size: 12.5px;
-  line-height: 1.5;
-  color: var(--color-muted);
-}
-.cl-product .cd-legend i {
-  display: inline-block;
-  width: 14px;
-  height: 3px;
-  margin-right: 6px;
-  border-radius: 2px;
-  vertical-align: middle;
-  background: var(--color-accent-strong);
-}
-.cl-product .cd-legend .recommendations i {
-  background: repeating-linear-gradient(90deg, var(--color-accent) 0 6px, transparent 6px 10px);
-}
+/* The Interest Funnel: each step's count as a bar, with its share of the step before. */
 .cl-product .cd-funnel {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--space-3);
 }
 .cl-product .cd-fstep {
   display: grid;
-  grid-template-columns: 120px minmax(0, 1fr);
-  gap: 10px;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  gap: var(--space-3);
   align-items: center;
-  font-size: 13px;
-  line-height: 1.4;
+  font-size: var(--detail);
+  line-height: var(--leading-title);
   color: var(--color-ink-2);
 }
 .cl-product .cd-fbar {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
   min-width: 0;
 }
 .cl-product .cd-fbar i {
   display: block;
-  min-width: 3px;
-  height: 20px;
-  border-radius: 4px;
+  min-width: var(--stroke-2);
+  height: var(--space-5);
+  border-radius: var(--radius-mark);
   background: var(--color-accent-strong);
 }
 .cl-product .cd-fbar b {
-  font: 600 13px var(--cd-mono);
+  font-weight: 600;
   color: var(--color-ink);
   font-variant-numeric: tabular-nums;
 }
-.cl-product .cd-bar b,
-.cl-product .cd-term span {
-  font: 400 13px var(--cd-mono);
-  color: var(--color-muted);
-  font-variant-numeric: tabular-nums;
-}
 .cl-product .cd-fbar small {
-  font-size: 11.5px;
-  color: var(--color-muted);
+  font-size: var(--text-12);
+  color: var(--color-quiet);
   white-space: nowrap;
 }
 .cl-product .cd-tip {
-  margin: 2px 0 0;
-  font-size: 12px;
-  line-height: 1.5;
-  color: var(--color-muted);
+  margin: 0;
+  font-size: var(--text-13);
+  line-height: var(--leading-text);
+  color: var(--color-quiet);
 }
+/* The table of interested Companies. On a phone each row becomes a stacked card. */
 .cl-product .cd-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 14px;
-  line-height: 20px;
+  font-size: var(--body);
+  line-height: var(--leading-text);
 }
 .cl-product .cd-table th {
-  padding: 8px 10px;
+  padding: var(--space-2);
   border-bottom: 1px solid var(--hair);
   text-align: left;
-  font: 700 11.5px/1.4 var(--font-text);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--color-muted);
+  font: 400 var(--text-13) / var(--leading-text) var(--font-text);
+  color: var(--color-quiet);
 }
 .cl-product .cd-table td {
-  padding: 10px;
+  padding: var(--space-2);
   border-bottom: 1px solid var(--hair);
   vertical-align: middle;
-  font-size: 13.5px;
+}
+.cl-product .cd-table .cd-right {
+  text-align: right;
+}
+/* A heading row that names the group of Companies under it. */
+.cl-product .cd-table .cd-group th {
+  padding-top: var(--space-4);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+/* A Company in the table: its mark beside its name and line. */
+.cl-product .cd-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
 }
 .cl-product .cd-sc {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
 }
 .cl-product .cd-sc b {
-  width: 24px;
-  font: 600 14px var(--cd-mono);
+  min-width: var(--space-6);
+  font-weight: 600;
   text-align: right;
   color: var(--color-ink);
   font-variant-numeric: tabular-nums;
 }
+/* What was done with a Company, in the place its button was. */
 .cl-product .cd-status {
-  font: 600 12.5px/1.4 var(--font-text);
+  font: 600 var(--text-13) / var(--leading-text) var(--font-text);
   color: var(--color-accent-strong);
   white-space: nowrap;
 }
+/* A link in the run of a panel's text: the fold under the table, and what to do about a gap. */
 .cl-product .cd-more,
 .cl-product .cd-textlink {
   display: inline-flex;
   align-items: center;
-  min-height: 24px;
+  min-height: var(--space-6);
   padding: 0;
   border: 0;
   background: none;
-  font: 600 12.5px/1.4 var(--font-text);
+  font: 600 var(--text-13) / var(--leading-text) var(--font-text);
   color: var(--color-accent-strong);
   text-align: left;
   text-decoration: underline;
-  text-underline-offset: 3px;
+  text-underline-offset: var(--space-1);
   cursor: pointer;
 }
 .cl-product .cd-more {
   align-self: flex-start;
+  min-height: var(--control-compact);
 }
 .cl-product .cd-bands {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
 }
-.cl-product .cd-table .cd-right {
-  text-align: right;
-}
-.cl-product .cd-table .cd-group th {
-  padding-top: 16px;
-}
-/* The prototype's tiers: a blurred name, an upgrade box, and the line for terms kept back. */
+/* The "View as" tiers: a blurred name, an upgrade box, and the line for terms kept back. */
 .cl-product .cd-blur {
-  filter: blur(5px);
+  filter: blur(var(--blur));
   user-select: none;
 }
 .cl-product .cd-upsell {
@@ -2656,33 +2582,29 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: 14px 16px;
-  border: 1px solid var(--hair);
-  border-radius: 10px;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-control);
   background: var(--color-accent-tint);
 }
 .cl-product .cd-upsell p {
   margin: 0;
   max-width: 60ch;
-  font-size: 14px;
-  line-height: 20px;
+  font-size: var(--body);
+  line-height: var(--leading-text);
   color: var(--color-ink);
 }
-.cl-product .cd-feed.cd-weekly li {
-  grid-template-columns: 76px minmax(0, 1fr);
-}
 .cl-product .cd-lockline {
-  margin-top: 4px;
-  padding-top: 8px;
-  border-top: 1px dashed var(--hair);
-  font-size: 12.5px;
-  color: var(--color-muted);
+  margin-top: var(--space-1);
+  padding-top: var(--space-2);
+  border-top: 1px dashed var(--color-rule);
+  font-size: var(--text-13);
+  color: var(--color-quiet);
 }
 .cl-product .cd-plan-adds {
   flex-basis: 100%;
   margin: 0;
-  font: 600 14px/20px var(--font-text);
+  font: 600 var(--text-14) / var(--leading-text) var(--font-text);
   color: var(--color-ink-2);
 }
 .cl-product .cd-latest {
@@ -2722,39 +2644,43 @@
 .cl-product .cd-terms {
   display: flex;
   flex-direction: column;
-}
-.cl-product .cd-feed {
-  gap: 10px;
-}
-.cl-product .cd-feed li {
-  display: grid;
-  grid-template-columns: 52px minmax(0, 1fr);
-  gap: 8px;
-  font-size: 13px;
-  line-height: 1.5;
+  gap: var(--space-2);
+  font-size: var(--detail);
+  line-height: var(--leading-text);
   color: var(--color-ink);
 }
-.cl-product .cd-feed .cd-day {
-  padding-top: 2px;
-  font: 400 11.5px var(--cd-mono);
-  color: var(--color-muted);
+/* A dated line: the day in its own column, then what happened. */
+.cl-product .cd-feed li {
+  display: grid;
+  grid-template-columns: var(--space-14) minmax(0, 1fr);
+  gap: var(--space-2);
 }
-.cl-product .cd-bars {
-  gap: 8px;
+.cl-product .cd-feed.cd-weekly li {
+  grid-template-columns: calc(var(--space-10) * 2) minmax(0, 1fr);
 }
+.cl-product .cd-day {
+  font-size: var(--text-12);
+  line-height: var(--leading-text);
+  color: var(--color-quiet);
+  font-variant-numeric: tabular-nums;
+}
+/* A labelled count over its bar, scaled to the largest. */
 .cl-product .cd-bar {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 2px 8px;
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--color-ink);
+  gap: var(--space-1) var(--space-2);
+}
+.cl-product .cd-bar b,
+.cl-product .cd-term span {
+  font-weight: 400;
+  color: var(--color-quiet);
+  font-variant-numeric: tabular-nums;
 }
 .cl-product .cd-bar i {
   grid-column: 1 / -1;
   display: block;
-  height: 6px;
-  border-radius: 3px;
+  height: var(--space-1);
+  border-radius: var(--radius-pill);
   background: var(--color-sunken);
   overflow: hidden;
 }
@@ -2763,33 +2689,26 @@
   height: 100%;
   background: var(--color-sky);
 }
-.cl-product .cd-terms {
-  gap: 6px;
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--color-ink);
-}
 .cl-product .cd-term {
   display: flex;
   justify-content: space-between;
-  gap: 8px;
+  gap: var(--space-2);
 }
 .cl-product .cd-term code {
-  font: 400 12.5px var(--cd-mono);
-  color: var(--color-ink);
+  font: inherit;
   overflow-wrap: anywhere;
 }
+/* A search term the profile does not list, and what to do about it. */
 .cl-product .cd-gap {
-  margin: 2px 0 0;
+  margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
 }
 .cl-product .cd-gap p,
 .cl-product p.cd-gap {
   margin: 0;
-  font-size: 12px;
-  line-height: 1.5;
+  font-size: var(--text-13);
+  line-height: var(--leading-text);
   color: var(--color-slot-ink);
 }
 .cl-product p.cd-gap.ok {
@@ -2798,10 +2717,7 @@
 .cl-product .cd-gaplinks {
   display: flex;
   flex-wrap: wrap;
-  gap: 0 14px;
-}
-.cl-product .cd-gaplinks .cd-textlink {
-  font-size: 12px;
+  gap: 0 var(--space-4);
 }
 /* The Focus panel's title sits small above its one serif line. */
 .cl-product [data-focus-panel] > .cd-ph .a-h2 {
@@ -2874,14 +2790,14 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 6px 14px;
-  margin-top: 10px;
+  gap: var(--space-2) var(--space-4);
+  margin-top: var(--space-3);
 }
 .cl-product .cd-seg {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
 }
 .cl-product .cd-moments,
 .cl-product .cd-sgrid,
@@ -2894,8 +2810,8 @@
 .cl-product .cd-moment {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 16px 0;
+  gap: var(--space-3);
+  padding: var(--space-4) 0;
   border-top: 1px solid var(--hair);
   min-width: 0;
 }
@@ -2911,38 +2827,34 @@
 .cl-product .cd-scard strong {
   overflow-wrap: anywhere;
 }
+/* A Company's dated timeline, in the drawer: the day, what happened, and any points. */
 .cl-product .cd-tl {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-2);
 }
 .cl-product .cd-tl li {
   display: grid;
-  grid-template-columns: 56px minmax(0, 1fr) auto;
-  gap: 8px;
-  padding-bottom: 8px;
+  grid-template-columns: var(--space-14) minmax(0, 1fr) auto;
+  gap: var(--space-2);
+  padding-bottom: var(--space-2);
   border-bottom: 1px solid var(--hair);
-  font-size: 13px;
-  line-height: 1.5;
+  font-size: var(--detail);
+  line-height: var(--leading-text);
   color: var(--color-ink);
 }
-.cl-product .cd-tl .cd-day {
-  font: 400 11.5px/1.7 var(--cd-mono);
-  color: var(--color-muted);
-}
 .cl-product .cd-tl b {
-  font: 400 12.5px var(--cd-mono);
-  color: var(--color-muted);
+  font-weight: 400;
+  color: var(--color-quiet);
   font-variant-numeric: tabular-nums;
 }
 .cl-product .cd-drawer .cd-mini {
-  margin: 0 0 8px;
+  margin-bottom: var(--space-2);
   padding: 0;
   border: 0;
-  font-weight: 700;
 }
 .cl-product .cd-total {
-  margin-top: 8px;
+  margin-top: var(--space-2);
 }
 /* The title of a list inside a panel, under a rule that sets the list apart. */
 .cl-product .cd-mini {
@@ -2956,52 +2868,44 @@
   cursor: pointer;
 }
 .cl-product .cd-click:hover td {
-  background: var(--color-sunken);
+  background: var(--color-paper);
 }
+/* The timeline drawer: a Company's signals, at the side of the screen. It slides in when the
+   viewer opens it, and is simply there when the address opens it. */
 .cl-product .cd-drawer {
   position: fixed;
   top: 0;
   right: 0;
   bottom: 0;
   z-index: 40;
-  width: min(420px, 100%);
+  width: min(var(--drawer-width), 100%);
   box-sizing: border-box;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  padding: calc(20px + env(safe-area-inset-top, 0px)) max(20px, env(safe-area-inset-right, 0px))
-    calc(20px + env(safe-area-inset-bottom, 0px)) 20px;
+  gap: var(--space-4);
+  padding: calc(var(--space-5) + env(safe-area-inset-top, 0px))
+    max(var(--space-5), env(safe-area-inset-right, 0px))
+    calc(var(--space-5) + env(safe-area-inset-bottom, 0px)) var(--space-5);
   background: var(--color-surface);
   border-left: 1px solid var(--hair);
-  box-shadow: -12px 0 32px color-mix(in srgb, var(--color-shadow) 35%, transparent);
+  box-shadow: calc(var(--space-3) * -1) 0 var(--space-8)
+    color-mix(in srgb, var(--color-shadow) 35%, transparent);
+}
+.cl-product .cd-drawer[data-opened] {
+  animation: cd-slide var(--duration-normal) var(--ease-out);
 }
 .cl-product .cd-close {
   align-self: flex-end;
-  min-height: 32px;
-  padding: 5px 10px;
-  border: 1px solid var(--hair);
-  border-radius: 8px;
-  background: none;
-  font: 600 14px/1.4 var(--font-text);
-  color: var(--color-ink);
-  cursor: pointer;
 }
 .cl-product .cd-drawer-head {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 8px;
+  gap: var(--space-2);
 }
-.cl-product .cd-drawer-head h2 {
-  margin: 0;
-  font: 600 18px/1.3 var(--font-text);
-  color: var(--color-ink);
+.cl-product .cd-drawer-head .a-h2 {
   overflow-wrap: anywhere;
-}
-.cl-product .cd-drawer-head .cd-when {
-  margin-top: -6px;
-  font-size: 12.5px;
 }
 .cl-product .cd-hot li {
   display: flex;
@@ -3029,14 +2933,18 @@
 .cl-product .cd-hot-name:focus-visible {
   text-decoration: underline;
 }
-/* The day bars: one bar per day, a short tick on a day with nothing, and the first and last day
-   named under the ends. */
+/* The day bars: one bar per day, each series stacked on the one before, and a short tick on a day
+   with nothing. Both ComDash charts are drawn by this one part. */
 .cl-product .db {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
 }
+.cl-product .db-plot {
+  position: relative;
+}
 .cl-product .db-bars {
+  position: relative;
   display: flex;
   align-items: flex-end;
   height: var(--space-14);
@@ -3045,6 +2953,7 @@
   list-style: none;
 }
 .cl-product .db-day {
+  position: relative;
   flex: 1;
   display: flex;
   align-items: flex-end;
@@ -3052,19 +2961,30 @@
   height: 100%;
   min-width: 0;
 }
-.cl-product .db-day i {
-  display: block;
+.cl-product .db-stack {
+  display: flex;
+  flex-direction: column-reverse;
   width: min(var(--space-5), 60%);
   min-height: var(--space-1);
   border-radius: var(--radius-mark) var(--radius-mark) 0 0;
-  background: var(--color-accent-strong);
+  overflow: hidden;
 }
-.cl-product .db-day[data-empty] i {
+.cl-product .db-day[data-empty] .db-stack {
   height: var(--stroke-2);
   min-height: 0;
   border-radius: 0;
   background: var(--color-rule);
 }
+/* A series' colour, on its segment of a bar and in the legend: the first navy, the second the
+   light logo blue. */
+.cl-product .db [data-series] {
+  display: block;
+  background: var(--color-accent-strong);
+}
+.cl-product .db [data-series="1"] {
+  background: var(--color-sky);
+}
+/* Without named series, the first and last day are named under the ends. */
 .cl-product .db-ends {
   display: flex;
   justify-content: space-between;
@@ -3075,78 +2995,144 @@
 .cl-product .db-ends span:only-child {
   margin: 0 auto;
 }
+/* With its series named the chart is drawn in full: a grid with its scale down the left, a label
+   under every other day, and a legend that also reads the latest day. */
+.cl-product .db[data-full] .db-plot {
+  padding: var(--space-2) 0 var(--space-6) var(--space-6);
+}
+.cl-product .db[data-full] .db-bars {
+  height: calc(var(--space-10) * 4);
+}
+.cl-product .db-grid {
+  position: absolute;
+  inset: var(--space-2) 0 var(--space-6) 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.cl-product .db-grid li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 0;
+  font: 400 var(--text-12) / 1 var(--font-text);
+  color: var(--color-quiet);
+  font-variant-numeric: tabular-nums;
+}
+.cl-product .db-grid span {
+  flex: none;
+  width: var(--space-4);
+  text-align: right;
+}
+.cl-product .db-grid li::after {
+  content: "";
+  flex: 1;
+  border-top: 1px solid var(--hair);
+}
+.cl-product .db-tick {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-top: var(--space-2);
+  transform: translateX(-50%);
+  font: 400 var(--text-12) / 1 var(--font-text);
+  color: var(--color-quiet);
+  white-space: nowrap;
+}
+.cl-product .db-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font: 400 var(--text-13) / var(--leading-text) var(--font-text);
+  color: var(--color-muted);
+}
+.cl-product .db-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.cl-product .db-legend i {
+  width: var(--space-2);
+  height: var(--space-2);
+  border-radius: var(--radius-mark);
+}
+.cl-product .db-legend b {
+  font-weight: 600;
+  color: var(--color-ink);
+  font-variant-numeric: tabular-nums;
+}
+.cl-product .db-legend li:last-child {
+  color: var(--color-quiet);
+}
 .cl-product .cd-viz {
   margin: 0;
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
 }
+/* The Connections tab: the Company's Connections beside what waits on it and who to meet. */
 .cl-product .cd-net,
 .cl-product .cd-net-main {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--panel-gap);
   min-width: 0;
 }
+/* Suggested Companies, as flat cells on hairlines, two to a row on a laptop. */
 .cl-product .cd-sgrid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 12px;
+  column-gap: var(--space-8);
 }
 .cl-product .cd-scard {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 4px;
-  padding: 14px;
-  border: 1px solid var(--hair);
-  border-radius: 12px;
+  gap: var(--space-1);
+  padding: var(--space-4) 0;
+  border-top: 1px solid var(--hair);
   min-width: 0;
 }
-.cl-product .cd-why2 {
-  margin-bottom: 6px;
-  font-size: 14px;
-  line-height: 20px;
-  color: var(--color-ink-2);
+.cl-product .cd-scard:first-child {
+  border-top: 0;
+  padding-top: 0;
 }
-.cl-product .cd-kind {
-  flex: none;
-  padding: 1px 10px;
-  border-radius: 999px;
-  background: var(--color-sunken);
-  font: 600 13px/20px var(--font-text);
+.cl-product .cd-scard strong {
+  font: 600 var(--body) / var(--leading-title) var(--font-text);
+  color: var(--color-ink);
+}
+.cl-product .cd-why2 {
+  margin-bottom: var(--space-2);
+  font-size: var(--detail);
+  line-height: var(--leading-text);
   color: var(--color-ink-2);
 }
 .cl-product .cd-quote {
   margin: 0;
-  padding-left: 12px;
-  border-left: 2px solid var(--color-rule);
-  font-size: 15px;
-  line-height: 22px;
+  padding-left: var(--space-3);
+  border-left: var(--stroke-2) solid var(--color-rule);
+  font-size: var(--body);
+  line-height: var(--leading-text);
   color: var(--color-ink);
   overflow-wrap: anywhere;
 }
 .cl-product .cd-done {
   margin: 0;
-  font: 600 14px/20px var(--font-text);
+  font: 600 var(--detail) / var(--leading-text) var(--font-text);
   color: var(--color-accent-strong);
 }
 .cl-product .cd-reply {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-2);
 }
 @media (max-width: 760px) {
-  .cl-product .cd-axis {
-    font-size: 22px;
-  }
-  .cl-product .cd-end {
-    font-size: 22px;
-  }
-  .cl-product .cd-chart[data-shown="searches"] .cd-series.recommendations,
-  .cl-product .cd-chart[data-shown="recommendations"] .cd-series.searches {
-    display: none;
-  }
   .cl-product .cd-table thead {
     position: absolute;
     width: 1px;
@@ -3163,8 +3149,8 @@
   .cl-product .cd-table tr {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
-    gap: 6px 12px;
-    padding: 12px 0;
+    gap: var(--space-2) var(--space-3);
+    padding: var(--space-3) 0;
     border-top: 1px solid var(--hair);
   }
   .cl-product .cd-table tr:first-child {
@@ -3214,11 +3200,15 @@
   }
   .cl-product .cd-net {
     display: grid;
-    grid-template-columns: 320px minmax(0, 1fr);
+    grid-template-columns: var(--side-width) minmax(0, 1fr);
     align-items: start;
   }
   .cl-product .cd-sgrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .cl-product .cd-scard:nth-child(2) {
+    border-top: 0;
+    padding-top: 0;
   }
 }
 @media (min-width: 481px) {
@@ -3227,17 +3217,8 @@
   }
 }
 @media (min-width: 761px) {
-  .cl-product .cd-toggle {
-    display: none;
-  }
-  .cl-product .cd-legend {
-    display: flex;
-  }
   .cl-product .cd-row2 {
     grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
-  }
-  .cl-product .cd-fstep {
-    grid-template-columns: 150px minmax(0, 1fr);
   }
 }
 @media (min-width: 1101px) {
@@ -3245,7 +3226,7 @@
     grid-template-columns: repeat(6, minmax(0, 1fr));
   }
   .cl-product .cd-row3 {
-    grid-template-columns: minmax(0, 1fr) 320px;
+    grid-template-columns: minmax(0, 1fr) var(--side-width);
     align-items: start;
   }
 }
@@ -3816,6 +3797,21 @@
   }
   .cl-product .pv-free {
     font-size: var(--text-28);
+  }
+}
+/* A status that took a button's place while the viewer watched fades in. One that was already
+   there when the screen opened does not move. */
+.cl-product [data-replaced] {
+  animation: a-settle var(--duration-normal) var(--ease-out);
+}
+@keyframes a-settle {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes cd-slide {
+  from {
+    transform: translateX(100%);
   }
 }
 @keyframes a-arrive {

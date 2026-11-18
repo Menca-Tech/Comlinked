@@ -8,7 +8,7 @@ import { DashPanel, EmptyNote } from "@/components/product/comdash/dash-panel";
 import { InterestAction } from "@/components/product/comdash/interest-action";
 import { LevelFilter, type LevelChoice } from "@/components/product/comdash/level-filter";
 import { LevelTag } from "@/components/product/comdash/level-tag";
-import { Btn } from "@/components/product/shared";
+import { Btn, Mono, PlainMark } from "@/components/product/shared";
 import { useSimulation } from "@/components/product/use-simulation";
 import { paths } from "@/paths";
 import {
@@ -27,6 +27,13 @@ import {
   type PlanView,
 } from "@/services/comlinked";
 
+/** A named Company's mark: claim-aware for a member of the network, and plain for a Company in
+ * another chamber, which the network holds no claim for. */
+export function SignalMark({ row }: { row: InterestRow }) {
+  const c = row.company;
+  return row.chamber === null ? <Mono c={c} /> : <PlainMark ini={c.ini} />;
+}
+
 function Row({
   row,
   view,
@@ -41,11 +48,14 @@ function Row({
   return (
     <tr data-company={c.id} className="cd-click" onClick={() => onOpen(c.id)}>
       <td>
-        {/* The row's click opens the drawer; the button gives it a keyboard stop. */}
-        <button type="button" className="cd-co">
-          <strong>{c.name}</strong>
-          <small>{companyLine(c, chamber)}</small>
-        </button>
+        <span className="cd-cell">
+          <SignalMark row={row} />
+          {/* The row's click opens the drawer; the button gives it a keyboard stop. */}
+          <button type="button" className="cd-co">
+            <strong>{c.name}</strong>
+            <small>{companyLine(c, chamber)}</small>
+          </button>
+        </span>
       </td>
       <td>
         <span className="cd-sc">
@@ -70,7 +80,7 @@ function Row({
 
 /** A Company whose name the tier hides, as the prototype draws it: blurred on Free member, with
  * "See who"; marked as another chamber on Growth, with "Unlock on Pro". Its name is not in the
- * page at all. */
+ * page at all, and its mark carries no initials. */
 function HiddenRow({ row, view }: { row: InterestRow; view: PlanView }) {
   const free = PLAN_VIEWS[view].names === "none";
   const blurred = (text: string) => (
@@ -81,11 +91,14 @@ function HiddenRow({ row, view }: { row: InterestRow; view: PlanView }) {
   return (
     <tr>
       <td>
-        <span className="cd-co">
-          <strong>{free ? blurred("Hidden company name") : blurred("Hidden company")}</strong>
-          <small>{free ? blurred("Industry · City") : "Another chamber · names on Pro"}</small>
-          <span className="sr-only">
-            {free ? "Name hidden on the free plan" : "Name hidden until Pro"}
+        <span className="cd-cell">
+          <PlainMark />
+          <span className="cd-co">
+            <strong>{free ? blurred("Hidden company name") : blurred("Hidden company")}</strong>
+            <small>{free ? blurred("Industry · City") : "Another chamber · names on Pro"}</small>
+            <span className="sr-only">
+              {free ? "Name hidden on the free plan" : "Name hidden until Pro"}
+            </span>
           </span>
         </span>
       </td>

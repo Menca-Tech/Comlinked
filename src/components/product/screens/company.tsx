@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { Check } from "lucide-react";
 
+import { focusPanel } from "@/components/product/focus-panel";
 import { AiChip, Btn, Mono, ProfileHead, St } from "@/components/product/shared";
 import { useSimulation } from "@/components/product/use-simulation";
 import { Input } from "@/components/ui/input";
@@ -50,7 +51,8 @@ function PendingRows() {
   );
 }
 
-// A4 A5 C1 C3: your own Company's profile. `focus` names a field to focus on arrival.
+// A4 A5 C1 C3: your own Company's profile. Profile Strength leads it, as the Focus panel. `focus`
+// names a field to focus on arrival.
 export function CompanyProfile({ focus }: { focus?: ProfileField }) {
   const S = useSimulation();
   useEffect(() => {
@@ -81,8 +83,8 @@ export function CompanyProfile({ focus }: { focus?: ProfileField }) {
         }
       />
       <div className="w-2">
-        <div className="w-col a-surface">
-          <section className="a-card">
+        <div className="w-col">
+          <section className="a-card" {...focusPanel(true)}>
             <div className="a-between">
               <h2 className="a-h2">Profile strength</h2>
               <span className="a-pct">{strength()}%</span>
@@ -173,43 +175,45 @@ export function CompanyProfile({ focus }: { focus?: ProfileField }) {
               )}
             </div>
           </section>
-          <section className="a-sec">
-            <h2 className="a-h2">Company connections: {links.length}</h2>
-            <p className="a-small">Connections belong to your company, not the person.</p>
-            <div className="a-list">
-              {links.map((id) => {
-                const c = co(id);
-                return (
-                  <button type="button" className="a-li" key={id} onClick={() => act.viewCo(id)}>
-                    <Mono c={c} cls="sm" />
-                    <span className="a-li-m">
-                      <strong>{c.name}</strong>
-                      <small>{c.ind}</small>
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-            <PendingRows />
-            <div className="a-between a-rule">
-              <span className="a-why">
-                Authorized rep: <b>{m.rep}</b>
-              </span>
-              <Btn cls="o sm" onClick={() => act.swapRep()}>
-                Assign new rep
-              </Btn>
-            </div>
-          </section>
-          {mine.length ? (
+          <div className="a-surface">
             <section className="a-sec">
-              <h2 className="a-h2">Testimonials on your profile</h2>
-              {mine.map((w, i) => (
-                <p className="a-why" key={i}>
-                  <b>{w.need}</b> {w.got}
-                </p>
-              ))}
+              <h2 className="a-h2">Company connections: {links.length}</h2>
+              <p className="a-small">Connections belong to your company, not the person.</p>
+              <div className="a-list">
+                {links.map((id) => {
+                  const c = co(id);
+                  return (
+                    <button type="button" className="a-li" key={id} onClick={() => act.viewCo(id)}>
+                      <Mono c={c} cls="sm" />
+                      <span className="a-li-m">
+                        <strong>{c.name}</strong>
+                        <small>{c.ind}</small>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+              <PendingRows />
+              <div className="a-between a-rule">
+                <span className="a-why">
+                  Authorized rep: <b>{m.rep}</b>
+                </span>
+                <Btn cls="o sm" onClick={() => act.swapRep()}>
+                  Assign new rep
+                </Btn>
+              </div>
             </section>
-          ) : null}
+            {mine.length ? (
+              <section className="a-sec">
+                <h2 className="a-h2">Testimonials on your profile</h2>
+                {mine.map((w, i) => (
+                  <p className="a-why" key={i}>
+                    <b>{w.need}</b> {w.got}
+                  </p>
+                ))}
+              </section>
+            ) : null}
+          </div>
         </div>
         <div className="w-col a-surface">
           <section className="a-sec">
