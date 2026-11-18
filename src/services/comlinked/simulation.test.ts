@@ -128,6 +128,14 @@ import {
   stopLine,
 } from "@/services/comlinked";
 import type { ConnectionItem } from "@/services/comlinked";
+import {
+  approver,
+  backupAdmin,
+  meetingAttendees,
+  primaryAdmin,
+  signature,
+  signedIn,
+} from "@/services/comlinked";
 
 function newCompany() {
   act.demoNew();
@@ -254,6 +262,45 @@ describe("the two-weeks-in preset", () => {
     act.demoActive();
     act.morning("1");
     expect(digestLine()).toBe(first);
+  });
+});
+
+describe("Kalayaan Foods' people", () => {
+  it("has four people with job titles and roles: two admins and two Authorized Users", () => {
+    expect(getState().me.people.map((p) => [p.name, p.title, p.role])).toEqual([
+      ["Ana Reyes", "Owner", "primary"],
+      ["Marco Dizon", "Operations manager", "backup"],
+      ["Liza Manalo", "Sales lead", "sales"],
+      ["Paolo Villanueva", "Purchasing officer", "procurement"],
+    ]);
+    expect(primaryAdmin().name).toBe("Ana Reyes");
+    expect(backupAdmin()?.name).toBe("Marco Dizon");
+    expect(signedIn().name).toBe("Ana Reyes");
+  });
+
+  it("gives each person an invented email on Kalayaan's domain and a visibly fake phone", () => {
+    getState().me.people.forEach((p) => {
+      expect(p.email).toMatch(/^[a-z]+@kalayaanfoods\.example$/);
+      expect(p.phone).toMatch(/^\+63 2 0000 \d{4}$/);
+    });
+  });
+
+  it("signs ComMail, approves the agent and attends its meeting as the admins", () => {
+    expect(signature()).toBe("Ana Reyes for your company");
+    expect(approver()).toBe("Ana Reyes, Owner");
+    expect(meetingAttendees()).toBe("Ana Reyes and Marco Dizon");
+  });
+
+  it("introduces Kalayaan in an AI draft as Ana", () => {
+    newCompany();
+    act.message("maple");
+    prepareThread("t-maple");
+    expect(getState().drafts["t-maple"]?.text).toContain("I am Ana Reyes from Kalayaan Foods Inc.");
+  });
+
+  it("records who switched the AI Assistant", () => {
+    act.toggleAi();
+    expect(getState().aiLog[0]?.note).toBe("Switched off by Ana Reyes");
   });
 });
 
@@ -3296,7 +3343,7 @@ describe("the claim message", () => {
     const S = getState();
     const message = claimMessage();
     expect(message.from).toBe(CHAMBER.senderName);
-    expect(message.to).toBe(`${S.me.rep}, ${S.me.name}`);
+    expect(message.to).toBe(`${primaryAdmin().name}, ${S.me.name}`);
     expect(message.paragraphs[0]?.startsWith(`${CHAMBER.shortName} is piloting`)).toBe(true);
     expect(message.note).toContain(`${CHAMBER.shortName} approves`);
   });

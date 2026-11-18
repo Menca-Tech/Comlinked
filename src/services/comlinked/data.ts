@@ -6,6 +6,8 @@ import type {
   Deal,
   Member,
   MyCompany,
+  Person,
+  PersonRole,
   PlanView,
   PlanViewRules,
   Rule,
@@ -41,6 +43,40 @@ type RawCompany = [
 function websiteOf(id: string) {
   return id + ".example";
 }
+/** A person with an invented email on their Company's example domain and a visibly fake phone:
+ * zeros after Metro Manila's area code, then their number in the Demo. Connected Companies see
+ * their full name and title until they choose otherwise. */
+function personAt(
+  domain: string,
+  phoneNumber: number,
+  person: Pick<Person, "id" | "name" | "title" | "role"> & Partial<Pick<Person, "alias">>,
+): Person {
+  const first = (person.name.split(" ")[0] ?? person.name).toLowerCase();
+  return {
+    alias: false,
+    showTitle: true,
+    ...person,
+    email: first + "@" + domain,
+    phone: "+63 2 0000 " + String(phoneNumber).padStart(4, "0"),
+  };
+}
+/** Kalayaan Foods' website, on a reserved example domain, which its people's emails share. */
+export const KALAYAAN_WEBSITE = "kalayaanfoods.example";
+/** Kalayaan Foods' people as the Demo starts. Ana Reyes, the Owner, is the primary admin and the
+ * person the Demo is signed in as. */
+export const KALAYAAN_PEOPLE: Person[] = (
+  [
+    ["ana", "Ana Reyes", "Owner", "primary"],
+    ["marco", "Marco Dizon", "Operations manager", "backup"],
+    ["liza", "Liza Manalo", "Sales lead", "sales"],
+    ["paolo", "Paolo Villanueva", "Purchasing officer", "procurement"],
+  ] as [string, string, string, PersonRole][]
+).map(function ([id, name, title, role], i) {
+  return personAt(KALAYAAN_WEBSITE, i + 1, { id: id, name: name, title: title, role: role });
+});
+/** The person the Demo is signed in as. There is no switching person. */
+export const SIGNED_IN = "ana";
+
 const RAW: RawCompany[] = [
   [
     "maple",

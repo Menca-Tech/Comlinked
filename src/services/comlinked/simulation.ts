@@ -12,6 +12,8 @@ import {
   EDGES,
   FULL_BOOST_AT,
   INDUSTRY,
+  KALAYAAN_PEOPLE,
+  KALAYAAN_WEBSITE,
   MAX_BOOST,
   METRO,
   MODERATE_FIT,
@@ -25,6 +27,7 @@ import {
   REPLIES,
   RULES,
   SEARCH_TERMS,
+  SIGNED_IN,
   STRONG_FIT,
   TEAM_SPIKES,
   TEMPLATES,
@@ -63,6 +66,7 @@ import type {
   NoteGroup,
   PlanTerms,
   PlanUpsell,
+  Person,
   PlanView,
   PreviewStop,
   ProfileField,
@@ -223,6 +227,10 @@ export const initials = function (n: string) {
     .split(/\s+/);
   return ((p[0] || "C")[0]! + (p[1] ? p[1][0] : "")).toUpperCase();
 };
+/** A person's first name, from their full name. */
+function firstName(name: string) {
+  return name.split(" ")[0] ?? name;
+}
 /** A label as it reads mid-sentence: its first letter lowered, unless it opens with an acronym
  * such as B2B. */
 function inSentence(label: string) {
@@ -275,11 +283,12 @@ function fresh(): SimState {
       products: "",
       projects: [],
       photo: false,
-      rep: "Ana Reyes",
-      altRep: "Marco Dizon",
+      people: KALAYAAN_PEOPLE.map(function (p) {
+        return { ...p };
+      }),
       lastUpdate: 1,
       chamber: CHAMBER.shortName,
-      website: "kalayaanfoods.example",
+      website: KALAYAAN_WEBSITE,
     },
     ai: true,
     aiLog: [{ day: 1, on: true, note: "On by default for new companies" }],
@@ -424,6 +433,51 @@ export function connected() {
     return S.conn[k] === "connected";
   });
 }
+/* ---------- Kalayaan Foods' people ---------- */
+function personWith(role: Person["role"]) {
+  return S.me.people.find(function (p) {
+    return p.role === role;
+  });
+}
+/** The primary admin. There is always one: no one can remove themselves, and making the backup
+ * primary swaps the two. */
+export function primaryAdmin(): Person {
+  const p = personWith("primary");
+  if (!p) throw new Error("Kalayaan Foods has no primary admin");
+  return p;
+}
+/** The backup admin, or null once the primary admin has removed them. */
+export function backupAdmin(): Person | null {
+  return personWith("backup") ?? null;
+}
+/** The person the Demo is signed in as: Ana Reyes, whichever admin she is. */
+export function signedIn(): Person {
+  const p = S.me.people.find(function (x) {
+    return x.id === SIGNED_IN;
+  });
+  if (!p) throw new Error("The signed-in person has no place in Kalayaan Foods");
+  return p;
+}
+/** How a message Kalayaan Foods sent is signed in ComMail. */
+export function signature() {
+  return signedIn().name + " for your company";
+}
+/** Who approves the AI Lead Agent's steps, with their job title. */
+export function approver() {
+  return signedIn().name + ", " + signedIn().title;
+}
+/** Kalayaan Foods' attendees at a meeting the agent books: its admins. */
+export function meetingAttendees() {
+  return [primaryAdmin(), backupAdmin()]
+    .filter(function (p): p is Person {
+      return p !== null;
+    })
+    .map(function (p) {
+      return p.name;
+    })
+    .join(" and ");
+}
+
 export function engineLog(what: string, why: string) {
   S.log.unshift({ day: S.day, what: what, why: why });
   S.log.length = Math.min(S.log.length, 40);
@@ -1127,7 +1181,7 @@ export function draftText(job: string, t: Thread) {
       "Hello " +
       c.name +
       " team,\n\nI am " +
-      m.rep +
+      signedIn().name +
       " from " +
       m.name +
       ", a " +
@@ -1748,8 +1802,8 @@ export function agentSteps(A: AgentRun): AgentStep[] {
       " match. " +
       A.need +
       ". Approver: " +
-      m.rep +
-      ", Owner.",
+      approver() +
+      ".",
     null,
     0,
   );
@@ -1818,7 +1872,7 @@ export function agentSteps(A: AgentRun): AgentStep[] {
     "That is confidential for " +
       who +
       ", so I’ve asked " +
-      m.rep +
+      signedIn().name +
       " for approval to share it. I’ll come back today.",
     { ty: "DISCLOSURE_PENDING" },
   );
@@ -2626,7 +2680,7 @@ const ACT = {
     S.aiLog.unshift({
       day: S.day,
       on: S.ai,
-      note: "Switched " + (S.ai ? "on" : "off") + " by " + S.me.rep,
+      note: "Switched " + (S.ai ? "on" : "off") + " by " + signedIn().name,
     });
     if (!S.ai) {
       Object.keys(S.drafts).forEach(function (k) {
@@ -2812,12 +2866,13 @@ const ACT = {
     emit();
   },
   swapRep: function () {
-    const m = S.me,
-      old = m.rep;
-    m.rep = m.altRep;
-    m.altRep = old;
+    const old = primaryAdmin(),
+      backup = backupAdmin();
+    if (!backup) return;
+    old.role = "backup";
+    backup.role = "primary";
     toast(
-      old +
+      old.name +
         " no longer has access. All " +
         connected().length +
         " connections stayed with your company.",
@@ -3322,9 +3377,9 @@ export function claimMessage(): ClaimMessageContent {
   const drafted = "A profile for " + m.name + " has been drafted from your website.";
   return {
     from: CHAMBER.senderName,
-    to: m.rep + ", " + m.name,
+    to: primaryAdmin().name + ", " + m.name,
     subject: "Your company profile on ComLinked is ready",
-    greeting: "Dear " + m.rep.split(" ")[0] + ",",
+    greeting: "Dear " + firstName(primaryAdmin().name) + ",",
     paragraphs: [
       chamber +
         " is piloting ComLinked, a network where member companies find leads among each other. It is free for members.",

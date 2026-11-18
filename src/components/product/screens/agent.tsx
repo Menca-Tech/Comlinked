@@ -19,9 +19,12 @@ import {
   agentBlocked,
   agentFinal,
   agentSteps,
+  approver,
   bandOf,
   co,
+  meetingAttendees,
   setForm,
+  signedIn,
 } from "@/services/comlinked";
 
 const check = <Check className="a-ic" aria-hidden="true" />;
@@ -58,8 +61,8 @@ function Mandate() {
         />
       </div>
       <p className="a-small">
-        Approver: {S.me.rep}, Owner. Nothing confidential is shared and no meeting is confirmed
-        without approval.
+        Approver: {approver()}. Nothing confidential is shared and no meeting is confirmed without
+        approval.
       </p>
       <Btn cls="block" onClick={() => act.agentStart()}>
         Start the agent
@@ -101,14 +104,14 @@ function StepView({ s, A }: { s: AgentStep; A: AgentRun }) {
       <section className="ag-gate">
         <h3 className="a-h2">{s.h}</h3>
         <p className="a-why">{s.x}</p>
-        <p className="a-small">Approver: {m.rep}, Owner</p>
+        <p className="a-small">Approver: {approver()}</p>
         {decision ? (
           <St
             kind={decision === "approve" ? "good" : ""}
             icon={decision === "approve" ? check : <X className="a-ic" aria-hidden="true" />}
           >
             {decision === "approve" ? "Approved by " : "Declined by "}
-            {m.rep}
+            {signedIn().name}
           </St>
         ) : (
           <div className="a-row">
@@ -334,7 +337,7 @@ function Agenda({ A }: { A: AgentRun }) {
         <b>
           {m.name} and {c.name}.
         </b>{" "}
-        Wednesday, 2:00 p.m. to 2:45 p.m., Manila time. Attendees: {m.rep} and {m.altRep} for your
+        Wednesday, 2:00 p.m. to 2:45 p.m., Manila time. Attendees: {meetingAttendees()} for your
         company, and the authorized representatives of {c.name}.
       </p>
       <div className="ag-table" tabIndex={0} role="region" aria-label="Scrollable table">

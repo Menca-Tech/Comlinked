@@ -15,6 +15,7 @@ import {
   prepareThread,
   publicView,
   setDraft,
+  signature,
   TEMPLATES,
   waitingForClaim,
 } from "@/services/comlinked";
@@ -64,8 +65,7 @@ export function Thread({ t }: { t: ThreadData }) {
             <div key={i} style={{ display: "contents" }}>
               <div className={`a-msg ${m.from === "me" ? "me" : "them"}`}>{m.text}</div>
               <div className={`a-msg-meta ${m.from === "me" ? "me" : ""}`}>
-                {m.from === "me" ? `${S.me.rep} for your company` : c.name},{" "}
-                {dayName(m.day).toLowerCase()}
+                {m.from === "me" ? signature() : c.name}, {dayName(m.day).toLowerCase()}
               </div>
             </div>
           ),

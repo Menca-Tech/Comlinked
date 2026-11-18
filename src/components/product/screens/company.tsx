@@ -17,6 +17,7 @@ import {
   connected,
   dayName,
   fit,
+  primaryAdmin,
   setForm,
   strength,
 } from "@/services/comlinked";
@@ -196,7 +197,7 @@ export function CompanyProfile({ focus }: { focus?: ProfileField }) {
               <PendingRows />
               <div className="a-between a-rule">
                 <span className="a-why">
-                  Authorized rep: <b>{m.rep}</b>
+                  Authorized rep: <b>{primaryAdmin().name}</b>
                 </span>
                 <Btn cls="o sm" onClick={() => act.swapRep()}>
                   Assign new rep

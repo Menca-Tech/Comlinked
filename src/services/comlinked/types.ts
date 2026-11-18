@@ -166,12 +166,31 @@ export interface MyCompany {
   products: string;
   projects: string[];
   photo: boolean;
-  rep: string;
-  altRep: string;
+  /** Who acts for the Company. Ask primaryAdmin(), backupAdmin() or signedIn() for one of them. */
+  people: Person[];
   lastUpdate: number;
   chamber: string;
   /** Invented, on a reserved example domain. */
   website: string;
+}
+
+/** A person's role in their Company: one of its two admins, or an Authorized User with an area. */
+export type PersonRole = "primary" | "backup" | "sales" | "procurement";
+
+/** Someone who acts for a Company. Every name, email and phone is invented. */
+export interface Person {
+  id: string;
+  name: string;
+  title: string;
+  role: PersonRole;
+  /** Whether connected Companies see an alias ("Ana R.") instead of the full name. */
+  alias: boolean;
+  /** Whether connected Companies see the job title. */
+  showTitle: boolean;
+  /** On the Company's reserved example domain. */
+  email: string;
+  /** Visibly fake: zeros after the area code. */
+  phone: string;
 }
 
 export type RuleKey =
