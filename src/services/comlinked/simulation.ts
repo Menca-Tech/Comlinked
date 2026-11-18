@@ -12,6 +12,7 @@ import {
   EDGES,
   FULL_BOOST_AT,
   INDUSTRY,
+  KALAYAAN_LOGO,
   KALAYAAN_PEOPLE,
   KALAYAAN_WEBSITE,
   MAX_BOOST,
@@ -64,6 +65,7 @@ import type {
   MemberListEntry,
   MemberStatus,
   Message,
+  MyCompany,
   MyContactRequests,
   NameShown,
   NextAction,
@@ -204,6 +206,7 @@ export function publicView(c: Company): PublicView {
     ind: c.ind,
     city: c.city,
     website: c.website,
+    ...(c.logo ? { logo: c.logo } : {}),
   };
   return hasClaimed(c.id)
     ? { ...basics, claimed: true, description: c.why, offer: c.offer, seek: c.seek }
@@ -433,9 +436,46 @@ export function rank() {
     }).length
   );
 }
+/** Profile Strength on the day of the Claim, before any step is done. */
+const PROFILE_BASE = 55;
+/** The steps that complete a profile, in the order the checklist suggests them, with the points
+ * each adds and how the checklist names it while it is missing. They add up to 100 with the base. */
+export const PROFILE_STEPS = [
+  {
+    key: "products",
+    pts: 15,
+    missing: "your top 3 products",
+    done: (m: MyCompany) => !!m.products,
+  },
+  {
+    key: "project",
+    pts: 10,
+    missing: "a recent project",
+    done: (m: MyCompany) => !!m.projects.length,
+  },
+  { key: "photo", pts: 10, missing: "a photo of your work", done: (m: MyCompany) => m.photo },
+  { key: "logo", pts: 10, missing: "your logo", done: (m: MyCompany) => !!m.logo },
+] as const;
+export type ProfileStep = (typeof PROFILE_STEPS)[number]["key"];
+const missingSteps = function () {
+  return PROFILE_STEPS.filter(function (step) {
+    return !step.done(S.me);
+  });
+};
+/** The points a profile step adds. */
+export function stepPoints(key: ProfileStep) {
+  return PROFILE_STEPS.find(function (step) {
+    return step.key === key;
+  })?.pts;
+}
+/** The first step the profile still misses, which the checklist highlights, or null when complete. */
+export function nextProfileStep(): ProfileStep | null {
+  return missingSteps()[0]?.key ?? null;
+}
 export function strength() {
-  const m = S.me;
-  return 65 + (m.products ? 15 : 0) + (m.projects.length ? 10 : 0) + (m.photo ? 10 : 0);
+  return PROFILE_STEPS.reduce(function (percent, step) {
+    return step.done(S.me) ? percent + step.pts : percent;
+  }, PROFILE_BASE);
 }
 export function connected() {
   return Object.keys(S.conn).filter(function (k) {
@@ -1140,6 +1180,7 @@ export function seedTwoWeeks() {
   buildList();
   m.products = "Banana chips, ube spread, frozen lumpia";
   m.projects = ["Private-label chips for a Quezon City grocer"];
+  m.logo = KALAYAAN_LOGO;
   m.lastUpdate = 8;
   S.lists[13] = ["bayan", "sari", "hapag", "kainan", "malaya"];
   S.conn = { nordhavn: "connected", maple: "connected", pack: "connected", tala: "connected" };
@@ -3068,6 +3109,13 @@ const ACT = {
     award("profile");
     emit();
   },
+  addLogo: function () {
+    if (S.me.logo) return;
+    S.me.logo = KALAYAAN_LOGO;
+    S.me.lastUpdate = S.day;
+    award("profile");
+    emit();
+  },
   addPhoto: function () {
     S.me.photo = true;
     S.me.lastUpdate = S.day;
@@ -4595,11 +4643,9 @@ export function clearProfileFocus() {
 }
 
 export function profileCompleteness() {
-  const m = S.me,
-    missing: string[] = [];
-  if (!m.products) missing.push("your top 3 products");
-  if (!m.projects.length) missing.push("a recent project");
-  if (!m.photo) missing.push("a photo of your work");
+  const missing = missingSteps().map(function (step) {
+    return step.missing;
+  });
   return { percent: strength(), missing: missing };
 }
 

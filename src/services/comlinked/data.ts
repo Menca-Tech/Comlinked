@@ -59,6 +59,8 @@ function personAt(domain: string, phoneNumber: number, person: PersonEntry): Per
 }
 /** Kalayaan Foods' website, on a reserved example domain, which its people's emails share. */
 export const KALAYAAN_WEBSITE = "kalayaanfoods.example";
+/** Kalayaan Foods' invented logo, which it can add to its profile. */
+export const KALAYAAN_LOGO = "/assets/kalayaan-foods-logo.svg";
 /** Kalayaan Foods' people as the Demo starts. Ana Reyes, the Owner, is the primary admin and the
  * person the Demo is signed in as. */
 const KALAYAAN_ENTRIES: PersonEntry[] = [

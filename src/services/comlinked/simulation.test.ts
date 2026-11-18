@@ -96,6 +96,7 @@ import {
   POOL,
   prepareThread,
   publicView,
+  strength,
   rank,
   RULES,
   score,
@@ -133,6 +134,7 @@ import {
   backupAdmin,
   contactRequestsToMe,
   meetingAttendees,
+  KALAYAAN_LOGO,
   KALAYAAN_PEOPLE,
   PEOPLE,
   peopleRows,
@@ -884,6 +886,57 @@ describe("Overview figures", () => {
     act.demoActive();
     expect(connectionSummary()).toEqual({ connections: 4, incoming: 1, outgoing: 1 });
     expect(profileCompleteness()).toEqual({ percent: 90, missing: ["a photo of your work"] });
+  });
+});
+
+describe("the logo and Profile Strength", () => {
+  beforeEach(newCompany);
+
+  it("starts at 55% on the day of the Claim, with no logo and the logo among the missing steps", () => {
+    expect(getState().me.logo).toBeUndefined();
+    expect(strength()).toBe(55);
+    expect(profileCompleteness().missing).toEqual([
+      "your top 3 products",
+      "a recent project",
+      "a photo of your work",
+      "your logo",
+    ]);
+  });
+
+  it("adds 10 for the logo and counts it as a profile update, once", () => {
+    getState().day = 3;
+    const pts = getState().ledger.length;
+    act.addLogo();
+    expect(getState().me.logo).toBe(KALAYAAN_LOGO);
+    expect(strength()).toBe(65);
+    expect(getState().me.lastUpdate).toBe(3);
+    expect(getState().ledger.length).toBe(pts + 1);
+    expect(profileCompleteness().missing).not.toContain("your logo");
+    act.addLogo();
+    expect(strength()).toBe(65);
+    expect(getState().ledger.length).toBe(pts + 1);
+  });
+
+  it("reads 100% once every step is done, and never more", () => {
+    setForm("products", "Chips");
+    act.addProducts();
+    setForm("project", "A project");
+    act.addProject();
+    act.addPhoto();
+    act.addLogo();
+    expect(profileCompleteness()).toEqual({ percent: 100, missing: [] });
+    setForm("project", "Another project");
+    act.addProject();
+    expect(strength()).toBe(100);
+  });
+
+  it("has the logo in the two-weeks-in preset", () => {
+    act.demoActive();
+    expect(getState().me.logo).toBe(KALAYAAN_LOGO);
+  });
+
+  it("shows another Company's logo only when its data has one", () => {
+    expect(publicView(co("nordhavn")).logo).toBeUndefined();
   });
 });
 

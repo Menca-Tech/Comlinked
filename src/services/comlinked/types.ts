@@ -24,10 +24,15 @@ export interface Company {
   joinedDay?: number;
   /** Set only for Companies outside the user's chamber, shown on the Pro view. */
   chamber?: string;
+  /** Where the Company's logo is served from, once it has one. Without it, its initials show. */
+  logo?: string;
 }
 
 /** What one Company may see of another. The description, offers and needs wait for the Claim. */
-export type PublicView = Pick<Company, "id" | "name" | "ini" | "ind" | "city" | "website"> &
+export type PublicView = Pick<
+  Company,
+  "id" | "name" | "ini" | "ind" | "city" | "website" | "logo"
+> &
   ({ claimed: true; description: string; offer: string[]; seek: string[] } | { claimed: false });
 
 /** How a Company uses ComLinked once it has claimed: fixed data held with the Company, so its
@@ -166,6 +171,8 @@ export interface MyCompany {
   products: string;
   projects: string[];
   photo: boolean;
+  /** Where the Company's logo is served from, once it has added one. */
+  logo?: string;
   /** Who acts for the Company. Ask primaryAdmin(), backupAdmin() or signedIn() for one of them. */
   people: Person[];
   lastUpdate: number;
