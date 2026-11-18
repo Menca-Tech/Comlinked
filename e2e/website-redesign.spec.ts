@@ -9,6 +9,55 @@ const NAVY = "rgb(19, 62, 94)";
 const WHITE = "rgb(255, 255, 255)";
 const BLOCKING_IMPACTS = new Set(["serious", "critical"]);
 
+const PALE_BLUE = "rgb(228, 241, 250)";
+const CLEAR = "rgba(0, 0, 0, 0)";
+
+/** The hero's example panel: one image for assistive technology, drawn as a picture of the Demo. */
+const examplePanel = (page: Page) => page.locator("main section").first().getByRole("img");
+/** One row of an example panel, found by the Company it names. */
+const exampleRow = (page: Page, company: string) =>
+  examplePanel(page).locator("li", { hasText: company });
+
+/** The custom properties an example panel's own rules read that have no value on the panel. The
+ * panel takes its sizes, radii and colours from the Demo's scale, so none may be missing. */
+function missingExampleValues(page: Page) {
+  return page.locator(".cl-example").evaluate((panel) => {
+    const read = new Set<string>();
+    const collect = (rules: CSSRuleList) => {
+      for (const rule of rules) {
+        if (rule instanceof CSSStyleRule && /\.cl-example|\.ex-/.test(rule.selectorText)) {
+          for (const property of rule.style) {
+            const value = rule.style.getPropertyValue(property);
+            for (const [, name] of value.matchAll(/var\((--[\w-]+)/g)) if (name) read.add(name);
+          }
+        }
+        if ("cssRules" in rule) collect(rule.cssRules as CSSRuleList);
+      }
+    };
+    for (const sheet of document.styleSheets) collect(sheet.cssRules);
+    const style = getComputedStyle(panel);
+    return {
+      read: read.size,
+      missing: [...read].filter((name) => style.getPropertyValue(name).trim() === ""),
+    };
+  });
+}
+
+/** How many of the page's style rules belong to the Demo's App Mode stylesheet. */
+const demoRules = (page: Page) =>
+  page.evaluate(() => {
+    let found = 0;
+    const count = (rules: CSSRuleList) => {
+      for (const rule of rules) {
+        if (rule instanceof CSSStyleRule && /\.a-surface|\.cd-panel/.test(rule.selectorText))
+          found++;
+        if ("cssRules" in rule) count(rule.cssRules as CSSRuleList);
+      }
+    };
+    for (const sheet of document.styleSheets) count(sheet.cssRules);
+    return found;
+  });
+
 const ribbonText = (page: Page) => page.getByText("Working mockup.", { exact: false });
 const mainNav = (page: Page) => page.getByRole("navigation", { name: "Main", exact: true });
 
@@ -722,6 +771,49 @@ test.describe("for chambers page", () => {
     await expect(page.locator("[data-network-ring]")).toHaveCount(0);
   });
 
+  test("the Activity View panel pictures the Demo: 40 of 100 claimed over the split and its four counts", async ({
+    page,
+  }) => {
+    await page.goto("/for-chambers");
+    const panel = examplePanel(page);
+    await expect(panel).toHaveAccessibleName(
+      /^Example activity view for a chamber\. Claimed: 40 of 100\. Active: 20, Quiet: 16, Needs an intro: 4, Not yet claimed: 60\./,
+    );
+    // The claimed figure leads, in the sans face at the size the Demo's chamber screen sets it.
+    const figure = panel.getByText("40", { exact: true });
+    await expect(figure).toHaveCSS("font-size", "44px");
+    expect(await figure.evaluate((el) => getComputedStyle(el).fontFamily)).toMatch(/Nunito Sans/);
+    await expect(panel.getByText("of 100", { exact: true })).toBeVisible();
+    // The bar splits in proportion, and each status gives its count in words under it.
+    const widths = await panel
+      .locator(".ex-split i")
+      .evaluateAll((parts) => parts.map((part) => part.getBoundingClientRect().width));
+    expect(widths).toHaveLength(4);
+    const [active = 0, quiet = 0, intro = 0, unclaimed = 0] = widths;
+    expect(active / intro).toBeCloseTo(5, 0);
+    expect(quiet / intro).toBeCloseTo(4, 0);
+    expect(unclaimed / active).toBeCloseTo(3, 0);
+    await expect(panel.locator(".ex-split")).toHaveAttribute("aria-hidden", "true");
+    await expect(panel.locator(".ex-counts li")).toHaveText([
+      "Active 20",
+      "Quiet 16",
+      "Needs an intro 4",
+      "Not yet claimed 60",
+    ]);
+    // The tiles it replaces are gone.
+    await expect(panel).not.toContainText("Active this week");
+    // A member that has claimed and one that has not show different marks, and each status is in
+    // words.
+    const claimed = exampleRow(page, "Luntian Foods Inc.");
+    await expect(claimed.getByText("LF", { exact: true })).toHaveCSS("background-color", PALE_BLUE);
+    await expect(claimed.getByText("Active", { exact: true })).toBeVisible();
+    const waiting = exampleRow(page, "Northline Logistics");
+    await expect(waiting.getByText("NL", { exact: true })).toHaveCSS("border-top-style", "dashed");
+    await expect(waiting.getByText("NL", { exact: true })).toHaveCSS("background-color", CLEAR);
+    await expect(waiting.getByText("Not yet claimed", { exact: true })).toBeVisible();
+    await expect(exampleRow(page, "Lakbay Hotels").getByText("Needs an intro")).toBeVisible();
+  });
+
   test("the hero button reaches the form", async ({ page }) => {
     await page.goto("/for-chambers");
     await page
@@ -900,6 +992,50 @@ test.describe("comdash page", () => {
     await expect(hero.getByText("Example", { exact: true })).toBeVisible();
   });
 
+  test("the Who’s interested panel pictures the Demo: pale blue marks, the Hot, Warm and New tags and sans figures", async ({
+    page,
+  }) => {
+    await page.goto("/comdash");
+    const panel = examplePanel(page);
+    // Each Company carries the Demo's mark: a pale blue square with navy initials.
+    const mark = exampleRow(page, "Maple Bay Grocers").getByText("MB", { exact: true });
+    await expect(mark).toHaveCSS("background-color", PALE_BLUE);
+    await expect(mark).toHaveCSS("color", NAVY);
+    await expect(mark).toHaveCSS("border-radius", "6px");
+    await expect(mark).toHaveCSS("font-size", "12px");
+    // Interest Level is a tag in words: Hot solid navy, Warm in the blue tint, New outlined.
+    const level = (company: string, name: string) =>
+      exampleRow(page, company).getByText(name, { exact: true });
+    await expect(level("Luntian Foods Inc.", "Hot")).toHaveCSS("background-color", NAVY);
+    await expect(level("Luntian Foods Inc.", "Hot")).toHaveCSS("color", WHITE);
+    await expect(level("Pacific Pack Solutions", "Warm")).toHaveCSS("background-color", PALE_BLUE);
+    await expect(level("Maple Bay Grocers", "New")).toHaveCSS("background-color", CLEAR);
+    for (const [company, name] of [
+      ["Luntian Foods Inc.", "Hot"],
+      ["Pacific Pack Solutions", "Warm"],
+      ["Maple Bay Grocers", "New"],
+    ] as const) {
+      await expect(level(company, name)).toHaveCSS("font-size", "12px");
+      await expect(level(company, name)).toHaveCSS("border-radius", "999px");
+    }
+    // The figures are in the sans face at the Demo's size, each under its label.
+    const figure = panel
+      .getByText("Interested companies", { exact: true })
+      .locator("xpath=following-sibling::*[1]");
+    await expect(figure).toHaveText("4");
+    await expect(figure).toHaveCSS("font-size", "28px");
+    expect(await figure.evaluate((el) => getComputedStyle(el).fontFamily)).toMatch(/Nunito Sans/);
+    // Every signal is still named, and no name is hidden.
+    for (const signal of [
+      "Messaged you",
+      "Viewed your profile",
+      "Found you in search",
+      "Was recommended your company",
+    ]) {
+      await expect(panel.getByText(signal, { exact: true })).toBeVisible();
+    }
+  });
+
   test("all four signals are explained and names are never hidden", async ({ page }) => {
     await page.goto("/comdash");
 
@@ -930,4 +1066,36 @@ test.describe("comdash page", () => {
   test("the closing button reaches the Join form", async ({ page }) => {
     await closingButtonReachesJoin(page, "/comdash");
   });
+});
+
+test.describe("the two example panels, drawn from the website's own stylesheet", () => {
+  for (const path of ["/comdash", "/for-chambers"]) {
+    test(`${path}: the Demo's stylesheet is absent and no value the panel reads is missing`, async ({
+      page,
+    }) => {
+      await page.goto(path);
+      await expect(examplePanel(page)).toBeVisible();
+      expect(await demoRules(page)).toBe(0);
+      const { read, missing } = await missingExampleValues(page);
+      expect(read).toBeGreaterThan(10);
+      expect(missing).toEqual([]);
+      // It reads as the Demo's flat panel: white, with the panel's corner.
+      await expect(page.locator(".cl-example")).toHaveCSS("background-color", WHITE);
+      await expect(page.locator(".cl-example")).toHaveCSS("border-radius", "14px");
+    });
+
+    for (const width of WIDTHS) {
+      test(`${path}: the panel fits a ${width} pixel screen`, async ({ page }) => {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto(path);
+        const box = await page.locator(".cl-example").boundingBox();
+        expect(box?.x ?? -1).toBeGreaterThanOrEqual(0);
+        expect((box?.x ?? 0) + (box?.width ?? 0)).toBeLessThanOrEqual(width);
+        const overflow = await page.evaluate(
+          () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+        );
+        expect(overflow).toBe(0);
+      });
+    }
+  }
 });

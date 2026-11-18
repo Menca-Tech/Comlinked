@@ -1,5 +1,6 @@
 import { EXAMPLE_MATCHES } from "@/components/marketing/home/example-matches";
 import { ExampleTag } from "@/components/marketing/section";
+import { cn } from "@/lib/utils";
 
 export const INTEREST_SIGNALS = {
   search: { short: "Found you in search", full: "Companies that found you in search" },
@@ -11,50 +12,72 @@ export const INTEREST_SIGNALS = {
   },
 };
 
+type InterestSignal = keyof typeof INTEREST_SIGNALS;
+
+/** How interested a Company is, and how the Demo's tag for it reads: Hot solid, Warm in the blue
+ * tint, New outlined. */
+const LEVEL_TONE = { Hot: "solid", Warm: "accent", New: "line" };
+
 const RANK = "#4 of 12 in Food Suppliers";
 
-const ROWS: { company: string; initials: string; signal: keyof typeof INTEREST_SIGNALS }[] = [
-  { ...nameOf(EXAMPLE_MATCHES.maple), signal: "search" },
-  { ...nameOf(EXAMPLE_MATCHES.pack), signal: "view" },
-  { company: "Luntian Foods Inc.", initials: "LF", signal: "message" },
-  { ...nameOf(EXAMPLE_MATCHES.northline), signal: "recommended" },
+/** The interested Companies, strongest interest first, as the Demo lists them. */
+const ROWS: {
+  company: string;
+  initials: string;
+  signal: InterestSignal;
+  level: keyof typeof LEVEL_TONE;
+}[] = [
+  { company: "Luntian Foods Inc.", initials: "LF", signal: "message", level: "Hot" },
+  { ...nameOf(EXAMPLE_MATCHES.pack), signal: "view", level: "Warm" },
+  { ...nameOf(EXAMPLE_MATCHES.maple), signal: "search", level: "New" },
+  { ...nameOf(EXAMPLE_MATCHES.northline), signal: "recommended", level: "New" },
 ];
 
 function nameOf({ name, initials }: { name: string; initials: string }) {
   return { company: name, initials };
 }
 
+const sent = (signal: InterestSignal) => ROWS.filter((row) => row.signal === signal).length;
+
+/** The figures over the list, counted from the rows so the two cannot disagree. */
+const FIGURES = [
+  { label: "Interested companies", value: ROWS.length },
+  { label: "Messages", value: sent("message") },
+  { label: "Search appearances", value: sent("search") },
+];
+
 const PANEL_LABEL = `Example of who’s interested in Kalayaan Foods, ranked ${RANK}. ${ROWS.map(
-  ({ company, signal }) => `${company}: ${INTEREST_SIGNALS[signal].short}`,
+  ({ company, signal, level }) => `${company}: ${INTEREST_SIGNALS[signal].short}, ${level}`,
 ).join(". ")}.`;
 
-/** Named example companies and the signal each one sent. */
+/** Named example companies, the signal each one sent and its Interest Level: the Demo's Interest
+ * Signals in small. */
 export function WhosInterestedPanel() {
   return (
-    <div className="relative min-w-0 rounded-[16px] border border-cl-on-night-14 bg-cl-night-raised p-6">
-      <ExampleTag className="absolute top-5 right-5 text-cl-on-night-82" />
-      <div role="img" aria-label={PANEL_LABEL}>
-        <p className="mx-0 mt-0 mb-1 pr-24 text-[18px] leading-[24px] font-extrabold text-cl-paper">
-          Who’s interested
-        </p>
-        <p className="mx-0 mt-0 mb-3 text-[14px] leading-[20px] text-cl-on-night-82">{RANK}</p>
-        <ul className="m-0 list-none p-0">
-          {ROWS.map(({ company, initials, signal }) => (
-            <li
-              className="flex items-center gap-3.5 border-t border-t-cl-on-night-14 py-3"
-              key={company}
-            >
-              <span className="grid h-10 w-10 flex-none place-items-center rounded-[8px] bg-cl-night-chip text-[13px] font-extrabold text-cl-paper">
-                {initials}
-              </span>
-              <div className="min-w-0 flex-1">
-                <div className="text-[16px] leading-[22px] font-bold [overflow-wrap:anywhere] text-cl-paper">
-                  {company}
-                </div>
-                <div className="text-[14px] leading-[20px] text-cl-on-night-82">
-                  {INTEREST_SIGNALS[signal].short}
-                </div>
+    <div className="cl-example">
+      <ExampleTag className="absolute top-5 right-5 text-cl-muted" />
+      <div className="ex-body" role="img" aria-label={PANEL_LABEL}>
+        <div>
+          <p className="ex-title">Who’s interested</p>
+          <p className="ex-note">{RANK}</p>
+        </div>
+        <div className="ex-figs">
+          {FIGURES.map(({ label, value }) => (
+            <div className="ex-fig" key={label}>
+              <span className="ex-k">{label}</span>
+              <span className="ex-v">{value}</span>
+            </div>
+          ))}
+        </div>
+        <ul className="ex-rows">
+          {ROWS.map(({ company, initials, signal, level }) => (
+            <li className="ex-row" key={company}>
+              <span className="ex-mark">{initials}</span>
+              <div className="ex-row-t">
+                <div className="ex-name">{company}</div>
+                <div className="ex-detail">{INTEREST_SIGNALS[signal].short}</div>
               </div>
+              <span className={cn("ex-tag", LEVEL_TONE[level])}>{level}</span>
             </li>
           ))}
         </ul>

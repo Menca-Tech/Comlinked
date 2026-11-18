@@ -674,6 +674,197 @@ html:has(.cl-site) {
   scroll-padding-top: 88px;
 }
 
+/* The two example panels, on the ComDash and For Chambers pages: small pictures of the Demo.
+   Every size, radius and colour is one of the Demo's named values, defined in demo-scale.css,
+   so the picture and the product cannot drift apart. */
+.cl-site {
+  .cl-example {
+    position: relative;
+    min-width: 0;
+    padding: var(--space-6);
+    border: 1px solid var(--hair);
+    border-radius: var(--radius-panel);
+    background: var(--color-surface);
+    color: var(--color-ink-2);
+    font-family: var(--font-text);
+  }
+  .ex-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+  .ex-title {
+    margin: 0;
+    padding-right: calc(var(--space-12) * 2);
+    font: 600 var(--text-18) / var(--leading-title) var(--font-text);
+    color: var(--color-ink);
+  }
+  .ex-note {
+    margin: 0;
+    font: 400 var(--text-13) / var(--leading-text) var(--font-text);
+    color: var(--color-quiet);
+  }
+  /* A figure: its label above, the figure in the sans face. */
+  .ex-figs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3) var(--space-8);
+  }
+  .ex-fig {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .ex-k {
+    font: 400 var(--text-13) / var(--leading-text) var(--font-text);
+    color: var(--color-quiet);
+  }
+  .ex-v,
+  .ex-claimed {
+    font: 600 var(--text-28) / var(--leading-tight) var(--font-text);
+    letter-spacing: -0.015em;
+    color: var(--color-ink);
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+  .ex-claimed {
+    font-size: var(--text-44);
+    line-height: 1;
+  }
+  .ex-of {
+    font: 400 var(--text-14) / 1 var(--font-text);
+    letter-spacing: 0;
+    color: var(--color-quiet);
+  }
+  /* How the members split by status, in proportion, over each status's count in words. */
+  .ex-split {
+    display: flex;
+    gap: var(--stroke-2);
+    height: var(--space-3);
+    margin: var(--space-4) 0 var(--space-3);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+  }
+  .ex-key {
+    display: block;
+  }
+  .ex-key.active {
+    background: var(--color-accent-strong);
+  }
+  .ex-key.quiet {
+    background: var(--color-sky);
+  }
+  .ex-key.intro {
+    background: var(--color-error);
+  }
+  .ex-key.unclaimed {
+    background: var(--color-sunken);
+  }
+  .ex-counts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font: 400 var(--text-13) / var(--leading-text) var(--font-text);
+    color: var(--color-muted);
+  }
+  .ex-counts li {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .ex-counts b {
+    font-weight: 600;
+    color: var(--color-ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .ex-dot {
+    flex: none;
+    width: var(--space-2);
+    height: var(--space-2);
+    border-radius: var(--radius-mark);
+  }
+  .ex-dot.unclaimed {
+    box-shadow: inset 0 0 0 1px var(--color-rule);
+  }
+  /* Companies in a flat list on hairlines, each with its mark and a tag. */
+  .ex-rows {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .ex-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) 0;
+    border-top: 1px solid var(--hair);
+  }
+  .ex-row:last-child {
+    padding-bottom: 0;
+  }
+  .ex-row-t {
+    flex: 1;
+    min-width: 0;
+  }
+  .ex-name {
+    font: 600 var(--text-14) / var(--leading-title) var(--font-text);
+    color: var(--color-ink);
+    overflow-wrap: anywhere;
+  }
+  .ex-detail {
+    font: 400 var(--text-13) / var(--leading-text) var(--font-text);
+    color: var(--color-muted);
+  }
+  /* A Company's mark: pale blue once it has claimed, a dashed outline until then. */
+  .ex-mark {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: var(--space-8);
+    height: var(--space-8);
+    border-radius: var(--radius-mark);
+    background: var(--color-accent-tint);
+    color: var(--color-accent-strong);
+    font: 600 var(--text-12) / 1 var(--font-text);
+    letter-spacing: 0.04em;
+  }
+  .ex-mark.unclaimed {
+    background: none;
+    border: 1px dashed var(--color-rule);
+    color: var(--color-quiet);
+  }
+  /* A tag: a small pill. Grey unless it takes a tone. */
+  .ex-tag {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 var(--space-2);
+    border-radius: var(--radius-pill);
+    background: var(--color-sunken);
+    color: var(--color-muted);
+    font: 600 var(--text-12) / var(--space-5) var(--font-text);
+    white-space: nowrap;
+  }
+  .ex-tag.accent {
+    background: var(--color-accent-tint);
+    color: var(--color-accent-strong);
+  }
+  .ex-tag.solid {
+    background: var(--color-accent-strong);
+    color: var(--color-accent-ink);
+  }
+  .ex-tag.error {
+    background: var(--color-error-tint);
+    color: var(--color-error);
+  }
+  .ex-tag.line {
+    font-weight: 400;
+    background: none;
+    box-shadow: inset 0 0 0 1px var(--color-rule);
+  }
+}
 @keyframes ring-appear {
   to {
     opacity: 1;
