@@ -8,7 +8,8 @@ import { DashPanel, EmptyNote } from "@/components/product/comdash/dash-panel";
 import { InterestAction } from "@/components/product/comdash/interest-action";
 import { LevelFilter, type LevelChoice } from "@/components/product/comdash/level-filter";
 import { LevelTag } from "@/components/product/comdash/level-tag";
-import { Btn, Mono, PlainMark } from "@/components/product/shared";
+import { SignalMark } from "@/components/product/comdash/signal-mark";
+import { Btn, Mono } from "@/components/product/shared";
 import { useSimulation } from "@/components/product/use-simulation";
 import { paths } from "@/paths";
 import {
@@ -26,13 +27,6 @@ import {
   type InterestRow,
   type PlanView,
 } from "@/services/comlinked";
-
-/** A named Company's mark: claim-aware for a member of the network, and plain for a Company in
- * another chamber, which the network holds no claim for. */
-export function SignalMark({ row }: { row: InterestRow }) {
-  const c = row.company;
-  return row.chamber === null ? <Mono c={c} /> : <PlainMark ini={c.ini} />;
-}
 
 function Row({
   row,
@@ -92,7 +86,7 @@ function HiddenRow({ row, view }: { row: InterestRow; view: PlanView }) {
     <tr>
       <td>
         <span className="cd-cell">
-          <PlainMark />
+          <Mono plain />
           <span className="cd-co">
             <strong>{free ? blurred("Hidden company name") : blurred("Hidden company")}</strong>
             <small>{free ? blurred("Industry · City") : "Another chamber · names on Pro"}</small>

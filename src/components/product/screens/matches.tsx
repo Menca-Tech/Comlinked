@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 import { LeadBoard, LeadsDone } from "@/components/product/lead-board";
 import { Btn, Tally } from "@/components/product/shared";
-import { arrivalStaged, arrivingFromClaim } from "@/components/product/staged-arrival";
+import { arrivingFromClaim, forgetClaimFinished } from "@/components/product/staged-arrival";
 import { useIsDesktop, useSimulation } from "@/components/product/use-simulation";
 import { act } from "@/services/comlinked";
 
@@ -13,7 +13,7 @@ import { act } from "@/services/comlinked";
  * there. */
 function useStagedArrival() {
   const [staged, setStaged] = useState(arrivingFromClaim);
-  useEffect(arrivalStaged, []);
+  useEffect(forgetClaimFinished, []);
   return { staged, arrived: () => setStaged(false) };
 }
 

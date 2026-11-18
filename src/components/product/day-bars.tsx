@@ -53,12 +53,12 @@ export function DayBars({ days, series }: { days: DayBar[]; series?: DaySeries[]
                 className="db-stack"
                 style={bar.total ? { height: `${(bar.total / top) * 100}%` } : undefined}
               >
-                {bar.values.map((value, of) => {
-                  const unit = series?.[of]?.unit;
+                {bar.values.map((value, index) => {
+                  const unit = series?.[index]?.unit;
                   return value ? (
                     <i
-                      key={of}
-                      data-series={of}
+                      key={index}
+                      data-series={index}
                       style={{ flexGrow: value }}
                       title={unit ? `${bar.label}: ${value} ${unit}` : undefined}
                     />
@@ -72,10 +72,10 @@ export function DayBars({ days, series }: { days: DayBar[]; series?: DaySeries[]
       </div>
       {series ? (
         <ul className="db-legend">
-          {series.map((one, of) => (
-            <li key={one.name}>
-              <i data-series={of} />
-              {one.name} <b>{last.values[of] ?? 0}</b>
+          {series.map((entry, index) => (
+            <li key={entry.name}>
+              <i data-series={index} />
+              {entry.name} <b>{last.values[index] ?? 0}</b>
             </li>
           ))}
           <li>{last.label}</li>

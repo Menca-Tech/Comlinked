@@ -5,9 +5,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 import { ConnectAction } from "@/components/product/comdash/connect-action";
 import { InterestAction } from "@/components/product/comdash/interest-action";
-import { SignalMark } from "@/components/product/comdash/interested-companies";
+import { SignalMark } from "@/components/product/comdash/signal-mark";
 import { LevelTag } from "@/components/product/comdash/level-tag";
-import { Btn } from "@/components/product/shared";
+import { Btn, useInitial } from "@/components/product/shared";
 import { useSimulation } from "@/components/product/use-simulation";
 import { paths } from "@/paths";
 import {
@@ -32,22 +32,22 @@ function closeDrawer(router: ReturnType<typeof useRouter>, companyId: string) {
   (row ?? filter)?.focus();
 }
 
-/** The drawer for one Company. `opened` says the viewer opened it on a tab already showing, so it
- * slides in; a drawer the address opens with the tab is simply there. */
+/** The drawer for one Company. With `slideIn` it slides in as it appears: the viewer opened it on
+ * a tab already showing. A drawer that comes with the tab is simply there. */
 function DrawerBody({
   row,
-  opened,
+  slideIn,
   onClose,
 }: {
   row: InterestRow;
-  opened: boolean;
+  slideIn: boolean;
   onClose: () => void;
 }) {
   const c = row.company;
   const close = useRef<HTMLButtonElement>(null);
   useEffect(() => close.current?.focus(), [c.id]);
-  // How it arrived is settled when it appears, and does not change while it stays open.
-  const [slides] = useState(opened);
+  // How it arrives is settled as it appears, and does not change while it stays open.
+  const slidesIn = useInitial(slideIn);
   const scored = row.score !== null;
   return (
     <div
@@ -55,7 +55,7 @@ function DrawerBody({
       role="dialog"
       aria-modal="false"
       aria-labelledby="cd-drawer-title"
-      data-opened={slides ? "" : undefined}
+      data-slide-in={slidesIn ? "" : undefined}
     >
       <Btn ref={close} cls="o sm cd-close" onClick={onClose}>
         Close
@@ -126,7 +126,7 @@ export function SignalDrawer() {
     <DrawerBody
       key={row.company.id}
       row={row}
-      opened={tabShown}
+      slideIn={tabShown}
       onClose={() => closeDrawer(router, row.company.id)}
     />
   );

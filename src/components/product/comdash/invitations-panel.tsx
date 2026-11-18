@@ -15,9 +15,9 @@ export function InvitationsPanel() {
     <DashPanel title={`Invitations (${rows.length})`} focus>
       {rows.length ? (
         <div>
-          {rows.map(({ company: c, day }, row) => (
+          {rows.map(({ company: c, day }, index) => (
             <QueueRow key={c.id} name={c.name} meta={`${companyLine(c)} · ${dayName(day)}`}>
-              <InviteActions company={c} main={row === 0} />
+              <InviteActions company={c} main={index === 0} />
             </QueueRow>
           ))}
         </div>

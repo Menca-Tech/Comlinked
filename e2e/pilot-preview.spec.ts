@@ -4,7 +4,7 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 import {
   expectStill,
   focusPanel,
-  hasVisibleFocus,
+  expectVisibleFocus,
   moving,
   surfaceShadow,
   tabTo,
@@ -1538,14 +1538,14 @@ test.describe("the side step from Stop 5", () => {
   }) => {
     await openStop(page, stop(5));
     await sideStep(page).focus();
-    await hasVisibleFocus(page);
+    await expectVisibleFocus(page);
     await page.keyboard.press("Tab");
     await expect(backLink(page)).toBeFocused();
     await page.keyboard.press("Tab");
     await expect(nextLink(page)).toBeFocused();
     await page.keyboard.press("Tab");
     await expect(statusFilter(page).getByRole("button", { name: "All 100" })).toBeFocused();
-    await hasVisibleFocus(page);
+    await expectVisibleFocus(page);
     await page.keyboard.press("Tab");
     await expect(chip(page, "Active")).toBeFocused();
     await page.keyboard.press("Enter");
@@ -1559,9 +1559,9 @@ test.describe("the side step from Stop 5", () => {
     await page.keyboard.press("Tab");
     // The tools come before the figures and the members.
     await expect(page.getByRole("button", { name: "Run the import again" })).toBeFocused();
-    await hasVisibleFocus(page);
+    await expectVisibleFocus(page);
     await page.locator("#f-a").focus();
-    await hasVisibleFocus(page);
+    await expectVisibleFocus(page);
   });
 
   test("with reduced motion, nothing moves when the Seat changes", async ({ page }) => {
@@ -2035,18 +2035,18 @@ test.describe("the four reference screens from the keyboard and with reduced mot
   }) => {
     await openStop(page, stop(4));
     await backLink(page).focus();
-    await hasVisibleFocus(page);
+    await expectVisibleFocus(page);
     await page.keyboard.press("Tab");
     await expect(nextLink(page)).toBeFocused();
-    await hasVisibleFocus(page);
+    await expectVisibleFocus(page);
     for (const tab of FOUR_TABS) {
       await page.keyboard.press("Tab");
       await expect(tabRow(page).getByRole("link", { name: tab, exact: true })).toBeFocused();
-      await hasVisibleFocus(page);
+      await expectVisibleFocus(page);
     }
     await page.keyboard.press("Tab");
     await expect(page.getByRole("button", { name: "Open today’s leads" })).toBeFocused();
-    await hasVisibleFocus(page);
+    await expectVisibleFocus(page);
   });
 
   test("on the community manager's side the chips, Show all and the member rows come in order, and a row opens its draft", async ({
@@ -2057,17 +2057,17 @@ test.describe("the four reference screens from the keyboard and with reduced mot
     await page.keyboard.press("Enter");
     await expect(backToView(page)).toBeFocused();
     await chip(page, "All").focus();
-    await hasVisibleFocus(page);
+    await expectVisibleFocus(page);
     for (const status of STATUSES) {
       await page.keyboard.press("Tab");
       await expect(chip(page, status)).toBeFocused();
     }
     await page.keyboard.press("Tab");
     await expect(showAll(page, 20)).toBeFocused();
-    await hasVisibleFocus(page);
+    await expectVisibleFocus(page);
     await page.keyboard.press("Tab");
     await expect(page.getByRole("button", { name: "Kalayaan Foods Inc." })).toBeFocused();
-    await hasVisibleFocus(page);
+    await expectVisibleFocus(page);
     await page.keyboard.press("Tab");
     await expect(page.getByRole("button", { name: "Maple Bay Grocers" })).toBeFocused();
     await page.keyboard.press("Enter");
@@ -2093,12 +2093,26 @@ test.describe("the four reference screens from the keyboard and with reduced mot
 const MATCHES_HEADING = "Meet your 3 matches today";
 const matchCards = (page: Page) => page.locator("[data-lead]");
 
+/** One arrival the page drew: which Match, whether it started or ended, and when. */
+interface Arrival {
+  lead: string;
+  type: string;
+  at: number;
+}
+
+declare global {
+  interface Window {
+    /** Where a test notes the arrivals it watches. */
+    arrivalsSeen?: Arrival[];
+  }
+}
+
 /** Notes every arrival the page draws from now on: which Match, when it started and when it
  * ended. The Demo moves between its screens without a page load, so the notes survive the claim. */
 async function watchArrivals(page: Page) {
   await page.evaluate(() => {
-    const seen: { lead: string; type: string; at: number }[] = [];
-    Object.assign(window, { arrivalsSeen: seen });
+    const seen: Arrival[] = [];
+    window.arrivalsSeen = seen;
     for (const type of ["animationstart", "animationend"]) {
       document.addEventListener(type, (event) => {
         const lead = event.target instanceof HTMLElement ? event.target.dataset.lead : undefined;
@@ -2108,12 +2122,7 @@ async function watchArrivals(page: Page) {
   });
 }
 
-const arrivals = (page: Page) =>
-  page.evaluate(
-    () =>
-      (window as unknown as { arrivalsSeen: { lead: string; type: string; at: number }[] })
-        .arrivalsSeen,
-  );
+const arrivals = (page: Page) => page.evaluate(() => window.arrivalsSeen ?? []);
 
 /** How many Matches are still arriving. A button's transition, or a status fading in where a
  * button was, is not an arrival. */

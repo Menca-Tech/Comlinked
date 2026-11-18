@@ -1,7 +1,15 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Locator, type Page } from "@playwright/test";
 
-import { arrival, expectStill, focusPanel, surfaceShadow, tabTo, WHITE } from "./demo-helpers";
+import {
+  arrival,
+  expectStill,
+  focusPanel,
+  goToSection,
+  surfaceShadow,
+  tabTo,
+  WHITE,
+} from "./demo-helpers";
 
 // The product runs on a browser-held simulation, and a full page load resets it by
 // design, so these tests navigate by clicking rather than with page.goto.
@@ -307,8 +315,8 @@ test.describe("ComDash", () => {
       "Profile saves",
     ]);
     // Messages is the tab's Focus panel: the one raised tile among the six.
-    await expect(page.locator("[data-focus-panel]")).toHaveCount(1);
-    await expect(page.locator(".cd-tile[data-focus-panel] .cd-k")).toHaveText("Messages");
+    await expect(focusPanel(page)).toHaveCount(1);
+    await expect(focusPanel(page).locator(".cd-k")).toHaveText("Messages");
     await expect(page.locator(".cd-tile .cd-d")).toHaveCount(6);
     const messages = page.locator(".cd-tile", { hasText: "Messages" }).locator(".cd-d");
     await expect(messages).toContainText("▲");
@@ -352,7 +360,7 @@ test.describe("ComDash", () => {
   }) => {
     await twoWeeksIn(page);
     await openTab(page, "Interest Signals");
-    const focus = page.locator("[data-focus-panel]");
+    const focus = focusPanel(page);
     await expect(focus).toHaveCount(1);
     await expect(focus).toContainText("Messages");
     // It is raised, and the other five tiles are flat.
@@ -760,7 +768,7 @@ test.describe("ComDash", () => {
     await backToComDash(page);
     await expect(next).toContainText("You’re all caught up");
     // With nothing waiting it is still the screen's one Focus panel, holding that line alone.
-    await expect(page.locator("[data-focus-panel]")).toHaveCount(1);
+    await expect(focusPanel(page)).toHaveCount(1);
     await expect(next).toHaveAttribute("data-focus-panel", "");
     await expect(next).toContainText("Nothing waiting");
     await expect(next.getByRole("button")).toHaveCount(0);
@@ -932,8 +940,8 @@ test.describe("ComDash", () => {
     // The upgrade box's button is the tab's one solid button; "See who" is outlined.
     const upgrade = page.getByRole("button", { name: "See who’s interested" });
     const seeWho = table.getByRole("button", { name: "See who", exact: true }).first();
-    await expect(seeWho).toHaveCSS("background-color", "rgb(255, 255, 255)");
-    await expect(upgrade).not.toHaveCSS("background-color", "rgb(255, 255, 255)");
+    await expect(seeWho).toHaveCSS("background-color", WHITE);
+    await expect(upgrade).not.toHaveCSS("background-color", WHITE);
     await expect(panel(page, "Alerts")).toContainText("weekly, without names");
     await expect(panel(page, "Alerts")).not.toContainText("Hapag Kitchen Group");
     await page.getByRole("button", { name: "See who’s interested" }).click();
@@ -951,7 +959,7 @@ test.describe("ComDash", () => {
     // "Send my agent" is outlined on every row, so no tier adds a second solid button.
     await expect(
       page.getByRole("button", { name: "Send my agent to Hapag Kitchen Group" }),
-    ).toHaveCSS("background-color", "rgb(255, 255, 255)");
+    ).toHaveCSS("background-color", WHITE);
     await page.getByRole("button", { name: "Send my agent to Hapag Kitchen Group" }).click();
     await expect(companyRow(page, "hapag")).toContainText("Agent intro sent for approval");
     await expect(
@@ -1669,10 +1677,11 @@ test.describe("Kalayaan's first export shipment, and basics only before a Claim"
 /** Opens one of the Company's sections and waits for its screen, so nothing is clicked on the
  * screen being left. */
 async function openScreen(page: Page, name: "Leads" | "ComMail" | "Asks" | "Wins") {
-  await openSection(page, name);
-  const title = name === "Leads" ? "Today’s leads" : name;
-  await expect(page.getByRole("heading", { name: title, level: 1 })).toBeVisible();
+  await goToSection(page, name, name === "Leads" ? "Today’s leads" : name);
 }
+
+/** One suggested Company on the Connections tab, or one item from the Company's connections. */
+const listed = (page: Page, name: string) => page.getByRole("listitem").filter({ hasText: name });
 
 test.describe("the member's daily screens, each led by one Focus panel", () => {
   test.use({ viewport: { width: 1280, height: 900 } });
@@ -1892,6 +1901,53 @@ test.describe("the member's daily screens, each led by one Focus panel", () => {
     await above("Success wall", "Monthly top companies");
   });
 
+  test("a very long company name at 360 pixels wraps inside its card and its row in ComMail", async ({
+    page,
+  }) => {
+    const NAME = "Sterling Rivera Insurance Brokers";
+    /** Whether `part` sits wholly inside `box`, side to side. */
+    const inside = async (part: Locator, box: Locator) => {
+      const [inner, outer] = [await part.boundingBox(), await box.boundingBox()];
+      if (!inner || !outer) throw new Error("Nothing to measure.");
+      expect(inner.x).toBeGreaterThanOrEqual(outer.x);
+      expect(inner.x + inner.width).toBeLessThanOrEqual(outer.x + outer.width);
+    };
+    await page.setViewportSize({ width: 360, height: 800 });
+    await claimNewCompany(page);
+    await openSearch(page, "insurance");
+    await results(page)
+      .getByRole("button", { name: new RegExp(NAME) })
+      .click();
+    await tap(page, "Message");
+    // The open conversation: the name, its tag and the line that says the message waits.
+    const focus = focusPanel(page);
+    const head = focus.getByRole("button", { name: new RegExp(`^${NAME}`) });
+    await expect(head).toContainText("Not yet claimed");
+    await inside(head, focus);
+    await inside(
+      focus.getByText(`${NAME} hasn’t claimed its profile yet.`, { exact: false }),
+      focus,
+    );
+    await noSidewaysScroll(page);
+    await focus.getByLabel("Your message").fill("Hello. Could you quote for product liability?");
+    await tap(page, "Send");
+    const held = focus.getByText(`Waiting until ${NAME} claims its profile`);
+    await expect(held).toBeVisible();
+    await inside(held, focus);
+    await noSidewaysScroll(page);
+    // Its row in the list: the name wraps onto a second line and stays inside the row.
+    await tap(page, "Back to ComMail");
+    const row = page.getByRole("button", { name: new RegExp(`^${NAME}`) });
+    const name = row.getByText(NAME, { exact: true });
+    await inside(name, row);
+    const lines = await name.evaluate(
+      (el) => el.getBoundingClientRect().height / parseFloat(getComputedStyle(el).lineHeight),
+    );
+    expect(Math.round(lines)).toBe(2);
+    await expect(row).toContainText("Not yet claimed");
+    await noSidewaysScroll(page);
+  });
+
   test("from the keyboard each screen's main action is reachable with a visible focus ring", async ({
     page,
   }) => {
@@ -1927,9 +1983,7 @@ test.describe("the member's daily screens, each led by one Focus panel", () => {
     await page.keyboard.press("Escape");
     await openTab(page, "Connections");
     await page.getByRole("button", { name: "Connect with Kapwa Snack Foods" }).click();
-    await expect(page.locator(".cd-scard", { hasText: "Kapwa" })).toContainText(
-      "Invitation pending",
-    );
+    await expect(listed(page, "Kapwa Snack Foods")).toContainText("Invitation pending");
     await expectStill(page);
     await openTab(page, "Profile");
     await expectStill(page);
@@ -2005,18 +2059,17 @@ test.describe("what the viewer triggers moves briefly, with motion allowed", () 
   }) => {
     await twoWeeksIn(page);
     await openTab(page, "Connections");
-    const suggestion = (name: string) => page.locator(".cd-scard", { hasText: name });
     // Buhay Pharmacy Chain's request was sent before the screen opened.
-    const before = suggestion("Buhay Pharmacy Chain").getByText("Invitation pending");
+    const before = listed(page, "Buhay Pharmacy Chain").getByText("Invitation pending");
     expect((await arrival(before)).name).toBe("none");
     await page.getByRole("button", { name: "Connect with Kapwa Snack Foods" }).click();
-    const pending = suggestion("Kapwa Snack Foods").getByText("Invitation pending");
+    const pending = listed(page, "Kapwa Snack Foods").getByText("Invitation pending");
     await expect(pending).toBeVisible();
     const afterConnect = await arrival(pending);
     expect(afterConnect.name).not.toBe("none");
     expectBrief(afterConnect.ms);
 
-    const item = page.locator(".cd-moment").first();
+    const item = panel(page, "From your connections").getByRole("listitem").first();
     await item.getByRole("button", { name: /^Reply to/ }).click();
     await item.getByRole("button", { name: "Send", exact: true }).click();
     const answered = item.getByText("Answered. Your reply is in ComMail.");
@@ -2033,6 +2086,21 @@ test.describe("what the viewer triggers moves briefly, with motion allowed", () 
     const afterSkip = await arrival(done);
     expect(afterSkip.name).not.toBe("none");
     expectBrief(afterSkip.ms);
+
+    // On a phone the lead leaves the Focus panel for a row in the list, and fades in there too.
+    await page.setViewportSize({ width: 390, height: 844 });
+    const next = await focusPanel(page).locator("strong").first().innerText();
+    await focusPanel(page).getByRole("button", { name: "Skip", exact: true }).click();
+    const row = page.locator("[data-lead]", { hasText: next });
+    await expect(row).toContainText("Skipped.");
+    await expect(row).not.toHaveAttribute("data-focus-panel");
+    const onPhone = await arrival(row);
+    expect(onPhone.name).not.toBe("none");
+    expectBrief(onPhone.ms);
+    // Left and come back to, the screen opens with both rows already done, and neither moves.
+    await openScreen(page, "Asks");
+    await openScreen(page, "Leads");
+    expect((await arrival(page.locator("[data-lead]", { hasText: lead }))).name).toBe("none");
   });
 
   test("a chip being chosen changes over 150ms", async ({ page }) => {

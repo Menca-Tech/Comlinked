@@ -41,8 +41,8 @@ export function VisibilityChart() {
           <ul>
             {days.map((d) => (
               <li key={d.day}>
-                {dayLabel(d.day)}: {d.searches} search appearances, {d.recommendations}{" "}
-                recommendations
+                {dayLabel(d.day)}:{" "}
+                {SERIES.map((series) => `${d[series.key]} ${series.unit}`).join(", ")}
               </li>
             ))}
           </ul>

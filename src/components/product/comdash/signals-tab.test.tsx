@@ -41,7 +41,7 @@ describe("Interest Signals for a company with no signals yet", () => {
   });
 
   it("shows calm empty states on the chart, funnel, table and rail", () => {
-    const { container } = render(
+    render(
       <>
         <VisibilityChart />
         <InterestFunnel />
@@ -52,7 +52,7 @@ describe("Interest Signals for a company with no signals yet", () => {
         <SearchTermsPanel />
       </>,
     );
-    expect(container.querySelector("figure")).toBeNull();
+    expect(screen.queryByRole("figure")).not.toBeInTheDocument();
     expect(screen.getByText(/Your visibility appears here/)).toBeInTheDocument();
     expect(screen.getByText(/The funnel fills/)).toBeInTheDocument();
     expect(screen.getByText(/No interested companies yet/)).toBeInTheDocument();

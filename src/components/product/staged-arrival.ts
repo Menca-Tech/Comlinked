@@ -1,20 +1,20 @@
 /** The Demo's one staged moment: the day-one Matches arriving one after another once the claim
- * finishes. The claim says it has just finished, and the Matches screen asks whether it was
+ * finishes. The claim notes that it has just finished, and the Matches screen asks whether it was
  * reached that way. It is held here, among the screens, because it is about what moves on arrival
  * and not about anything the simulation holds. */
-let fromClaim = false;
+let claimFinished = false;
 
-/** Called as the claim finishes, just before the Matches open. */
-export function claimJustFinished() {
-  fromClaim = true;
+/** Notes that the claim has just finished, as the Matches are about to open. */
+export function noteClaimFinished() {
+  claimFinished = true;
 }
 
 /** Whether the Matches screen is being reached from finishing the claim. */
 export function arrivingFromClaim() {
-  return fromClaim;
+  return claimFinished;
 }
 
-/** Called once the Matches screen is up, so opening it any other way stages nothing. */
-export function arrivalStaged() {
-  fromClaim = false;
+/** Forgets the note once the Matches screen is up, so opening it any other way stages nothing. */
+export function forgetClaimFinished() {
+  claimFinished = false;
 }

@@ -15,14 +15,22 @@ import {
   OfferSeek,
   Panel,
   ReasonList,
+  replacedMark,
   St,
-  useReplaced,
+  useInitial,
   WhyMeet,
 } from "@/components/product/shared";
 import { useIsDesktop, useSimulation } from "@/components/product/use-simulation";
 import { cn } from "@/lib/utils";
 import type { Company, ConnStatus } from "@/services/comlinked";
 import { act, CAT, co, fit, matchReason, publicView, selectedLead } from "@/services/comlinked";
+
+/** A Lead's turn in a staged arrival, for the element that arrives: its place in the order, and
+ * a delay of one beat for each turn before it. Nothing when the arrival is not staged. */
+function inTurn(turn: number | undefined) {
+  if (turn === undefined) return undefined;
+  return { "data-turn": turn, style: { animationDelay: `calc(${turn} * var(--stagger))` } };
+}
 
 function LeadHead({ c, markCls }: { c: Company; markCls?: string }) {
   return (
@@ -57,7 +65,12 @@ function LeadActions({ c }: { c: Company }) {
 /** The selected Lead in full, as the Focus panel in its place in the list on a phone. */
 function LeadCard({ c, turn }: { c: Company; turn?: number }) {
   return (
-    <article className="a-card a-lead-open" data-lead={c.id} data-turn={turn} {...focusPanel(true)}>
+    <article
+      className="a-card a-lead-open"
+      data-lead={c.id}
+      {...inTurn(turn)}
+      {...focusPanel(true)}
+    >
       <LeadHead c={c} />
       <WhyMeet c={c} />
       <ReasonList c={c} />
@@ -131,15 +144,30 @@ function leadOutcome(c: Company, conn: ConnStatus | undefined, action: string | 
   return null;
 }
 
-/** A Lead as a row in the list: what was done with it, or a row that selects it. */
-function LeadRow({ c, selected, turn }: { c: Company; selected: boolean; turn?: number }) {
+/** A Lead as a row in the list: what was done with it, or a row that selects it. `actedHere` says
+ * it was acted on while the board was up, so its status fades in where its buttons were. */
+function LeadRow({
+  c,
+  selected,
+  turn,
+  actedHere,
+}: {
+  c: Company;
+  selected: boolean;
+  turn?: number;
+  actedHere: boolean;
+}) {
   const S = useSimulation();
   const score = <FitMark score={fit(c).score} />;
   const outcome = leadOutcome(c, S.conn[c.id], S.leadAct[c.id]);
-  const replaced = useReplaced(outcome !== null);
   if (outcome) {
     return (
-      <article className="a-lead done" data-lead={c.id} data-turn={turn} {...replaced}>
+      <article
+        className="a-lead done"
+        data-lead={c.id}
+        {...inTurn(turn)}
+        {...replacedMark(actedHere)}
+      >
         <CoBtn c={c} detail={outcome.result} cls="sm" />
         {score}
         {outcome.tail}
@@ -148,7 +176,7 @@ function LeadRow({ c, selected, turn }: { c: Company; selected: boolean; turn?: 
   }
   const reason = matchReason(c);
   return (
-    <article className={cn("a-lead pick", selected && "sel")} data-lead={c.id} data-turn={turn}>
+    <article className={cn("a-lead pick", selected && "sel")} data-lead={c.id} {...inTurn(turn)}>
       <button
         type="button"
         className="a-pick"
@@ -205,15 +233,25 @@ export function LeadBoard({
   staged?: boolean;
   onArrived?: () => void;
 }) {
+  const S = useSimulation();
   const isWeb = useIsDesktop();
   const selected = selectedLead(ids);
   const turn = (id: string) => (staged ? ids.indexOf(id) : undefined);
+  const acted = (id: string) => Boolean(S.leadAct[id] || S.conn[id]);
+  // The Leads already acted on when the board appeared: only one acted on since then fades in.
+  const actedAtFirst = useInitial(ids.filter(acted));
   const rows = (list: string[]) =>
     list.length ? (
       <Panel cls="a-board-list">
         <div className="a-leads">
           {list.map((id) => (
-            <LeadRow key={id} c={co(id)} selected={id === selected} turn={turn(id)} />
+            <LeadRow
+              key={id}
+              c={co(id)}
+              selected={id === selected}
+              turn={turn(id)}
+              actedHere={acted(id) && !actedAtFirst.includes(id)}
+            />
           ))}
         </div>
       </Panel>
@@ -250,7 +288,7 @@ export function LeadBoard({
       {rows(ids)}
       <aside
         className="a-surface a-detail"
-        data-turn={staged ? 0 : undefined}
+        {...inTurn(staged ? 0 : undefined)}
         {...focusPanel(true)}
       >
         {selected ? <LeadDetail c={co(selected)} /> : finished}

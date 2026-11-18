@@ -4,7 +4,7 @@ import { useState, type ReactNode } from "react";
 
 import { ClaimMessage } from "@/components/product/screens/claim-message";
 import { Btn, Mono, OfferSeek } from "@/components/product/shared";
-import { claimJustFinished } from "@/components/product/staged-arrival";
+import { noteClaimFinished } from "@/components/product/staged-arrival";
 import { TwoPanel } from "@/components/product/two-panel";
 import { useSimulation } from "@/components/product/use-simulation";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -46,7 +46,7 @@ function Welcome({
 
 /** Finishes the claim and opens the day-one Matches, which arrive one after another this once. */
 function finishClaim() {
-  claimJustFinished();
+  noteClaimFinished();
   act.claimFinish();
 }
 

@@ -18,7 +18,9 @@ export function MonthlyTopList() {
           {top.map((t, i) => (
             <div className="a-li" key={t.n}>
               <span className="a-li-m">
-                {i + 1}. {t.n}
+                <strong>
+                  {i + 1}. {t.n}
+                </strong>
               </span>
               <span className="a-li-r">{t.p} points</span>
             </div>

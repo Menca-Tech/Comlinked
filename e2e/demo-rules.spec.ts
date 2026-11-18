@@ -1,6 +1,8 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
+import { goToComDashTab, goToSection } from "./demo-helpers";
+
 // The rules every Demo screen holds to (docs/specs/2026-11-18-demo-premium-pass.md): text sizes
 // on the one scale, no capitals, at most one Focus panel, at most one solid button outside the
 // Story Bar, and no sideways scroll. They are checked on each screen in SCREENS at laptop and
@@ -27,28 +29,8 @@ async function openAt(page: Page, address: string, heading: string) {
   await expect(page.locator("main h1")).toHaveText(heading);
 }
 
-/** Opens one of the Company's sections from its bar: the top bar on a laptop, the tabs along the
- * bottom on a phone. Only the bar in use is on screen, and a section's count sits after its name
- * in the top bar and before it on a tab. */
-async function openSection(page: Page, name: string, heading: string) {
-  await page
-    .getByRole("navigation")
-    .getByRole("button", { name: new RegExp(`^(\\d+ )?${name}( \\d+)?$`) })
-    .click();
-  await expect(page.locator("main h1")).toHaveText(heading);
-}
-
-/** Opens one of ComDash's tabs and waits for something only that tab shows. */
-async function openTab(page: Page, name: string, shows: string | RegExp) {
-  await page
-    .getByRole("navigation", { name: "ComDash sections" })
-    .getByRole("link", { name, exact: true })
-    .click();
-  await expect(page.getByRole("heading", { name: shows })).toBeVisible();
-}
-
 /** Stop 4: Kalayaan Foods two weeks in, with possible future pricing off. */
-const twoWeeksIn = (page: Page) => openAt(page, "/app/dash?stop=4", "Kalayaan Foods Inc.");
+const stopFour = (page: Page) => openAt(page, "/app/dash?stop=4", "Kalayaan Foods Inc.");
 
 /** The full Demo two weeks in, which opens ComDash on the Free member view. */
 async function fullDemoTwoWeeksIn(page: Page) {
@@ -134,15 +116,15 @@ const SCREENS: Screen[] = [
   {
     name: "Interest Signals, with possible future pricing off",
     open: async (page) => {
-      await twoWeeksIn(page);
-      await openTab(page, "Interest Signals", "13 interested companies");
+      await stopFour(page);
+      await goToComDashTab(page, "Interest Signals", "13 interested companies");
     },
   },
   {
     name: "Interest Signals with a Company's timeline open",
     open: async (page) => {
-      await twoWeeksIn(page);
-      await openTab(page, "Interest Signals", "13 interested companies");
+      await stopFour(page);
+      await goToComDashTab(page, "Interest Signals", "13 interested companies");
       await page.getByRole("button", { name: /^Hapag Kitchen Group/ }).click();
       await expect(page.getByRole("dialog", { name: "Hapag Kitchen Group" })).toBeVisible();
     },
@@ -151,7 +133,7 @@ const SCREENS: Screen[] = [
     name: "Interest Signals on the Free member view",
     open: async (page) => {
       await fullDemoTwoWeeksIn(page);
-      await openTab(page, "Interest Signals", "13 interested companies");
+      await goToComDashTab(page, "Interest Signals", "13 interested companies");
       await expect(page.getByRole("button", { name: "See who", exact: true })).toHaveCount(6);
     },
   },
@@ -168,29 +150,29 @@ const SCREENS: Screen[] = [
   {
     name: "the Connections tab",
     open: async (page) => {
-      await twoWeeksIn(page);
-      await openTab(page, "Connections", "Manage connections");
+      await stopFour(page);
+      await goToComDashTab(page, "Connections", "Manage connections");
     },
   },
   {
     name: "the Profile tab",
     open: async (page) => {
-      await twoWeeksIn(page);
-      await openTab(page, "Profile", "Profile strength");
+      await stopFour(page);
+      await goToComDashTab(page, "Profile", "Profile strength");
     },
   },
   {
     name: "Leads",
     open: async (page) => {
-      await twoWeeksIn(page);
-      await openSection(page, "Leads", "Today’s leads");
+      await stopFour(page);
+      await goToSection(page, "Leads", "Today’s leads");
     },
   },
   {
     name: "another Company's profile",
     open: async (page) => {
-      await twoWeeksIn(page);
-      await openSection(page, "Leads", "Today’s leads");
+      await stopFour(page);
+      await goToSection(page, "Leads", "Today’s leads");
       const lead = page
         .getByRole("article")
         .filter({ has: page.getByRole("button", { name: "Skip" }) });
@@ -201,15 +183,15 @@ const SCREENS: Screen[] = [
   {
     name: "ComMail",
     open: async (page) => {
-      await twoWeeksIn(page);
-      await openSection(page, "ComMail", "ComMail");
+      await stopFour(page);
+      await goToSection(page, "ComMail", "ComMail");
     },
   },
   {
     name: "a conversation in ComMail",
     open: async (page) => {
-      await twoWeeksIn(page);
-      await openSection(page, "ComMail", "ComMail");
+      await stopFour(page);
+      await goToSection(page, "ComMail", "ComMail");
       await page
         .getByRole("button", { name: /^Nordhavn Freight Forwarders/ })
         .first()
@@ -220,15 +202,15 @@ const SCREENS: Screen[] = [
   {
     name: "Asks",
     open: async (page) => {
-      await twoWeeksIn(page);
-      await openSection(page, "Asks", "Asks");
+      await stopFour(page);
+      await goToSection(page, "Asks", "Asks");
     },
   },
   {
     name: "Wins",
     open: async (page) => {
-      await twoWeeksIn(page);
-      await openSection(page, "Wins", "Wins");
+      await stopFour(page);
+      await goToSection(page, "Wins", "Wins");
     },
   },
 ];

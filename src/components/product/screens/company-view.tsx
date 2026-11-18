@@ -25,7 +25,7 @@ function ContactActions({ c }: { c: Company }) {
   const S = useSimulation();
   const conn = S.conn[c.id];
   const asked = S.incoming.some((r) => r.co === c.id);
-  const replaced = useReplaced(conn === "connected" || conn === "pending");
+  const replaced = useReplaced(conn !== undefined);
   return (
     <div className="a-acts">
       {conn === "connected" ? (

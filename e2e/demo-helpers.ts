@@ -10,17 +10,35 @@ export const focusPanel = (page: Page) => page.locator("[data-focus-panel]");
 
 /** The shadow of the white surface an element sits on: "none" for a flat panel. */
 export async function surfaceShadow(part: Locator) {
-  return part.evaluate((el) => {
+  return part.evaluate((el, white) => {
     let node: Element | null = el;
-    while (node && getComputedStyle(node).backgroundColor !== "rgb(255, 255, 255)") {
-      node = node.parentElement;
-    }
+    while (node && getComputedStyle(node).backgroundColor !== white) node = node.parentElement;
     return node ? getComputedStyle(node).boxShadow : "no surface";
-  });
+  }, WHITE);
 }
 
-/** Focus shows as an outline, or as a field's ring. */
-export async function hasVisibleFocus(page: Page) {
+/** Opens one of the Company's sections from its bar and waits for its screen: the top bar on a
+ * laptop, the tabs along the bottom on a phone. Only the bar in use is on screen, and a section's
+ * count sits after its name in the top bar and before it on a tab. */
+export async function goToSection(page: Page, name: string, heading: string) {
+  await page
+    .getByRole("navigation")
+    .getByRole("button", { name: new RegExp(`^(\\d+ )?${name}( \\d+)?$`) })
+    .click();
+  await expect(page.getByRole("heading", { name: heading, level: 1 })).toBeVisible();
+}
+
+/** Opens one of ComDash's tabs and waits for a heading only that tab shows. */
+export async function goToComDashTab(page: Page, name: string, shows: string | RegExp) {
+  await page
+    .getByRole("navigation", { name: "ComDash sections" })
+    .getByRole("link", { name, exact: true })
+    .click();
+  await expect(page.getByRole("heading", { name: shows })).toBeVisible();
+}
+
+/** The focused element must show its focus: as an outline, or as a field's ring. */
+export async function expectVisibleFocus(page: Page) {
   const shown = await page.evaluate(() => {
     const el = document.activeElement;
     if (!el) return false;
@@ -35,7 +53,7 @@ export async function tabTo(page: Page, target: Locator, limit = 60) {
   for (let presses = 0; presses < limit; presses++) {
     await page.keyboard.press("Tab");
     if (await target.evaluate((el) => el === document.activeElement)) {
-      await hasVisibleFocus(page);
+      await expectVisibleFocus(page);
       return;
     }
   }

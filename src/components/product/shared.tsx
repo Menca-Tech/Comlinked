@@ -26,29 +26,29 @@ export function Btn({ cls, className, type = "button", ...props }: ButtonProps) 
   return <Button type={type} variant="ghost" className={cn("a-btn", cls, className)} {...props} />;
 }
 
-/** Whose mark it is: a Company in the network, by its id, or the viewer's own Company. */
+/** Whose mark it is: a Company in the network, by its id; the viewer's own Company; or a Company
+ * the network holds no claim for, with its initials if it is named. */
 type MarkOf =
-  { c: Pick<Company, "id" | "ini">; own?: false } | { c: Pick<MyCompany, "ini">; own: true };
+  | { c: Pick<Company, "id" | "ini">; own?: false; plain?: false }
+  | { c: Pick<MyCompany, "ini">; own: true; plain?: false }
+  | { c?: Pick<Company, "ini">; plain: true };
 
 /** A Company's mark: its initials on a square. Pale blue once the Company has claimed, a dashed
  * outline until then, and solid navy for the viewer's `own` Company. Whether a Company has
- * claimed comes from the seam, so no screen works it out. */
+ * claimed comes from the seam, so no screen works it out. A `plain` mark is grey and says nothing
+ * of claiming: it is for a Company in another chamber, which the network holds no claim for, and
+ * for one whose name a "View as" tier hides, which carries no initials either. */
 export function Mono(props: MarkOf & { cls?: string }) {
-  const state = props.own ? "me" : hasClaimed(props.c.id) ? null : "unclaimed";
+  const state = props.plain
+    ? "plain"
+    : props.own
+      ? "me"
+      : hasClaimed(props.c.id)
+        ? null
+        : "unclaimed";
   return (
     <span className={cn("a-mono", state, props.cls)} aria-hidden="true">
-      {props.c.ini}
-    </span>
-  );
-}
-
-/** The mark of a Company the network holds no claim for, in grey, so it says nothing of whether
- * the Company has claimed: one in another chamber, with its initials, or one whose name a "View
- * as" tier hides, with none. */
-export function PlainMark({ ini, cls }: { ini?: string; cls?: string }) {
-  return (
-    <span className={cn("a-mono plain", cls)} aria-hidden="true">
-      {ini}
+      {props.c?.ini}
     </span>
   );
 }
@@ -81,30 +81,45 @@ export function CoBtn({ c, detail, cls }: { c: Company; detail?: ReactNode; cls?
   );
 }
 
+/** A status: an icon and a few words. `data-replaced` is what useReplaced returns, for one that
+ * took a button's place. */
 export function St({
   kind = "",
   icon,
   children,
-  ...rest
+  "data-replaced": replaced,
 }: {
   kind?: string;
   icon: ReactNode;
   children: ReactNode;
-} & Omit<ComponentProps<"span">, "className" | "children">) {
+  "data-replaced"?: string;
+}) {
   return (
-    <span className={cn("a-st", kind)} {...rest}>
+    <span className={cn("a-st", kind)} data-replaced={replaced}>
       {icon}
       {children}
     </span>
   );
 }
 
-/** For a status that takes a button's place once the viewer has acted. It marks the status so it
- * fades in, but only when it took that place while the viewer watched: one that was already there
- * when the screen opened does not move. Spread what it returns on the status. */
+/** A value as it was when the part first appeared, whatever it becomes afterwards. */
+export function useInitial<T>(value: T) {
+  const [initial] = useState(value);
+  return initial;
+}
+
+/** What a status carries when it took a button's place while the viewer watched, so it fades in.
+ * Spread it on the status. */
+export function replacedMark(on: boolean) {
+  return on ? { "data-replaced": "" } : undefined;
+}
+
+/** For a status that takes a button's place once the viewer has acted: its replacedMark, but only
+ * when it took that place while the viewer watched. One that was already there when the part
+ * first appeared does not move. */
 export function useReplaced(done: boolean) {
-  const [doneAtFirst] = useState(done);
-  return done && !doneAtFirst ? { "data-replaced": "" } : undefined;
+  const doneAtFirst = useInitial(done);
+  return replacedMark(done && !doneAtFirst);
 }
 
 export function NewMark() {

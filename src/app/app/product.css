@@ -823,7 +823,7 @@
     height: 100%;
     background: var(--color-accent-strong);
     border-radius: var(--radius-pill);
-    transition: width var(--duration-slow) var(--ease-out);
+    transition: width var(--duration-normal) var(--ease-out);
   }
   .a-switch-row {
     display: flex;
@@ -2036,16 +2036,10 @@
     margin-top: var(--space-1);
   }
   /* The one staged moment: after the claim the day-one Matches arrive one after another, about a
-     second in all. Each is in place and usable from the start; only its arrival is drawn. */
+     second in all. Each is in place and usable from the start; only its arrival is drawn, and each
+     carries its own delay, one beat for every turn before it. */
   [data-arriving] [data-turn] {
     animation: a-arrive var(--duration-slow) var(--ease-out) backwards;
-    animation-delay: calc(var(--turn, 0) * var(--stagger));
-  }
-  [data-turn="1"] {
-    --turn: 1;
-  }
-  [data-turn="2"] {
-    --turn: 2;
   }
   .a-auth {
     width: 100%;
@@ -2892,7 +2886,7 @@
   box-shadow: calc(var(--space-3) * -1) 0 var(--space-8)
     color-mix(in srgb, var(--color-shadow) 35%, transparent);
 }
-.cl-product .cd-drawer[data-opened] {
+.cl-product .cd-drawer[data-slide-in] {
   animation: cd-slide var(--duration-normal) var(--ease-out);
 }
 .cl-product .cd-close {

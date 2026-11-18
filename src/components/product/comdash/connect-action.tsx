@@ -8,7 +8,7 @@ import { act, connectionStatus, type Company } from "@/services/comlinked";
 export function ConnectAction({ company }: { company: Company }) {
   useSimulation();
   const status = connectionStatus(company.id);
-  const replaced = useReplaced(status === "connected" || status === "pending");
+  const replaced = useReplaced(status !== null);
   if (status === "connected") {
     return (
       <span className="cd-when" {...replaced}>

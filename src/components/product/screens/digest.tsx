@@ -45,7 +45,7 @@ export function Digest() {
         title="Morning digest"
         tail={<span className="a-small">8:00 a.m., by push and email</span>}
       />
-      <section className="a-card" aria-label="Today" {...focusPanel(true)}>
+      <section className="a-card" {...focusPanel(true)}>
         <p className="a-formal">
           #{d.rank}{" "}
           <span className="a-dim">

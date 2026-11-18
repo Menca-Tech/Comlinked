@@ -1,11 +1,13 @@
 "use client";
 
 import { LeadBoard, LeadsDone } from "@/components/product/lead-board";
-import { Btn, PageHead, Panel, Tally } from "@/components/product/shared";
+import { focusPanel } from "@/components/product/focus-panel";
+import { Btn, PageHead, Tally } from "@/components/product/shared";
 import { useSimulation } from "@/components/product/use-simulation";
 import { act } from "@/services/comlinked";
 
-// D2: the Daily Lead List.
+// D2: the Daily Lead List. The selected Company leads it; with no Lead left, or no Company left
+// to show, the Focus panel still shows, holding that line.
 export function Leads() {
   const S = useSimulation();
   const ids = S.lists[S.day] ?? [];
@@ -14,11 +16,11 @@ export function Leads() {
     return (
       <>
         <PageHead title="Today’s leads" />
-        <Panel>
+        <section className="a-card" {...focusPanel(true)}>
           <p className="a-empty">
             You have seen every example company. Reset the mockup from the guide to start again.
           </p>
-        </Panel>
+        </section>
       </>
     );
   }
