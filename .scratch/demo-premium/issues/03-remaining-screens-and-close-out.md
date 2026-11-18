@@ -8,20 +8,20 @@
 
 **Blocked by:** 02 — The member's story and daily screens, committed.
 
-**Status:** ready-for-agent
+**Status:** built and verified on 2026-11-18. Its choices are in the Outcome below, for the user to confirm or overturn. The pass is closed apart from those.
 
-- [ ] Search, Notifications, the Team Dashboard and After the MVP use the scale and the shared parts, with no raised panel
-- [ ] The Network Ring is the Focus panel on Engine, and the Mandate form is the Focus panel on the AI Lead Agent preview
-- [ ] The Presenter Guide uses the scale and the shared parts
-- [ ] The website's "Who's interested" panel shows the new marks, tags and figures, and its Activity View panel shows the claimed figure with its split, both still marked as examples
-- [ ] Nothing else on the website changes
-- [ ] The design system's App Mode section and its token list describe the scale, panels, the Focus panel, marks, charts, the Story Bar, compact controls, phones, motion and the two-panel screens as built
-- [ ] The ComDash redesign and Pilot Preview specs each carry a dated note pointing to the premium pass spec
-- [ ] No App Mode style writes a font size, radius or colour as a literal outside the scale's definition, and the stylesheet holds no rule that nothing uses
-- [ ] The rule checks run on every screen under `/app`, and a screen missing from their list fails a test
-- [ ] No Demo screen scrolls sideways at 360, 390, 1280 or 1440 pixels
-- [ ] After screenshots of every Demo screen are saved at 390 and 1280 pixels beside the before set
-- [ ] Meets the code quality points in its prompt, with the result reported
+- [x] Search, Notifications, the Team Dashboard and After the MVP use the scale and the shared parts, with no raised panel
+- [x] The Network Ring is the Focus panel on Engine, and the Mandate form is the Focus panel on the AI Lead Agent preview
+- [x] The Presenter Guide uses the scale and the shared parts
+- [x] The website's "Who's interested" panel shows the new marks, tags and figures, and its Activity View panel shows the claimed figure with its split, both still marked as examples
+- [x] Nothing else on the website changes
+- [x] The design system's App Mode section and its token list describe the scale, panels, the Focus panel, marks, charts, the Story Bar, compact controls, phones, motion and the two-panel screens as built
+- [x] The ComDash redesign and Pilot Preview specs each carry a dated note pointing to the premium pass spec
+- [x] No App Mode style writes a font size, radius or colour as a literal outside the scale's definition, and the stylesheet holds no rule that nothing uses
+- [x] The rule checks run on every screen under `/app`, and a screen missing from their list fails a test
+- [x] No Demo screen scrolls sideways at 360, 390, 1280 or 1440 pixels
+- [x] After screenshots of every Demo screen are saved at 390 and 1280 pixels beside the before set
+- [x] Meets the code quality points in its prompt, with the result reported
 
 ## Happy paths
 
@@ -135,3 +135,113 @@ Guardrails
 - Do not edit docs/mockup or CONTEXT.md.
 - If something here conflicts with the code or the spec, stop and ask.
 ```
+
+## Outcome
+
+Built on 2026-11-18, in the same session as tickets 01 and 02, after the user said to go on. Steps 1 to 7 are done. Every check passes except one website test that also fails now and then on the code before this ticket (see the checks below).
+
+**Commits on `feat/website-redesign-pages`**
+
+- `0436076`: steps 1 and 2. Search, Notifications, Engine, the AI Lead Agent preview, After the MVP, the Team Dashboard and the Presenter Guide, with the scale moved to its own file and the rule checks on every address under `/app`.
+- `8768236`: step 3. The website's two example panels.
+- `7e241f8`: steps 4 and 5. Every weight on the scale, and a class with no rule removed.
+- `e72d736`: step 6. The design system, the token list and the two dated notes.
+- `81b5e2c`: the code review's findings.
+
+**Two things that happened on the branch during this work, neither done by this session**
+
+- At 20:35 a commit `2bae58d` ("feat: code structure for improved readability and maintainability", the user's git identity) committed everything that had been left uncommitted on purpose: `CONTEXT.md`, the two older specs' tier edits, the premium pass spec, the flow map and all 173 files under `.scratch/demo-premium`, including the specimen and the screenshots of tickets 01 and 02.
+- At 21:08:59 the branch was pushed to `origin`, 34 seconds after `0436076`, so that commit went up with it. No git hook pushes, and this session never ran a push. This ticket says never to push and never to publish the specimen, so the user should check whether that push was meant. Nothing was done to undo it, since that would mean rewriting pushed history. The four later commits are local only. This file and the new screenshots and scripts under `.scratch/` were left uncommitted, as `.scratch/` always was before that commit.
+
+**Checks run on the final code**
+
+- Lint and type check pass. 346 unit tests pass (5 database tests are skipped, as before). The production build passes in a scratch copy, because a ComLinked dev server on port 3001 holds the build folder.
+- The whole browser suite, on a fresh server on port 3111 with three workers: 504 of 505 pass.
+  - The one failure is the homepage's contrast check ("foundation on / › axe finds no serious or critical violations"), which this ticket names. Axe catches one chip of the homepage ring part-way through its entrance.
+  - Run alone ten times, it failed once and then three times on this code, and once in ten on the code before this ticket (`2bae58d`, on a server of its own). So it is not caused by this work. No file of the homepage is changed.
+  - A full run before the review fixes passed 501 of 505 while another job on the machine held the load average above 20. Its four failures were 5-second navigation waits and passed when rerun.
+- The rule checks pass on 46 screens at 1280 and 390 pixels, with no sideways scroll at 360 or 1440: the 24 from tickets 01 and 02, and 22 more.
+  - Added: the Demo's own address; the Member List before its profiles are built; ComDash Overview for a new Company and with the later items; ComDash's AI Lead Agent tab; Your company; Search empty, with results and with none; Notifications with a request waiting and on the first day; Engine; the AI Lead Agent preview on its form, at a gate and complete; After the MVP; the Team Dashboard's four tabs and its first day; and the Presenter Guide.
+  - They failed first on Engine (text at 9, 11 and 15) and on the Presenter Guide (10.4), and pass now.
+  - The test that guards the list reads `src/paths.ts` and the page files under `src/app/app`, checks each screen is at the address the list gives it, and is itself tested with a made-up address.
+- Reduced motion, the keyboard and axe are covered on every screen in this ticket, and axe passes on the website's ComDash and For Chambers pages.
+- Coding standards: no finding left. No `any`, `!` or silencing cast, no logs, and no font size, radius or colour written as a literal in the App Mode stylesheet.
+- Code review, on two axes:
+  - Standards found two hard breaches, an XPath locator and two casts in a test, which are fixed. Also acted on: locators by class where a role exists, one-shot reads where an assertion can wait, the agent's run played in an order that depended on timing, helpers copied between test files, three unclear names, and the list guard trusting each screen's own label.
+  - Spec found seven things, all acted on: the chart stretched after the first day (a real fault, now with a test); the list guard read only `src/paths.ts`; the gate was a box inside a panel; the reduced-motion rule reached any sheet's veil; the website panels copied two letter-spacings; the long-name test did not prove wrapping; and four lines of the design system claimed more than the code does.
+  - Left as it is, on purpose: the website test that reads the stylesheet's rules, which the spec's "not how a style is written" would rule out, because the sad path asks for "no missing value"; and the 15-second wait, kept in the rule-check file and not in the Playwright config.
+- Prettier passes on every document changed, and every link in them resolves.
+
+**Sizes and radii in the App Mode stylesheet**
+
+|                                          | Before this ticket                                    | After                                  |
+| ---------------------------------------- | ----------------------------------------------------- | -------------------------------------- |
+| Distinct font sizes                      | 12: the scale's nine plus 9, 11 and 15px              | 9: the scale                           |
+| Font sizes written as literals in a rule | 36                                                    | 0                                      |
+| Distinct radii                           | 8, plus 0: 3, 6, 8, 10, 12 and 14px, 50% and the pill | 4, plus 0: 6, 10 and 14px and the pill |
+| Radii written as literals in a rule      | 14                                                    | 0                                      |
+| Colours written as literals              | 35                                                    | 0                                      |
+
+- The pass started at 16 sizes and 8 radii. It ends at the scale.
+- The scale's definition, `src/app/demo-scale.css`, holds the only literals: the nine sizes, the four radii, the hairline and the two colours of the Focus panel's shadow.
+- `font-size: inherit` appears once, on the note inside a Presenter Guide switch.
+- Every class the stylesheet styles is used by a component. The one exception is the Network Ring component's rules (see choice 2).
+
+**Screenshots**
+
+- After: 61 views at 390 and 1280 pixels, 122 files, in `.scratch/demo-premium/shots/after/03/`: every Demo screen the earlier sets hold, the states this ticket adds (Search empty and with no results, the four Team Dashboard tabs and its first day, the agent's run at a gate and complete, the Presenter Guide) and the two website heroes. They are mirrored to `test-results/demo-premium/after/03/`.
+- Each Demo screen has a file of the same name in `shots/before/`.
+- The new files are untracked and were not committed. The scripts that take them are `shots.mjs`, `later_shots.mjs` and `web_shots.mjs` in `.scratch/demo-premium/`.
+
+**Choices the ticket did not spell out**
+
+These stand unless overturned.
+
+1. **The scale moved to `src/app/demo-scale.css`**, imported from `src/app/globals.css`, so the website can read it without the Demo's stylesheet. Its selector now also names the toast and the two example panels. It gained three named values: the ring round a focused field (3px), an icon (22px) and the width of the Engine's map (700px). The review notes this as more than "widen where it is defined"; they replace literals that were already there.
+2. **"The Network Ring" on Engine is read as the Engine's network map.** `network-ring.tsx` is drawn by no screen, and the ComDash spec says it stays in the codebase unused. Its styles were put on the scale and kept, so they are the one set of rules no element uses.
+3. **Engine.** The map's initials are 12 (they were 9 and 11) and your own Company's are 16 (15). The scores under it are a compact data panel.
+4. **Search.** The field sits on the page under the title, and the results are in a flat panel below it.
+5. **The AI Lead Agent preview during a run raises nothing.** The spec names only the Mandate form. A gate sits between two hairlines in the conversation, where it was a blue-tinted panel, and its Approve is the one solid button. The match types are chips.
+6. **The Team Dashboard's chart is drawn at the width it is given**, so its axis reads at 12. It was scaled up with its panel and read at about 21 on a laptop. "Target 20" is now drawn over the line, where the line struck it out.
+7. **"On track", "Behind", "Cleared" and "Flagged" are the shared tag with an icon**, at 12. They were a larger pill of their own.
+8. **Tabs inside a screen** (the Team Dashboard, the handoff package) read as the places in the top bar do, at 14 in these compact areas.
+9. **The Presenter Guide's presets are outlined**, so the guide adds no solid button to the screen behind it. Its switches stay buttons that say On or Off, restyled on the scale.
+10. **Reduced motion now also stills the Presenter Guide** and the veil behind it.
+11. **Emphasis is 600 everywhere in the Demo.** One line on the approved ComDash Overview, "Missing:", was the browser's bold and is now 600. A read notification's title is 400. The rule checks now also fail on a weight the scale does not use.
+12. **The website's panels are white**, as the Demo's panels are, on the navy hero. They were dark. "Who's interested" lists Hot first and gained three figures, counted from its own rows. The Activity View panel shows the Demo's Day 14: 40 of 100, split 20, 16, 4 and 60, with four members whose statuses match the Demo's, one of them not yet claimed with its dashed mark. Their "Example" tag is the website's own part, in grey, so it is the one thing in them not on the Demo's scale.
+13. **The toast** takes the panel radius (14, was 12), and the guide's round button lost its shadow.
+14. **The rule checks wait up to 15 seconds for a screen**, where other tests wait 5, because each opens a screen through several steps on a server that builds each address on first use.
+15. **The Run of Show is unchanged.** It was walked against the app, and no click or sentence differs.
+16. **The dated notes sit under each older spec's header lines**, above the user's own note of 2026-11-18 on the ComDash spec.
+
+**Files touched outside the Modify list**
+
+- New: `src/app/demo-scale.css`, and one import line in `src/app/globals.css`.
+- New tests: `src/components/product/screens/notifications.test.tsx`.
+- `e2e/demo-rules.spec.ts` and `e2e/demo-helpers.ts`, which hold the rule checks and the shared helpers.
+
+**Existing tests changed, and why**
+
+None was weakened.
+
+- `e2e/demo-rules.spec.ts`: each screen names its address; the narrow-phone test also checks 1440 pixels; the reader takes the part of the page to read, for the Presenter Guide; and text weight joined the rules.
+- `e2e/demo-helpers.ts`: `expectStill` can read a part of the page other than the screen, and `surfaceEdges` was added.
+- `e2e/product-smoke.spec.ts`: `solid` moved out of one group of tests so a second can use it. Its own `guide` helper gave way to the shared `fromGuide`, at 24 call sites, and three locators by class became the button's name.
+- `e2e/website-redesign.spec.ts`: the two "one marked example image" tests are unchanged and still pass. New tests cover what the panels now show.
+
+**Component test added, and why the browser cannot reach it**
+
+- `notifications.test.tsx`: Notifications with nothing to show. A Company has notifications from its first day in the Demo.
+
+**Left for later**
+
+- **A dev server needs a restart, or a second edit, to see a new stylesheet import.** The running servers served the Demo unstyled until `globals.css` changed again. Both serve it correctly now.
+- **The Engine's map cannot be used from the keyboard.** Its companies open on a click only, as before. Making 100 nodes reachable changes what the screen does.
+- **The service seam.** `hasClaimed` still throws for a Company in another chamber, and `activityView().tiles` still returns "Active" and "Need an intro", which no screen shows.
+- **Marks in ComDash's plain rows.** Next action, Manage connections, Invitations and "From your connections" still list a Company with no mark.
+- **The Profile tab still shows the company name twice.**
+- **Browser test helpers.** `panelTitles`, `expectAccessible` and `noSidewaysScroll` are still repeated in three spec files, and older tests write addresses out where `src/paths.ts` names them.
+- **The homepage's contrast check** fails about one run in ten alone. Waiting for the ring to finish before axe runs would end it; the test already has a helper for that.
+- **Three one-off offsets** (3px, 9px and a 340px width) and the logo rings' geometry are still literals in the App Mode stylesheet. None is a font size, radius or colour.
+- **The Network Ring component** and its styles could be deleted together if the user no longer wants it kept.
+- **The mockup under `docs/mockup`** is still named as the reference for how each screen works in the design system's opening lines, which this ticket did not touch.
