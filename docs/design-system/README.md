@@ -88,8 +88,8 @@ shadow. Inputs use `radius-control` (8px); buttons, tags and chips are pills
 surface, and the **recommended** tier (`cl-blue-tint` + `cl-blue` border).
 
 **Data.** In Site Mode, the proof device is an **oversized blue figure** with a
-short caption and an optional superscript unit (`/mo`). App Mode figures are small
-and plain.
+short caption and an optional superscript unit (`/mo`). App Mode figures are plain:
+the sans face at 28px in ink.
 
 **The ring.** The logo's concentric mark, small (`.cl-ring`), leads Site Mode list
 rows and marks "live" or "new" items (never a label above a heading). It replaces
@@ -109,8 +109,9 @@ icons, though check marks may show included features.
 
 Other companies are shown by **initials only** (no logos or photos): a dark chip
 with 8px corners, or an oversized monogram (ink, accent or steel). In App Mode the
-chip is a pale square with navy initials, and only your own company's stays solid
-navy. Squares mean companies; circles would read as people.
+mark is a square that shows whether the Company has claimed (see
+[Controls and small parts](#controls-and-small-parts)). Squares mean companies;
+circles would read as people.
 
 **App Mode controls use Lucide** at a 2px stroke, in ink or muted. Blue appears only
 on the active item. Never put an icon on a tinted tile.
@@ -119,118 +120,289 @@ on the active item. Never put an icon on a tinted tile.
 
 ## App Mode
 
-The rules for signed-in screens and the claim steps. The job of every screen is to
-make the next action obvious, so one thing leads and the rest stays quiet.
+The rules for signed-in screens, the claim steps and the Pilot Preview. The job of every screen
+is to make the next action obvious, so one thing leads and the rest stays quiet. How these
+screens look was set by the premium pass of 2026-11-18
+([spec](../specs/2026-11-18-demo-premium-pass.md)): quiet and exact.
 
-**The feeling.** "This is serious, and I was invited." Calm and precise, closer to a
-private bank than a consumer app.
+**The feeling.** "This is serious, and I was invited." Calm and precise, closer to a private
+bank than a consumer app.
 
-**Theme.** Light only for the MVP. Dark sections and rings stay on public pages, with
-one exception: the claim steps are the doorway into the app, so they use a navy panel
-with the rings.
+**Theme.** Light only for the MVP. Dark sections and rings stay on public pages, with one
+exception: the two-panel screens are doorways into the app, so they use a navy panel with the
+rings (see [Two-panel screens](#two-panel-screens)).
 
-**Navigation.** Five places, in this order: ComDash, Leads, ComMail, Asks, Wins.
-Words in a top bar from 900px; bottom tabs with Lucide icons on phones. The active
-tab has a tinted icon and a bold label. The phone top bar holds a bell with its
-count, search and the company's initials. Community Manager and ComLinked Staff
-tools use their own simple header.
+### The scale
 
-**Type.** Source Serif 4 for page titles and the rank figure only, one formal line per
-screen. Nunito Sans for everything else, kept light: bold (700 and up) is rare.
+Every font size, corner radius, space and colour on an App Mode screen is a named value from one
+scale. The scale is defined once, in `src/app/demo-scale.css`, and the App Mode stylesheet
+(`src/app/app/product.css`) uses those names and writes no size, radius or colour of its own.
+Changing a step changes one value, and every screen follows.
 
-| Role                          | Phone, laptop | Font and weight          |
-| ----------------------------- | ------------- | ------------------------ |
-| Claim headline                | 34px, 46px    | Source Serif 4, 500      |
-| Page title                    | 26px, 32px    | Source Serif 4, 500      |
-| Rank figure                   | 32px          | Source Serif 4, 500      |
-| Score, where the number leads | 28px          | Nunito Sans, 600         |
-| Section title                 | 18px          | Nunito Sans, 600         |
-| Body, company names           | 16px          | Nunito Sans, 400 and 600 |
-| Details such as city or time  | 14px          | Nunito Sans, 400         |
-| Count badge, tab label        | 12px          | Nunito Sans, 600         |
+**Type.** Nine sizes, and nothing between them.
 
-**Layout.** Phones are single-column and come first. Laptops get their own layout on
-key screens: the claim steps are two panels (navy invitation, white action), and Leads
-and day-one matches are a ranked list beside the selected company in full.
+| Size | Used for                                                                                       |
+| ---- | ---------------------------------------------------------------------------------------------- |
+| 12   | Count badges, tags, chart axes, initials in a mark                                             |
+| 13   | Notes, captions, labels above figures, details in the compact density                          |
+| 14   | Details such as city or time, body text in the compact density, compact buttons, the Story Bar |
+| 16   | Body text, company names, navigation, tabs, buttons, inputs                                    |
+| 18   | Section and panel titles                                                                       |
+| 22   | The Focus panel's serif line on phones                                                         |
+| 28   | Figures. The Focus panel's serif line on laptops, and the page title on phones                 |
+| 36   | Page titles on laptops. The two-panel headline on phones                                       |
+| 44   | Only the two-panel headline on laptops and the chamber screens' claimed figure                 |
+
+- **Faces and weights.** Source Serif 4 at 500 for the page title, the Focus panel's one formal
+  line and the two-panel headline, and nothing else. Nunito Sans at 400 and 600 for everything
+  else. 700 and heavier are not used, so emphasis is 600.
+- **Figures.** Nunito Sans 600 at 28 in ink, with the label above in 13 and any note below in 13.
+- **No capitals.** No heading, label or table header is set in capitals.
+
+**Radii.** Three, plus pills: 6 for company marks and small inner shapes, 10 for controls, 14
+for panels. Tags, count badges and chips are pills.
+
+**Space.** Multiples of 4. Space is tight inside a group and clearly larger between sections.
+
+**Two densities.** Standard for most screens. Compact for data panels wherever they appear:
+number tiles, tables, charts, side rails, the Interest Signals tab, the chamber screens and the
+Team Dashboard. A density is set once, on the panel or the screen that holds the data
+(`data-density="compact"`), never per element.
+
+| Value              | Standard | Compact                     |
+| ------------------ | -------- | --------------------------- |
+| Body text          | 16       | 14                          |
+| Details            | 14       | 13                          |
+| Panel padding      | 24       | 16 on phones, 20 on laptops |
+| Gap between panels | 20       | 12                          |
+| Company mark       | 40       | 32                          |
+
+**Colour.** One accent and no new hue. App Mode adds one neutral: a quieter grey for third-level
+text (`cl-quiet`, #62676C), which holds 5.23:1 on the page and 5.71:1 on a panel.
+
+### Panels and the Focus panel
+
+- **Panel.** Flat white, a 1px hairline border, the panel radius, no shadow. Lists sit inside it
+  on hairline dividers. Never a card per row, and never a card inside a card.
+- **Focus panel.** The one panel on a screen that holds the thing to act on now. At most one per
+  screen. White, no border, raised on a soft navy-tinted shadow, with 28px of padding. Where it
+  holds a line to act on, that line is the screen's one serif line below the title. A screen with
+  nothing to act on ("You’re all caught up") still shows its Focus panel, holding that line. A number tile that is the Focus panel keeps the
+  tiles' padding, so its figure stays in line with the others.
+- **One solid button.** The screen's main action is its only solid navy button. Every other
+  button is outline or quiet. The Story Bar's Next is outlined, so it never competes.
+- **Phones.** One column. Panels stay inset by a 16px gutter and keep their hairline, and the
+  Focus panel keeps its raise.
+
+| Screen                                               | Focus panel                                                 |
+| ---------------------------------------------------- | ----------------------------------------------------------- |
+| Opening, the ask                                     | The navy panel                                              |
+| Claim message and claim steps                        | The claim message, then the action panel of the claim steps |
+| Day-one Matches, Leads                               | The selected Company                                        |
+| Morning Digest                                       | The rank line and "Open today’s lead list"                  |
+| ComDash Overview                                     | Next action                                                 |
+| Interest Signals                                     | The Messages tile                                           |
+| Connections tab                                      | Invitations                                                 |
+| Profile tab                                          | Profile strength                                            |
+| ComMail                                              | The open conversation and its reply box                     |
+| Asks                                                 | The box for posting an Ask                                  |
+| Wins                                                 | The testimonial that is owed, or else the card for sharing  |
+| Chamber screens, both Seats                          | The claimed figure with its split                           |
+| Engine                                               | The network map                                             |
+| AI Lead Agent preview                                | The Mandate form                                            |
+| Search, Notifications, Team Dashboard, After the MVP | None: the page title leads                                  |
+
+The Focus panel carries one marker in the page, `data-focus-panel`, written by `focusPanel()`.
+The styles and the browser checks both find it by that marker.
+
+### Navigation
+
+Five places, in this order: ComDash, Leads, ComMail, Asks, Wins.
+
+- **Top bar.** White with a hairline under it and no shadow, 60px tall on laptops and 56px on
+  phones. From 900px the places are words: the active one is ink at 600 on a navy underline.
+  Count badges are small tinted pills with navy figures. On phones the top bar holds a bell with
+  its count, search and the company's own mark.
+- **Bottom tabs.** On phones, with Lucide icons. The active tab has a tinted icon and a label at 600.
+- **Tabs inside a screen** (ComDash, the Team Dashboard, the handoff package) read as the places
+  in the top bar do. The chosen tab's underline moves to it.
+- Community Manager and ComLinked Staff tools use their own simple header.
+
+**Story Bar.** On every Stop of the Pilot Preview, a slim second row of the white header, about
+48px tall on laptops, closed by a hairline and not fixed to the screen. Left to right: six step
+dots (done, current, to come), the day and what is happening at 600, whose Seat in the quieter
+grey, then the Stop count, Back as a quiet button and Next as an outlined button. A Stop's side
+step is a quiet button before the count. Its text is 14. On phones the step dots share the first
+row with the count, Back and Next; the day and title follow, then the Seat line; a side step
+takes its own row; and Next is at least 44px tall.
+
+### Controls and small parts
+
+- **Controls.** Standard controls are 40px tall on laptops and 44px on phones. Compact controls
+  (chips, table actions, the Story Bar's buttons) are 32px on laptops and 44px on phones. Buttons
+  have 10px corners, matching inputs, and run full width on phones only.
+- **Button**: solid, outline, quiet.
+- **Tag** and **count badge**: small pills that cannot be tapped. A tag is 20px tall at 12px.
+- **Chip**: a pill with a border, which can be tapped. The chosen one is tinted. Shape shows what
+  is clickable.
+- **Company mark**: a square with initials at 12px, on the mark radius. It is one part, used
+  wherever a Company is listed.
+  - A Company that has claimed: pale blue ground, navy initials.
+  - A Company that has not: no ground, a dashed outline, initials in the quieter grey. "Not yet
+    claimed" still shows as a tag wherever it does, so the shape is never the only cue.
+  - Your own Company, where a screen shows it as yours: solid navy.
+  - A Company the network holds no claim for, and a row a "View as" tier hides: plain grey. A
+    hidden row's mark carries no initials.
+- **Fit Score**: a number with a small "Fit" label, in ink. Point values appear only on the
+  Engine screen.
+- **Lead row**: selected (the Focus panel, and the only one with buttons), waiting (name, city,
+  Fit Score and one line on why to meet; select it to act), done (collapsed to a one-line
+  result). Highest Fit Score first. Finishing a Lead opens the next one.
+- **Tally**: one mark per item in a short daily task, such as 2 of 5 done.
+- **List row**: mark, name, details, optional plain value at the end.
+- **Toast** and **empty state**. Every panel has a calm empty state that says what will appear.
+
+**Colour and status.** Status is always text, never colour alone.
+
+| Meaning                                   | Treatment                                                                                         |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| The one main action on a screen           | Solid navy (`action-primary`) button                                                              |
+| Active or selected                        | Blue plus a second cue: weight 600 or a tint                                                      |
+| Good ("On track", "Connected", "Cleared") | Blue tint, check icon and label                                                                   |
+| Needs attention ("Behind", "Flagged")     | `error` tint, alert icon and label                                                                |
+| Interest Level                            | Hot solid navy, Warm in the blue tint, New outlined                                               |
+| Member status                             | Active in the blue tint, Quiet grey, Needs an intro in the `error` tint, Not yet claimed outlined |
+| Everything else, including Fit Scores     | Ink or muted                                                                                      |
+
+Inside a group already headed by its status, rows carry no status tag.
+
+### Charts
+
+Daily counts are drawn as bars, by one shared part (`DayBars`). A quiet day must not look like a
+fault.
+
+- **Small chart, ComDash Overview.** One bar per day. A day with nothing shows a short tick on
+  the baseline. "Day 1" and the last day label the ends, and a sentence under the chart says what
+  it shows.
+- **Large chart, Interest Signals.** One bar per day, with search appearances in navy and
+  recommendations stacked above in light blue. It has an axis grid, a tick label every other day,
+  a hover label on each segment, a legend that gives the latest day's values, and a text list of
+  each day's values for screen readers. There is no series toggle: both fit on a phone.
+- **Empty.** A new Company with no visibility sees the calm empty state and no bars.
+- **The Team Dashboard's trend** is the one line chart: weekly active companies against the
+  target. It is drawn at the width it is given, so its axis reads at 12.
+
+### Two-panel screens
+
+The Opening, the ask and the claim steps share one form (`TwoPanel`): two panels in one frame on
+the panel radius, navy with the logo rings beside white. The headline is the serif at 44 on
+laptops and 36 on phones. On phones the navy panel stacks above the white one.
+
+- **The Opening.** Navy: the title, the one-line description, and the invented-data line at the
+  foot above a rule. White: "The 6 stops" as a timeline with the day beside each Stop, then Start
+  as the solid button.
+- **The ask.** Navy: the title, the two things ECCP gives as a numbered pair, and "The pilot is
+  free for ECCP and its members." at the foot in the serif. White: what ComLinked does and what
+  members get as plain lists, then Email Richard as the solid button and Explore on your own as
+  outline.
+- **The claim steps.** Navy invitation, white action panel. Here the white panel is the Focus
+  panel.
+
+### Screens
+
+**Layout.** Phones are single-column and come first. Laptops get their own layout on key
+screens: the two-panel screens, and Leads and day-one Matches as a ranked list beside the
+selected company in full.
 
 **ComDash.** The home screen follows the 2026-11-11 redesign
-([spec](../specs/2026-11-11-comdash-redesign.md)). It has a header with the company name,
-industry, city and chamber, a "View as" switcher, and five tabs with their own addresses:
-Overview, Interest Signals, AI Lead Agent, Connections and Profile. The tabs are links in
-one row that scrolls sideways on phones.
+([spec](../specs/2026-11-11-comdash-redesign.md)) for what it holds. It has a header with the
+company name, industry, city and chamber, a "View as" switcher, and five tabs with their own
+addresses: Overview, Interest Signals, AI Lead Agent, Connections and Profile. The tabs are links
+in one row that scrolls sideways on phones.
 
-- **Overview**: Next action, then four summary cards two by two (one column on phones):
-  Interest Signals with three stats, a small visibility line and the Hot companies, each
-  opening its timeline; AI Lead Agent, labelled "Preview: after the MVP", with no agent
-  figures; Connections; and Profile.
-- **Interest Signals**: the six top numbers, the visibility chart beside the interest
-  funnel, then the interested companies table (Hot, then Warm, then New, with All, Hot,
-  Warm and New filter chips showing counts) beside a rail of alerts, "Found you as a…",
-  interest by industry and search terms with profile gaps. A row opens a side drawer
-  with the company's dated timeline, "You see the company, not the person.", and Connect
-  and Message. On Growth and Pro the drawer adds each entry's intent points. On phones
-  the table becomes stacked cards, the chart shows one series and the drawer is full
-  width.
-- **Connections**: Manage connections beside the main column on laptops, then
-  Invitations, Companies in your chamber, Buyers of what you sell, and "From your
-  connections" (asks, Success Wall wins and profile updates, each with a reply box that
-  sends only on Send).
-- **"View as"**: Free, Growth and Pro chips with the note "Possible future pricing. Not
-  in the MVP." Free is the default and hides nothing. Growth adds an intent score and
-  Pro adds interest from other chambers. There is never blur or an upgrade prompt.
+- **Overview**: Next action spans the width as the Focus panel. Below it, two columns on
+  laptops: Interest Signals in the wide one, with three figures, the day bars and the Hot
+  companies, each opening its timeline; Connections and Profile stacked in the narrow one, each
+  as tall as its content. When the presenter shows the later items, the AI Lead Agent card,
+  labelled "Preview: after the MVP", joins the narrow stack. One column on phones.
+- **Interest Signals**: in the compact density. Six number tiles with Messages as the Focus
+  panel, the stacked day bars beside the interest funnel, then the interested companies table
+  (Hot, then Warm, then New, with All, Hot, Warm and New filter chips showing counts) beside a
+  rail of alerts, "Found you as a…", interest by industry and search terms with profile gaps.
+  Table headers are sentence case. A row opens a side drawer with the company's mark, its dated
+  timeline, "You see the company, not the person.", and Connect and Message. On phones the table
+  becomes stacked cards and the drawer is full width.
+- **Connections**: Invitations lead as the Focus panel, with Accept as the one solid button.
+  Manage connections sits beside the main column on laptops, then Companies in your chamber,
+  Buyers of what you sell, and "From your connections" (asks, Success Wall wins and profile
+  updates, each with a reply box that sends only on Send).
+- **Profile**: Profile strength leads, with whatever is still missing as its one solid button.
+- **"View as"**: Free member, Growth and Pro chips with the note "Possible future pricing. Not in
+  the MVP." The tiers are a labelled demo of possible future pricing, as the user decided on
+  2026-11-18. They are off in the Pilot Preview, where ComDash shows everything the MVP does with
+  no tier, and on in the full Demo, which opens on Free member.
+  - **Free member** lists six interested companies with names, Interest Levels and signals
+    blurred, a "See who" button on each, an upgrade box, weekly alerts without names and five
+    search terms.
+  - **Growth** names the Company's own chamber with intent scores, highest first, hides other
+    chambers behind "Unlock on Pro", and adds "Send my agent" and a "Compare Pro" box.
+  - **Pro** names every chamber.
+  - The tier elements keep to the scale. The tab still has at most one solid button with the
+    tier's buttons counted: the upgrade box's button on Free member, while "Send my agent" is
+    outlined. What a tier shows or hides is set by the ComDash spec, not here. Richard must agree
+    before ECCP sees the tiers.
 
-The Network Ring and the rank line no longer appear on ComDash. Every panel has a calm
-empty state that says what will appear.
+The Network Ring and the rank line no longer appear on ComDash.
 
-**Containers.** One raised white panel per column, with a very soft navy-tinted shadow
-on the cool off-white page. Lists sit inside it with hairline dividers. Never a card
-per row and never a card inside a card. On phones, panels run edge to edge with no
-shadow. Space is tight within a group and clearly larger between sections.
+**Chamber screens, both Seats.** One Focus panel leads: the claimed figure ("40 of 100") at 44
+over a bar split in proportion into Active, Quiet, Needs an intro and Not yet claimed, with deals
+confirmed and wins posted beside it. Active is navy, Quiet the light logo blue, Needs an intro
+the `error` red and Not yet claimed the sunken grey; a status with no members draws no segment.
+The status filter under the bar is its key: five chips, each status with its colour and its
+count, so the counts are always in text. Below, members are grouped under the four status
+headings, six per group in two columns on laptops, with a control that shows the whole group,
+beside the side column (the Community Manager's tools, or the Success Wall and Monthly Top
+Companies).
 
-**Colour and status.** One accent, no new hues.
+**The later screens.** Search leads with its field under the title, over a flat list of marked
+results. Notifications is a flat list with new items marked. Engine raises the network map and
+keeps its notes flat. The AI Lead Agent preview raises the Mandate form; during a run nothing is
+raised, and a gate's Approve is the one solid button. After the MVP is flat lists. The Team
+Dashboard is compact, with "On track" and "Behind" as tags with their icons. None of Search,
+Notifications, After the MVP or the Team Dashboard raises a panel.
 
-| Meaning                               | Treatment                              |
-| ------------------------------------- | -------------------------------------- |
-| The one main action on a screen       | Solid navy (`action-primary`) button   |
-| Active or selected                    | Blue plus a second cue: bold or a tint |
-| Good ("On track", "Connected")        | Blue tint, check icon and label        |
-| Needs attention ("Behind", "Flagged") | `error` tint, alert icon and label     |
-| Everything else, including Fit Scores | Ink or muted                           |
+**Presenter Guide.** Opens with G. Its links, switches and figures use the same scale, and its
+buttons are outline or quiet, so it never adds a solid button to the screen behind it.
 
-**Controls.** Controls are at least 44px tall on phones and 40px on laptops. Buttons
-have 10px corners, matching inputs, and run full width on phones only. Each screen has
-one solid button; the rest are outline or quiet. Tags and count badges cannot be tapped
-and stay as small tinted pills, so shape shows what is clickable.
+### Copy
 
-**Components.**
+Name the screen plainly: "Wins", not a tagline. Do not explain the product inside the product. In
+the Demo, one "Example data" tag sits beside the logo on every screen, so a screenshot is never
+mistaken for real activity.
 
-- **App bar** and **bottom tabs**: the navigation above.
-- **Rank line**: rank figure, category and Activity Score on one line, with no dark
-  card and no row of stats.
-- **Active panel**: the single item to act on now, on a blue tint with no border.
-- **Lead row**: selected (the only one with buttons), waiting (name, city, Fit Score and
-  one line on why to meet; select it to act), done (collapsed to a one-line result).
-  Highest Fit Score first. Finishing a Lead opens the next one.
-- **Selected company**: why to meet, why it fits in plain words, then the actions. To
-  the right of the list on a laptop, opened in place on a phone.
-- **Fit Score**: a number with a small "Fit" label, in ink. Point values appear only on
-  the Engine screen.
-- **Company mark**: pale square with navy initials.
-- **Tally**: one mark per item in a short daily task, such as 2 of 5 done.
-- **Section**: an 18px title, then its list or content, with no container.
-- **List row**: initials, name, details, optional plain value at the end.
-- **Button**: primary, outline, quiet.
-- **Status label**, **tag**, **count badge**, **toast**, **empty state**.
+### Motion
 
-**Copy.** Name the screen plainly: "Wins", not a tagline. Do not explain the product
-inside the product. In the mockup, one "Example data" tag sits beside the logo on every
-screen, so a screenshot is never mistaken for real activity.
+- **State changes.** 150 to 250ms, on things the viewer triggers: the timeline drawer sliding in
+  when a row opens it, a tab's underline moving, a status fading in where a button was after
+  Connect or Send, a chip being chosen.
+- **One staged moment.** After the claim finishes on Stop 2, the three day-one Matches arrive one
+  after another: each fades in and rises 8px over 400ms, 300ms after the one before, about a
+  second in all. It runs once, on arrival from the claim, and any tap or key press ends it.
+- **Nothing else is staged.** No screen animates on load, and no figure counts up.
+- **Reduced motion.** Every transition and the staged moment are off, and the finished state
+  shows at once.
 
-**Motion.** 150–250ms, for state changes only. Respect reduced motion.
+### Keeping to it
 
-**Before keeping any element,** say what job it does. If removing it loses nothing,
-remove it. A choice that could be pasted into an unrelated product unchanged needs a
-reason to stay.
+- **The checks.** `e2e/demo-rules.spec.ts` opens every address under `/app` at laptop and phone
+  width and checks that every text size and weight is on the scale, nothing is in capitals, at
+  most one panel is the Focus panel, at most one button outside the Story Bar is solid, and
+  nothing scrolls sideways at 360, 390, 1280 or 1440 pixels. A new screen joins by joining its
+  list of screens, and a test fails, naming the address, if it is left off.
+- **The website's two example panels** picture these screens, and read the same named values
+  from `src/app/demo-scale.css`.
+- **Before keeping any element,** say what job it does. If removing it loses nothing, remove it.
+  A choice that could be pasted into an unrelated product unchanged needs a reason to stay.
 
 ---
 
@@ -241,8 +413,9 @@ From Google Fonts (loaded by `components/bundle.css`):
 - **Everything:** `Nunito Sans`: 800 for headlines and figures, 400–700 for
   text, labels and buttons. (Rounded Nunito was tried for headlines and dropped:
   it read too soft at display sizes for a B2B audience.)
-- **App Mode titles:** `Source Serif 4` at 500, for page titles and the rank figure
-  only.
+- **App Mode:** `Source Serif 4` at 500 for the page title, the Focus panel's one
+  formal line and the two-panel headline only. `Nunito Sans` at 400 and 600 for
+  everything else.
 
 The `--font-mono` family now points to Nunito Sans, so older component code keeps
 working without monospace.
@@ -273,7 +446,7 @@ Avatar's `'blue'` is now `'steel'`.
 
 ```
 styles.css              → entry point (imports only)
-tokens.json             → every token: grounds, logo blue + grey, accent, neutral ramp, ring hues · families, scales, tracking · space, radii, minimal shadows
+tokens.json             → every token: grounds, logo blue + grey, accent, neutral ramp, ring hues · families, scales, tracking · space, radii, minimal shadows · the App Mode scale
 components/bundle.css   → Google Fonts @import · logo rings, motion · reset + signature utility classes (.cl-label, .cl-headline, .cl-accent, .cl-ring …)
 components/bundle.js    → compiled components (window.ComLinkedDesignSystem_55a2d4)
 components/<Comp>/      → Label, RailLabel, Headline, Accent, Tag, Card, Stat, PlusList, NumberedList, Avatar, Button · Logotype, Signature

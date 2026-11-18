@@ -7,6 +7,8 @@
 **Vocabulary:** [CONTEXT.md](../../CONTEXT.md), section "Showing ComLinked"
 **Awaiting Richard:** four choices here change his plan. They are listed under [Questions for Richard](#questions-for-richard) and are built as wording that is easy to alter.
 
+> **Note, 2026-11-18: how these screens look is now set by the [Demo premium pass](2026-11-18-demo-premium-pass.md).** The Opening and the ask in two panels, the Story Bar as a slim second row of the header, and the chamber screens' claimed figure over grouped members replace the layouts described below. What each Stop shows, says and does is still set here.
+
 ## Problem Statement
 
 ECCP, the European Chamber of Commerce of the Philippines, is the first Pilot. Nobody at ECCP has seen ComLinked or agreed to anything. The person who decides is ECCP's Chamber Leader, and they will meet ComLinked cold.

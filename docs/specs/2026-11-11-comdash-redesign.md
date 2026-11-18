@@ -5,6 +5,8 @@
 **Source:** grilling session of 2026-11-11, based on the ComDash prototype the user supplied (`comdash-prototype.html`, kept outside the repo in the user's Downloads folder)
 **Feature IDs:** L2 (ComDash interest signals), D2 (daily lead list, via Next action), D4 (freshness nudges), C-series connections, A-series AI drafts
 
+> **Note, 2026-11-18: how these screens look is now set by the [Demo premium pass](2026-11-18-demo-premium-pass.md).** Its scale, panels, Focus panel, company marks, day-bar charts and motion replace the sizes, surfaces, line chart and four-card Overview described below. What ComDash holds and does is still set here.
+
 > **Changed 2026-11-18 (user): the "View as" tiers now copy the prototype.** This replaces user story 14 and every line below that says Free shows everything. While possible future pricing shows, the Interest Signals tab follows the prototype's `ComDash Interest Signals` tiers:
 >
 > - **Free member** lists six interested companies with names, levels and signals blurred, a "See who" button on each, an upgrade box, weekly alerts without names and five search terms.
