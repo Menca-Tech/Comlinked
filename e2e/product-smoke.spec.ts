@@ -62,15 +62,33 @@ async function claimToMatches(page: Page) {
   await tap(page, "Continue with Google");
 }
 
+/** Claims a new company and opens ComDash, with the pricing tiers off, as for twoWeeksIn(). */
 async function claimNewCompany(page: Page) {
   await claimToMatches(page);
   await tap(page, "Go to my ComDash");
   await expect(page.getByRole("heading", { name: "Next action" })).toBeVisible();
+  await withoutPricing(page);
 }
 
-async function twoWeeksIn(page: Page) {
+/** Switches possible future pricing off from the guide, so ComDash shows everything the MVP does,
+ * with no tier. */
+async function withoutPricing(page: Page) {
+  await page.locator(".demo-guide").click();
+  const toggle = page
+    .getByRole("dialog")
+    .getByRole("button", { name: "Possible future pricing", exact: true });
+  await toggle.click();
+  await expect(toggle).toHaveAttribute("aria-pressed", "false");
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog")).toBeHidden();
+}
+
+/** Opens the full Demo two weeks in. Unless a test asks for the pricing tiers, it switches them
+ * off, so ComDash names every interested company as the MVP does. */
+async function twoWeeksIn(page: Page, { pricing = false } = {}) {
   await page.goto("/app/claim");
   await guide(page, "Two weeks in");
+  if (!pricing) await withoutPricing(page);
   await expect(hotCompany(page, "Hapag Kitchen Group")).toBeVisible();
 }
 
@@ -712,37 +730,48 @@ test.describe("ComDash", () => {
     await expect(page.getByText("Nothing from your connections yet.")).toBeVisible();
   });
 
-  test("Free shows everything; Pro adds other chambers and intent scores", async ({ page }) => {
-    await twoWeeksIn(page);
+  test("Free member hides every name, Growth names the own chamber and Pro names every chamber", async ({
+    page,
+  }) => {
+    const table = page.locator("table.cd-table");
+    await twoWeeksIn(page, { pricing: true });
     await expect(page.getByText("Possible future pricing. Not in the MVP.")).toBeVisible();
-    await expect(viewButton(page, "Free")).toHaveAttribute("aria-pressed", "true");
+    await expect(viewButton(page, "Free member")).toHaveAttribute("aria-pressed", "true");
+    await expect(page.getByText("Plan: Free member · inbound-only AI agent")).toBeVisible();
     await openTab(page, "Interest Signals");
-    await expect(page.getByText(/Intent score/)).toHaveCount(0);
-    await expect(page.getByText(/upgrade|unlock|hidden/i)).toHaveCount(0);
-    await expect(companyRow(page, "hapag")).toContainText("Hapag Kitchen Group");
-    await expect(companyRow(page, "hapag")).toContainText("Hot");
-    await expect(
-      panel(page, "Search terms that found you")
-        .getByRole("link", { name: "Add to profile" })
-        .first(),
-    ).toBeVisible();
-    await rowButton(page, "hapag").click();
-    await expect(
-      drawer(page, "Hapag Kitchen Group").locator(".cd-tl b", { hasText: "+" }),
-    ).toHaveCount(0);
-    await page.keyboard.press("Escape");
+    await expect(table.getByRole("button", { name: "See who", exact: true })).toHaveCount(6);
+    await expect(page.getByText("Name hidden on the free plan")).toHaveCount(6);
+    await expect(table).not.toContainText("Hapag Kitchen Group");
+    await expect(table.locator("tr[data-company]")).toHaveCount(0);
+    await expect(panel(page, "Alerts")).toContainText("weekly, without names");
+    await expect(panel(page, "Alerts")).not.toContainText("Hapag Kitchen Group");
+    await page.getByRole("button", { name: "See who’s interested" }).click();
 
-    await viewButton(page, "Pro").click();
-    await expect(viewButton(page, "Pro")).toHaveAttribute("aria-pressed", "true");
+    await expect(viewButton(page, "Growth")).toHaveAttribute("aria-pressed", "true");
+    await expect(
+      page.getByText("Showing the Growth view: names and Intent Scores for your own chamber."),
+    ).toBeVisible();
+    await expect(
+      page.getByText("Plan: Growth · 7 of 10 agent engagements left this month · own chamber"),
+    ).toBeVisible();
     await expect(companyRow(page, "hapag")).toContainText("Intent score");
-    await expect(companyRow(page, "hapag")).toContainText("Hot");
+    await expect(companyRow(page, "oc-bagwis")).toHaveCount(0);
+    await expect(table.getByRole("button", { name: "Unlock on Pro" })).toHaveCount(3);
+    await page.getByRole("button", { name: "Send my agent to Hapag Kitchen Group" }).click();
+    await expect(companyRow(page, "hapag")).toContainText("Agent intro sent for approval");
+    await expect(
+      page.getByText("Plan: Growth · 6 of 10 agent engagements left this month · own chamber"),
+    ).toBeVisible();
+    await page.getByRole("button", { name: "Compare Pro" }).click();
+
+    await expect(viewButton(page, "Pro")).toHaveAttribute("aria-pressed", "true");
+    await expect(page.getByText("Compare Pro")).toHaveCount(0);
     await expect(companyRow(page, "oc-bagwis")).toContainText("other chamber (PCCI–Quezon City)");
     await expect(companyRow(page, "hapag").locator(".cd-sc b")).toContainText("11");
     await rowButton(page, "hapag").click();
     const hapag = drawer(page, "Hapag Kitchen Group");
     await expect(hapag.getByText("How the intent score was built")).toBeVisible();
     await expect(hapag.locator(".cd-tl b")).toHaveText(["+3", "+5", "+3", ""]);
-    await expect(hapag.locator(".cd-level")).toContainText("11");
     await expect(hapag.getByText("11 points, capped at 100.")).toBeVisible();
     await expectAccessible(page);
     await page.keyboard.press("Escape");
@@ -750,20 +779,52 @@ test.describe("ComDash", () => {
     await expect(drawer(page, "Harbourfront Filipino Market")).toContainText(
       "Toronto Region Board of Trade",
     );
-    await page.keyboard.press("Escape");
-    await openTab(page, "Connections");
-    await expect(viewButton(page, "Pro")).toHaveAttribute("aria-pressed", "true");
-    await viewButton(page, "Growth").click();
-    await openTab(page, "Interest Signals");
-    await expect(companyRow(page, "hapag")).toContainText("Intent score");
-    await expect(companyRow(page, "oc-harbour")).toHaveCount(0);
   });
 
-  test("a full page load resets the selected view to Free", async ({ page }) => {
+  test("choosing a tier opens Interest Signals; Growth sorts by intent score and Pro lists other chambers first", async ({
+    page,
+  }) => {
+    const body = page.locator("table.cd-table tbody tr[data-company]");
+    await twoWeeksIn(page, { pricing: true });
+    await viewButton(page, "Growth").click();
+    await expect(page).toHaveURL(/\/app\/dash\/signals$/);
+    await expect(page.getByRole("columnheader", { name: "Intent score and level" })).toBeVisible();
+    const scores = (await body.locator(".cd-sc b").allTextContents()).map(Number);
+    expect(scores.length).toBeGreaterThan(1);
+    expect(scores).toEqual([...scores].sort((a, b) => b - a));
+    await expect(body.first()).toContainText("Nordhavn Freight Forwarders");
+
+    await viewButton(page, "Pro").click();
+    await expect(page.locator(".cd-group th")).toHaveText(["Other chambers", "ECCP members"]);
+    await expect(body.first()).toHaveAttribute("data-company", /^oc-/);
+    await expect(page.locator('tr[data-company^="oc-"]')).toHaveCount(3);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await noSidewaysScroll(page);
+
+    await viewButton(page, "Free member").click();
+    await expect(page.getByRole("columnheader", { name: "Interest Level" })).toBeVisible();
+    await expect(page.locator(".cd-group")).toHaveCount(0);
+    await expect(body).toHaveCount(0);
+    await noSidewaysScroll(page);
+  });
+
+  test("with possible future pricing off, ComDash names everyone with no tier, as the MVP does", async ({
+    page,
+  }) => {
     await twoWeeksIn(page);
+    await expect(page.getByRole("group", { name: "View as" })).toHaveCount(0);
+    await openTab(page, "Interest Signals");
+    await expect(companyRow(page, "hapag")).toContainText("Hapag Kitchen Group");
+    await expect(page.getByText(/Intent score/)).toHaveCount(0);
+    await expect(page.getByText(/upgrade|unlock|hidden/i)).toHaveCount(0);
+    await expect(panel(page, "Alerts")).toContainText("Hapag Kitchen Group");
+  });
+
+  test("a full page load resets the selected view to Free member", async ({ page }) => {
+    await twoWeeksIn(page, { pricing: true });
     await viewButton(page, "Pro").click();
     await page.reload();
-    await expect(viewButton(page, "Free")).toHaveAttribute("aria-pressed", "true");
+    await expect(viewButton(page, "Free member")).toHaveAttribute("aria-pressed", "true");
   });
 
   test("the presenter guide jumps straight to each ComDash tab", async ({ page }) => {
@@ -781,7 +842,7 @@ test.describe("ComDash", () => {
   });
 
   test("the switcher and replies work from the keyboard", async ({ page }) => {
-    await twoWeeksIn(page);
+    await twoWeeksIn(page, { pricing: true });
     await viewButton(page, "Growth").focus();
     await page.keyboard.press("Enter");
     await expect(viewButton(page, "Growth")).toHaveAttribute("aria-pressed", "true");

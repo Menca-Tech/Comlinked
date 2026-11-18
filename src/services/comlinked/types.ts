@@ -198,16 +198,54 @@ export interface InterestedCompany {
 /** Free is the MVP. Growth and Pro are a labelled demo of possible future pricing. */
 export type PlanView = "free" | "growth" | "pro";
 
+/** One "View as" tier, copied from the ComDash prototype as a demo of possible future pricing. */
 export interface PlanViewRules {
   label: string;
   intentScore: boolean;
+  /** Whether interest from other chambers is listed, named or not. */
   otherChambers: boolean;
+  /** Whose names show: nobody's, the user's own chamber's, or every chamber's. */
+  names: "none" | "own" | "all";
+  /** How many interested Companies the table lists, or null for all of them. */
+  rowsShown: number | null;
+  /** How many search terms show, or null for all of them. */
+  termsShown: number | null;
+  /** Whether alerts name the Company, or come weekly without names. */
+  namedAlerts: boolean;
+  /** AI Lead Agent engagements a month, with how many are left when the demo starts. */
+  agent: { left: number; max: number } | null;
+  /** Which chambers the tier reaches, for the plan line. */
+  reach: string | null;
+  /** What an upgrade button says once it has opened this tier. */
+  opened: string;
+}
+
+/** What a tier offers next, under the interested companies, and the tier it opens. */
+export interface PlanUpsell {
+  text: string;
+  button: string;
+  to: PlanView;
+}
+
+/** An alert from a week, without the Company's name. */
+export interface WeeklyAlert {
+  week: string;
+  text: string;
+}
+
+/** The search terms a tier shows, and how many more it keeps for the next tier. */
+export interface PlanTerms {
+  shown: SearchTerm[];
+  more: number;
+  moreGaps: number;
 }
 
 /** An interested Company as the selected view shows it. */
 export interface InterestRow extends InterestedCompany {
   /** Only on Growth and Pro. */
   score: number | null;
+  /** Whether the tier hides the Company's name, industry, city and latest signal. */
+  hidden: boolean;
   /** The other chamber's name, only on Pro; null for the user's own chamber. */
   chamber: string | null;
   /** Whether Message and Connect apply. Companies in other chambers are a demo view only. */
@@ -593,6 +631,9 @@ export interface SimState {
   exploring: boolean;
   /** Whether the Stop's side step is open, showing the same screen in another Seat. */
   sideStepShown: boolean;
+  /** The demo tiers' AI Lead Agent engagements left this month, and the Companies sent to. */
+  agentLeft: Record<PlanView, number>;
+  agentSent: string[];
   laterItems: LaterItems;
 }
 

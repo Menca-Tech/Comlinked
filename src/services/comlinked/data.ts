@@ -622,9 +622,42 @@ export const SEARCH_TERMS = [
 ];
 /** What each "View as" option adds. Free is the MVP and hides nothing. */
 export const PLAN_VIEWS: Record<PlanView, PlanViewRules> = {
-  free: { label: "Free", intentScore: false, otherChambers: false },
-  growth: { label: "Growth", intentScore: true, otherChambers: false },
-  pro: { label: "Pro", intentScore: true, otherChambers: true },
+  free: {
+    label: "Free member",
+    intentScore: false,
+    otherChambers: false,
+    names: "none",
+    rowsShown: 6,
+    termsShown: 5,
+    namedAlerts: false,
+    agent: null,
+    reach: null,
+    opened: "Showing the Free member view: names hidden.",
+  },
+  growth: {
+    label: "Growth",
+    intentScore: true,
+    otherChambers: true,
+    names: "own",
+    rowsShown: null,
+    termsShown: null,
+    namedAlerts: true,
+    agent: { left: 7, max: 10 },
+    reach: "own chamber",
+    opened: "Showing the Growth view: names and Intent Scores for your own chamber.",
+  },
+  pro: {
+    label: "Pro",
+    intentScore: true,
+    otherChambers: true,
+    names: "all",
+    rowsShown: null,
+    termsShown: null,
+    namedAlerts: true,
+    agent: { left: 31, max: 40 },
+    reach: "all chambers",
+    opened: "Showing the Pro view: every chamber.",
+  },
 };
 /** Companies in other chambers, whose interest only the Pro demo view shows. */
 type OtherCompany = [

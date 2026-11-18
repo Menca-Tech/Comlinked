@@ -420,8 +420,28 @@ test.describe("the Pilot Preview", () => {
     await openStop(page, stop(4));
     await flipSwitch(page, "Possible future pricing", true);
     await expect(viewAs(page)).toBeVisible();
-    await expect(viewAs(page).getByRole("button")).toHaveText(["Free", "Growth", "Pro"]);
+    await expect(viewAs(page).getByRole("button")).toHaveText(["Free member", "Growth", "Pro"]);
     await expect(page.getByText("Possible future pricing. Not in the MVP.")).toBeVisible();
+  });
+
+  test("Stop 4 names every interested company until pricing is on, then opens on Free member with names hidden", async ({
+    page,
+  }) => {
+    await openStop(page, stop(4));
+    await tabRow(page).getByRole("link", { name: "Interest Signals" }).click();
+    await expect(page).toHaveURL(/\/app\/dash\/signals$/);
+    const table = page.locator("table.cd-table");
+    await expect(table).toContainText("Hapag Kitchen Group");
+    await expect(table.getByRole("button", { name: "See who", exact: true })).toHaveCount(0);
+    await flipSwitch(page, "Possible future pricing", true);
+    await expect(viewAs(page).getByRole("button", { name: "Free member" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    await expect(table).not.toContainText("Hapag Kitchen Group");
+    await expect(table.getByRole("button", { name: "See who", exact: true })).toHaveCount(6);
+    await flipSwitch(page, "Possible future pricing", false);
+    await expect(table).toContainText("Hapag Kitchen Group");
   });
 
   test("switching on the after-MVP previews brings back the tab, the card and the screens", async ({

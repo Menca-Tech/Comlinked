@@ -12,6 +12,7 @@ import {
   companyLine,
   dayLabel,
   interestForView,
+  planShown,
   pointsTotal,
   type InterestRow,
 } from "@/services/comlinked";
@@ -74,10 +75,11 @@ function DrawerBody({ row, onClose }: { row: InterestRow; onClose: () => void })
 
 /** The open Company's dated timeline, from ?company= in the address. Escape or Close shuts it. */
 export function SignalDrawer() {
-  const S = useSimulation();
+  useSimulation();
   const router = useRouter();
   const id = useSearchParams().get("company");
-  const row = interestForView(S.view).find((r) => r.company.id === id);
+  // A Company whose name the tier hides has no drawer.
+  const row = interestForView(planShown()).find((r) => r.company.id === id && !r.hidden);
   const openId = row?.company.id;
 
   useEffect(() => {

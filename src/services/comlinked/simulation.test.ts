@@ -14,6 +14,7 @@ import {
   INDUSTRY,
   NEIGHBORS,
   NETWORK,
+  PLAN_VIEWS,
   agentSteps,
   claimDayOf,
   claimMessage,
@@ -32,6 +33,11 @@ import {
   presenterContact,
   intentScore,
   interestForView,
+  planLine,
+  planShown,
+  planUpsell,
+  termsForPlan,
+  weeklyAlerts,
   invitations,
   setHandlers,
   setReplyDraft,
@@ -985,39 +991,151 @@ describe("intent score", () => {
 
 describe("plan views", () => {
   beforeEach(() => act.demoActive());
+  const ids = (rows: { company: { id: string } }[]) => rows.map((r) => r.company.id);
+  const free = () => interestForView("free");
 
-  it("opens on Free, which shows every interested Company with no extras", () => {
-    expect(getState().view).toBe("free");
-    const free = interestForView("free");
-    expect(free.map((r) => r.company.name)).toEqual(
-      interestedCompanies().map((r) => r.company.name),
-    );
-    expect(free.map((r) => r.level)).toEqual(interestedCompanies().map((r) => r.level));
-    expect(free.every((r) => r.score === null && r.chamber === null)).toBe(true);
+  it("opens the full Demo on Free member, and shows everything while pricing is off", () => {
+    expect(planShown()).toBe("free");
+    openStop(4);
+    expect(planShown()).toBeNull();
+    const all = interestForView(null);
+    expect(ids(all)).toEqual(ids(interestedCompanies()));
+    expect(
+      all.every((r) => !r.hidden && r.score === null && r.chamber === null && r.actionable),
+    ).toBe(true);
+    act.toggleLaterItem("pricing");
+    expect(planShown()).toBe("free");
   });
 
-  it("adds only the intent score on Growth", () => {
+  it("hides every name on Free member, with no score and no other chambers", () => {
+    expect(ids(free())).toEqual(ids(interestedCompanies()));
+    expect(free().every((r) => r.hidden && r.score === null && r.chamber === null)).toBe(true);
+    expect(free().map((r) => r.level)).toEqual(interestedCompanies().map((r) => r.level));
+    expect(PLAN_VIEWS.free).toMatchObject({ label: "Free member", rowsShown: 6, termsShown: 5 });
+  });
+
+  it("names the user's own chamber on Growth, highest score first, with other chambers hidden", () => {
     const growth = interestForView("growth");
-    expect(growth.map((r) => r.company.id)).toEqual(
-      interestForView("free").map((r) => r.company.id),
-    );
-    expect(growth.every((r) => typeof r.score === "number" && r.chamber === null)).toBe(true);
-  });
-
-  it("adds interest from other chambers, labelled with the chamber, on Pro", () => {
-    const pro = interestForView("pro");
-    const free = interestForView("free");
-    expect(pro.slice(0, free.length).map((r) => r.company.id)).toEqual(
-      free.map((r) => r.company.id),
-    );
-    const others = pro.slice(free.length);
+    const own = growth.filter((r) => r.chamber === null);
+    const others = growth.filter((r) => r.chamber !== null);
+    expect(ids(own).sort()).toEqual(ids(free()).sort());
+    expect(own.every((r) => !r.hidden && typeof r.score === "number")).toBe(true);
+    const scores = own.map((r) => r.score ?? 0);
+    expect(scores).toEqual([...scores].sort((a, b) => b - a));
+    expect(own[0]?.company.id).toBe("nordhavn");
     expect(others.length).toBeGreaterThan(0);
-    expect(others.every((r) => r.chamber && r.chamber !== "ECCP" && r.score !== null)).toBe(true);
-    expect(others.every((r) => !r.actionable)).toBe(true);
-    expect(free.every((r) => r.actionable)).toBe(true);
+    expect(others.every((r) => r.hidden && r.score !== null && !r.actionable)).toBe(true);
   });
 
-  it("leaves Free content unchanged when another view is selected", () => {
+  it("names every chamber on Pro, other chambers labelled and highest score first", () => {
+    const pro = interestForView("pro");
+    expect(pro.every((r) => !r.hidden)).toBe(true);
+    const others = pro.filter((r) => r.chamber !== null);
+    expect(others.length).toBe(3);
+    expect(others.every((r) => r.chamber !== "ECCP" && !r.actionable)).toBe(true);
+    const scores = others.map((r) => r.score ?? 0);
+    expect(scores).toEqual([...scores].sort((a, b) => b - a));
+    expect(ids(pro.filter((r) => r.chamber === null))).toEqual(
+      ids(interestForView("growth").filter((r) => r.chamber === null)),
+    );
+  });
+
+  it("writes each tier's plan line, with agent engagements only while the previews show", () => {
+    expect(planLine("free")).toBe("Plan: Free member · inbound-only AI agent");
+    expect(planLine("growth")).toBe(
+      "Plan: Growth · 7 of 10 agent engagements left this month · own chamber",
+    );
+    expect(planLine("pro")).toBe(
+      "Plan: Pro · 31 of 40 agent engagements left this month · all chambers",
+    );
+    act.toggleLaterItem("previews");
+    expect(planLine("free")).toBe("Plan: Free member");
+    expect(planLine("growth")).toBe("Plan: Growth · own chamber");
+  });
+
+  it("sends the agent only from Growth or Pro, to a named Company, while engagements last", () => {
+    const toast = vi.fn();
+    setHandlers({ toast });
+    act.sendAgent("hapag");
+    expect(getState().agentSent).toEqual([]);
+    act.setView("growth");
+    act.sendAgent("oc-bagwis");
+    act.sendAgent("hapag");
+    act.sendAgent("hapag");
+    expect(getState().agentSent).toEqual(["hapag"]);
+    expect(getState().agentLeft.growth).toBe(6);
+    expect(toast).toHaveBeenCalledWith(
+      "Your agent drafted an intro to Hapag Kitchen Group. It waits for your approval.",
+      undefined,
+      undefined,
+    );
+    getState().agentLeft.growth = 0;
+    act.sendAgent("luntian");
+    expect(getState().agentSent).toEqual(["hapag"]);
+    act.setView("pro");
+    act.sendAgent("oc-bagwis");
+    expect(getState().agentLeft.pro).toBe(30);
+    act.toggleLaterItem("previews");
+    act.sendAgent("sari");
+    expect(getState().agentSent).toEqual(["hapag", "oc-bagwis"]);
+  });
+
+  it("offers Growth from Free and Pro from Growth, mentioning the agent only while it shows", () => {
+    expect(planUpsell("free")).toEqual({
+      text: "13 companies showed interest in Kalayaan Foods Inc. in the last 14 days, and 4 are Hot. Upgrade to Growth to see who they are and why they’re interested, and send your AI agent to start the conversation. Your free inbound agent still replies when they contact you.",
+      button: "See who’s interested",
+      to: "growth",
+    });
+    expect(planUpsell("growth")).toEqual({
+      text: "3 interested companies are in other chambers. Pro shows every chamber and gives 40 agent engagements a month.",
+      button: "Compare Pro",
+      to: "pro",
+    });
+    expect(planUpsell("pro")).toBeNull();
+    act.toggleLaterItem("previews");
+    expect(planUpsell("free")?.text).toBe(
+      "13 companies showed interest in Kalayaan Foods Inc. in the last 14 days, and 4 are Hot. Upgrade to Growth to see who they are and why they’re interested.",
+    );
+    expect(planUpsell("growth")?.text).toBe(
+      "3 interested companies are in other chambers. Pro shows every chamber.",
+    );
+  });
+
+  it("switches tier from an upgrade button, saying what the new tier shows", () => {
+    const toast = vi.fn();
+    setHandlers({ toast });
+    act.showPlan("growth");
+    expect(getState().view).toBe("growth");
+    act.showPlan("pro");
+    expect(getState().view).toBe("pro");
+    expect(toast.mock.calls.map((c) => c[0])).toEqual([
+      "Showing the Growth view: names and Intent Scores for your own chamber.",
+      "Showing the Pro view: every chamber.",
+    ]);
+  });
+
+  it("gives Free member weekly alerts without names", () => {
+    const weekly = weeklyAlerts();
+    expect(weekly.length).toBeGreaterThan(0);
+    const names = [...POOL.map((c) => c.name), "Kalayaan"];
+    weekly.forEach((a) =>
+      names.forEach((n) => expect([n, a.text.includes(n)]).toEqual([n, false])),
+    );
+    weekly.forEach((a) => expect(["This week", "Last week"]).toContain(a.week));
+    expect(weekly.some((a) => /^\d+ compan(y|ies) /.test(a.text))).toBe(true);
+  });
+
+  it("shows Free member five search terms, keeping the rest and their profile gaps for Growth", () => {
+    const all = searchTerms();
+    const shown = termsForPlan("free");
+    expect(shown.shown).toEqual(all.slice(0, 5));
+    expect(shown.more).toBe(Math.max(0, all.length - 5));
+    expect(shown.moreGaps).toBe(all.slice(5).filter((t) => t.gap).length);
+    expect(termsForPlan("growth")).toEqual({ shown: all, more: 0, moreGaps: 0 });
+    expect(termsForPlan(null)).toEqual({ shown: all, more: 0, moreGaps: 0 });
+  });
+
+  it("leaves the MVP's own figures unchanged when another view is selected", () => {
     const before = { rows: interestedCompanies(), numbers: topNumbers(), next: nextAction() };
     act.setView("pro");
     expect(getState().view).toBe("pro");
@@ -1027,12 +1145,13 @@ describe("plan views", () => {
     expect(profileGaps().length).toBeGreaterThan(0);
   });
 
-  it("ignores an unknown view and resets to Free with the simulation", () => {
+  it("ignores an unknown view and resets to Free member with the simulation", () => {
     act.setView("growth");
     act.setView("enterprise");
     expect(getState().view).toBe("growth");
     act.demoActive();
     expect(getState().view).toBe("free");
+    expect(getState().agentLeft).toEqual({ free: 0, growth: 7, pro: 31 });
   });
 
   it("gives a new Company no interest from other chambers", () => {

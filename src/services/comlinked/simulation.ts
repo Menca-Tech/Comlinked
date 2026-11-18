@@ -59,6 +59,8 @@ import type {
   Message,
   NextAction,
   NoteGroup,
+  PlanTerms,
+  PlanUpsell,
   PlanView,
   PreviewStop,
   ProfileField,
@@ -81,6 +83,7 @@ import type {
   ToastAction,
   TopNumber,
   VisibilityDay,
+  WeeklyAlert,
   Win,
 } from "@/services/comlinked/types";
 
@@ -370,6 +373,12 @@ function fresh(): SimState {
     preview: null,
     exploring: false,
     sideStepShown: false,
+    agentLeft: {
+      free: PLAN_VIEWS.free.agent?.left ?? 0,
+      growth: PLAN_VIEWS.growth.agent?.left ?? 0,
+      pro: PLAN_VIEWS.pro.agent?.left ?? 0,
+    },
+    agentSent: [],
     laterItems: { pricing: true, previews: true },
   };
 }
@@ -2833,6 +2842,26 @@ const ACT = {
   setView: function (view: string) {
     if (isPlanView(view)) S.view = view;
   },
+  /** An upgrade button: opens the tier and says what it shows. */
+  showPlan: function (view: string) {
+    if (!isPlanView(view)) return;
+    S.view = view;
+    toast(PLAN_VIEWS[view].opened);
+  },
+  /** "Send my agent" from Growth or Pro, to a Company the tier names, while the month's
+   * engagements last and the after-MVP previews show. A person approves the intro. */
+  sendAgent: function (id: string) {
+    const view = planShown();
+    if (!view || !PLAN_VIEWS[view].agent || !S.laterItems.previews) return;
+    if (S.agentSent.includes(id) || S.agentLeft[view] <= 0) return;
+    const row = interestForView(view).find(function (r) {
+      return r.company.id === id;
+    });
+    if (!row || row.hidden) return;
+    S.agentLeft[view]--;
+    S.agentSent.push(id);
+    toast("Your agent drafted an intro to " + row.company.name + ". It waits for your approval.");
+  },
   /** The Presenter Guide's switches. With pricing hidden, ComDash stays on the Free view. */
   toggleLaterItem: function (item: string) {
     if (!isLaterItem(item)) return;
@@ -3650,25 +3679,44 @@ function isPlanView(view: string): view is PlanView {
 
 /** Interested Companies as a view shows them. Free is every own-chamber Company with nothing
  * hidden; Growth adds intent scores; Pro adds interest from other chambers. */
-export function interestForView(view: PlanView): InterestRow[] {
-  const rules = PLAN_VIEWS[view];
+/** The tier "View as" shows: the chosen one while possible future pricing shows, and none while it
+ * is hidden, when ComDash shows everything the MVP does. */
+export function planShown(): PlanView | null {
+  return S.laterItems.pricing ? S.view : null;
+}
+/** Interested Companies as a tier shows them, or as the MVP does with no tier. A tier may hide
+ * names, add an intent score, sorted highest first, and add interest from other chambers. */
+export function interestForView(view: PlanView | null): InterestRow[] {
+  const rules = view ? PLAN_VIEWS[view] : null;
+  const scored = rules?.intentScore === true;
   const timeline = function (entries: TimelineEntry[]) {
-    return rules.intentScore
+    return scored
       ? entries
       : entries.map(function (e) {
           return { ...e, points: null };
         });
   };
-  const own: InterestRow[] = interestedCompanies().map(function (x) {
-    return {
-      ...x,
-      timeline: timeline(x.timeline),
-      score: rules.intentScore ? intentScore(x.company.id) : null,
-      chamber: null,
-      actionable: true,
-    };
-  });
-  if (!rules.otherChambers) return own;
+  // With a score, the highest comes first; equal scores keep the Interest Level order.
+  const byScore = function (rows: InterestRow[]) {
+    return scored
+      ? rows.sort(function (a, b) {
+          return (b.score ?? 0) - (a.score ?? 0);
+        })
+      : rows;
+  };
+  const own: InterestRow[] = byScore(
+    interestedCompanies().map(function (x) {
+      return {
+        ...x,
+        timeline: timeline(x.timeline),
+        score: scored ? intentScore(x.company.id) : null,
+        hidden: rules?.names === "none",
+        chamber: null,
+        actionable: true,
+      };
+    }),
+  );
+  if (!rules?.otherChambers) return own;
   const recent = interestBetween(S.day - LEVEL_DAYS, S.day, undefined, S.otherSignals);
   const others = interestRows(recent, otherCompany).map(function (x) {
     return {
@@ -3678,11 +3726,84 @@ export function interestForView(view: PlanView): InterestRow[] {
           return s.co === x.company.id;
         }),
       ),
+      hidden: rules.names !== "all",
       chamber: x.company.chamber ?? null,
       actionable: false,
     };
   });
-  return own.concat(others);
+  return own.concat(byScore(others));
+}
+/** The plan line under the switcher: the tier, its AI Lead Agent allowance while the after-MVP
+ * previews show, and the chambers it reaches. */
+export function planLine(view: PlanView) {
+  const rules = PLAN_VIEWS[view];
+  const parts = ["Plan: " + rules.label];
+  if (S.laterItems.previews) {
+    parts.push(
+      rules.agent
+        ? S.agentLeft[view] + " of " + rules.agent.max + " agent engagements left this month"
+        : "inbound-only AI agent",
+    );
+  }
+  if (rules.reach) parts.push(rules.reach);
+  return parts.join(" · ");
+}
+/** What a tier offers next, under the interested companies: Growth from Free, Pro from Growth. */
+export function planUpsell(view: PlanView): PlanUpsell | null {
+  const agent = S.laterItems.previews;
+  if (view === "free") {
+    const totals = interestTotals();
+    const n = totals.interested;
+    return {
+      text:
+        n +
+        (n === 1 ? " company" : " companies") +
+        " showed interest in " +
+        S.me.name +
+        " in the last " +
+        LEVEL_DAYS +
+        " days, and " +
+        totals.hot +
+        (totals.hot === 1 ? " is" : " are") +
+        " Hot. Upgrade to Growth to see who they are and why they’re interested" +
+        (agent
+          ? ", and send your AI agent to start the conversation. Your free inbound agent still replies when they contact you."
+          : "."),
+      button: "See who’s interested",
+      to: "growth",
+    };
+  }
+  if (view === "growth") {
+    const others = interestForView("pro").filter(function (r) {
+      return r.chamber !== null;
+    }).length;
+    const pro = PLAN_VIEWS.pro.agent;
+    if (!others) return null;
+    return {
+      text:
+        others +
+        (others === 1 ? " interested company is" : " interested companies are") +
+        " in other chambers. Pro shows every chamber" +
+        (agent && pro ? " and gives " + pro.max + " agent engagements a month." : "."),
+      button: "Compare Pro",
+      to: "pro",
+    };
+  }
+  return null;
+}
+/** The search terms a tier shows, with how many more, and how many profile gaps, it keeps back. */
+export function termsForPlan(view: PlanView | null): PlanTerms {
+  const all = searchTerms();
+  const limit = view ? PLAN_VIEWS[view].termsShown : null;
+  if (limit === null) return { shown: all, more: 0, moreGaps: 0 };
+  const rest = all.slice(limit);
+  return {
+    shown: all.slice(0, limit),
+    more: rest.length,
+    moreGaps: rest.filter(function (t) {
+      return t.gap;
+    }).length,
+  };
 }
 
 function otherCompany(id: string): Company {
@@ -3862,35 +3983,91 @@ export function interestFunnel(): Funnel | null {
 }
 
 /** Saves, messages, intros and Companies becoming Hot in the last 14 days, newest first. */
-export function comDashAlerts(): DashAlert[] {
+type AlertKind = "hot" | "messaged" | "saved" | "intro";
+/** The kinds of alert, in the order a week's summary lists them. */
+const ALERT_KINDS: readonly AlertKind[] = ["hot", "messaged", "saved", "intro"];
+const ALERT_TEXT: Record<AlertKind, (name: string) => string> = {
+  hot: function (n) {
+    return n + " is now Hot.";
+  },
+  messaged: function (n) {
+    return n + " messaged you.";
+  },
+  saved: function (n) {
+    return n + " saved your profile.";
+  },
+  intro: function (n) {
+    return "Your community manager introduced you to " + n + ".";
+  },
+};
+const companies = function (n: number) {
+  return n + (n === 1 ? " company" : " companies");
+};
+const WEEKLY_TEXT: Record<AlertKind, (count: number) => string> = {
+  hot: function (n) {
+    return companies(n) + (n === 1 ? " is" : " are") + " now Hot.";
+  },
+  messaged: function (n) {
+    return companies(n) + " messaged you.";
+  },
+  saved: function (n) {
+    return companies(n) + " saved your profile.";
+  },
+  intro: function (n) {
+    return "Your community manager made " + n + (n === 1 ? " introduction." : " introductions.");
+  },
+};
+/** Saves, messages, intros and Companies becoming Hot in the last 14 days, one per Company and
+ * kind. */
+function alertEvents() {
   const from = S.day - LEVEL_DAYS;
-  const alerts: DashAlert[] = [];
+  const events: { day: number; kind: AlertKind; name: string }[] = [];
   S.signals.forEach(function (s) {
     if (s.day <= from) return;
-    const n = co(s.co).name;
-    if (s.type === "saved") alerts.push({ day: s.day, text: n + " saved your profile." });
-    if (s.type === "messaged") alerts.push({ day: s.day, text: n + " messaged you." });
-    if (s.type === "intro")
-      alerts.push({ day: s.day, text: "Your community manager introduced you to " + n + "." });
+    if (s.type === "saved" || s.type === "messaged" || s.type === "intro")
+      events.push({ day: s.day, kind: s.type, name: co(s.co).name });
   });
   interestedCompanies().forEach(function (x) {
     if (x.level !== "Hot") return;
     let day = S.day;
     while (day > S.joined && interestLevel(x.company.id, day - 1) === "Hot") day--;
-    if (day > from) alerts.push({ day: day, text: x.company.name + " is now Hot." });
+    if (day > from) events.push({ day: day, kind: "hot", name: x.company.name });
   });
-  const unique = alerts.filter(function (a, i) {
+  return events.filter(function (e, i) {
     return (
-      alerts.findIndex(function (b) {
-        return b.text === a.text;
+      events.findIndex(function (f) {
+        return f.kind === e.kind && f.name === e.name;
       }) === i
     );
   });
-  return unique
+}
+/** The latest six alerts, newest first, each naming its Company. */
+export function comDashAlerts(): DashAlert[] {
+  return alertEvents()
+    .map(function (e) {
+      return { day: e.day, text: ALERT_TEXT[e.kind](e.name) };
+    })
     .sort(function (a, b) {
       return b.day - a.day;
     })
     .slice(0, 6);
+}
+/** The same alerts counted by week, without any Company's name, as the Free member tier shows
+ * them. */
+export function weeklyAlerts(): WeeklyAlert[] {
+  const events = alertEvents();
+  const weeks: [string, number][] = [
+    ["This week", S.day],
+    ["Last week", S.day - 7],
+  ];
+  return weeks.flatMap(function ([week, to]) {
+    return ALERT_KINDS.flatMap(function (kind) {
+      const n = events.filter(function (e) {
+        return e.kind === kind && e.day > to - 7 && e.day <= to;
+      }).length;
+      return n ? [{ week: week, text: WEEKLY_TEXT[kind](n) }] : [];
+    });
+  });
 }
 
 function countRows(labels: string[]): CountRow[] {
