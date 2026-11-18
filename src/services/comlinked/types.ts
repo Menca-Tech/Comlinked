@@ -570,9 +570,11 @@ export interface TeamQueueItem {
 
 export interface TeamData {
   D: number;
-  /** The chamber's claimed members today, out of `of`, the Chamber Size. */
+  /** The chamber's claimed members today, out of `of`, the Chamber Size, and the weekly active
+   * target: half of those claimed. */
   claimed: number;
   of: number;
+  target: number;
   /** The chamber's weekly active members today, and on any day. */
   wac: number;
   wacAt: (day: number) => number;

@@ -103,7 +103,7 @@ function TrendChart({ d }: { d: TeamData }) {
     .map((p, i) => `${i ? "L" : "M"}${sx(i).toFixed(1)} ${sy(p.v).toFixed(1)}`)
     .join(" ");
   const last = pts[pts.length - 1]!;
-  const targetV = Math.ceil(d.claimed * 0.5);
+  const targetV = d.target;
   const ty = sy(targetV);
   const point = hover === null ? null : pts[hover];
   return (

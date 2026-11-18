@@ -1841,15 +1841,15 @@ describe("the Chamber Size", () => {
 
   it("adds up to 1,000 on Day 0, on Day 1 before and after the Claim, and on Day 14", () => {
     openStop(1);
-    expect(total()).toBe(1000);
+    expect(total()).toBe(CHAMBER.size);
     openStop(2);
-    expect(total()).toBe(1000);
+    expect(total()).toBe(CHAMBER.size);
     const before = chamberClaimed();
     newCompany();
-    expect(total()).toBe(1000);
+    expect(total()).toBe(CHAMBER.size);
     expect(chamberClaimed()).toBe(before + 1);
     openStop(5);
-    expect(total()).toBe(1000);
+    expect(total()).toBe(CHAMBER.size);
   });
 
   it("reads ten times the Example Companies on Day 14 with no session actions: 400 claimed of 1,000", () => {
@@ -1866,7 +1866,7 @@ describe("the Chamber Size", () => {
     setForm("introB", "maple");
     act.makeIntro();
     expect(counts()).toEqual([201, 160, 39, 600]);
-    expect(total()).toBe(1000);
+    expect(total()).toBe(CHAMBER.size);
   });
 
   it("leaves deals and wins at the named ones", () => {
@@ -1909,8 +1909,10 @@ describe("the Chamber Size", () => {
   it("gives the Team Dashboard the chamber's claimed and weekly active figures", () => {
     act.demoActive();
     const d = teamData();
-    expect([d.claimed, d.of]).toEqual([400, 1000]);
+    expect([d.claimed, d.of, d.target]).toEqual([400, 1000, 200]);
     expect(d.wacAt(14)).toBe(200);
+    const firstLead = d.rows.find((r) => r.goal === "Immediate leads")?.now;
+    expect(firstLead).toBe("90%");
   });
 
   it("writes every count with a thousands separator", () => {
@@ -2079,10 +2081,16 @@ describe("ECCP's Activity View", () => {
       expect([day, view.counts.map((c) => c.status)]).toEqual([day, MEMBER_STATUSES]);
       const sum = view.counts.reduce((total, c) => total + c.count, 0);
       expect([day, sum]).toEqual([day, CHAMBER.size]);
-      view.counts.forEach((c) => {
-        const named = view.rows.filter((r) => r.status === c.status).length;
-        expect([day, c.status, c.count >= named]).toEqual([day, c.status, true]);
-      });
+      // Beyond the named rows, each status holds a whole number of unnamed members for every
+      // Example Company the schedule puts in it, and the unnamed add up to the rest of the chamber.
+      const perExample = UNNAMED_MEMBERS / EXAMPLE_COMPANIES;
+      const unnamed = view.counts.map(
+        (c) => c.count - view.rows.filter((r) => r.status === c.status).length,
+      );
+      unnamed.forEach((n, i) =>
+        expect([day, i, n >= 0 && n % perExample === 0]).toEqual([day, i, true]),
+      );
+      expect([day, unnamed.reduce((a, n) => a + n, 0)]).toEqual([day, UNNAMED_MEMBERS]);
       expect([day, view.tiles[0]?.value]).toEqual([day, chamberClaimed(day)]);
     }
   });

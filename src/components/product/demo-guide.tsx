@@ -40,19 +40,19 @@ function KeyValue({ label, value }: { label: string; value: string | number }) {
   );
 }
 
-/** The Presenter Guide's switches for what is not in the MVP. */
-const LATER_ITEMS: { item: LaterItem; label: string; note: string; start: string }[] = [
+/** The Presenter Guide's switches for what is not in the MVP: what each shows, and how it starts. */
+const LATER_ITEMS: { item: LaterItem; label: string; note: string; startsAs: string }[] = [
   {
     item: "pricing",
     label: "Possible future pricing",
     note: "The Free, Growth and Pro switcher on ComDash.",
-    start: "Off unless you switch it on.",
+    startsAs: "Off unless you switch it on.",
   },
   {
     item: "previews",
     label: "After-MVP previews",
     note: "The AI Lead Agent, the Team Dashboard and the Engine.",
-    start: "Off in the Pilot Preview and on in the full demo.",
+    startsAs: "Off in the Pilot Preview and on in the full demo.",
   },
 ];
 
@@ -119,7 +119,7 @@ export function DemoGuide({ route }: { route: string }) {
           </div>
           <div className="g-sec">
             <h3>Later items</h3>
-            {LATER_ITEMS.map(({ item, label, note, start }) => (
+            {LATER_ITEMS.map(({ item, label, note, startsAs }) => (
               <button
                 key={item}
                 type="button"
@@ -132,7 +132,7 @@ export function DemoGuide({ route }: { route: string }) {
                 <span className="g-switch-t">
                   <b>{label}</b>
                   <small id={`g-later-${item}`}>
-                    {note} {start}
+                    {note} {startsAs}
                   </small>
                 </span>
                 <span className="g-switch-s" aria-hidden="true">

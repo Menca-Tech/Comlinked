@@ -1421,30 +1421,48 @@ function daysActed(id: string, day: number) {
     id === "me" ? earnedPointsOn : actsOnRecord(member(id)?.activity.actsEvery ?? null, claimDay),
   );
 }
-/** A member's one status on a day, today unless one is given, by this order: Not yet claimed;
- * Needs an intro while it has claimed and has no Lead; Active when it acted lately; Quiet
- * otherwise. The Activity View, the Community Manager's tools and the Team Dashboard all read it. */
+/** The status rules, in their order: Not yet claimed; Needs an intro while it has claimed and has
+ * no Lead; Active when it acted lately; Quiet otherwise. Each fact is asked only when the rules
+ * before it have passed. Both a member's live status and its scheduled one follow them. */
+function statusBy(facts: {
+  claimed: () => boolean;
+  hadLead: () => boolean;
+  actedLately: () => boolean;
+}): MemberStatus {
+  if (!facts.claimed()) return "Not yet claimed";
+  if (!facts.hadLead()) return "Needs an intro";
+  return facts.actedLately() ? "Active" : "Quiet";
+}
+/** A member's one status on a day, today unless one is given, by the status rules. The Activity
+ * View, the Community Manager's tools and the Team Dashboard all read it. */
 export function memberStatus(id: string, day = S.day): MemberStatus {
-  if (!hasClaimed(id, day)) return "Not yet claimed";
-  if (!hadLead(id, day)) return "Needs an intro";
-  return daysActed(id, day) > 0 ? "Active" : "Quiet";
+  return statusBy({
+    claimed: () => hasClaimed(id, day),
+    hadLead: () => hadLead(id, day),
+    actedLately: () => daysActed(id, day) > 0,
+  });
 }
 /** How many Example Companies had a status on a day. */
 function countWith(status: MemberStatus, day: number) {
-  return networkMembers().filter(function (m) {
-    return memberStatus(m.id, day) === status;
-  }).length;
+  const counts = examplesBy(function (id) {
+    return memberStatus(id, day);
+  });
+  return counts[MEMBER_STATUSES.indexOf(status)] ?? 0;
 }
 /** An Example Company's status on a day by its schedule alone: Kalayaan Foods claims on its
  * story's day and acts every day after; every other Company follows the claim day and activity
  * record in its data. Nothing done in the session changes it. */
 function scheduledStatus(id: string, day: number): MemberStatus {
-  if (id === "me") return day >= STORY_CLAIM_DAY ? "Active" : "Not yet claimed";
   const m = member(id);
-  if (!m || m.claimDay === null || m.claimDay > day) return "Not yet claimed";
-  if (!m.activity.firstDayLead) return "Needs an intro";
-  const acted = daysActedSince(m.claimDay, day, actsOnRecord(m.activity.actsEvery, m.claimDay));
-  return acted > 0 ? "Active" : "Quiet";
+  const claimDay = id === "me" ? STORY_CLAIM_DAY : (m?.claimDay ?? null);
+  return statusBy({
+    claimed: () => claimDay !== null && claimDay <= day,
+    hadLead: () => id === "me" || m?.activity.firstDayLead === true,
+    actedLately: () =>
+      id === "me" ||
+      (claimDay !== null &&
+        daysActedSince(claimDay, day, actsOnRecord(m?.activity.actsEvery ?? null, claimDay)) > 0),
+  });
 }
 /** The members beyond the Example Companies, who are counted but never named. */
 export const UNNAMED_MEMBERS = CHAMBER.size - EXAMPLE_COMPANIES;
@@ -1973,7 +1991,7 @@ export function teamData(): TeamData {
   // Averages per company read the Example Companies, whose activity the simulation holds.
   const claimed = claimedBy(D),
     base = claimed.length + (S.claimed ? 1 : 0),
-    wac = countWith("Active", D),
+    activeExamples = countWith("Active", D),
     activeBase = claimed.filter(function (x) {
       return memberStatus(x.c.id, D) === "Active";
     });
@@ -1984,8 +2002,8 @@ export function teamData(): TeamData {
       return b ? Math.round((a / b) * 100) : 0;
     };
   const claimPct = pct(chamberClaimed(Math.min(D, 14)), CHAMBER.size);
-  const firstLead = base - countWith("Needs an intro", D),
-    firstPct = pct(firstLead, base);
+  const firstLead = claimedInChamber - countIn(chamberCounts(D), "Needs an intro"),
+    firstPct = pct(firstLead, claimedInChamber);
   const myListDays = new Set(
     S.ledger
       .filter(function (l) {
@@ -1995,12 +2013,12 @@ export function teamData(): TeamData {
         return l.day;
       }),
   ).size;
-  const habit = wac
+  const habit = activeExamples
     ? (activeBase.reduce(function (a, x) {
         return a + daysActed(x.c.id, D);
       }, 0) +
         myListDays) /
-      wac
+      activeExamples
     : 0;
   const myMails = S.threads.reduce(function (a, t) {
     return (
@@ -2010,12 +2028,12 @@ export function teamData(): TeamData {
       }).length
     );
   }, 0);
-  const mails = wac
+  const mails = activeExamples
     ? (activeBase.reduce(function (a, x) {
         return a + daysActed(x.c.id, D) * 0.8;
       }, 0) +
         myMails) /
-      wac
+      activeExamples
     : 0;
   const aiOn =
       claimed.filter(function (x) {
@@ -2036,7 +2054,7 @@ export function teamData(): TeamData {
       S.invites.filter(function (i) {
         return i.joined;
       }).length,
-    growth = wac ? joined / wac : 0;
+    growth = activeExamples ? joined / activeExamples : 0;
   const row = function (
     goal: string,
     metric: string,
@@ -2214,6 +2232,7 @@ export function teamData(): TeamData {
     D: D,
     claimed: claimedInChamber,
     of: CHAMBER.size,
+    target: Math.ceil(claimedInChamber * 0.5),
     wac: chamberActive,
     wacAt: chamberActiveAt,
     rows: rows,
