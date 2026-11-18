@@ -1,5 +1,5 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Locator, type Page } from "@playwright/test";
 
 // The Pilot Preview (docs/specs/2026-11-17-pilot-preview.md, tickets 03 and 04). Each Stop has its
 // own address that prepares its state, so unlike the product smoke tests these may open a Stop
@@ -97,19 +97,36 @@ const exploreLink = (page: Page) =>
   page.getByRole("link", { name: "Explore on your own", exact: true });
 const wayBack = (page: Page) => storyBar(page).getByRole("link", { name: "Back to stop 6" });
 const MANAGER_SEAT = "You’re seeing ComLinked’s community manager, working for ECCP.";
-const tiles = (page: Page) =>
-  page.getByRole("region", { name: "The pilot in figures" }).getByRole("listitem");
-/** A tile, whose text is its label followed by its figure. */
-const tile = (page: Page, label: string) => tiles(page).filter({ hasText: label });
+/** The chamber screen's Focus panel: the claimed figure over the split, and the results beside it. */
+const figures = (page: Page) => page.getByRole("region", { name: "The pilot in figures" });
+/** One figure there, whose text is its label followed by what it reads. */
+const figure = (page: Page, label: string) =>
+  figures(page).getByText(label, { exact: true }).locator("..");
+/** The split bar's segments, one for each status that has members. */
+const splitSegments = (page: Page) => figures(page).locator(".av-split > *");
 const statusFilter = (page: Page) => page.getByRole("group", { name: "Filter by status" });
 const chip = (page: Page, status: string) =>
   statusFilter(page).getByRole("button", { name: new RegExp(`^${status} \\d+$`) });
-const memberRows = (page: Page) => page.getByRole("table").locator("tbody").getByRole("row");
-const memberRow = (page: Page, name: string) => memberRows(page).filter({ hasText: name });
+const STATUSES = ["Active", "Quiet", "Needs an intro", "Not yet claimed"];
 const STATUS_NAME = /^(Active|Quiet|Needs an intro|Not yet claimed)$/;
-const statusCells = (page: Page) => memberRows(page).getByRole("cell", { name: STATUS_NAME });
+/** The member list's groups: one for each status that has members, under its heading. */
+const groups = (page: Page) => page.getByRole("region", { name: STATUS_NAME });
+const group = (page: Page, status: string) =>
+  page.getByRole("region", { name: status, exact: true });
+const groupHeadings = (page: Page) => groups(page).getByRole("heading");
+const memberRows = (page: Page) => groups(page).getByRole("listitem");
+const memberRow = (page: Page, name: string) => memberRows(page).filter({ hasText: name });
+/** The heading a member is listed under: its status, in words. */
 const statusOf = (page: Page, name: string) =>
-  memberRow(page, name).getByRole("cell", { name: STATUS_NAME });
+  groups(page).filter({ hasText: name }).getByRole("heading");
+/** The panel holding the member list, under its count of members. */
+const membersPanel = (page: Page) =>
+  page.locator("section", { has: page.getByRole("heading", { name: /^\d+ members$/ }) });
+const showAll = (page: Page, count: number) =>
+  page.getByRole("button", { name: `Show all ${count}`, exact: true });
+/** The titles of the panels on a screen, in order. */
+const panelTitles = (page: Page) => page.locator("main").getByRole("heading", { level: 2 });
+const focusPanel = (page: Page) => page.locator("[data-focus-panel]");
 const sideColumn = (page: Page) =>
   page.getByRole("complementary", { name: "Wins and top companies" });
 const sideStep = (page: Page) =>
@@ -132,6 +149,22 @@ async function expectStop(page: Page, s: Stop) {
   await expect(storyBar(page)).toContainText(`${s.n} of 6`);
   if (s.seat) await expect(storyBar(page)).toContainText(s.seat);
   await expect(mainHeading(page)).toHaveText(s.heading);
+}
+
+/** Day 0 as the chamber screen shows it: nobody claimed, no results, and every member not yet
+ * claimed, under the one heading. */
+async function expectDayZero(page: Page) {
+  await expect(figure(page, "Claimed")).toHaveText("Claimed0 of 100");
+  await expect(figure(page, "Deals confirmed")).toHaveText("Deals confirmed0");
+  await expect(figure(page, "Wins posted")).toHaveText("Wins posted0");
+  await expect(statusFilter(page).getByRole("button")).toHaveText([
+    "All 100",
+    "Active 0",
+    "Quiet 0",
+    "Needs an intro 0",
+    "Not yet claimed 100",
+  ]);
+  await expect(groupHeadings(page)).toHaveText(["Not yet claimed"]);
 }
 
 async function expectOpening(page: Page) {
@@ -298,7 +331,7 @@ test.describe("the Pilot Preview", () => {
     await openStop(page, stop(4));
     await nextLink(page).click();
     await expectStop(page, stop(5));
-    await expect(tile(page, "Claimed")).toHaveText("Claimed40 of 100");
+    await expect(figure(page, "Claimed")).toHaveText("Claimed40 of 100");
     for (const tool of [
       "Member import",
       "Make an introduction",
@@ -340,7 +373,7 @@ test.describe("the Pilot Preview", () => {
     const fresh = await context.newPage();
     await fresh.goto(stop(5).path);
     await expectStop(fresh, stop(5));
-    await expect(tile(fresh, "Claimed")).toHaveText("Claimed40 of 100");
+    await expect(figure(fresh, "Claimed")).toHaveText("Claimed40 of 100");
   });
 
   test("Stop 4 shows four ComDash tabs, three Overview cards and no View as switcher", async ({
@@ -348,8 +381,12 @@ test.describe("the Pilot Preview", () => {
   }) => {
     await openStop(page, stop(4));
     expect(await tabLabels(page)).toEqual(FOUR_TABS);
-    await expect(page.locator(".cd-cards > .cd-panel")).toHaveCount(3);
-    await expect(page.getByRole("heading", { name: "AI Lead Agent" })).toHaveCount(0);
+    await expect(panelTitles(page)).toHaveText([
+      "Next action",
+      "Interest Signals",
+      "Connections",
+      "Profile",
+    ]);
     await expect(viewAs(page)).toHaveCount(0);
   });
 
@@ -468,7 +505,13 @@ test.describe("the Pilot Preview", () => {
     await expect(guideButton(page)).toBeVisible();
     expect(await tabLabels(page)).toEqual(FIVE_TABS);
     await expect(viewAs(page)).toBeVisible();
-    await expect(page.locator(".cd-cards > .cd-panel")).toHaveCount(4);
+    await expect(panelTitles(page)).toHaveText([
+      "Next action",
+      "Interest Signals",
+      "AI Lead Agent",
+      "Connections",
+      "Profile",
+    ]);
   });
 });
 
@@ -568,14 +611,10 @@ test.describe("the Pilot Preview when something goes wrong", () => {
   }) => {
     const errors = pageErrors(page);
     await openStop(page, stop(1));
-    await expect(tiles(page)).toHaveText([
-      "Claimed0 of 100",
-      "Active0",
-      "Need an intro0",
-      "Deals confirmed0",
-      "Wins posted0",
-    ]);
-    await expect(statusCells(page)).toHaveText(Array(100).fill("Not yet claimed"));
+    await expectDayZero(page);
+    await chip(page, "Not yet claimed").click();
+    await expect(groupHeadings(page)).toHaveText(["Not yet claimed"]);
+    await expect(memberRows(page)).toHaveCount(100);
     await presenterGuide(page);
     await guideDialog(page)
       .getByRole("button", { name: /^See who’s interested/ })
@@ -1054,7 +1093,12 @@ test.describe("exploring after Stop 6", () => {
     await explore(page);
     expect(await tabLabels(page)).toEqual(FOUR_TABS);
     await expect(viewAs(page)).toHaveCount(0);
-    await expect(page.locator(".cd-cards > .cd-panel")).toHaveCount(3);
+    await expect(panelTitles(page)).toHaveText([
+      "Next action",
+      "Interest Signals",
+      "Connections",
+      "Profile",
+    ]);
     await expect(guideButton(page)).toHaveCount(0);
     await section(page, "Leads").click();
     await expect(page).toHaveURL(/\/app\/leads$/);
@@ -1135,26 +1179,44 @@ async function hasVisibleFocus(page: Page) {
 }
 
 test.describe("Stop 5, ECCP's Activity View", () => {
-  test("names ECCP and Day 14 of the pilot, and five tiles read 40 of 100, 20, 4, 3 and 2", async ({
+  test("names ECCP and Day 14 of the pilot, and leads with 40 of 100 claimed beside 3 deals and 2 wins", async ({
     page,
   }) => {
     await openStop(page, stop(5));
-    const head = page.locator("main .cd-head");
-    await expect(head.locator(".cd-kicker")).toHaveText("ECCP on ComLinked");
+    const head = page.locator("main header");
+    await expect(head).toContainText("ECCP on ComLinked");
     await expect(head).toContainText("Read-only");
     await expect(head).not.toContainText(/90|on track|behind|target/i);
-    // Each tile is read as its label, then its figure.
-    await expect(tiles(page)).toHaveCount(5);
-    expect(await tiles(page).allInnerTexts()).toEqual([
-      "Claimed\n40 of 100",
-      "Active\n20",
-      "Need an intro\n4",
-      "Deals confirmed\n3",
-      "Wins posted\n2",
-    ]);
+    // The claimed figure with its split is the screen's one Focus panel.
+    await expect(focusPanel(page)).toHaveCount(1);
+    await expect(figures(page)).toHaveAttribute("data-focus-panel", "");
+    // Each figure is read as its label, then what it says.
+    const asShown = { useInnerText: true };
+    await expect(figure(page, "Claimed")).toHaveText("Claimed 40 of 100", asShown);
+    await expect(figure(page, "Deals confirmed")).toHaveText("Deals confirmed 3", asShown);
+    await expect(figure(page, "Wins posted")).toHaveText("Wins posted 2", asShown);
   });
 
-  test("the member list starts with All 100, and each filter shows its count and narrows the list", async ({
+  test("the bar splits in proportion to 20, 16, 4 and 60, and is hidden from assistive technology", async ({
+    page,
+  }) => {
+    await openStop(page, stop(5));
+    const widths = await splitSegments(page).evaluateAll((els) =>
+      els.map((el) => el.getBoundingClientRect().width),
+    );
+    expect(widths).toHaveLength(4);
+    const whole = widths.reduce((sum, w) => sum + w, 0);
+    expect(widths.map((w) => Math.round((w / whole) * 100))).toEqual([20, 16, 4, 60]);
+    // The four colours differ, and each is repeated on its chip beside the status in words.
+    const colours = (els: Element[]) => els.map((el) => getComputedStyle(el).backgroundColor);
+    const segments = await splitSegments(page).evaluateAll(colours);
+    expect(new Set(segments).size).toBe(4);
+    const dots = await statusFilter(page).locator("button i").evaluateAll(colours);
+    expect(dots).toEqual(segments);
+    await expect(splitSegments(page).first().locator("..")).toHaveAttribute("aria-hidden", "true");
+  });
+
+  test("the status filter starts on All 100, where each status shows its count and six members, and a chip shows its whole group", async ({
     page,
   }) => {
     await openStop(page, stop(5));
@@ -1170,35 +1232,83 @@ test.describe("Stop 5, ECCP's Activity View", () => {
       "aria-pressed",
       "true",
     );
-    await expect(memberRows(page)).toHaveCount(100);
-    for (const [status, count] of [
-      ["Active", 20],
-      ["Quiet", 16],
-      ["Needs an intro", 4],
-      ["Not yet claimed", 60],
-    ] as const) {
+    const held = [
+      ["Active", 20, 6],
+      ["Quiet", 16, 6],
+      ["Needs an intro", 4, 4],
+      ["Not yet claimed", 60, 6],
+    ] as const;
+    await expect(groupHeadings(page)).toHaveText(STATUSES);
+    for (const [status, count, shown] of held) {
+      await expect(group(page, status).getByRole("listitem")).toHaveCount(shown);
+      await expect(group(page, status).getByText(String(count), { exact: true })).toBeVisible();
+      // "Show all" is offered only where a group holds more than it lists.
+      await expect(group(page, status).getByRole("button", { name: /^Show all/ })).toHaveCount(
+        count > shown ? 1 : 0,
+      );
+    }
+    for (const [status, count] of held) {
       await chip(page, status).click();
       await expect(chip(page, status)).toHaveAttribute("aria-pressed", "true");
-      await expect(statusCells(page)).toHaveText(Array(count).fill(status));
+      await expect(groupHeadings(page)).toHaveText([status]);
+      await expect(memberRows(page)).toHaveCount(count);
+      await expect(page.getByRole("button", { name: /^Show all/ })).toHaveCount(0);
     }
+    await chip(page, "All").click();
+    await expect(groupHeadings(page)).toHaveText(STATUSES);
+    await expect(memberRows(page)).toHaveCount(22);
   });
 
-  test("each row shows the member and its status in words, and nothing else about it", async ({
+  test("Show all 20 under Active chooses the Active chip, and moves focus to it", async ({
+    page,
+  }) => {
+    await openStop(page, stop(5));
+    await showAll(page, 20).click();
+    await expect(chip(page, "Active")).toHaveAttribute("aria-pressed", "true");
+    await expect(chip(page, "Active")).toBeFocused();
+    await expect(groupHeadings(page)).toHaveText(["Active"]);
+    await expect(memberRows(page)).toHaveCount(20);
+    await chip(page, "All").click();
+    await expect(showAll(page, 20)).toBeVisible();
+  });
+
+  test("each row shows the member under its status in words, and nothing else about it", async ({
     page,
   }) => {
     await openStop(page, stop(5));
     await expect(statusOf(page, "Kalayaan Foods Inc.")).toHaveText("Active");
-    await expect(statusOf(page, "Nordhavn Freight Forwarders")).toHaveText("Active");
+    await chip(page, "Active").click();
+    await expect(memberRow(page, "Nordhavn Freight Forwarders")).toHaveCount(1);
     await chip(page, "Needs an intro").click();
+    await expect(groupHeadings(page)).toHaveText(["Needs an intro"]);
+    // A row is its mark's initials and its name: the heading above it says its status.
     await expect(memberRows(page)).toHaveText([
-      "LHLakbay HotelsNeeds an intro",
-      "BRBigasan Rice MillsNeeds an intro",
-      "POPalengke OnlineNeeds an intro",
-      "MPMedivant Pharma DistributionNeeds an intro",
+      "LHLakbay Hotels",
+      "BRBigasan Rice Mills",
+      "POPalengke Online",
+      "MPMedivant Pharma Distribution",
     ]);
     await chip(page, "All").click();
-    await expect(statusCells(page)).toHaveCount(100);
+    await expect(memberRows(page)).toHaveCount(22);
     await expect(page.locator("main")).not.toContainText(/\blead(s)?\b|connection|points? this/i);
+  });
+
+  test("a member that has claimed and one that has not show different marks", async ({ page }) => {
+    await openStop(page, stop(5));
+    const mark = (name: string) =>
+      memberRow(page, name)
+        .locator("[aria-hidden='true']")
+        .evaluate((el) => {
+          const style = getComputedStyle(el);
+          return {
+            border: style.borderTopStyle,
+            filled: style.backgroundColor !== "rgba(0, 0, 0, 0)",
+          };
+        });
+    expect(await mark("Maple Bay Grocers")).toEqual({ border: "none", filled: true });
+    expect(await mark("Northline Logistics")).toEqual({ border: "dashed", filled: false });
+    // The shape is never the only cue: the member also sits under "Not yet claimed", in words.
+    await expect(statusOf(page, "Northline Logistics")).toHaveText("Not yet claimed");
   });
 
   test("Northline Logistics, with a message waiting, comes first among the not yet claimed, saying nothing of who is waiting", async ({
@@ -1247,7 +1357,7 @@ test.describe("Stop 5, ECCP's Activity View", () => {
     await expect(page.locator("#monthly").getByText(/^\d+\. /)).toHaveText(top);
   });
 
-  test("in the Chamber Contact's Seat the filters are the only controls on the screen", async ({
+  test("in the Chamber Contact's Seat the status filter and its Show all buttons are the only controls on the screen", async ({
     page,
   }) => {
     await openStop(page, stop(5));
@@ -1256,55 +1366,79 @@ test.describe("Stop 5, ECCP's Activity View", () => {
       .locator(
         "button, a[href], input, select, textarea, [role='combobox'], [contenteditable], [tabindex]:not([tabindex='-1'])",
       );
+    // "Show all" chooses its status's chip, so it is the filter by another name.
     await expect(controls).toHaveText([
       "All 100",
       "Active 20",
       "Quiet 16",
       "Needs an intro 4",
       "Not yet claimed 60",
+      "Show all 20",
+      "Show all 16",
+      "Show all 60",
     ]);
     for (const tool of ["Send introduction", "Run the import again", "Flag it"]) {
       await expect(page.getByRole("button", { name: tool })).toHaveCount(0);
     }
   });
 
-  test("on a phone the tiles form two columns, the list becomes cards and the side column moves below", async ({
+  test("on a phone the claimed figure leads, the members form one column and the side column moves below", async ({
     page,
   }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await openStop(page, stop(5));
-    const boxes = await tiles(page).evaluateAll((els) =>
-      els.map((el) => {
-        const r = el.getBoundingClientRect();
-        return { x: Math.round(r.x), y: Math.round(r.y) };
-      }),
+    const edges = await memberRows(page).evaluateAll((els) =>
+      els.map((el) => Math.round(el.getBoundingClientRect().x)),
     );
-    expect(boxes[0]?.y).toBe(boxes[1]?.y);
-    expect(boxes[2]?.y).toBeGreaterThan(boxes[0]?.y ?? 0);
-    expect(boxes[2]?.x).toBe(boxes[0]?.x);
-    expect(
-      await memberRows(page)
-        .first()
-        .evaluate((el) => getComputedStyle(el).display),
-    ).toBe("grid");
-    const list = await page.locator(".av-main").boundingBox();
+    expect(new Set(edges).size).toBe(1);
+    const lead = await figures(page).boundingBox();
+    const list = await membersPanel(page).boundingBox();
     const side = await sideColumn(page).boundingBox();
+    expect(lead?.x).toBe(16);
+    expect((lead?.y ?? 0) + (lead?.height ?? 0)).toBeLessThanOrEqual(list?.y ?? 0);
     expect(side?.y ?? 0).toBeGreaterThan((list?.y ?? 0) + (list?.height ?? 0) - 1);
     await noSidewaysScroll(page);
   });
 
-  test("on a 360 pixel phone a long company name wraps inside its card", async ({ page }) => {
+  test("on a laptop the figure spans the width, and the members sit in two columns beside the side column", async ({
+    page,
+  }) => {
+    await openStop(page, stop(5));
+    const lead = await figures(page).boundingBox();
+    const list = await membersPanel(page).boundingBox();
+    const side = await sideColumn(page).boundingBox();
+    expect(lead?.width).toBeGreaterThan((list?.width ?? 0) + (side?.width ?? 0));
+    expect(side?.x ?? 0).toBeGreaterThan((list?.x ?? 0) + (list?.width ?? 0) - 1);
+    expect(Math.abs((side?.y ?? 0) - (list?.y ?? 0))).toBeLessThanOrEqual(1);
+    const edges = await group(page, "Active")
+      .getByRole("listitem")
+      .evaluateAll((els) => els.map((el) => Math.round(el.getBoundingClientRect().x)));
+    expect(new Set(edges).size).toBe(2);
+  });
+
+  test("the longest company name fits its row at 360 pixels, and wraps inside it once it no longer fits", async ({
+    page,
+  }) => {
     await page.setViewportSize({ width: 360, height: 740 });
     await openStop(page, stop(5));
     await chip(page, "Not yet claimed").click();
-    const row = memberRow(page, "Sterling Rivera Insurance Brokers");
-    const name = row.locator("strong");
-    const lines = await name.evaluate(
-      (el) => el.getBoundingClientRect().height / parseFloat(getComputedStyle(el).lineHeight),
-    );
-    expect(Math.round(lines)).toBeGreaterThan(1);
-    const card = await row.boundingBox();
-    expect((card?.x ?? 0) + (card?.width ?? 0)).toBeLessThanOrEqual(360);
+    const name = memberRow(page, "Sterling Rivera Insurance Brokers").locator("strong");
+    await expect(name).toBeVisible();
+    const measure = () =>
+      name.evaluate((el) => {
+        const text = el.getBoundingClientRect();
+        const row = el.closest("li")?.getBoundingClientRect();
+        return {
+          lines: Math.round(text.height / parseFloat(getComputedStyle(el).lineHeight)),
+          inside: row !== undefined && text.right <= row.right && row.right <= window.innerWidth,
+        };
+      });
+    // A row carries no status tag now, so even the longest name has room on one line.
+    expect(await measure()).toEqual({ lines: 1, inside: true });
+    await noSidewaysScroll(page);
+    // Narrower than any phone the Demo is checked on, the name wraps and still stays inside.
+    await page.setViewportSize({ width: 320, height: 740 });
+    expect(await measure()).toEqual({ lines: 2, inside: true });
     await noSidewaysScroll(page);
   });
 });
@@ -1344,8 +1478,10 @@ test.describe("the side step from Stop 5", () => {
     await backToView(page).click();
     await expect(storyBar(page)).toContainText("You’re seeing ECCP’s own view. It is read-only.");
     await expect(banner(page)).toContainText("ECCP, read-only");
-    await expect(tile(page, "Need an intro")).toHaveText("Need an intro3");
     await expect(chip(page, "Needs an intro")).toHaveText("Needs an intro 3");
+    await expect(chip(page, "Active")).toHaveText("Active 21");
+    await expect(group(page, "Needs an intro").getByRole("listitem")).toHaveCount(3);
+    await chip(page, "Active").click();
     await expect(statusOf(page, "Lakbay Hotels")).toHaveText("Active");
     await nextLink(page).click();
     await expectStop(page, stop(6));
@@ -1396,7 +1532,7 @@ test.describe("the side step from Stop 5", () => {
     await page.getByRole("button", { name: "Send introduction" }).click();
     await expect(page.getByText("Choose two different companies.")).toBeVisible();
     await backToView(page).click();
-    await expect(tile(page, "Need an intro")).toHaveText("Need an intro4");
+    await expect(chip(page, "Needs an intro")).toHaveText("Needs an intro 4");
   });
 
   test("from the keyboard, the side step, the filters and the tools come in order with visible focus", async ({
@@ -1448,14 +1584,11 @@ test.describe("Stop 1, the community manager's Activity View on Day 0", () => {
   }) => {
     await openStop(page, stop(1));
     await expect(memberImport(page)).toBeInViewport();
-    await expect(tiles(page)).toHaveText([
-      "Claimed0 of 100",
-      "Active0",
-      "Need an intro0",
-      "Deals confirmed0",
-      "Wins posted0",
-    ]);
-    await expect(chip(page, "Not yet claimed")).toHaveText("Not yet claimed 100");
+    await expectDayZero(page);
+    // With nobody claimed, the bar is all "not yet claimed": one segment, and no other is drawn.
+    await expect(splitSegments(page)).toHaveCount(1);
+    await expect(group(page, "Not yet claimed").getByRole("listitem")).toHaveCount(6);
+    await expect(showAll(page, 100)).toBeVisible();
     await expect(sideColumn(page)).toContainText("No wins yet.");
     await expect(
       page.getByText("No member has claimed yet, so an announcement would reach nobody."),
@@ -1476,8 +1609,8 @@ test.describe("Stop 1, the community manager's Activity View on Day 0", () => {
     const tools = await page
       .getByRole("region", { name: "Community manager’s tools" })
       .boundingBox();
-    const figures = await tiles(page).first().boundingBox();
-    expect(tools?.y ?? 0).toBeLessThan(figures?.y ?? 0);
+    const lead = await figures(page).boundingBox();
+    expect(tools?.y ?? 0).toBeLessThan(lead?.y ?? 0);
     await expect(memberImport(page)).toBeInViewport();
   });
 });
@@ -1566,6 +1699,404 @@ test.describe("the Activity View's layout and accessibility", () => {
     await expectAccessible(page);
     await openStop(page, stop(1));
     await expectAccessible(page);
+  });
+});
+
+/** How far an element's content stops short of its foot: a card as tall as its content leaves
+ * only its own padding. */
+async function slackBelowContent(card: Locator) {
+  return card.evaluate((el) => {
+    const last = el.lastElementChild;
+    return last ? el.getBoundingClientRect().bottom - last.getBoundingClientRect().bottom : 0;
+  });
+}
+
+/** A panel on a screen, by its title. */
+const panelTitled = (page: Page, title: string) =>
+  page
+    .locator("main section")
+    .filter({ has: page.getByRole("heading", { name: title, exact: true, level: 2 }) });
+
+test.describe("the Opening and the ask, in two panels", () => {
+  /** The navy panel is the screen's Focus panel, and the white one follows it in the frame. */
+  const navy = (page: Page) => focusPanel(page);
+  const white = (page: Page) => page.locator("[data-focus-panel] + *");
+  const background = (panel: Locator) =>
+    panel.evaluate((el) => getComputedStyle(el).backgroundColor);
+  const WHITE = "rgb(255, 255, 255)";
+
+  async function expectSideBySide(page: Page) {
+    const left = await navy(page).boundingBox();
+    const right = await white(page).boundingBox();
+    expect(Math.round(right?.y ?? 0)).toBe(Math.round(left?.y ?? -1));
+    expect(Math.round(right?.height ?? 0)).toBe(Math.round(left?.height ?? -1));
+    expect(Math.round(right?.x ?? 0)).toBe(Math.round((left?.x ?? 0) + (left?.width ?? 0)));
+  }
+
+  async function expectStacked(page: Page) {
+    const top = await navy(page).boundingBox();
+    const below = await white(page).boundingBox();
+    // One column, inset by the 16px gutter, navy above white.
+    expect(top?.x).toBe(16);
+    expect(below?.x).toBe(16);
+    expect(top?.width).toBe(below?.width);
+    expect(Math.round(below?.y ?? 0)).toBe(Math.round((top?.y ?? 0) + (top?.height ?? 0)));
+    await noSidewaysScroll(page);
+  }
+
+  test("the Opening is one frame on a laptop: navy with what it is, white with the six Stops by day and Start", async ({
+    page,
+  }) => {
+    await page.goto(OPENING);
+    await expectOpening(page);
+    await expect(focusPanel(page)).toHaveCount(1);
+    expect(await background(navy(page))).not.toBe(WHITE);
+    expect(await background(white(page))).toBe(WHITE);
+    await expectSideBySide(page);
+    await expect(navy(page).getByRole("heading", { level: 1 })).toHaveText("A preview for ECCP");
+    await expect(navy(page)).toContainText(
+      "It shows how a ComLinked pilot could run for ECCP’s members, from the first day to two weeks in.",
+    );
+    await expect(navy(page)).toContainText(
+      "ECCP has not joined ComLinked. Every company, person and figure here is invented.",
+    );
+    await expect(white(page).getByRole("heading", { name: "The 6 stops" })).toBeVisible();
+    const stops = white(page).getByRole("listitem");
+    await expect(stops).toHaveText(STOPS.map((s) => s.line));
+    // The day sits beside each Stop, to its left on the same line, and the last Stop has none.
+    const rows = await stops.evaluateAll((items) =>
+      items.map((item) => {
+        const day = item.firstElementChild;
+        const title = item.lastElementChild;
+        if (!day || !title) throw new Error("A Stop has no day or title.");
+        const [a, b] = [day.getBoundingClientRect(), title.getBoundingClientRect()];
+        return {
+          day: (day.textContent ?? "").replace(" · ", ""),
+          beside: a.right <= b.left && a.top < b.bottom && b.top < a.bottom,
+        };
+      }),
+    );
+    expect(rows.map((row) => row.day)).toEqual(["Day 0", "Day 1", "Day 2", "Day 14", "Day 14", ""]);
+    expect(rows.slice(0, 5).every((row) => row.beside)).toBe(true);
+    await expect(white(page).getByRole("link", { name: "Start", exact: true })).toBeVisible();
+  });
+
+  test("the ask closes the walk in the same two panels: navy with what ECCP gives and that it is free, white with the rest", async ({
+    page,
+  }) => {
+    await openStop(page, stop(6));
+    await expect(focusPanel(page)).toHaveCount(1);
+    expect(await background(navy(page))).not.toBe(WHITE);
+    expect(await background(white(page))).toBe(WHITE);
+    await expectSideBySide(page);
+    await expect(navy(page).getByRole("heading", { level: 1 })).toHaveText(
+      "What a pilot asks of ECCP",
+    );
+    await expect(
+      navy(page).getByRole("region", { name: "ECCP gives two things" }).getByRole("listitem"),
+    ).toHaveCount(2);
+    await expect(navy(page)).toContainText("The pilot is free for ECCP and its members.");
+    await expect(white(page).getByRole("heading", { level: 2 })).toHaveText([
+      "ComLinked does the rest",
+      "What your members get",
+    ]);
+    // Email Richard is the one solid button, Explore on your own is outlined, and the address
+    // is text.
+    await expect(white(page).getByRole("link")).toHaveText([
+      "Email Richard",
+      "Explore on your own",
+    ]);
+    expect(await background(emailLink(page))).not.toBe(WHITE);
+    expect(await background(exploreLink(page))).toBe(WHITE);
+    await expect(white(page).getByText(PRESENTER_ADDRESS, { exact: true })).toBeVisible();
+    await expect(white(page).getByRole("link", { name: PRESENTER_ADDRESS })).toHaveCount(0);
+  });
+
+  test("on a phone, navy stacks above white on both screens", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(OPENING);
+    await expectOpening(page);
+    await expectStacked(page);
+    await openStop(page, stop(6));
+    await expectStacked(page);
+  });
+});
+
+test.describe("the Story Bar, a slim second row of the header", () => {
+  const stepDots = (page: Page) => storyBar(page).locator("ol[aria-hidden='true'] > li");
+
+  test("on every Stop it sits under the top bar in white, marks the Stop on six step dots and keeps Next in one place", async ({
+    page,
+  }) => {
+    const nextEdges: number[] = [];
+    for (const s of STOPS) {
+      await openStop(page, s);
+      expect(await stepDots(page).evaluateAll((dots) => dots.map((d) => d.dataset.step))).toEqual(
+        STOPS.map((other) => (other.n < s.n ? "done" : other.n === s.n ? "now" : "next")),
+      );
+      const top = await banner(page).boundingBox();
+      const bar = await storyBar(page).boundingBox();
+      const next = await nextLink(page).boundingBox();
+      expect(Math.round(bar?.y ?? 0)).toBe(Math.round((top?.y ?? 0) + (top?.height ?? 0)));
+      // About 48px tall, closed by a hairline.
+      expect(bar?.height ?? 0).toBeLessThanOrEqual(50);
+      expect(await storyBar(page).evaluate((el) => getComputedStyle(el).backgroundColor)).toBe(
+        await banner(page).evaluate((el) => getComputedStyle(el).backgroundColor),
+      );
+      nextEdges.push(Math.round((next?.x ?? 0) + (next?.width ?? 0)), Math.round(next?.y ?? 0));
+    }
+    // The same right edge and the same line on all six Stops.
+    expect(new Set(nextEdges.filter((_, i) => i % 2 === 0)).size).toBe(1);
+    expect(new Set(nextEdges.filter((_, i) => i % 2 === 1)).size).toBe(1);
+  });
+
+  test("Next is outlined and Back is quiet, so neither competes with the screen's own button", async ({
+    page,
+  }) => {
+    await openStop(page, stop(4));
+    const look = (link: Locator) =>
+      link.evaluate((el) => {
+        const style = getComputedStyle(el);
+        return { fill: style.backgroundColor, line: style.borderTopColor };
+      });
+    const next = await look(nextLink(page));
+    const back = await look(backLink(page));
+    expect(next.fill).toBe("rgb(255, 255, 255)");
+    expect(next.line).not.toBe(next.fill);
+    expect(back.fill).toBe("rgba(0, 0, 0, 0)");
+    expect(back.line).toBe("rgba(0, 0, 0, 0)");
+  });
+
+  test("at 360 pixels it is no taller than the bar it replaces on a Stop with no side step, and Next is whole and 44px tall", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 360, height: 740 });
+    const lines = (text: Locator) =>
+      text.evaluate((el) =>
+        Math.round(el.getBoundingClientRect().height / parseFloat(getComputedStyle(el).lineHeight)),
+      );
+    for (const s of STOPS.filter((other) => other.n !== 5)) {
+      await openStop(page, s);
+      const titleLines = await lines(storyBar(page).getByText(s.line, { exact: true }));
+      const seatLines = s.seat ? await lines(storyBar(page).getByText(s.seat, { exact: true })) : 0;
+      // The bar this replaces: 24px of padding and a hairline, a 20px line for each line of the
+      // title and of the Seat with 2px between the two, then 10px and its 44px buttons. Its
+      // title was larger and bolder, so it wrapped at least as often as this one does.
+      const replaced = 25 + 20 * titleLines + (seatLines ? 2 + 20 * seatLines : 0) + 10 + 44;
+      const bar = await storyBar(page).boundingBox();
+      expect([s.n, (bar?.height ?? 0) <= replaced]).toEqual([s.n, true]);
+      const next = await nextLink(page).boundingBox();
+      expect(next?.height ?? 0).toBeGreaterThanOrEqual(44);
+      expect(next?.x ?? -1).toBeGreaterThanOrEqual(0);
+      expect((next?.x ?? 0) + (next?.width ?? 0)).toBeLessThanOrEqual(360);
+      await expect(nextLink(page)).toBeInViewport({ ratio: 1 });
+      await noSidewaysScroll(page);
+    }
+  });
+
+  test("on a phone the side step takes its own row under the Seat line", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await openStop(page, stop(5));
+    const seat = await storyBar(page)
+      .getByText("You’re seeing ECCP’s own view. It is read-only.", { exact: true })
+      .boundingBox();
+    const step = await sideStep(page).boundingBox();
+    expect(step?.y ?? 0).toBeGreaterThanOrEqual((seat?.y ?? 0) + (seat?.height ?? 0));
+    expect(step?.height ?? 0).toBeGreaterThanOrEqual(44);
+  });
+});
+
+test.describe("Stop 4, ComDash Overview", () => {
+  test("Next action is the one raised panel, across the width, with Interest Signals wide below it and Connections and Profile stacked beside", async ({
+    page,
+  }) => {
+    await openStop(page, stop(4));
+    await expect(focusPanel(page)).toHaveCount(1);
+    await expect(focusPanel(page).getByRole("heading", { name: "Next action" })).toBeVisible();
+    await expect(focusPanel(page)).toContainText("Finish today’s leads");
+    const shadow = (panel: Locator) => panel.evaluate((el) => getComputedStyle(el).boxShadow);
+    expect(await shadow(focusPanel(page))).not.toBe("none");
+    for (const title of ["Interest Signals", "Connections", "Profile"]) {
+      expect([title, await shadow(panelTitled(page, title))]).toEqual([title, "none"]);
+    }
+    const lead = await focusPanel(page).boundingBox();
+    const signals = await panelTitled(page, "Interest Signals").boundingBox();
+    const connections = await panelTitled(page, "Connections").boundingBox();
+    const profile = await panelTitled(page, "Profile").boundingBox();
+    const right = (box: typeof lead) => Math.round((box?.x ?? 0) + (box?.width ?? 0));
+    const foot = (box: typeof lead) => (box?.y ?? 0) + (box?.height ?? 0);
+    expect(Math.round(lead?.x ?? 0)).toBe(Math.round(signals?.x ?? -1));
+    expect(right(lead)).toBe(right(connections));
+    expect(foot(lead)).toBeLessThan(signals?.y ?? 0);
+    expect(signals?.width ?? 0).toBeGreaterThan((connections?.width ?? 0) * 1.5);
+    expect(Math.round(connections?.y ?? 0)).toBe(Math.round(signals?.y ?? -1));
+    expect(Math.round(profile?.x ?? 0)).toBe(Math.round(connections?.x ?? -1));
+    expect(profile?.y ?? 0).toBeGreaterThan(foot(connections));
+    // Each stacked card is as tall as its content, not stretched to the wide column's height.
+    expect(foot(profile)).toBeLessThan(foot(signals));
+    for (const title of ["Connections", "Profile"]) {
+      expect(await slackBelowContent(panelTitled(page, title))).toBeLessThanOrEqual(26);
+    }
+  });
+
+  test("Interest Signals holds its three figures, a bar or a tick for each of the 14 days, and the Hot Companies with their marks", async ({
+    page,
+  }) => {
+    await openStop(page, stop(4));
+    const signals = panelTitled(page, "Interest Signals");
+    for (const figure of ["Interested companies13", "Messages3", "Search appearances3"]) {
+      await expect(signals).toContainText(figure);
+    }
+    // One mark for each day: a bar where something happened, and a short tick where nothing did.
+    const heights = await signals
+      .locator("figure li > *")
+      .evaluateAll((marks) => marks.map((mark) => mark.getBoundingClientRect().height));
+    expect(heights).toHaveLength(14);
+    expect(heights.filter((h) => h > 4)).toHaveLength(5);
+    expect(heights.filter((h) => h <= 4).every((h) => h > 0)).toBe(true);
+    await expect(signals.locator("figure").getByText(/^Day \d+$/)).toHaveText(["Day 1", "Day 14"]);
+    await expect(signals.locator("figcaption")).toHaveText(
+      "7 search appearances and recommendations over 14 days since you claimed your profile, with at most 2 in a day.",
+    );
+    // The chart's labels are text at their own size, whatever the width.
+    const label = signals.locator("figure").getByText("Day 14", { exact: true });
+    expect(await label.evaluate((el) => getComputedStyle(el).fontSize)).toBe("12px");
+    await page.setViewportSize({ width: 390, height: 844 });
+    expect(await label.evaluate((el) => getComputedStyle(el).fontSize)).toBe("12px");
+    await page.setViewportSize({ width: 1280, height: 900 });
+
+    const title = signals.getByRole("heading", { name: "Hot companies" });
+    expect(await title.evaluate((el) => getComputedStyle(el).textTransform)).toBe("none");
+    const hot = signals.getByRole("listitem").filter({ has: page.getByRole("link") });
+    await expect(hot).toHaveText([
+      "HKHapag Kitchen GroupRestaurant group · Taguig CityHot",
+      "LFLuntian Foods Inc.Organic food distribution · Marikina CityHot",
+      "PPPacific Pack SolutionsPackaging · Pasig CityHot",
+      "NFNordhavn Freight ForwardersFreight forwarding · Quezon CityHot",
+    ]);
+    // A Hot Company's name is underlined only on hover or focus.
+    const name = signals.getByRole("link", { name: "Hapag Kitchen Group", exact: true });
+    const underline = () => name.evaluate((el) => getComputedStyle(el).textDecorationLine);
+    expect(await underline()).toBe("none");
+    await name.hover();
+    expect(await underline()).toBe("underline");
+    await page.mouse.move(0, 0);
+    await name.focus();
+    expect(await underline()).toBe("underline");
+  });
+
+  test("with the later items switched on, the AI Lead Agent card joins the narrow column and no card is left half empty", async ({
+    page,
+  }) => {
+    await openStop(page, stop(4));
+    await flipSwitch(page, "After-MVP previews", true);
+    await expect(panelTitles(page)).toHaveText([
+      "Next action",
+      "Interest Signals",
+      "AI Lead Agent",
+      "Connections",
+      "Profile",
+    ]);
+    const signals = await panelTitled(page, "Interest Signals").boundingBox();
+    const stack = ["AI Lead Agent", "Connections", "Profile"];
+    const boxes = await Promise.all(stack.map((title) => panelTitled(page, title).boundingBox()));
+    expect(Math.round(boxes[0]?.y ?? 0)).toBe(Math.round(signals?.y ?? -1));
+    expect(new Set(boxes.map((box) => Math.round(box?.x ?? 0))).size).toBe(1);
+    expect(boxes[0]?.x ?? 0).toBeGreaterThan((signals?.x ?? 0) + (signals?.width ?? 0));
+    for (const [i, title] of stack.entries()) {
+      if (i) {
+        const above = boxes[i - 1];
+        expect(boxes[i]?.y ?? 0).toBeGreaterThan((above?.y ?? 0) + (above?.height ?? 0));
+      }
+      expect([title, (await slackBelowContent(panelTitled(page, title))) <= 26]).toEqual([
+        title,
+        true,
+      ]);
+    }
+    await expect(focusPanel(page)).toHaveCount(1);
+    await noSidewaysScroll(page);
+  });
+
+  test("on a phone the panels form one column in the same order, inset by 16px", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await openStop(page, stop(4));
+    const titles = ["Next action", "Interest Signals", "Connections", "Profile"];
+    await expect(panelTitles(page)).toHaveText(titles);
+    const boxes = await Promise.all(titles.map((title) => panelTitled(page, title).boundingBox()));
+    expect(boxes.map((box) => box?.x)).toEqual([16, 16, 16, 16]);
+    expect(boxes.map((box) => box?.width)).toEqual([358, 358, 358, 358]);
+    const tops = boxes.map((box) => box?.y ?? 0);
+    expect(tops).toEqual([...tops].sort((a, b) => a - b));
+  });
+});
+
+test.describe("the four reference screens from the keyboard and with reduced motion", () => {
+  test("ComDash's tabs follow the Story Bar in order, each with a visible focus ring", async ({
+    page,
+  }) => {
+    await openStop(page, stop(4));
+    await backLink(page).focus();
+    await hasVisibleFocus(page);
+    await page.keyboard.press("Tab");
+    await expect(nextLink(page)).toBeFocused();
+    await hasVisibleFocus(page);
+    for (const tab of FOUR_TABS) {
+      await page.keyboard.press("Tab");
+      await expect(tabRow(page).getByRole("link", { name: tab, exact: true })).toBeFocused();
+      await hasVisibleFocus(page);
+    }
+    await page.keyboard.press("Tab");
+    await expect(page.getByRole("button", { name: "Open today’s leads" })).toBeFocused();
+    await hasVisibleFocus(page);
+  });
+
+  test("on the community manager's side the chips, Show all and the member rows come in order, and a row opens its draft", async ({
+    page,
+  }) => {
+    await openStop(page, stop(5));
+    await sideStep(page).focus();
+    await page.keyboard.press("Enter");
+    await expect(backToView(page)).toBeFocused();
+    await chip(page, "All").focus();
+    await hasVisibleFocus(page);
+    for (const status of STATUSES) {
+      await page.keyboard.press("Tab");
+      await expect(chip(page, status)).toBeFocused();
+    }
+    await page.keyboard.press("Tab");
+    await expect(showAll(page, 20)).toBeFocused();
+    await hasVisibleFocus(page);
+    await page.keyboard.press("Tab");
+    await expect(page.getByRole("button", { name: "Kalayaan Foods Inc." })).toBeFocused();
+    await hasVisibleFocus(page);
+    await page.keyboard.press("Tab");
+    await expect(page.getByRole("button", { name: "Maple Bay Grocers" })).toBeFocused();
+    await page.keyboard.press("Enter");
+    await expect(mainHeading(page)).toHaveText("Draft profile");
+  });
+
+  test("with reduced motion, nothing on the four reference screens transitions or animates", async ({
+    page,
+  }) => {
+    const still = async () => {
+      const durations = await page
+        .locator(".cl-product *")
+        .evaluateAll((els) => els.map((el) => getComputedStyle(el).transitionDuration));
+      expect(durations.length).toBeGreaterThan(0);
+      expect(durations.every((d) => d.split(",").every((x) => parseFloat(x) === 0))).toBe(true);
+      expect(await page.evaluate(() => document.getAnimations().length)).toBe(0);
+    };
+    await page.goto(OPENING);
+    await expectOpening(page);
+    await still();
+    for (const n of [1, 4, 6, 5] as const) {
+      await openStop(page, stop(n));
+      await still();
+    }
+    await chip(page, "Needs an intro").click();
+    await still();
   });
 });
 

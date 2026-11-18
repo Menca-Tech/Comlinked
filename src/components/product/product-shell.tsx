@@ -182,15 +182,7 @@ function Shell({ children }: { children: ReactNode }) {
     <ProductRoot>
       <TopBar route={route} />
       <StoryBar />
-      <main
-        className={
-          route === "claim"
-            ? "a-body a-body-welcome"
-            : route === "dash" && !showCompany
-              ? "a-body a-body-full"
-              : "a-body"
-        }
-      >
+      <main className={route === "dash" && !showCompany ? "a-body a-body-full" : "a-body"}>
         {showCompany ? <CompanyView /> : children}
       </main>
       <BottomTabs route={route} />

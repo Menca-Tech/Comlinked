@@ -100,7 +100,7 @@ export function MemberImport() {
   if (S.cm.stage === "building") return <BuildProgress rows={rows} built={S.cm.built} />;
   if (S.cm.stage === "done") {
     return (
-      <section className="a-sec mi">
+      <section className="a-card mi">
         <h2 className="a-h2">Member import</h2>
         <St kind="good" icon={check}>
           {importResult()}

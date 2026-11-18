@@ -26,7 +26,6 @@ export function ComDashFrame({ children }: { children: ReactNode }) {
   return (
     <div className="cd">
       <header className="cd-head">
-        <p className="cd-kicker">ComDash</p>
         <h1 className="a-h1">{m.name}</h1>
         <p className="a-small">
           {m.ind} · {m.city} · {m.chamber} member

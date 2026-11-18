@@ -4,6 +4,7 @@ import { useState, type ReactNode } from "react";
 
 import { ClaimMessage } from "@/components/product/screens/claim-message";
 import { Btn, Mono, OfferSeek } from "@/components/product/shared";
+import { TwoPanel } from "@/components/product/two-panel";
 import { useSimulation } from "@/components/product/use-simulation";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -22,19 +23,22 @@ function Welcome({
 }) {
   const S = useSimulation();
   return (
-    <div className="a-welcome">
-      <div className="a-welcome-side">
-        {named ? (
-          <div className="a-welcome-co">
-            <Mono c={S.me} />
-            {S.me.name}
-          </div>
-        ) : null}
-        <h1 className="a-h1">{title}</h1>
-        {sub ? <p>{sub}</p> : null}
-      </div>
-      <div className="a-welcome-main">{children}</div>
-    </div>
+    <TwoPanel
+      side={
+        <>
+          {named ? (
+            <div className="a-two-co">
+              <Mono c={S.me} own />
+              {S.me.name}
+            </div>
+          ) : null}
+          <h1 className="a-h1">{title}</h1>
+          {sub ? <p className="a-two-lead">{sub}</p> : null}
+        </>
+      }
+    >
+      {children}
+    </TwoPanel>
   );
 }
 
@@ -75,7 +79,7 @@ export function Claim() {
         sub="We built this draft from your website, Facebook page and public directory listings."
       >
         <div className="a-co a-static">
-          <Mono c={m} cls="lg" />
+          <Mono c={m} own cls="lg" />
           <span className="a-co-t">
             <strong>{m.name}</strong>
             <small>

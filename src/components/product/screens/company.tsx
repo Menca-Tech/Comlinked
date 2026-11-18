@@ -73,6 +73,7 @@ export function CompanyProfile({ focus }: { focus?: ProfileField }) {
     <>
       <ProfileHead
         c={m}
+        own
         tail={
           <St kind="good" icon={check}>
             Verified

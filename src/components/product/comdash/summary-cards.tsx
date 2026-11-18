@@ -5,7 +5,9 @@ import Link from "next/link";
 
 import { DashPanel } from "@/components/product/comdash/dash-panel";
 import { LevelTag } from "@/components/product/comdash/level-tag";
-import { Sparkline } from "@/components/product/comdash/sparkline";
+import { VisibilityDays } from "@/components/product/comdash/visibility-days";
+import { Mono } from "@/components/product/shared";
+import { Tag } from "@/components/product/tag";
 import { useSimulation } from "@/components/product/use-simulation";
 import { paths } from "@/paths";
 import {
@@ -20,7 +22,7 @@ import {
   type TopNumber,
 } from "@/services/comlinked";
 
-function Stat({ label, value, note }: { label: string; value: ReactNode; note?: string }) {
+function Stat({ label, value, note }: { label: string; value: ReactNode; note?: ReactNode }) {
   return (
     <div className="cd-stat">
       <span className="cd-k">{label}</span>
@@ -38,7 +40,8 @@ function CardLink({ href, children }: { href: string; children: ReactNode }) {
   );
 }
 
-/** Interested Companies, messages and search appearances, the visibility trend and Hot names. */
+/** Interested Companies, messages and search appearances, visibility by day and the Hot
+ * Companies, each opening its timeline. */
 export function InterestSignalsCard() {
   useSimulation();
   const interested = interestedCompanies();
@@ -51,17 +54,22 @@ export function InterestSignalsCard() {
       note={<CardLink href={paths.dashTabs.signals}>Open Interest Signals</CardLink>}
     >
       <div className="cd-stats">
-        <Stat label="Interested companies" value={interested.length} note={`${hot.length} Hot`} />
+        <Stat
+          label="Interested companies"
+          value={interested.length}
+          note={<b>{hot.length} Hot</b>}
+        />
         <Stat label="Messages" value={week("messaged")} note="last 7 days" />
         <Stat label="Search appearances" value={week("search")} note="last 7 days" />
       </div>
-      <Sparkline days={visibilityByDay()} />
+      <VisibilityDays days={visibilityByDay()} />
       <div>
         <h3 className="cd-mini">Hot companies</h3>
         {hot.length ? (
           <ul className="cd-hot">
             {hot.map(({ company: c, level }) => (
               <li key={c.id}>
+                <Mono c={c} cls="sm" />
                 <span className="cd-qrow-t">
                   <Link href={paths.dashTabs.signalsFor(c.id)} className="cd-hot-name">
                     {c.name}
@@ -87,7 +95,9 @@ function AgentCard() {
       title="AI Lead Agent"
       note={<CardLink href={paths.dashTabs.agent}>Open AI Lead Agent</CardLink>}
     >
-      <p className="a-tag">Preview: after the MVP</p>
+      <p>
+        <Tag>Preview: after the MVP</Tag>
+      </p>
       <p className="cd-lead">
         See how an agent could find companies for you, talk to their agents and ask before booking a
         meeting.
@@ -143,16 +153,19 @@ function ProfileCard() {
   );
 }
 
-/** The Overview's summary cards, two by two on a laptop. The AI Lead Agent's shows only while the
- * after-MVP previews are on. */
+/** The Overview's summary cards: Interest Signals in the wide column on a laptop, with the others
+ * stacked beside it, each as tall as its content. The AI Lead Agent's joins the stack only while
+ * the after-MVP previews are on. One column on a phone. */
 export function SummaryCards() {
   useSimulation();
   return (
-    <div className="cd-cards">
+    <div className="cd-two">
       <InterestSignalsCard />
-      {laterItemShown("previews") ? <AgentCard /> : null}
-      <ConnectionsCard />
-      <ProfileCard />
+      <div className="cd-stack">
+        {laterItemShown("previews") ? <AgentCard /> : null}
+        <ConnectionsCard />
+        <ProfileCard />
+      </div>
     </div>
   );
 }

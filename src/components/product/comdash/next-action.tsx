@@ -16,6 +16,10 @@ function plural(n: number, one: string, many: string) {
   return n === 1 ? one : `${n} ${many}`;
 }
 
+/** A row's button in a list of several: solid on the first row only, so the panel keeps one main
+ * action. */
+const rowButton = (row: number) => (row === 0 ? "sm" : "o sm");
+
 function Body({ n, company }: { n: NextAction; company: string }) {
   switch (n.kind) {
     case "drafts":
@@ -25,11 +29,11 @@ function Body({ n, company }: { n: NextAction; company: string }) {
             Approve {plural(n.threads.length, "1 draft", "drafts")} from the AI Assistant
           </p>
           <p className="cd-lead">Nothing is sent until you tap Send.</p>
-          {n.threads.map((id) => {
+          {n.threads.map((id, row) => {
             const c = co(th(id).co);
             return (
               <QueueRow key={id} name={c.name} meta="Reply draft in ComMail">
-                <Btn cls="sm" onClick={() => act.openCoThread(c.id)}>
+                <Btn cls={rowButton(row)} onClick={() => act.openCoThread(c.id)}>
                   Review draft
                 </Btn>
               </QueueRow>
@@ -45,9 +49,7 @@ function Body({ n, company }: { n: NextAction; company: string }) {
             {n.left} of {n.total} leads still need a Connect, Message or Skip.
           </p>
           <div className="a-acts">
-            <Btn cls="sm" onClick={() => act.nav("leads")}>
-              Open today’s leads
-            </Btn>
+            <Btn onClick={() => act.nav("leads")}>Open today’s leads</Btn>
           </div>
         </>
       );
@@ -58,9 +60,9 @@ function Body({ n, company }: { n: NextAction; company: string }) {
             {plural(n.asks.length, "A connection is", "connections are")} looking for what you sell
           </p>
           <p className="cd-lead">They posted what they need. Reply before other suppliers do.</p>
-          {n.asks.map((a) => (
+          {n.asks.map((a, row) => (
             <QueueRow key={a.id} name={co(a.co).name} meta={a.text}>
-              <Btn cls="sm" onClick={() => act.respond(a.id)}>
+              <Btn cls={rowButton(row)} onClick={() => act.respond(a.id)}>
                 Respond
               </Btn>
             </QueueRow>
@@ -77,12 +79,10 @@ function Body({ n, company }: { n: NextAction; company: string }) {
           </p>
           <p className="a-why">{n.lead.summary}.</p>
           <div className="a-acts">
-            <Link href={paths.dashTabs.signalsFor(c.id)} className="a-btn o sm">
+            <Link href={paths.dashTabs.signalsFor(c.id)} className="a-btn o">
               See signals
             </Link>
-            <Btn cls="sm" onClick={() => act.message(c.id)}>
-              Message
-            </Btn>
+            <Btn onClick={() => act.message(c.id)}>Message</Btn>
           </div>
         </>
       );
@@ -95,11 +95,11 @@ function Body({ n, company }: { n: NextAction; company: string }) {
             {company}
           </p>
           <p className="cd-lead">Accepted connections stay with your company.</p>
-          {n.companies.map((id) => {
+          {n.companies.map((id, row) => {
             const c = co(id);
             return (
               <QueueRow key={id} name={c.name} meta={companyLine(c)}>
-                <InviteActions company={c} />
+                <InviteActions company={c} main={row === 0} />
               </QueueRow>
             );
           })}
@@ -123,7 +123,7 @@ function Body({ n, company }: { n: NextAction; company: string }) {
           <div className="a-acts">
             <Link
               href={paths.dashTabs.profile}
-              className="a-btn sm"
+              className="a-btn"
               onClick={() => act.focusProfile("project")}
             >
               Update my profile
@@ -144,7 +144,7 @@ function Body({ n, company }: { n: NextAction; company: string }) {
   }
 }
 
-/** The one most useful thing to do now, with why it was chosen. */
+/** The one most useful thing to do now, with why it was chosen: ComDash Overview's Focus panel. */
 export function NextActionPanel() {
   const S = useSimulation();
   const n = nextAction();
@@ -152,7 +152,7 @@ export function NextActionPanel() {
     <DashPanel
       title="Next action"
       note={n.kind === "clear" ? "Nothing waiting" : `Priority ${n.rank} of 8`}
-      className="cd-next"
+      focus
     >
       <Body n={n} company={S.me.name} />
       <p className="cd-why">{n.reason}</p>

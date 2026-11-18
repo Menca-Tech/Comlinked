@@ -25,7 +25,9 @@ function DraftProfile({ id }: { id: string }) {
       />
       <Panel>
         <div className="a-co a-static">
-          <Mono c={c} cls="lg" />
+          {/* The draft is the member's, by its id in the network, so its mark says whether it
+              has claimed, Kalayaan Foods' included. */}
+          <Mono c={{ id, ini: c.ini }} cls="lg" />
           <span className="a-co-t">
             <strong>{c.name}</strong>
             <small>

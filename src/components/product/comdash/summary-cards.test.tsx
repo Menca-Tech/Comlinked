@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { InterestSignalsCard, SummaryCards } from "@/components/product/comdash/summary-cards";
@@ -14,12 +14,30 @@ describe("the Overview's Interest Signals card", () => {
     act.claimFinish();
   });
 
-  it("shows zeros and says there are no Hot companies when nothing is interested", () => {
+  it("shows zeros, a calm line in place of the day bars, and no Hot companies when nothing is interested", () => {
     getState().signals = [];
     render(<InterestSignalsCard />);
     expect(screen.getByText("No Hot companies yet")).toBeInTheDocument();
     expect(screen.getByText("0 Hot")).toBeInTheDocument();
     expect(screen.getByText("No search appearances or recommendations yet.")).toBeInTheDocument();
+    expect(screen.queryByRole("figure")).toBeNull();
+    expect(screen.queryByText(/^Day \d+$/)).toBeNull();
+  });
+
+  it("draws one bar for each day since the claim, names the first and last, and says the same in words", () => {
+    act.morning("14");
+    render(<InterestSignalsCard />);
+    const days = getState().day - getState().joined + 1;
+    const chart = within(screen.getByRole("figure"));
+    // The bars are a picture, hidden from assistive technology: the sentence says the same.
+    expect(chart.getAllByRole("listitem", { hidden: true })).toHaveLength(days);
+    expect(chart.getByText(`Day ${getState().joined}`)).toBeInTheDocument();
+    expect(chart.getByText(`Day ${getState().day}`)).toBeInTheDocument();
+    expect(
+      chart.getByText(
+        new RegExp(`search appearances and recommendations over ${days} days since you claimed`),
+      ),
+    ).toBeInTheDocument();
   });
 
   it("links each Hot company to its timeline drawer", () => {

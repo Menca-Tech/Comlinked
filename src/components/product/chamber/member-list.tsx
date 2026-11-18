@@ -1,27 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useId } from "react";
 
-import { StatusFilter, type StatusChoice } from "@/components/product/chamber/status-filter";
 import { DashPanel, EmptyNote } from "@/components/product/comdash/dash-panel";
-import { Mono } from "@/components/product/shared";
-import type { ActivityRow, ActivityViewData, MemberStatus } from "@/services/comlinked";
+import { Btn, Mono } from "@/components/product/shared";
+import type { ActivityRow, MemberGroup, MemberStatus } from "@/services/comlinked";
 
-/** Each status's colour, a second cue after its words. */
-const TONE: Record<MemberStatus, string> = {
-  Active: "active",
-  Quiet: "quiet",
-  "Needs an intro": "intro",
-  "Not yet claimed": "unclaimed",
-};
-
-function StatusTag({ status }: { status: MemberStatus }) {
-  return <span className={`cd-level av-${TONE[status]}`}>{status}</span>;
-}
-
-/** One member: its mark, its name, whether a member is waiting for it to claim, and its status.
- * Given `onOpen`, the name opens the member's draft profile. */
-function MemberTableRow({ row, onOpen }: { row: ActivityRow; onOpen?: (id: string) => void }) {
+/** One member: its mark, its name, and whether a member is waiting for it to claim. It sits under
+ * its status's heading, so it carries no status tag. Given `onOpen`, the name opens the member's
+ * draft profile. */
+function MemberRow({ row, onOpen }: { row: ActivityRow; onOpen?: (id: string) => void }) {
   const name = (
     <>
       <strong>{row.name}</strong>
@@ -29,54 +17,70 @@ function MemberTableRow({ row, onOpen }: { row: ActivityRow; onOpen?: (id: strin
     </>
   );
   return (
-    <tr>
-      <td>
-        <span className="av-member">
-          <Mono c={row} />
-          {onOpen ? (
-            <button type="button" className="cd-co" onClick={() => onOpen(row.id)}>
-              {name}
-            </button>
-          ) : (
-            <span className="cd-co">{name}</span>
-          )}
-        </span>
-      </td>
-      <td>
-        <StatusTag status={row.status} />
-      </td>
-    </tr>
+    <li>
+      <Mono c={row} />
+      {onOpen ? (
+        <button type="button" className="cd-co" onClick={() => onOpen(row.id)}>
+          {name}
+        </button>
+      ) : (
+        <span className="cd-co">{name}</span>
+      )}
+    </li>
   );
 }
 
-/** Every member with its status alone, narrowed by the status filter. It becomes stacked cards
- * on a phone, as ComDash's table does. */
-export function MemberList({
-  data,
+/** One status's members under its heading, with how many it holds. Where the group lists only its
+ * first few, "Show all" asks for the rest. */
+function StatusGroup({
+  group,
   onOpen,
+  onShowAll,
 }: {
-  data: ActivityViewData;
+  group: MemberGroup;
   onOpen?: (id: string) => void;
+  onShowAll: (status: MemberStatus) => void;
 }) {
-  const [choice, setChoice] = useState<StatusChoice>("All");
-  const rows = choice === "All" ? data.rows : data.rows.filter((r) => r.status === choice);
+  const heading = useId();
   return (
-    <DashPanel title={`${data.memberCount} members`}>
-      <StatusFilter data={data} value={choice} onChange={setChoice} />
-      {rows.length ? (
-        <table className="cd-table">
-          <thead>
-            <tr>
-              <th scope="col">Member</th>
-              <th scope="col">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row) => (
-              <MemberTableRow key={row.id} row={row} onOpen={onOpen} />
-            ))}
-          </tbody>
-        </table>
+    <section className="av-group" aria-labelledby={heading}>
+      <div className="av-group-head">
+        <h3 id={heading}>{group.status}</h3>
+        <span className="av-group-n">{group.count}</span>
+        {group.more ? (
+          <Btn cls="g sm av-group-all" onClick={() => onShowAll(group.status)}>
+            Show all {group.count}
+          </Btn>
+        ) : null}
+      </div>
+      <ul className="av-rows">
+        {group.members.map((row) => (
+          <MemberRow key={row.id} row={row} onOpen={onOpen} />
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+/** The chamber's members under their status headings, as the status filter chose them: a few of
+ * each status, or the whole of one. */
+export function MemberList({
+  memberCount,
+  groups,
+  onOpen,
+  onShowAll,
+}: {
+  memberCount: number;
+  groups: MemberGroup[];
+  onOpen?: (id: string) => void;
+  onShowAll: (status: MemberStatus) => void;
+}) {
+  return (
+    <DashPanel title={`${memberCount} members`} className="av-main">
+      {groups.length ? (
+        groups.map((group) => (
+          <StatusGroup key={group.status} group={group} onOpen={onOpen} onShowAll={onShowAll} />
+        ))
       ) : (
         <EmptyNote>No members with this status.</EmptyNote>
       )}

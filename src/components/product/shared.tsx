@@ -4,13 +4,15 @@ import type { ComponentProps, ReactNode } from "react";
 import { Check, ChevronLeft, Minus } from "lucide-react";
 
 import { ClaimMark } from "@/components/product/claim-mark";
+import { Tag } from "@/components/product/tag";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import type { Company } from "@/services/comlinked";
+import type { Company, MyCompany } from "@/services/comlinked";
 import {
   act,
   degreeLabel,
   fitReasons,
+  hasClaimed,
   matchReason,
   mutualText,
   publicView,
@@ -24,12 +26,18 @@ export function Btn({ cls, className, type = "button", ...props }: ButtonProps) 
   return <Button type={type} variant="ghost" className={cn("a-btn", cls, className)} {...props} />;
 }
 
-type Mark = Pick<Company, "ini">;
+/** Whose mark it is: a Company in the network, by its id, or the viewer's own Company. */
+type MarkOf =
+  { c: Pick<Company, "id" | "ini">; own?: false } | { c: Pick<MyCompany, "ini">; own: true };
 
-export function Mono({ c, cls }: { c: Mark; cls?: string }) {
+/** A Company's mark: its initials on a square. Pale blue once the Company has claimed, a dashed
+ * outline until then, and solid navy for the viewer's `own` Company. Whether a Company has
+ * claimed comes from the seam, so no screen works it out. */
+export function Mono(props: MarkOf & { cls?: string }) {
+  const state = props.own ? "me" : hasClaimed(props.c.id) ? null : "unclaimed";
   return (
-    <span className={cn("a-mono", cls)} aria-hidden="true">
-      {c.ini}
+    <span className={cn("a-mono", state, props.cls)} aria-hidden="true">
+      {props.c.ini}
     </span>
   );
 }
@@ -109,9 +117,7 @@ export function Tags({ list }: { list: string[] }) {
   return (
     <div className="a-row">
       {list.map((tag) => (
-        <span key={tag} className="a-tag">
-          {tag}
-        </span>
+        <Tag key={tag}>{tag}</Tag>
       ))}
     </div>
   );
@@ -155,19 +161,17 @@ export function PageHead({
   );
 }
 
+/** Whose profile it heads: a Company in the network, or the viewer's own. */
+type ProfileOf =
+  | { c: Pick<Company, "id" | "ini" | "name" | "ind" | "city">; own?: false }
+  | { c: Pick<MyCompany, "ini" | "name" | "ind" | "city">; own: true };
+
 /** The head of a profile. `note` adds lines under the industry and city. */
-export function ProfileHead({
-  c,
-  tail,
-  note,
-}: {
-  c: Mark & Pick<Company, "name" | "ind" | "city">;
-  tail?: ReactNode;
-  note?: ReactNode;
-}) {
+export function ProfileHead(props: ProfileOf & { tail?: ReactNode; note?: ReactNode }) {
+  const { c, tail, note } = props;
   return (
     <header className="a-profile">
-      <Mono c={c} cls="lg" />
+      {props.own ? <Mono c={props.c} own cls="lg" /> : <Mono c={props.c} cls="lg" />}
       <div className="a-profile-t">
         <h1 className="a-h1">{c.name}</h1>
         <p className="a-small">
@@ -180,7 +184,7 @@ export function ProfileHead({
   );
 }
 
-/** One raised white panel per column. */
+/** A panel: flat white with a hairline and no shadow. */
 export function Panel({ cls, children }: { cls?: string; children: ReactNode }) {
   return <div className={cn("a-surface", cls)}>{children}</div>;
 }
@@ -246,8 +250,8 @@ export function MutualLine({ c }: { c: Company }) {
 
 export function AiChip({ field, on }: { field: string; on: boolean }) {
   return on ? (
-    <span className="a-tag accent" data-chip={field}>
+    <Tag tone="accent" data-chip={field}>
       AI draft
-    </span>
+    </Tag>
   ) : null;
 }

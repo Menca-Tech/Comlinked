@@ -31,6 +31,8 @@ const TABS = [
 const tabRow = (page: Page) => page.getByRole("navigation", { name: "ComDash sections" });
 const panel = (page: Page, title: string | RegExp) =>
   page.locator(".cd-panel").filter({ has: page.getByRole("heading", { name: title }) });
+/** The titles of the panels on a screen, in order. */
+const panelTitles = (page: Page) => page.locator("main").getByRole("heading", { level: 2 });
 const companyRow = (page: Page, id: string) => page.locator(`tr[data-company="${id}"]`);
 const rowButton = (page: Page, id: string) => companyRow(page, id).getByRole("button").first();
 const drawer = (page: Page, name: string) => page.getByRole("dialog", { name });
@@ -223,7 +225,9 @@ test.describe("on a laptop", () => {
 
   test("the leads board keeps one selected company with buttons", async ({ page }) => {
     await page.goto("/app/claim");
-    await expect(page.locator(".a-welcome-side")).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Your company is already here", level: 1 }),
+    ).toBeVisible();
     await expectAccessible(page);
     await guide(page, "Two weeks in");
     await expect(hotCompany(page, "Hapag Kitchen Group")).toBeVisible();
@@ -253,6 +257,13 @@ test.describe("ComDash", () => {
     await expect(panel(page, "Next action")).toContainText("Finish today’s leads");
     await expect(panel(page, "Next action")).toContainText("Shown because");
     await expect(panel(page, "Interest Signals")).toContainText("Messages");
+    // One day since the claim: one bar, named under it, and the same in words.
+    const visibility = panel(page, "Interest Signals").locator("figure");
+    await expect(visibility.locator("li")).toHaveCount(1);
+    await expect(visibility.getByText(/^Day \d+$/)).toHaveText(["Day 1"]);
+    await expect(visibility.locator("figcaption")).toHaveText(
+      "2 search appearances and recommendations over 1 day since you claimed your profile, with at most 2 in a day.",
+    );
     await expect(page.locator(".a-rank")).toHaveCount(0);
     await expect(page.locator(".dv2-ring")).toHaveCount(0);
     await openTab(page, "Interest Signals");
@@ -271,13 +282,13 @@ test.describe("ComDash", () => {
     page,
   }) => {
     await twoWeeksIn(page);
-    await expect(panel(page, "Next action")).toBeVisible();
-    await expect(page.locator(".cd-cards > .cd-panel")).toHaveCount(4);
-    for (const title of ["Interest Signals", "AI Lead Agent", "Connections", "Profile"]) {
-      await expect(
-        page.locator(".cd-cards").getByRole("heading", { name: title, exact: true }),
-      ).toBeVisible();
-    }
+    await expect(panelTitles(page)).toHaveText([
+      "Next action",
+      "Interest Signals",
+      "AI Lead Agent",
+      "Connections",
+      "Profile",
+    ]);
     await expect(panel(page, "AI Lead Agent")).toContainText("Preview: after the MVP");
     await expect(page.locator(".cd-tile")).toHaveCount(0);
     await expect(page.getByText("Recent wins")).toHaveCount(0);
@@ -391,7 +402,7 @@ test.describe("ComDash", () => {
     await expect(hapag.getByRole("heading", { name: "Signal timeline" })).toBeVisible();
     await expect(hapag.getByText("How the intent score was built")).toHaveCount(0);
     await expect(hapag.locator(".cd-tl b")).toHaveText(["", "", "", ""]);
-    await expect(hapag.locator(".cd-level")).toHaveText("Hot");
+    await expect(hapag.getByText("Hot", { exact: true })).toBeVisible();
     await expect(hapag.getByText(/points, capped/)).toHaveCount(0);
     await expect(
       hapag.getByRole("button", { name: "Connect with Hapag Kitchen Group" }),
@@ -622,6 +633,48 @@ test.describe("ComDash", () => {
     await tap(page, "Send");
     await backToComDash(page);
     await expect(next).toContainText("You’re all caught up");
+    // With nothing waiting it is still the screen's one Focus panel, holding that line alone.
+    await expect(page.locator("[data-focus-panel]")).toHaveCount(1);
+    await expect(next).toHaveAttribute("data-focus-panel", "");
+    await expect(next).toContainText("Nothing waiting");
+    await expect(next.getByRole("button")).toHaveCount(0);
+  });
+
+  test("the top bar marks the place you are in, in ink at 600 on a navy underline", async ({
+    page,
+  }) => {
+    await twoWeeksIn(page);
+    const look = (name: string | RegExp) =>
+      page
+        .getByRole("banner")
+        .getByRole("button", { name })
+        .evaluate((el) => {
+          const style = getComputedStyle(el);
+          return {
+            weight: style.fontWeight,
+            underlined: style.borderBottomColor !== "rgba(0, 0, 0, 0)",
+            shadow: getComputedStyle(el.closest("header") ?? el).boxShadow,
+          };
+        });
+    // The bar itself is flat: a hairline under it and no shadow.
+    expect(await look(/^ComDash/)).toEqual({ weight: "600", underlined: true, shadow: "none" });
+    expect(await look(/^Leads/)).toEqual({ weight: "400", underlined: false, shadow: "none" });
+    expect(await look(/^Notifications/)).toMatchObject({ weight: "400", underlined: false });
+    await page.getByRole("button", { name: /^Notifications/ }).click();
+    await expect(page.getByRole("heading", { name: "Notifications", level: 1 })).toBeVisible();
+    expect(await look(/^Notifications/)).toMatchObject({ weight: "600", underlined: true });
+    expect(await look(/^ComDash/)).toMatchObject({ weight: "400", underlined: false });
+    // Counts are small tinted pills with navy figures, not solid circles.
+    const count = page
+      .getByRole("banner")
+      .getByRole("button", { name: /^Leads/ })
+      .locator("b");
+    const pill = await count.evaluate((el) => {
+      const style = getComputedStyle(el);
+      return { fill: style.backgroundColor, figure: style.color };
+    });
+    expect(pill.fill).not.toBe(pill.figure);
+    expect(pill.figure).not.toBe("rgb(255, 255, 255)");
   });
 
   test("tabs work from the keyboard with visible focus", async ({ page }) => {
@@ -916,14 +969,13 @@ test.describe("ComDash", () => {
   test("on a phone, Next action comes first and the table becomes cards", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await twoWeeksIn(page);
-    const order = await page.locator(".cd-overview > *").evaluateAll((els) =>
-      els
-        .map((el) => ({ el, top: el.getBoundingClientRect().top }))
-        .sort((a, b) => a.top - b.top)
-        .map(({ el }) => el.className),
-    );
-    expect(order[0]).toContain("cd-next");
-    await expect(page.locator(".cd-cards > .cd-panel")).toHaveCount(4);
+    // One column, in the order the panels are titled: Next action first.
+    const titles = ["Next action", "Interest Signals", "AI Lead Agent", "Connections", "Profile"];
+    await expect(panelTitles(page)).toHaveText(titles);
+    const boxes = await Promise.all(titles.map((title) => panel(page, title).boundingBox()));
+    const tops = boxes.map((box) => box?.y ?? 0);
+    expect(tops).toEqual([...tops].sort((a, b) => a - b));
+    expect(new Set(boxes.map((box) => box?.x)).size).toBe(1);
     await openTab(page, "Interest Signals");
     const headerWidth = await page
       .locator(".cd-table thead")
@@ -969,7 +1021,10 @@ test.describe("the chamber's network of 100", () => {
     await expect(page.getByText("ECCP on ComLinked")).toBeVisible();
     await expect(page.getByRole("heading", { name: "100 members" })).toBeVisible();
     await expect(
-      page.getByRole("region", { name: "The pilot in figures" }).getByRole("listitem").first(),
+      page
+        .getByRole("region", { name: "The pilot in figures" })
+        .getByText("Claimed", { exact: true })
+        .locator(".."),
     ).toHaveText("Claimed40 of 100");
     await page.locator("#f-b2").fill("Our next member meeting is on Friday.");
     await tap(page, "Send to 40 claimed members");
@@ -1176,6 +1231,46 @@ test.describe("Kalayaan's first export shipment, and basics only before a Claim"
     await expect(page.locator(".a-leads").getByText("Not yet claimed")).toHaveCount(1);
     await expect(lead(page, "north")).toContainText("Not yet claimed");
     await expect(lead(page, "north")).toContainText(NORTHLINE_REASON);
+  });
+
+  test("on Leads a company that has not claimed shows a dashed mark and keeps its tag, and one that has shows a pale blue mark", async ({
+    page,
+  }) => {
+    await claimNewCompany(page);
+    await openSection(page, "Leads");
+    const mark = (id: string) =>
+      lead(page, id)
+        .locator("[aria-hidden='true']")
+        .first()
+        .evaluate((el) => {
+          const style = getComputedStyle(el);
+          return {
+            initials: el.textContent,
+            border: style.borderTopStyle,
+            filled: style.backgroundColor !== "rgba(0, 0, 0, 0)",
+          };
+        });
+    expect(await mark("north")).toEqual({ initials: "NL", border: "dashed", filled: false });
+    expect(await mark("maple")).toEqual({ initials: "MB", border: "none", filled: true });
+    // The shape is never the only cue.
+    await expect(lead(page, "north").getByText("Not yet claimed", { exact: true })).toBeVisible();
+    await expect(lead(page, "maple").getByText("Not yet claimed")).toHaveCount(0);
+    // Your own company's mark stays solid navy, with white initials.
+    const own = page.getByRole("button", { name: "Your company" }).locator("[aria-hidden='true']");
+    expect(await own.evaluate((el) => getComputedStyle(el).color)).toBe("rgb(255, 255, 255)");
+    expect(await own.evaluate((el) => getComputedStyle(el).borderTopStyle)).toBe("none");
+    await noSidewaysScroll(page);
+
+    // Search draws the same marks: dashed until a company claims, and solid for your own.
+    await openSearch(page, "freight");
+    const found = (name: string) =>
+      results(page)
+        .locator(".a-li", { hasText: name })
+        .locator("[aria-hidden='true']")
+        .first()
+        .evaluate((el) => getComputedStyle(el).borderTopStyle);
+    expect(await found("Northline Logistics")).toBe("dashed");
+    expect(await found("Nordhavn Freight Forwarders")).toBe("none");
   });
 
   test("a lead that has not claimed shows its basics, a Fit Score and one reason, with no Connect", async ({

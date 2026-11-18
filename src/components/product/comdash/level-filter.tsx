@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import type { ReactNode, Ref } from "react";
 
 import { LevelTag } from "@/components/product/comdash/level-tag";
 import { INTEREST_LEVELS, type InterestLevel } from "@/services/comlinked";
@@ -14,17 +14,20 @@ export interface FilterChip<T extends string> {
   count: number;
 }
 
-/** A row of filter chips, each with its count, the chosen one pressed. */
+/** A row of filter chips, each with its count, the chosen one pressed. `chosen` is set on the
+ * chosen chip, for a screen that sends focus to it. */
 export function FilterChips<T extends string>({
   label,
   chips,
   value,
   onChange,
+  chosen,
 }: {
   label: string;
   chips: FilterChip<T>[];
   value: T;
   onChange: (choice: T) => void;
+  chosen?: Ref<HTMLButtonElement>;
 }) {
   return (
     <div className="cd-bands" role="group" aria-label={label}>
@@ -33,10 +36,11 @@ export function FilterChips<T extends string>({
           key={chip.value}
           type="button"
           className="cd-band"
+          ref={value === chip.value ? chosen : undefined}
           aria-pressed={value === chip.value}
           onClick={() => onChange(chip.value)}
         >
-          {chip.label} {chip.count}
+          {chip.label} <b>{chip.count}</b>
         </button>
       ))}
     </div>

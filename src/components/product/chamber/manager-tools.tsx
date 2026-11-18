@@ -59,7 +59,8 @@ function MemberSelect({
   );
 }
 
-/** An Intro between two members that have claimed. */
+/** An Intro between two members that have claimed. Its button is the screen's solid one once the
+ * Member List is imported; until then the import's own button is. */
 function Introduction() {
   const S = useSimulation();
   const choices = introChoices();
@@ -80,7 +81,7 @@ function Introduction() {
             </label>
             <MemberSelect id="f-b" field="introB" value={S.forms.introB} choices={choices} />
           </div>
-          <Btn cls="block" onClick={() => act.makeIntro()}>
+          <Btn cls={S.cm.imported ? "block" : "o block"} onClick={() => act.makeIntro()}>
             Send introduction
           </Btn>
         </>

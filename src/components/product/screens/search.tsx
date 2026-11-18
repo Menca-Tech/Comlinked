@@ -12,7 +12,7 @@ function ResultRow({ rank, row }: { rank: number; row: SearchRow }) {
   const source = row.source;
   const body = (
     <>
-      <Mono c={row.company} cls="sm" />
+      {source ? <Mono c={source} cls="sm" /> : <Mono c={row.company} own cls="sm" />}
       <span className="a-li-m">
         <strong>
           {rank}. {row.company.name}

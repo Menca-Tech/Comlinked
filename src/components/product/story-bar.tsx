@@ -57,7 +57,7 @@ function SideStepButton({ step }: { step: SideStep }) {
   return (
     <button
       type="button"
-      className="a-btn o sm a-story-step"
+      className="a-btn g sm a-story-step"
       onClick={() => (open ? act.sideStepClose() : act.sideStepOpen())}
     >
       {open ? step.back : step.open}
@@ -65,9 +65,24 @@ function SideStepButton({ step }: { step: SideStep }) {
   );
 }
 
-/** The strip under the top bar on every screen of a Stop: the day and what is happening, whose
- * Seat is shown, the way into its side step if it has one, how far through the walk this is, and
- * Back and Next. */
+/** One dot for each Stop: done, current or still to come. The count beside Back says the same in
+ * words, so the dots are hidden from assistive technology. */
+function StepDots({ current }: { current: number }) {
+  return (
+    <ol className="a-story-dots" aria-hidden="true">
+      {PREVIEW_STOPS.map((stop) => (
+        <li
+          key={stop.number}
+          data-step={stop.number < current ? "done" : stop.number === current ? "now" : "next"}
+        />
+      ))}
+    </ol>
+  );
+}
+
+/** The slim second row of the header on every screen of a Stop: how far through the walk this is,
+ * the day and what is happening, whose Seat is shown, the way into its side step if it has one,
+ * and Back and Next. Next is outlined, so it never competes with the screen's own main button. */
 export function StoryBar() {
   const stop = useStop();
   if (!stop) return null;
@@ -77,19 +92,20 @@ export function StoryBar() {
   return (
     <section className="a-story" aria-label="Pilot Preview">
       <div className="a-story-in">
-        <div className="a-story-t">
+        <StepDots current={stop.number} />
+        <div className="a-story-what">
           <p className="a-story-title">{stopLine(stop)}</p>
           {seat ? <p className="a-story-seat">{seat}</p> : null}
-          {stop.sideStep ? <SideStepButton step={stop.sideStep} /> : null}
         </div>
+        {stop.sideStep ? <SideStepButton step={stop.sideStep} /> : null}
         <div className="a-story-nav">
           <span className="a-story-pos">
             {stop.number} of {PREVIEW_STOPS.length}
           </span>
-          <Link href={previousStop(stop.number).href} className="a-btn o sm">
+          <Link href={previousStop(stop.number).href} className="a-btn g sm">
             Back
           </Link>
-          <Link href={next.href} className="a-btn sm">
+          <Link href={next.href} className="a-btn o sm">
             {next === PREVIEW_OPENING ? "Start again" : "Next"}
           </Link>
         </div>
