@@ -202,6 +202,8 @@ test.describe("on a phone", () => {
     await tap(page, "Post ask");
     await expect(page.locator(".a-ask").first()).toContainText("label printer");
 
+    // On a phone the toasts drop from the top, over the account mark, so let them go first.
+    await expect(page.locator("[data-sonner-toast]")).toHaveCount(0, { timeout: 12_000 });
     await openOwnProfile(page);
     await page.locator("#f-products").fill("Banana chips, ube spread, frozen lumpia");
     await tap(page, "Add products");
