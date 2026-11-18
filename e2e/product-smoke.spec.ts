@@ -2930,3 +2930,95 @@ test.describe("privacy and people, by keyboard, with the AI Assistant off, and a
     await expect(previewCard(page)).toContainText("Owner · Primary admin");
   });
 });
+
+const LOGO = "Your logo, +10%";
+const profileSpot = (page: Page) => page.locator(".a-profile .a-mono");
+const strengthFigure = (page: Page) => focusPanel(page).locator(".a-pct");
+const logoIn = (part: Locator) => part.locator("img[src*='kalayaan-foods-logo']");
+
+/** The large spot at the top of a profile is a square that fits the screen, with nothing past
+ * its right edge. */
+async function expectSpotFits(page: Page, width: number) {
+  const box = await profileSpot(page).boundingBox();
+  expect(box?.width ?? 0).toBeGreaterThan(80);
+  expect(box?.width).toBe(box?.height);
+  expect((box?.x ?? 0) + (box?.width ?? 0)).toBeLessThanOrEqual(width);
+  await noSidewaysScroll(page);
+}
+
+for (const width of [360, 390, 1280]) {
+  test.describe(`Kalayaan's logo and the large spot on a profile, at ${width} pixels`, () => {
+    test.use({ viewport: { width, height: 900 } });
+
+    test("the logo starts missing at 55%, adds 10 once, and shows on the profile, the mark and the menu", async ({
+      page,
+    }) => {
+      await page.goto("/app/claim");
+      // Before the Claim there is no mark in the top bar, so no logo.
+      await expect(accountMark(page)).toHaveCount(0);
+      await claimNewCompany(page);
+      await expect(logoIn(accountMark(page))).toHaveCount(0);
+      await openOwnProfile(page);
+      await expect(strengthFigure(page)).toHaveText("55%");
+      await expect(focusPanel(page).getByText(LOGO)).toBeVisible();
+      await expect(profileSpot(page)).toHaveText("KF");
+      await expect(logoIn(profileSpot(page))).toHaveCount(0);
+      await expectSpotFits(page, width);
+
+      await tap(page, "Add logo");
+      await expect(strengthFigure(page)).toHaveText("65%");
+      // Added once: the button becomes the done state, as the photo's does.
+      await expect(page.getByRole("button", { name: "Add logo" })).toHaveCount(0);
+      await expect(focusPanel(page).getByText("Your logo", { exact: true })).toBeVisible();
+      await expect(logoIn(profileSpot(page))).toBeVisible();
+      await expect(logoIn(accountMark(page))).toBeVisible();
+      // The logo is hidden from screen readers: the name sits beside it, and the mark has a label.
+      await expect(profileSpot(page)).toHaveAttribute("aria-hidden", "true");
+      await expectSpotFits(page, width);
+      await expectAccessible(page);
+
+      await page.getByLabel(/Your top 3 products/).fill("Banana chips, ube spread, frozen lumpia");
+      await tap(page, "Add products");
+      await page.getByLabel(/A recent project/).fill("Private-label chips for a grocer");
+      await tap(page, "Add project");
+      await tap(page, "Add photo");
+      await expect(strengthFigure(page)).toHaveText("100%");
+
+      await accountMark(page).click();
+      const header = page.locator(".acct-head");
+      await expect(logoIn(header)).toBeVisible();
+      await expectAccessibleIn(page, width < 900 ? "[role='dialog']" : "[role='menu']");
+      await page.keyboard.press("Escape");
+    });
+
+    test("two weeks in, the logo is already there and Profile Strength reads 90%", async ({
+      page,
+    }) => {
+      await twoWeeksIn(page);
+      await expect(logoIn(accountMark(page))).toBeVisible();
+      await openOwnProfile(page);
+      await expect(strengthFigure(page)).toHaveText("90%");
+      await expect(logoIn(profileSpot(page))).toBeVisible();
+      await expect(page.getByRole("button", { name: "Add logo" })).toHaveCount(0);
+      await expect(page.getByText(LOGO)).toHaveCount(0);
+      await expectSpotFits(page, width);
+    });
+
+    test("another Company shows its initials in the same large spot, dashed until it claims", async ({
+      page,
+    }) => {
+      await twoWeeksIn(page);
+      await openProfile(page, "Nordhavn Freight Forwarders");
+      await expect(profileSpot(page)).toHaveText("NF");
+      await expect(profileSpot(page)).not.toHaveClass(/unclaimed/);
+      await expect(page.locator(".a-profile img")).toHaveCount(0);
+      await expectSpotFits(page, width);
+      await expectAccessible(page);
+
+      await openProfile(page, "Sterling Rivera Insurance Brokers");
+      await expect(profileSpot(page)).toHaveClass(/unclaimed/);
+      await expect(page.locator(".a-profile img")).toHaveCount(0);
+      await expectSpotFits(page, width);
+    });
+  });
+}

@@ -437,7 +437,7 @@ export function rank() {
   );
 }
 /** Profile Strength on the day of the Claim, before any step is done. */
-const PROFILE_BASE = 55;
+export const PROFILE_BASE = 55;
 /** The steps that complete a profile, in the order the checklist suggests them, with the points
  * each adds and how the checklist names it while it is missing. They add up to 100 with the base. */
 export const PROFILE_STEPS = [
@@ -462,11 +462,13 @@ const missingSteps = function () {
     return !step.done(S.me);
   });
 };
-/** The points a profile step adds. */
-export function stepPoints(key: ProfileStep) {
-  return PROFILE_STEPS.find(function (step) {
-    return step.key === key;
-  })?.pts;
+/** The points a profile step adds. Every key is in PROFILE_STEPS, so the 0 is never reached. */
+export function stepPoints(key: ProfileStep): number {
+  return (
+    PROFILE_STEPS.find(function (step) {
+      return step.key === key;
+    })?.pts ?? 0
+  );
 }
 /** The first step the profile still misses, which the checklist highlights, or null when complete. */
 export function nextProfileStep(): ProfileStep | null {

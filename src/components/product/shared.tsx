@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type ComponentProps, type ReactNode } from "react";
+import Image from "next/image";
 import { Check, ChevronLeft, Minus } from "lucide-react";
 
 import { ClaimMark } from "@/components/product/claim-mark";
@@ -29,16 +30,19 @@ export function Btn({ cls, className, type = "button", ...props }: ButtonProps) 
 /** Whose mark it is: a Company in the network, by its id; the viewer's own Company; or a Company
  * the network holds no claim for, with its initials if it is named. */
 type MarkOf =
-  | { c: Pick<Company, "id" | "ini">; own?: false; plain?: false }
-  | { c: Pick<MyCompany, "ini">; own: true; plain?: false }
+  | { c: Pick<Company, "id" | "ini" | "logo">; own?: false; plain?: false }
+  | { c: Pick<MyCompany, "ini" | "logo">; own: true; plain?: false }
   | { c?: Pick<Company, "ini">; plain: true };
 
 /** A Company's mark: its initials on a square. Pale blue once the Company has claimed, a dashed
  * outline until then, and solid navy for the viewer's `own` Company. Whether a Company has
  * claimed comes from the seam, so no screen works it out. A `plain` mark is grey and says nothing
  * of claiming: it is for a Company in another chamber, which the network holds no claim for, and
- * for one whose name a "View as" tier hides, which carries no initials either. */
+ * for one whose name a "View as" tier hides, which carries no initials either. A Company with a
+ * logo shows its logo instead of its initials. The mark is hidden from screen readers, as the
+ * Company's name or the control's label always sits beside it. */
 export function Mono(props: MarkOf & { cls?: string }) {
+  const logo = props.plain ? undefined : props.c.logo;
   const state = props.plain
     ? "plain"
     : props.own
@@ -47,8 +51,8 @@ export function Mono(props: MarkOf & { cls?: string }) {
         ? null
         : "unclaimed";
   return (
-    <span className={cn("a-mono", state, props.cls)} aria-hidden="true">
-      {props.c?.ini}
+    <span className={cn("a-mono", state, logo && "logo", props.cls)} aria-hidden="true">
+      {logo ? <Image src={logo} alt="" width={96} height={96} /> : props.c?.ini}
     </span>
   );
 }
@@ -198,23 +202,26 @@ export function PageHead({
 
 /** Whose profile it heads: a Company in the network, or the viewer's own. */
 type ProfileOf =
-  | { c: Pick<Company, "id" | "ini" | "name" | "ind" | "city">; own?: false }
-  | { c: Pick<MyCompany, "ini" | "name" | "ind" | "city">; own: true };
+  | { c: Pick<Company, "id" | "ini" | "logo" | "name" | "ind" | "city">; own?: false }
+  | { c: Pick<MyCompany, "ini" | "logo" | "name" | "ind" | "city">; own: true };
 
-/** The head of a profile. `note` adds lines under the industry and city. */
+/** The head of a profile: the Company's logo or initials large at the top, then its name. `note`
+ * adds lines under the industry and city. */
 export function ProfileHead(props: ProfileOf & { tail?: ReactNode; note?: ReactNode }) {
   const { c, tail, note } = props;
   return (
     <header className="a-profile">
-      {props.own ? <Mono c={props.c} own cls="lg" /> : <Mono c={props.c} cls="lg" />}
-      <div className="a-profile-t">
-        <h1 className="a-h1">{c.name}</h1>
-        <p className="a-small">
-          {c.ind}, {c.city}
-        </p>
-        {note}
+      {props.own ? <Mono c={props.c} own cls="xl" /> : <Mono c={props.c} cls="xl" />}
+      <div className="a-profile-row">
+        <div className="a-profile-t">
+          <h1 className="a-h1">{c.name}</h1>
+          <p className="a-small">
+            {c.ind}, {c.city}
+          </p>
+          {note}
+        </div>
+        {tail}
       </div>
-      {tail}
     </header>
   );
 }

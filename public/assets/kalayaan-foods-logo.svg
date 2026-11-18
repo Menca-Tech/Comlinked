@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-labelledby="kf-title">
+  <title id="kf-title">Kalayaan Foods logo</title>
+  <!-- Invented for the ComLinked Demo. Not a real brand. -->
+  <rect width="96" height="96" rx="14" fill="#FBF3E4"/>
+  <g transform="translate(0 -6)">
+  <!-- The mark: a rising half sun over two leaves, on a field. -->
+  <path d="M30 50a18 18 0 0 1 36 0z" fill="#E2873A"/>
+  <path d="M48 50c-9-2-16-9-17-19 9 1 16 8 17 19z" fill="#3E6B45"/>
+  <path d="M48 50c9-2 16-9 17-19-9 1-16 8-17 19z" fill="#3E6B45"/>
+  <rect x="24" y="50" width="48" height="4" rx="2" fill="#3E6B45"/>
+  <!-- The wordmark. -->
+  <text x="48" y="70" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="11.5" font-weight="700" letter-spacing="0.6" fill="#3E6B45">KALAYAAN</text>
+  <text x="48" y="82" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="8" font-weight="600" letter-spacing="3" fill="#E2873A">FOODS</text>
+  </g>
+</svg>

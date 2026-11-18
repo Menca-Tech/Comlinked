@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { paths } from "@/paths";
-import type { ProfileField } from "@/services/comlinked";
+import type { ProfileField, ProfileStep } from "@/services/comlinked";
 import {
   act,
   AI_LIMIT,
@@ -19,8 +19,10 @@ import {
   connected,
   dayName,
   fit,
+  nextProfileStep,
   primaryAdmin,
   setForm,
+  stepPoints,
   strength,
 } from "@/services/comlinked";
 
@@ -63,14 +65,9 @@ export function CompanyProfile({ focus }: { focus?: ProfileField }) {
   }, [focus]);
   const m = S.me;
   const f = S.forms;
-  const todo = !m.products
-    ? "products"
-    : !m.projects.length
-      ? "project"
-      : !m.photo
-        ? "photo"
-        : null;
-  const addCls = (key: string) => `${todo === key ? "" : "o "}sm`;
+  const todo = nextProfileStep();
+  const addCls = (key: ProfileStep) => `${todo === key ? "" : "o "}sm`;
+  const worth = (key: ProfileStep) => `, +${stepPoints(key)}%`;
   const mine = S.wall.filter((w) => w.a === m.name || w.b === m.name);
   const lastChange = S.aiLog[0];
   const links = connected();
@@ -124,7 +121,7 @@ export function CompanyProfile({ focus }: { focus?: ProfileField }) {
             </div>
             <div>
               <label className="a-label" htmlFor="f-products">
-                Your top 3 products{m.products ? "" : ", +15%"}
+                Your top 3 products{m.products ? "" : worth("products")}
               </label>
               {m.products ? (
                 <p className="a-why">{m.products}</p>
@@ -145,7 +142,7 @@ export function CompanyProfile({ focus }: { focus?: ProfileField }) {
             </div>
             <div>
               <label className="a-label" htmlFor="f-project">
-                A recent project{m.projects.length ? "" : ", +10%"}
+                A recent project{m.projects.length ? "" : worth("project")}
               </label>
               <div className="a-stack">
                 {m.projects.map((p) => (
@@ -166,7 +163,7 @@ export function CompanyProfile({ focus }: { focus?: ProfileField }) {
               </div>
             </div>
             <div className="a-between">
-              <span className="a-why">A photo of your work{m.photo ? "" : ", +10%"}</span>
+              <span className="a-why">A photo of your work{m.photo ? "" : worth("photo")}</span>
               {m.photo ? (
                 <St kind="good" icon={check}>
                   Added
@@ -174,6 +171,18 @@ export function CompanyProfile({ focus }: { focus?: ProfileField }) {
               ) : (
                 <Btn cls={addCls("photo")} onClick={() => act.addPhoto()}>
                   Add photo
+                </Btn>
+              )}
+            </div>
+            <div className="a-between">
+              <span className="a-why">Your logo{m.logo ? "" : worth("logo")}</span>
+              {m.logo ? (
+                <St kind="good" icon={check}>
+                  Added
+                </St>
+              ) : (
+                <Btn cls={addCls("logo")} onClick={() => act.addLogo()}>
+                  Add logo
                 </Btn>
               )}
             </div>

@@ -433,9 +433,12 @@ test.describe("the Pilot Preview", () => {
     await openStop(page, stop(6));
     await expectPlainBar(null);
     await openStop(page, stop(4));
-    await expect(banner(page).getByRole("button", { name: "Open the account menu" })).toHaveText(
-      "KF",
-    );
+    // Two weeks in, Kalayaan Foods has added its logo, which the mark shows in place of "KF".
+    await expect(
+      banner(page)
+        .getByRole("button", { name: "Open the account menu" })
+        .locator("img[src*='kalayaan-foods-logo']"),
+    ).toBeVisible();
     await expect(banner(page)).not.toContainText("read-only");
   });
 
@@ -1110,9 +1113,12 @@ test.describe("exploring after Stop 6", () => {
         .filter({ has: page.getByRole("heading", { name: "Interest Signals" }) })
         .getByRole("link", { name: "Hapag Kitchen Group", exact: true }),
     ).toBeVisible();
-    await expect(banner(page).getByRole("button", { name: "Open the account menu" })).toHaveText(
-      "KF",
-    );
+    // Two weeks in, Kalayaan Foods has added its logo, which the mark shows in place of "KF".
+    await expect(
+      banner(page)
+        .getByRole("button", { name: "Open the account menu" })
+        .locator("img[src*='kalayaan-foods-logo']"),
+    ).toBeVisible();
     await expect(banner(page)).toContainText("Example data");
     await wayBack(page).click();
     await expectStop(page, stop(6));

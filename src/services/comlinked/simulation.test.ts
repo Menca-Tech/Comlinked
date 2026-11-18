@@ -96,6 +96,8 @@ import {
   POOL,
   prepareThread,
   publicView,
+  PROFILE_BASE,
+  PROFILE_STEPS,
   strength,
   rank,
   RULES,
@@ -917,7 +919,11 @@ describe("the logo and Profile Strength", () => {
     expect(getState().ledger.length).toBe(pts + 1);
   });
 
-  it("reads 100% once every step is done, and never more", () => {
+  it("adds up to 100% from the base and the steps, so it never passes 100", () => {
+    expect(PROFILE_BASE + PROFILE_STEPS.reduce((sum, step) => sum + step.pts, 0)).toBe(100);
+  });
+
+  it("reads 100% once every step is done", () => {
     setForm("products", "Chips");
     act.addProducts();
     setForm("project", "A project");
@@ -925,9 +931,6 @@ describe("the logo and Profile Strength", () => {
     act.addPhoto();
     act.addLogo();
     expect(profileCompleteness()).toEqual({ percent: 100, missing: [] });
-    setForm("project", "Another project");
-    act.addProject();
-    expect(strength()).toBe(100);
   });
 
   it("has the logo in the two-weeks-in preset", () => {
@@ -937,6 +940,9 @@ describe("the logo and Profile Strength", () => {
 
   it("shows another Company's logo only when its data has one", () => {
     expect(publicView(co("nordhavn")).logo).toBeUndefined();
+    expect(publicView({ ...co("nordhavn"), logo: "/assets/example.svg" }).logo).toBe(
+      "/assets/example.svg",
+    );
   });
 });
 
