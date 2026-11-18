@@ -237,6 +237,16 @@ export interface PersonRow {
   you: boolean;
   canMakePrimary: boolean;
   canRemove: boolean;
+  /** The Companies whose Contact Request waits for this colleague. Empty on the signed-in
+   * person's own row: theirs wait on the privacy page. */
+  waitingFrom: string[];
+}
+
+/** The Contact Requests to the signed-in person: those waiting for an answer, by the Company that
+ * asked, and the Companies they have shared their details with. */
+export interface MyContactRequests {
+  waiting: { from: string; name: string }[];
+  sharedWith: string[];
 }
 
 export type RuleKey =

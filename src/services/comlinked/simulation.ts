@@ -64,6 +64,7 @@ import type {
   MemberListEntry,
   MemberStatus,
   Message,
+  MyContactRequests,
   NextAction,
   NoteGroup,
   PlanTerms,
@@ -524,6 +525,12 @@ export function peopleRows(): PersonRow[] {
       you: p.id === me.id,
       canMakePrimary: mayMakePrimary(p),
       canRemove: mayRemove(p),
+      waitingFrom:
+        p.id === me.id
+          ? []
+          : waitingFor(p.id).map(function (r) {
+              return co(r.from).name;
+            }),
     };
   });
 }
@@ -576,6 +583,77 @@ export function peopleSeenBy(viewer: string, owner: string): PeopleShown {
     }),
   };
 }
+/* ---------- Contact Requests ---------- */
+/** Who asks Kalayaan's people for their details: each Company asks on the morning after it and
+ * Kalayaan Foods connect. Nordhavn asks Ana, and Maple Bay Grocers asks Marco. */
+const INCOMING_CONTACT_REQUESTS: Pick<ContactRequest, "from" | "person">[] = [
+  { from: "nordhavn", person: SIGNED_IN },
+  { from: "maple", person: "marco" },
+];
+/** The Company a person outside Kalayaan Foods works for, if the data lists them. */
+function ownerOf(personId: string) {
+  return Object.keys(PEOPLE).find(function (id) {
+    return peopleOf(id).some(function (p) {
+      return p.id === personId;
+    });
+  });
+}
+/** The Contact Requests waiting for one of Kalayaan's people, by whom they are for. */
+function waitingFor(personId: string) {
+  return S.contactRequests.filter(function (r) {
+    return r.person === personId && r.from !== "me" && r.state === "waiting";
+  });
+}
+/** The overnight part of Contact Requests: each person Kalayaan Foods asked shares their details,
+ * and each Company newly connected asks its person at Kalayaan. Only the signed-in person is
+ * notified of a request; a colleague's waits on the people page. */
+function contactRequestsMorning() {
+  S.contactRequests.forEach(function (r) {
+    if (r.from !== "me" || r.state !== "waiting" || r.day >= S.day) return;
+    r.state = "shared";
+    const owner = ownerOf(r.person),
+      p = owner ? peopleOf(owner).find((x) => x.id === r.person) : undefined;
+    if (owner && p)
+      notify("contact", owner, personSeen(p, r).name + " shared their contact details.");
+  });
+  INCOMING_CONTACT_REQUESTS.forEach(function (r) {
+    if (!areConnected(r.from, "me") || !person(r.person) || requestFor(r.from, r.person)) return;
+    S.contactRequests.push({ ...r, day: S.day, state: "waiting" });
+    if (r.person === SIGNED_IN)
+      notify("contact-request", r.from, co(r.from).name + " asked for your email and phone");
+  });
+}
+/** The Contact Requests to the signed-in person: those waiting, and whom they shared with. */
+export function contactRequestsToMe(): MyContactRequests {
+  const mine = S.contactRequests.filter(function (r) {
+    return r.person === SIGNED_IN && r.from !== "me";
+  });
+  return {
+    waiting: mine
+      .filter(function (r) {
+        return r.state === "waiting";
+      })
+      .map(function (r) {
+        return { from: r.from, name: co(r.from).name };
+      }),
+    sharedWith: mine
+      .filter(function (r) {
+        return r.state === "shared";
+      })
+      .map(function (r) {
+        return co(r.from).name;
+      }),
+  };
+}
+/** Answers a Contact Request to the signed-in person. Only the person asked answers. */
+function answerContact(from: string, state: ContactRequest["state"]) {
+  const request = waitingFor(SIGNED_IN).find(function (r) {
+    return r.from === from;
+  });
+  if (request) request.state = state;
+  return Boolean(request);
+}
+
 /** How a connected Company sees Ana before she has shared her details with it. */
 export function previewOfMe(): PersonView {
   return personSeen(signedIn(), undefined);
@@ -1065,6 +1143,11 @@ export function seedTwoWeeks() {
   m.lastUpdate = 8;
   S.lists[13] = ["bayan", "sari", "hapag", "kainan", "malaya"];
   S.conn = { nordhavn: "connected", maple: "connected", pack: "connected", tala: "connected" };
+  // The morning after Day 1's Connections, Nordhavn asked Ana for her details and Maple Bay Grocers
+  // asked Marco. Neither has been answered.
+  S.contactRequests = INCOMING_CONTACT_REQUESTS.map(function (r): ContactRequest {
+    return { ...r, day: STORY_CLAIM_DAY + 1, state: "waiting" };
+  });
   S.leadAct = {
     maple: "connect",
     nordhavn: "connect",
@@ -1363,6 +1446,8 @@ export function incoming(t: Thread) {
 export function nextMorning(n: number) {
   const before = S.rankAtMorning || rank();
   S.day += n;
+  // Before tonight's accepts: a Company asks the morning after it connects, not the same night.
+  contactRequestsMorning();
   Object.keys(S.pendingUntil).forEach(function (id) {
     if (S.pendingUntil[id]! > S.day || S.conn[id] !== "pending") return;
     engineLog(
@@ -2996,6 +3081,23 @@ const ACT = {
     target.role = "primary";
     emit();
   },
+  /** Asks a person at a connected Company for their email and phone, once. */
+  askContact: function (personId: string) {
+    const owner = ownerOf(personId);
+    if (!owner || peopleSeenBy("me", owner).kind !== "people" || requestFor("me", personId)) return;
+    S.contactRequests.push({ from: "me", person: personId, day: S.day, state: "waiting" });
+    emit();
+  },
+  /** Shares the signed-in person's email and phone with the Company that asked. */
+  shareContact: function (from: string) {
+    if (answerContact(from, "shared")) toast(co(from).name + " can now see your email and phone.");
+    emit();
+  },
+  /** Declines a Contact Request to the signed-in person. The Company that asked isn't told. */
+  declineContact: function (from: string) {
+    if (answerContact(from, "declined")) toast("Declined. " + co(from).name + " won’t be told.");
+    emit();
+  },
   /** Shows the signed-in person to connected Companies by their full name or by an alias. */
   chooseName: function (choice: string) {
     signedIn().alias = choice === "alias";
@@ -3013,6 +3115,9 @@ const ACT = {
     if (!target || !mayRemove(target)) return;
     S.me.people = S.me.people.filter(function (p) {
       return p !== target;
+    });
+    S.contactRequests = S.contactRequests.filter(function (r) {
+      return r.person !== target.id;
     });
     toast(
       target.name +

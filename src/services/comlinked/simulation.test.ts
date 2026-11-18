@@ -131,6 +131,7 @@ import type { ConnectionItem } from "@/services/comlinked";
 import {
   approver,
   backupAdmin,
+  contactRequestsToMe,
   meetingAttendees,
   PEOPLE,
   peopleRows,
@@ -3020,6 +3021,132 @@ describe("the people a Company may see of another", () => {
         expect(p.phone).toMatch(/^\+63 2 0000 \d{4}$/);
       });
     });
+  });
+});
+
+describe("Contact Requests", () => {
+  const person = (viewer: string, owner: string, id: string) => {
+    const seen = peopleSeenBy(viewer, owner);
+    return seen.kind === "people" ? seen.people.find((p) => p.id === id) : undefined;
+  };
+  const askedByMe = () => getState().contactRequests.filter((r) => r.from === "me");
+  const waitingFor = (id: string) => peopleRows().find((r) => r.person.id === id)?.waitingFrom;
+
+  it("marks an ask as waiting, and refuses to ask the same person again", () => {
+    act.demoActive();
+    act.askContact("mette");
+    expect(person("me", "nordhavn", "mette")).toMatchObject({ ask: "asked", contact: null });
+    act.askContact("mette");
+    expect(askedByMe()).toHaveLength(1);
+    expect(person("me", "nordhavn", "jonas")?.ask).toBe("open");
+  });
+
+  it("asks only the people of a Company Kalayaan is connected to", () => {
+    newCompany();
+    act.askContact("mette");
+    expect(askedByMe()).toEqual([]);
+  });
+
+  it("shares the details the next morning, with a Notification", () => {
+    act.demoActive();
+    act.askContact("mette");
+    act.askContact("rosario");
+    act.morning("1");
+    expect(person("me", "nordhavn", "mette")).toMatchObject({
+      ask: "shared",
+      contact: { email: "mette@nordhavn.example", phone: "+63 2 0000 0011" },
+    });
+    const notes = getState().notes.filter((n) => n.type === "contact");
+    expect(notes.map((n) => [n.co, n.text])).toEqual(
+      expect.arrayContaining([
+        ["nordhavn", "Mette Lindholm shared their contact details."],
+        ["tala", "Rosario M. shared their contact details."],
+      ]),
+    );
+  });
+
+  it("brings Nordhavn's request to Ana the morning after the two connect, once", () => {
+    newCompany();
+    act.connect("nordhavn");
+    vi.advanceTimersByTime(1500);
+    expect(getState().conn.nordhavn).toBe("connected");
+    expect(contactRequestsToMe().waiting).toEqual([]);
+    act.morning("1");
+    expect(contactRequestsToMe().waiting).toEqual([
+      { from: "nordhavn", name: "Nordhavn Freight Forwarders" },
+    ]);
+    expect(getState().notes.find((n) => n.type === "contact-request")).toMatchObject({
+      type: "contact-request",
+      co: "nordhavn",
+      text: "Nordhavn Freight Forwarders asked for your email and phone",
+    });
+    act.morning("1");
+    expect(contactRequestsToMe().waiting).toHaveLength(1);
+  });
+
+  it("holds Nordhavn's request for Ana and Maple Bay's for Marco two weeks in", () => {
+    act.demoActive();
+    expect(contactRequestsToMe()).toEqual({
+      waiting: [{ from: "nordhavn", name: "Nordhavn Freight Forwarders" }],
+      sharedWith: [],
+    });
+    expect(waitingFor("marco")).toEqual(["Maple Bay Grocers"]);
+    expect(waitingFor("ana")).toEqual([]);
+    expect(waitingFor("liza")).toEqual([]);
+  });
+
+  it("shares Ana's email and phone with Nordhavn alone", () => {
+    act.demoActive();
+    const toast = vi.fn();
+    setHandlers({ toast });
+    expect(person("nordhavn", "me", "ana")?.contact).toBeNull();
+    act.shareContact("nordhavn");
+    expect(person("nordhavn", "me", "ana")?.contact).toEqual({
+      email: "ana@kalayaanfoods.example",
+      phone: "+63 2 0000 0001",
+    });
+    expect(person("maple", "me", "ana")?.contact).toBeNull();
+    expect(contactRequestsToMe()).toEqual({
+      waiting: [],
+      sharedWith: ["Nordhavn Freight Forwarders"],
+    });
+    expect(toast).toHaveBeenCalledWith(
+      "Nordhavn Freight Forwarders can now see your email and phone.",
+      undefined,
+      undefined,
+    );
+  });
+
+  it("declines quietly: Nordhavn isn't told and still sees no email or phone", () => {
+    act.demoActive();
+    const toast = vi.fn();
+    setHandlers({ toast });
+    act.declineContact("nordhavn");
+    expect(toast).toHaveBeenCalledWith(
+      "Declined. Nordhavn Freight Forwarders won’t be told.",
+      undefined,
+      undefined,
+    );
+    expect(contactRequestsToMe()).toEqual({ waiting: [], sharedWith: [] });
+    expect(person("nordhavn", "me", "ana")).toMatchObject({ contact: null, ask: "asked" });
+    act.morning("1");
+    expect(contactRequestsToMe().waiting).toEqual([]);
+  });
+
+  it("lets only the person asked answer: an admin can't answer for a colleague", () => {
+    act.demoActive();
+    act.shareContact("maple");
+    act.declineContact("maple");
+    expect(waitingFor("marco")).toEqual(["Maple Bay Grocers"]);
+    expect(person("maple", "me", "marco")?.contact).toBeNull();
+  });
+
+  it("drops a removed person's Contact Requests, and none comes back", () => {
+    act.demoActive();
+    act.removePerson("marco");
+    expect(getState().contactRequests.some((r) => r.person === "marco")).toBe(false);
+    act.morning("1");
+    expect(getState().contactRequests.some((r) => r.person === "marco")).toBe(false);
   });
 });
 
