@@ -14,9 +14,12 @@ export const INTEREST_SIGNALS = {
 
 type InterestSignal = keyof typeof INTEREST_SIGNALS;
 
-/** How interested a Company is, and how the Demo's tag for it reads: Hot solid, Warm in the blue
- * tint, New outlined. */
-const LEVEL_TONE = { Hot: "solid", Warm: "accent", New: "line" };
+/** How the Demo's tag reads for each Interest Level: Hot solid, Warm in the blue tint, New
+ * outlined. */
+const LEVEL_TONE = { Hot: "solid", Warm: "accent", New: "line" } as const;
+
+/** How interested a Company is. */
+type InterestLevel = keyof typeof LEVEL_TONE;
 
 const RANK = "#4 of 12 in Food Suppliers";
 
@@ -25,7 +28,7 @@ const ROWS: {
   company: string;
   initials: string;
   signal: InterestSignal;
-  level: keyof typeof LEVEL_TONE;
+  level: InterestLevel;
 }[] = [
   { company: "Luntian Foods Inc.", initials: "LF", signal: "message", level: "Hot" },
   { ...nameOf(EXAMPLE_MATCHES.pack), signal: "view", level: "Warm" },
@@ -37,13 +40,14 @@ function nameOf({ name, initials }: { name: string; initials: string }) {
   return { company: name, initials };
 }
 
-const sent = (signal: InterestSignal) => ROWS.filter((row) => row.signal === signal).length;
+const companiesWith = (signal: InterestSignal) =>
+  ROWS.filter((row) => row.signal === signal).length;
 
 /** The figures over the list, counted from the rows so the two cannot disagree. */
 const FIGURES = [
   { label: "Interested companies", value: ROWS.length },
-  { label: "Messages", value: sent("message") },
-  { label: "Search appearances", value: sent("search") },
+  { label: "Messages", value: companiesWith("message") },
+  { label: "Search appearances", value: companiesWith("search") },
 ];
 
 const PANEL_LABEL = `Example of who’s interested in Kalayaan Foods, ranked ${RANK}. ${ROWS.map(

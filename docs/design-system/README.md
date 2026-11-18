@@ -136,8 +136,8 @@ rings (see [Two-panel screens](#two-panel-screens)).
 
 Every font size, corner radius, space and colour on an App Mode screen is a named value from one
 scale. The scale is defined once, in `src/app/demo-scale.css`, and the App Mode stylesheet
-(`src/app/app/product.css`) uses those names and writes no size, radius or colour of its own.
-Changing a step changes one value, and every screen follows.
+(`src/app/app/product.css`) uses those names and writes no font size, corner radius or colour of
+its own. Changing a step changes one value, and every screen follows.
 
 **Type.** Nine sizes, and nothing between them.
 
@@ -163,6 +163,8 @@ Changing a step changes one value, and every screen follows.
 for panels. Tags, count badges and chips are pills.
 
 **Space.** Multiples of 4. Space is tight inside a group and clearly larger between sections.
+Hairlines, strokes of 2 and 3px, the logo rings' geometry and a few one-off offsets sit outside
+the steps.
 
 **Two densities.** Standard for most screens. Compact for data panels wherever they appear:
 number tiles, tables, charts, side rails, the Interest Signals tab, the chamber screens and the
@@ -367,7 +369,8 @@ Companies).
 **The later screens.** Search leads with its field under the title, over a flat list of marked
 results. Notifications is a flat list with new items marked. Engine raises the network map and
 keeps its notes flat. The AI Lead Agent preview raises the Mandate form; during a run nothing is
-raised, and a gate's Approve is the one solid button. After the MVP is flat lists. The Team
+raised, a gate sits between two hairlines in the conversation, and its Approve is the one solid
+button. After the MVP is flat lists. The Team
 Dashboard is compact, with "On track" and "Behind" as tags with their icons. None of Search,
 Notifications, After the MVP or the Team Dashboard raises a panel.
 
@@ -394,8 +397,9 @@ mistaken for real activity.
 
 ### Keeping to it
 
-- **The checks.** `e2e/demo-rules.spec.ts` opens every address under `/app` at laptop and phone
-  width and checks that every text size and weight is on the scale, nothing is in capitals, at
+- **The checks.** `e2e/demo-rules.spec.ts` opens every address under `/app` that `src/paths.ts`
+  names or that has a page file, at laptop and phone width,
+  and checks that every text size and weight is on the scale, nothing is in capitals, at
   most one panel is the Focus panel, at most one button outside the Story Bar is solid, and
   nothing scrolls sideways at 360, 390, 1280 or 1440 pixels. A new screen joins by joining its
   list of screens, and a test fails, naming the address, if it is left off.

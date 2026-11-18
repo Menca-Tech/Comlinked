@@ -5,7 +5,9 @@ import {
   arrival,
   expectStill,
   focusPanel,
+  fromGuide,
   goToSection,
+  openFromGuide,
   surfaceEdges,
   surfaceShadow,
   tabTo,
@@ -21,12 +23,6 @@ test.setTimeout(240_000);
 
 const tap = (page: Page, name: string) =>
   page.getByRole("button", { name, exact: true }).first().click();
-
-async function guide(page: Page, name: string | RegExp) {
-  await page.locator(".demo-guide").click();
-  await page.getByRole("dialog").getByRole("button", { name, exact: true }).click();
-  await expect(page.getByRole("dialog")).toBeHidden();
-}
 
 const WIDTHS = [360, 390, 1280, 1440];
 const TWO_WEEKS_HEADING = "13 interested companies";
@@ -86,7 +82,7 @@ async function claimNewCompany(page: Page) {
 /** Switches possible future pricing off from the guide, so ComDash shows everything the MVP does,
  * with no tier. */
 async function withoutPricing(page: Page) {
-  await page.locator(".demo-guide").click();
+  await page.getByRole("button", { name: "Demo guide" }).click();
   const toggle = page
     .getByRole("dialog")
     .getByRole("button", { name: "Possible future pricing", exact: true });
@@ -100,7 +96,7 @@ async function withoutPricing(page: Page) {
  * off, so ComDash names every interested company as the MVP does. */
 async function twoWeeksIn(page: Page, { pricing = false } = {}) {
   await page.goto("/app/claim");
-  await guide(page, "Two weeks in");
+  await fromGuide(page, "Two weeks in");
   if (!pricing) await withoutPricing(page);
   await expect(hotCompany(page, "Hapag Kitchen Group")).toBeVisible();
 }
@@ -213,7 +209,7 @@ test.describe("on a phone", () => {
     await page.locator("#f-query").fill("packaging");
     await expect(page.locator("#search-results .a-li").first()).toBeVisible();
 
-    await guide(page, /^Open the chamber tools/);
+    await fromGuide(page, /^Open the chamber tools/);
     await tap(page, "Choose sample file");
     await tap(page, "Build profiles");
     await expect(page.getByRole("button", { name: "Send introduction" })).toBeVisible({
@@ -224,8 +220,8 @@ test.describe("on a phone", () => {
     await expect(page.getByText("Flagged for ComLinked staff")).toBeVisible();
     await tap(page, "Back to company view");
 
-    await guide(page, "Next morning");
-    await guide(page, /^Open the morning digest/);
+    await fromGuide(page, "Next morning");
+    await fromGuide(page, /^Open the morning digest/);
     await expect(page.getByRole("heading", { name: "Who viewed you" })).toBeVisible();
     await noSidewaysScroll(page);
   });
@@ -240,7 +236,7 @@ test.describe("on a laptop", () => {
       page.getByRole("heading", { name: "Your company is already here", level: 1 }),
     ).toBeVisible();
     await expectAccessible(page);
-    await guide(page, "Two weeks in");
+    await fromGuide(page, "Two weeks in");
     await expect(hotCompany(page, "Hapag Kitchen Group")).toBeVisible();
 
     await page.locator(".a-web-nav .nav-link", { hasText: "Leads" }).click();
@@ -1041,7 +1037,7 @@ test.describe("ComDash", () => {
   test("the presenter guide jumps straight to each ComDash tab", async ({ page }) => {
     await twoWeeksIn(page);
     for (const tab of [...TABS].reverse()) {
-      await page.locator(".demo-guide").click();
+      await page.getByRole("button", { name: "Demo guide" }).click();
       await page
         .getByRole("navigation", { name: "Jump to a ComDash tab" })
         .getByRole("link", { name: tab.name, exact: true })
@@ -1184,7 +1180,7 @@ test.describe("the chamber's network of 100", () => {
 
   test("the chamber tools name ECCP and count the whole network", async ({ page }) => {
     await twoWeeksIn(page);
-    await guide(page, /^Open the chamber tools/);
+    await fromGuide(page, /^Open the chamber tools/);
     await expect(page.getByText("ECCP on ComLinked")).toBeVisible();
     await expect(page.getByRole("heading", { name: "100 members" })).toBeVisible();
     await expect(
@@ -1227,7 +1223,7 @@ test.describe("the chamber's network of 100", () => {
     page,
   }) => {
     await twoWeeksIn(page);
-    await guide(page, "ComLinked team dashboard");
+    await fromGuide(page, "ComLinked team dashboard");
     await expect(page.locator(".t-sum")).toContainText("of the 90-day ECCP pilot");
     const adoption = page.locator(".t-row", {
       hasText: "Invited companies that claim within 14 days",
@@ -1238,14 +1234,14 @@ test.describe("the chamber's network of 100", () => {
 
   test("a staff claim reminder leads to a claim the next morning", async ({ page }) => {
     await twoWeeksIn(page);
-    await guide(page, "ComLinked team dashboard");
+    await fromGuide(page, "ComLinked team dashboard");
     await page.getByRole("tab", { name: "Companies needing help" }).click();
     // The queue's rows stack; the activity log's rows, which also name the company, do not.
     const northline = page.locator(".a-li.stack", { hasText: "Northline Logistics" });
     await expect(northline).toContainText("Hasn’t claimed its profile");
     await northline.getByRole("button", { name: "Send claim reminder" }).click();
     await expect(northline).toContainText("Reminder sent");
-    await guide(page, "Next morning");
+    await fromGuide(page, "Next morning");
     await expect(
       page.getByText("Northline Logistics claimed its profile after a reminder"),
     ).toBeVisible();
@@ -1254,7 +1250,7 @@ test.describe("the chamber's network of 100", () => {
 
   test("the Engine map draws all 100 companies", async ({ page }) => {
     await twoWeeksIn(page);
-    await guide(page, "Engine");
+    await fromGuide(page, "Engine");
     await expect(page.getByText("calculated from a network of 100 companies")).toBeVisible();
     await expect(page.locator(".e-map .e-n")).toHaveCount(100);
     await expect(page.locator(".e-map")).toHaveAttribute(
@@ -1273,8 +1269,8 @@ test.describe("the chamber's network of 100", () => {
     await page.locator("textarea[data-draft]").fill("Hello, could we talk about shipping cartons?");
     await tap(page, "Send");
     await expect(page.locator(".a-msg.me")).toHaveCount(1);
-    await guide(page, "Next morning");
-    await guide(page, "Next morning");
+    await fromGuide(page, "Next morning");
+    await fromGuide(page, "Next morning");
     await openSection(page, "ComMail");
     await page.locator(".a-li", { hasText: "Kahon" }).click();
     await expect(page.locator(".a-msg.me")).toHaveCount(1);
@@ -1289,14 +1285,14 @@ test.describe("the chamber's network of 100", () => {
     test(`chamber tools, Wins and the Engine fit a ${width}px screen`, async ({ page }) => {
       await page.setViewportSize({ width, height: 844 });
       await twoWeeksIn(page);
-      await guide(page, /^Open the chamber tools/);
+      await fromGuide(page, /^Open the chamber tools/);
       await expect(page.getByRole("heading", { name: "100 members" })).toBeVisible();
       await noSidewaysScroll(page);
       await tap(page, "Back to company view");
       await openSection(page, "Wins");
       await expect(page.locator("#monthly")).toContainText("ECCP, month 1.");
       await noSidewaysScroll(page);
-      await guide(page, "Engine");
+      await fromGuide(page, "Engine");
       await expect(page.locator(".e-map .e-n")).toHaveCount(100);
       await noSidewaysScroll(page);
       const map = await page.locator(".e-map").boundingBox();
@@ -1503,7 +1499,7 @@ test.describe("Kalayaan's first export shipment, and basics only before a Claim"
     await expect(page.locator(".a-msg.me")).toHaveCount(1);
     const waiting = page.getByText("Waiting until Northline Logistics claims its profile");
     await expect(waiting).toBeVisible();
-    await guide(page, "Next morning");
+    await fromGuide(page, "Next morning");
     await openSection(page, "ComMail");
     const row = page.locator(".a-li", { hasText: "Northline Logistics" });
     await expect(row).toContainText("Not yet claimed");
@@ -1551,7 +1547,7 @@ test.describe("Kalayaan's first export shipment, and basics only before a Claim"
     await expect(profile.locator(".a-profile")).toContainText("Not yet claimed");
     await expect(profile.getByText("What we offer")).toHaveCount(0);
     await expect(connect(page)).toHaveCount(0);
-    await guide(page, "Next morning");
+    await fromGuide(page, "Next morning");
     await openProfile(page, "Sari Central Wholesale");
     await expect(profile.getByText("Not yet claimed")).toHaveCount(0);
     await expect(profile).toContainText("Supplies 400 neighborhood stores with packaged snacks.");
@@ -1576,8 +1572,8 @@ test.describe("Kalayaan's first export shipment, and basics only before a Claim"
       for (const name of NEVER_CLAIMS) await expect(page.getByText(name)).toHaveCount(0);
     };
     await claimNewCompany(page);
-    for (let morning = 0; morning < 3; morning++) await guide(page, "Next morning");
-    await guide(page, /^Open the morning digest/);
+    for (let morning = 0; morning < 3; morning++) await fromGuide(page, "Next morning");
+    await fromGuide(page, /^Open the morning digest/);
     await expect(page.getByRole("heading", { name: "Who viewed you" })).toBeVisible();
     await expect(page.locator(".a-sec .a-li").first()).toBeVisible();
     await noneNamed();
@@ -1602,7 +1598,7 @@ test.describe("Kalayaan's first export shipment, and basics only before a Claim"
     const empty = page.getByText("No wins yet. The first appears when two members confirm a deal.");
     await expect(empty).toBeVisible();
     await expect(page.locator(".a-win")).toHaveCount(0);
-    await guide(page, "Next morning");
+    await fromGuide(page, "Next morning");
     await openSection(page, "Wins");
     await expect(empty).toBeVisible();
     await expect(page.locator(".a-win")).toHaveCount(0);
@@ -1612,7 +1608,7 @@ test.describe("Kalayaan's first export shipment, and basics only before a Claim"
     page,
   }) => {
     await twoWeeksIn(page);
-    await page.locator(".demo-guide").click();
+    await page.getByRole("button", { name: "Demo guide" }).click();
     const day = page
       .getByRole("dialog")
       .locator(".g-kv")
@@ -1630,7 +1626,7 @@ test.describe("Kalayaan's first export shipment, and basics only before a Claim"
     await expect(page.getByText("Confirmed by both companies: 1 meeting, 1 deal.")).toBeVisible();
     await expect(page.locator(".a-msg.me").first()).toContainText("first shipment to Europe");
 
-    await guide(page, "ComLinked team dashboard");
+    await fromGuide(page, "ComLinked team dashboard");
     await expect(page.locator(".t-sum")).toContainText("Day 14 of the 90-day ECCP pilot");
   });
 
@@ -1657,7 +1653,7 @@ test.describe("Kalayaan's first export shipment, and basics only before a Claim"
     );
     await expect(profile).toContainText("Connected to your company");
 
-    await guide(page, "ComLinked team dashboard");
+    await fromGuide(page, "ComLinked team dashboard");
     const now = (metric: string) =>
       page.locator(".t-row", { hasText: metric }).locator(".t-num b").first();
     await expect(now("Deals confirmed by both companies")).toHaveText("3");
@@ -2126,11 +2122,14 @@ test.describe("what the viewer triggers moves briefly, with motion allowed", () 
   });
 });
 
-/** Presses one of the Presenter Guide's buttons and waits for the screen it opens. */
-async function openLater(page: Page, button: string, heading: string) {
-  await guide(page, button);
-  await expect(page.getByRole("heading", { name: heading, level: 1 })).toBeVisible();
-}
+/** The Team Dashboard's chart of weekly active companies. */
+const trendChart = (page: Page) =>
+  page.getByRole("img", { name: /^Weekly active companies by day/ });
+/** How large the chart is drawn against the size it is set in: 1 when its text reads as set. */
+const drawnScale = (page: Page) =>
+  trendChart(page).evaluate(
+    (svg: SVGSVGElement) => svg.getBoundingClientRect().width / svg.viewBox.baseVal.width,
+  );
 
 const heading = (page: Page, name: string) => page.getByRole("heading", { name, exact: true });
 const presenterGuide = (page: Page) => page.getByRole("dialog", { name: "Presenter guide" });
@@ -2156,8 +2155,7 @@ test.describe("the later screens and the Presenter Guide, on the scale and the s
     expect(await surfaceShadow(results(page))).toBe("none");
     await expect(focusPanel(page)).toHaveCount(0);
     // Each result carries its Company's mark, and your own is the solid navy one.
-    const marks = results(page).locator(".a-li [aria-hidden='true']:first-child");
-    expect(await marks.count()).toBe(await results(page).locator(".a-li").count());
+    await expect(results(page).locator(".a-li:not(:has([aria-hidden='true']))")).toHaveCount(0);
     await expect(own.locator("[aria-hidden='true']").first()).toHaveCSS("color", WHITE);
 
     // A search that finds nothing says so in one line, in the same flat panel.
@@ -2191,7 +2189,7 @@ test.describe("the later screens and the Presenter Guide, on the scale and the s
     page,
   }) => {
     await twoWeeksIn(page);
-    await openLater(page, "Engine", "Engine");
+    await openFromGuide(page, "Engine", "Engine");
     await expect(focusPanel(page)).toHaveCount(1);
     await expect(focusPanel(page).getByRole("heading", { name: "Your network" })).toBeVisible();
     const map = focusPanel(page).getByRole("img", { name: /^Network map of 100 companies/ });
@@ -2209,7 +2207,7 @@ test.describe("the later screens and the Presenter Guide, on the scale and the s
     page,
   }) => {
     await twoWeeksIn(page);
-    await openLater(page, "AI Lead Agent preview", "AI Lead Agent");
+    await openFromGuide(page, "AI Lead Agent preview", "AI Lead Agent");
     await expect(page.locator("main").getByText("Preview: after the MVP")).toBeVisible();
     const form = focusPanel(page);
     await expect(form.getByRole("heading", { name: "What should your agent find?" })).toBeVisible();
@@ -2244,7 +2242,7 @@ test.describe("the later screens and the Presenter Guide, on the scale and the s
 
   test("After the MVP: flat lists under their headings, with nothing raised", async ({ page }) => {
     await twoWeeksIn(page);
-    await openLater(page, "What’s next", "After the MVP");
+    await openFromGuide(page, "What’s next", "After the MVP");
     await expect(focusPanel(page)).toHaveCount(0);
     for (const title of ["Phase 2", "Later", "When needed", "If chambers ask"]) {
       expect(await surfaceShadow(heading(page, title))).toBe("none");
@@ -2259,7 +2257,7 @@ test.describe("the later screens and the Presenter Guide, on the scale and the s
     page,
   }) => {
     await twoWeeksIn(page);
-    await openLater(page, "ComLinked team dashboard", "Team dashboard");
+    await openFromGuide(page, "ComLinked team dashboard", "Team dashboard");
     await expect(focusPanel(page)).toHaveCount(0);
     expect(await surfaceShadow(heading(page, "Pilot targets"))).toBe("none");
     // The compact density: a target's name at 14 and its note at 13.
@@ -2281,12 +2279,7 @@ test.describe("the later screens and the Presenter Guide, on the scale and the s
       await expect(tag.locator("svg")).toBeVisible();
     }
     // The chart is drawn one to one, so its axis reads at the size it is set in.
-    const drawn = await page
-      .locator("#t-trend")
-      .evaluate(
-        (svg: SVGSVGElement) => svg.getBoundingClientRect().width / svg.viewBox.baseVal.width,
-      );
-    expect(drawn).toBeCloseTo(1, 1);
+    await expect.poll(() => drawnScale(page)).toBeCloseTo(1, 1);
     // The chosen tab reads as the chosen place in the top bar does.
     const safety = page.getByRole("tab", { name: "Network safety" });
     await safety.click();
@@ -2310,6 +2303,10 @@ test.describe("the later screens and the Presenter Guide, on the scale and the s
     await expect(page.getByRole("tab")).toHaveCount(4);
     await expect(focusPanel(page)).toHaveCount(0);
     await noSidewaysScroll(page);
+    // The next morning the chart appears in its place, drawn one to one like any other day's.
+    await fromGuide(page, "Next morning");
+    await expect(trendChart(page)).toBeVisible();
+    await expect.poll(() => drawnScale(page)).toBeCloseTo(1, 1);
   });
 
   test("the Presenter Guide opens and closes with G, with outlined presets and switches that turn", async ({
@@ -2341,7 +2338,7 @@ test.describe("the later screens and the Presenter Guide, on the scale and the s
     await page.keyboard.press("g");
     await expect(sheet).toBeHidden();
     // A preset still starts the Demo over.
-    await guide(page, "New company");
+    await fromGuide(page, "New company");
     await expect(heading(page, "Your company is already here")).toBeVisible();
   });
 
@@ -2350,24 +2347,43 @@ test.describe("the later screens and the Presenter Guide, on the scale and the s
   }) => {
     await page.setViewportSize({ width: 360, height: 800 });
     await twoWeeksIn(page);
-    await openLater(page, "ComLinked team dashboard", "Team dashboard");
+    await openFromGuide(page, "ComLinked team dashboard", "Team dashboard");
     await page.getByRole("tab", { name: "Companies needing help" }).click();
     const rows = page.locator(".a-li.stack");
     await expect(rows.first()).toBeVisible();
     const names = await rows.locator("strong").allInnerTexts();
     const longest = names.reduce((long, name) => (name.length > long.length ? name : long));
     const row = rows.filter({ hasText: longest }).first();
-    for (const width of [360, 320]) {
-      await page.setViewportSize({ width, height: 800 });
+    /** The name's box and its row's, with the number of lines the name takes. */
+    const measure = async () => {
       const box = await row.boundingBox();
       const name = await row.locator("strong").boundingBox();
-      expect(name?.x ?? -1).toBeGreaterThanOrEqual(box?.x ?? 0);
-      expect((name?.x ?? 0) + (name?.width ?? 0)).toBeLessThanOrEqual(
-        (box?.x ?? 0) + (box?.width ?? 0),
-      );
-      expect((box?.x ?? 0) + (box?.width ?? 0)).toBeLessThanOrEqual(width);
-      await noSidewaysScroll(page);
+      const lineHeight = await row
+        .locator("strong")
+        .evaluate((el) => parseFloat(getComputedStyle(el).lineHeight));
+      return {
+        left: (name?.x ?? -1) - (box?.x ?? 0),
+        right: (box?.x ?? 0) + (box?.width ?? 0) - ((name?.x ?? 0) + (name?.width ?? 0)),
+        rowRight: (box?.x ?? 0) + (box?.width ?? 0),
+        lines: Math.round((name?.height ?? 0) / lineHeight),
+      };
+    };
+    // At 360 pixels it sits inside its row, and nothing scrolls sideways.
+    const fits = await measure();
+    expect(fits.left).toBeGreaterThanOrEqual(0);
+    expect(fits.right).toBeGreaterThanOrEqual(0);
+    expect(fits.rowRight).toBeLessThanOrEqual(360);
+    await noSidewaysScroll(page);
+    // Narrowed until the name no longer fits on one line, it wraps inside its row.
+    let wrapped = fits;
+    for (const width of [320, 280, 240, 200]) {
+      if (wrapped.lines > 1) break;
+      await page.setViewportSize({ width, height: 800 });
+      wrapped = await measure();
     }
+    expect(wrapped.lines).toBeGreaterThan(1);
+    expect(wrapped.left).toBeGreaterThanOrEqual(0);
+    expect(wrapped.right).toBeGreaterThanOrEqual(0);
   });
 
   test("from the keyboard each later screen is usable in order with a visible focus ring, and G opens and closes the guide", async ({
@@ -2378,9 +2394,9 @@ test.describe("the later screens and the Presenter Guide, on the scale and the s
     await tabTo(page, results(page).getByRole("button", { name: /Kapwa Snack Foods/ }));
     await page.getByRole("button", { name: /^Notifications/ }).click();
     await tabTo(page, page.getByRole("button", { name: "Accept", exact: true }));
-    await openLater(page, "Engine", "Engine");
+    await openFromGuide(page, "Engine", "Engine");
     await tabTo(page, page.getByRole("button", { name: "Back to ComDash" }));
-    await openLater(page, "What’s next", "After the MVP");
+    await openFromGuide(page, "What’s next", "After the MVP");
     await tabTo(page, page.getByRole("button", { name: "Open the preview" }));
     await page.keyboard.press("Enter");
     await expect(heading(page, "AI Lead Agent")).toBeVisible();
@@ -2389,7 +2405,7 @@ test.describe("the later screens and the Presenter Guide, on the scale and the s
     await tabTo(page, page.getByRole("button", { name: "Play to next gate" }));
     await page.keyboard.press("Enter");
     await tabTo(page, page.getByRole("button", { name: "Approve", exact: true }));
-    await openLater(page, "ComLinked team dashboard", "Team dashboard");
+    await openFromGuide(page, "ComLinked team dashboard", "Team dashboard");
     await tabTo(page, page.getByRole("tab", { name: "Pilot health" }));
     await page.keyboard.press("ArrowRight");
     await expect(heading(page, "Companies waiting on someone")).toBeVisible();
@@ -2412,22 +2428,22 @@ test.describe("the later screens and the Presenter Guide, on the scale and the s
     await page.getByRole("button", { name: /^Notifications/ }).click();
     await expect(heading(page, "Notifications")).toBeVisible();
     await expectStill(page);
-    await openLater(page, "Engine", "Engine");
+    await openFromGuide(page, "Engine", "Engine");
     await expectStill(page);
-    await openLater(page, "What’s next", "After the MVP");
+    await openFromGuide(page, "What’s next", "After the MVP");
     await expectStill(page);
-    await openLater(page, "AI Lead Agent preview", "AI Lead Agent");
+    await openFromGuide(page, "AI Lead Agent preview", "AI Lead Agent");
     await expectStill(page);
     await tap(page, "Start the agent");
     await tap(page, "Play to next gate");
     await expect(page.getByText("Waiting for your approval", { exact: true })).toBeVisible();
     await expectStill(page);
-    await openLater(page, "ComLinked team dashboard", "Team dashboard");
+    await openFromGuide(page, "ComLinked team dashboard", "Team dashboard");
     for (const name of ["Companies needing help", "Network safety", "AI and agent"]) {
       await page.getByRole("tab", { name }).click();
       await expectStill(page);
     }
-    await page.locator(".demo-guide").click();
+    await page.getByRole("button", { name: "Demo guide" }).click();
     await expect(presenterGuide(page)).toBeVisible();
     await expectStill(page, ".cl-guide, .cl-guide *, [data-slot='sheet-overlay']");
     await page.keyboard.press("Escape");

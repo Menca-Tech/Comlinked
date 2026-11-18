@@ -1,13 +1,13 @@
 import { ExampleTag } from "@/components/marketing/section";
 import { cn } from "@/lib/utils";
 
-/** How the example chamber's members split by status, with each status's key on the bar and the
- * tone of its tag, as the Demo's chamber screen draws them on Day 14. */
+/** How the example chamber's members split by status, as the Demo's chamber screen draws them on
+ * Day 14: each status's colour on the bar, and the tone of its tag. A tag with no tone is grey. */
 const STATUSES = [
-  { status: "Active", count: 20, key: "active", tone: "accent" },
-  { status: "Quiet", count: 16, key: "quiet", tone: "" },
-  { status: "Needs an intro", count: 4, key: "intro", tone: "error" },
-  { status: "Not yet claimed", count: 60, key: "unclaimed", tone: "line" },
+  { status: "Active", count: 20, colour: "active", tone: "accent" },
+  { status: "Quiet", count: 16, colour: "quiet", tone: null },
+  { status: "Needs an intro", count: 4, colour: "intro", tone: "error" },
+  { status: "Not yet claimed", count: 60, colour: "unclaimed", tone: "line" },
 ] as const;
 
 type Status = (typeof STATUSES)[number]["status"];
@@ -49,14 +49,14 @@ export function ActivityViewPanel() {
             </span>
           </div>
           <div className="ex-split" aria-hidden="true">
-            {STATUSES.map(({ status, count, key }) => (
-              <i key={status} className={cn("ex-key", key)} style={{ flex: count }} />
+            {STATUSES.map(({ status, count, colour }) => (
+              <i key={status} className={cn("ex-key", colour)} style={{ flex: count }} />
             ))}
           </div>
           <ul className="ex-counts">
-            {STATUSES.map(({ status, count, key }) => (
+            {STATUSES.map(({ status, count, colour }) => (
               <li key={status}>
-                <i className={cn("ex-dot ex-key", key)} />
+                <i className={cn("ex-dot ex-key", colour)} />
                 {status} <b>{count}</b>
               </li>
             ))}

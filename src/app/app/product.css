@@ -1155,14 +1155,16 @@
     border-color: var(--color-accent-strong);
     color: var(--color-accent-strong);
   }
-  /* A gate in the agent's conversation: what is asked, who approves, and the decision. */
+  /* A gate in the agent's conversation: what is asked, who approves, and the decision. It sits
+     between two hairlines, since a panel holds no card of its own. */
   .ag-gate {
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
-    padding: var(--space-4);
-    border: 1px solid var(--hair);
-    border-radius: var(--radius-control);
+    margin: var(--space-2) 0;
+    padding: var(--space-4) 0;
+    border-top: 1px solid var(--hair);
+    border-bottom: 1px solid var(--hair);
     min-width: 0;
   }
   .ag-gate > .a-st {
@@ -3686,7 +3688,7 @@
   .cl-product *::after,
   .cl-guide,
   .cl-guide *,
-  [data-slot="sheet-overlay"] {
+  [data-slot="sheet-overlay"]:has(+ .cl-guide) {
     transition: none !important;
     animation: none !important;
   }

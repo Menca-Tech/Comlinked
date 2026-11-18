@@ -676,7 +676,8 @@ html:has(.cl-site) {
 
 /* The two example panels, on the ComDash and For Chambers pages: small pictures of the Demo.
    Every size, radius and colour is one of the Demo's named values, defined in demo-scale.css,
-   so the picture and the product cannot drift apart. */
+   so a change to the scale reaches the picture too. The rules themselves are the website's own:
+   it shares no part with the Demo. */
 .cl-site {
   .cl-example {
     position: relative;
@@ -722,7 +723,6 @@ html:has(.cl-site) {
   .ex-v,
   .ex-claimed {
     font: 600 var(--text-28) / var(--leading-tight) var(--font-text);
-    letter-spacing: -0.015em;
     color: var(--color-ink);
     font-variant-numeric: lining-nums tabular-nums;
   }
@@ -732,7 +732,6 @@ html:has(.cl-site) {
   }
   .ex-of {
     font: 400 var(--text-14) / 1 var(--font-text);
-    letter-spacing: 0;
     color: var(--color-quiet);
   }
   /* How the members split by status, in proportion, over each status's count in words. */
@@ -828,7 +827,6 @@ html:has(.cl-site) {
     background: var(--color-accent-tint);
     color: var(--color-accent-strong);
     font: 600 var(--text-12) / 1 var(--font-text);
-    letter-spacing: 0.04em;
   }
   .ex-mark.unclaimed {
     background: none;

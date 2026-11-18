@@ -1,14 +1,18 @@
+import { readdirSync } from "node:fs";
+import path from "node:path";
+
 import AxeBuilder from "@axe-core/playwright";
 import { expect as defaultExpect, test, type Page } from "@playwright/test";
 
 import { paths } from "../src/paths";
-import { goToComDashTab, goToSection } from "./demo-helpers";
+import { fromGuide, goToComDashTab, goToSection } from "./demo-helpers";
 
 // The rules every Demo screen holds to (docs/specs/2026-11-18-demo-premium-pass.md): text sizes
 // on the one scale, no capitals, at most one Focus panel, at most one solid button outside the
 // Story Bar, and no sideways scroll. They are checked on each screen in SCREENS at laptop and
-// phone width, so a screen joins the checks by joining the list. Every address src/paths.ts names
-// under /app must have a screen in the list, so a new screen cannot be left out.
+// phone width, so a screen joins the checks by joining the list. Every address that src/paths.ts
+// names under /app, and every page file under src/app/app, must have a screen in the list, so a
+// new screen cannot be left out.
 
 test.use({ contextOptions: { reducedMotion: "reduce" } });
 
@@ -29,10 +33,12 @@ const PRESENTER_GUIDE = ".cl-guide";
 const BLOCKING_IMPACTS = new Set(["serious", "critical"]);
 
 /** A Demo screen under the rules: what to call it, the address it answers to, and how to reach
- * it. The rules read the screen itself unless `within` names another part of the page. */
+ * it. `landsOn` is set where that address only sends the viewer on to another. The rules read the
+ * screen itself unless `within` names another part of the page. */
 interface Screen {
   name: string;
   at: string;
+  landsOn?: string;
   open: (page: Page) => Promise<void>;
   within?: string;
 }
@@ -45,13 +51,6 @@ async function openAt(page: Page, address: string, heading: string) {
 
 /** Stop 4: Kalayaan Foods two weeks in, with possible future pricing off. */
 const stopFour = (page: Page) => openAt(page, "/app/dash?stop=4", "Kalayaan Foods Inc.");
-
-/** Presses one of the Presenter Guide's buttons, which closes the guide. */
-async function fromGuide(page: Page, name: string) {
-  await page.getByRole("button", { name: "Demo guide" }).click();
-  await page.getByRole("dialog").getByRole("button", { name, exact: true }).click();
-  await expect(page.getByRole("dialog")).toBeHidden();
-}
 
 /** The full Demo two weeks in, which opens ComDash on the Free member view with the later items
  * showing. */
@@ -83,26 +82,29 @@ async function teamTab(page: Page, name: string, shows: string) {
   await expect(page.getByRole("heading", { name: shows, exact: true })).toBeVisible();
 }
 
-/** The AI Lead Agent preview's run, played until `status` shows beside its controls. A gate on the
- * way is approved. */
-async function agentRunUntil(page: Page, status: "Waiting for your approval" | "Run complete") {
+/** The gates in the AI Lead Agent preview's run, each of which waits for a person to approve. */
+const AGENT_GATES = 2;
+const waitingAtGate = (page: Page) => page.getByText("Waiting for your approval", { exact: true });
+
+/** The AI Lead Agent preview's run, played as far as its first gate. */
+async function agentRunToFirstGate(page: Page) {
   await laterScreen(page, "AI Lead Agent preview", "AI Lead Agent");
   await press(page, "Start the agent");
-  const approve = page.getByRole("button", { name: "Approve", exact: true });
-  const waiting = page.getByText("Waiting for your approval", { exact: true });
-  const complete = page.getByText("Run complete", { exact: true });
-  await expect(page.getByRole("heading", { name: "Agent conversation" })).toBeVisible();
-  for (let turns = 0; turns < 8; turns++) {
-    if (await page.getByText(status, { exact: true }).isVisible()) return;
-    if (await approve.isVisible()) {
-      await approve.click();
-      await expect(approve).toBeHidden();
-    } else {
-      await press(page, "Play to next gate");
-      await expect(waiting.or(complete)).toBeVisible();
-    }
+  await press(page, "Play to next gate");
+  await expect(waitingAtGate(page)).toBeVisible();
+}
+
+/** The AI Lead Agent preview's run, played to its end with each gate approved on the way. */
+async function agentRunToEnd(page: Page) {
+  await agentRunToFirstGate(page);
+  for (let gate = 1; gate <= AGENT_GATES; gate++) {
+    await press(page, "Approve");
+    await expect(waitingAtGate(page)).toBeHidden();
+    await press(page, "Play to next gate");
+    const next =
+      gate < AGENT_GATES ? waitingAtGate(page) : page.getByText("Run complete", { exact: true });
+    await expect(next).toBeVisible();
   }
-  throw new Error(`The agent's run never reached "${status}".`);
 }
 
 /** Stop 2's claim, as far as the step headed `heading`. */
@@ -310,13 +312,14 @@ const SCREENS: Screen[] = [
   {
     name: "the Demo's own address, which opens the claim",
     at: paths.product.root,
-    open: (page) => openAt(page, "/app", "Your company is already here"),
+    landsOn: paths.product.claim,
+    open: (page) => openAt(page, paths.product.root, "Your company is already here"),
   },
   {
     name: "the Member List before its profiles are built",
     at: paths.product.chamber,
     open: async (page) => {
-      await openAt(page, "/app/chamber?stop=1", "Day 0 of the pilot");
+      await openAt(page, paths.preview.stop(paths.product.chamber, 1), "Day 0 of the pilot");
       await press(page, "Run the import again");
       await expect(page.getByText("members-sample.csv: 100 companies found")).toBeVisible();
     },
@@ -391,7 +394,7 @@ const SCREENS: Screen[] = [
   {
     name: "Notifications on the first day",
     at: paths.product.notifications,
-    open: (page) => openAt(page, "/app/notifications", "Notifications"),
+    open: (page) => openAt(page, paths.product.notifications, "Notifications"),
   },
   {
     name: "Engine",
@@ -406,12 +409,12 @@ const SCREENS: Screen[] = [
   {
     name: "the AI Lead Agent preview, waiting at a gate",
     at: paths.product.agent,
-    open: (page) => agentRunUntil(page, "Waiting for your approval"),
+    open: agentRunToFirstGate,
   },
   {
     name: "the AI Lead Agent preview, with its run complete",
     at: paths.product.agent,
-    open: (page) => agentRunUntil(page, "Run complete"),
+    open: agentRunToEnd,
   },
   {
     name: "After the MVP",
@@ -442,7 +445,7 @@ const SCREENS: Screen[] = [
     name: "the Team Dashboard on the first day",
     at: paths.product.team,
     open: async (page) => {
-      await openAt(page, "/app/team", "Team dashboard");
+      await openAt(page, paths.product.team, "Team dashboard");
       await expect(page.getByText("The trend starts after the first simulated day.")).toBeVisible();
     },
   },
@@ -458,18 +461,42 @@ const SCREENS: Screen[] = [
   },
 ];
 
-/** Every address src/paths.ts names under /app. */
-const ADDRESSES: string[] = [
-  ...Object.values(paths.product),
-  ...Object.values(paths.dashTabs).filter((address) => typeof address === "string"),
-  paths.preview.opening,
-  paths.preview.ask,
+const isAddress = (value: unknown): value is string =>
+  typeof value === "string" && value.startsWith(paths.product.root);
+
+/** The address of each page file under a folder of the app. A folder in square brackets catches
+ * addresses that name no screen, so it adds none of its own. */
+function pageFileAddresses(folder: string, address: string): string[] {
+  return readdirSync(folder, { withFileTypes: true }).flatMap((entry) => {
+    if (entry.isDirectory()) {
+      if (entry.name.startsWith("[")) return [];
+      return pageFileAddresses(path.join(folder, entry.name), `${address}/${entry.name}`);
+    }
+    return entry.name === "page.tsx" ? [address] : [];
+  });
+}
+
+/** Every address under /app: those src/paths.ts names (the screens, ComDash's tabs and the Pilot
+ * Preview's own two screens) and those that have a page file. A screen added either way joins
+ * this list by itself. */
+const ADDRESSES = [
+  ...[paths.product, paths.dashTabs, paths.preview].flatMap((group) =>
+    Object.values(group).filter(isAddress),
+  ),
+  ...pageFileAddresses(path.resolve("src/app/app"), paths.product.root),
 ];
 
 /** The addresses that no screen in the rule checks answers to. */
 function addressesWithoutRuleChecks(addresses: string[]) {
   const checked = new Set(SCREENS.map((screen) => screen.at));
   return [...new Set(addresses)].filter((address) => !checked.has(address));
+}
+
+/** Opens a screen and checks that it is showing at the address the list gives it, so no screen can
+ * stand in the list under an address it is not at. */
+async function openScreen(page: Page, screen: Screen) {
+  await screen.open(page);
+  await expect(page).toHaveURL(new RegExp(`${screen.landsOn ?? screen.at}(\\?.*)?$`));
 }
 
 /** What the page shows, read from the browser: each visible piece of text with its size and
@@ -562,7 +589,7 @@ for (const screen of SCREENS) {
   test.describe(`the Demo's rules on ${screen.name}`, () => {
     test("hold on a laptop", async ({ page }) => {
       await page.setViewportSize(LAPTOP);
-      await screen.open(page);
+      await openScreen(page, screen);
       await expectRules(page, within);
       await expectNoSidewaysScroll(page);
       await expectAccessible(page, within);
@@ -570,7 +597,7 @@ for (const screen of SCREENS) {
 
     test("hold on a phone", async ({ page }) => {
       await page.setViewportSize(PHONE);
-      await screen.open(page);
+      await openScreen(page, screen);
       await expectRules(page, within);
       await expectNoSidewaysScroll(page);
       await expectAccessible(page, within);
@@ -581,7 +608,7 @@ for (const screen of SCREENS) {
     }) => {
       for (const size of [NARROW_PHONE, WIDE_LAPTOP]) {
         await page.setViewportSize(size);
-        await screen.open(page);
+        await openScreen(page, screen);
         await expectNoSidewaysScroll(page);
       }
     });

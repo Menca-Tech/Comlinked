@@ -39,6 +39,20 @@ export async function goToSection(page: Page, name: string, heading: string) {
   await expect(page.getByRole("heading", { name: heading, level: 1 })).toBeVisible();
 }
 
+/** Presses one of the Presenter Guide's buttons, which closes the guide. Outside the Pilot Preview
+ * the guide opens from its round button. */
+export async function fromGuide(page: Page, name: string | RegExp) {
+  await page.getByRole("button", { name: "Demo guide" }).click();
+  await page.getByRole("dialog").getByRole("button", { name, exact: true }).click();
+  await expect(page.getByRole("dialog")).toBeHidden();
+}
+
+/** Opens a screen from one of the Presenter Guide's buttons and waits for its page title. */
+export async function openFromGuide(page: Page, button: string, heading: string) {
+  await fromGuide(page, button);
+  await expect(page.getByRole("heading", { name: heading, level: 1 })).toBeVisible();
+}
+
 /** Opens one of ComDash's tabs and waits for a heading only that tab shows. */
 export async function goToComDashTab(page: Page, name: string, shows: string | RegExp) {
   await page

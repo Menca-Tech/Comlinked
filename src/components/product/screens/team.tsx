@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { useLayoutEffect, useState, type ReactNode } from "react";
 import { AlertCircle, Check } from "lucide-react";
 
 import { Btn, PageHead, Panel } from "@/components/product/shared";
@@ -64,20 +64,20 @@ function MetricRows({ rows }: { rows: TeamRow[] }) {
 /** Five grid lines from none to the whole network; every other one is labelled. */
 const GRID_LINES = [0, 1, 2, 3, 4].map((step) => (NETWORK * step) / 4);
 
-/** The width an element is drawn at, and the ref that measures it. It is 0 until measured. */
+/** The width an element is drawn at, and the ref that hands the element over. The width is 0 until
+ * the element is on screen, and is measured afresh whenever it appears. */
 function useWidth() {
-  const ref = useRef<HTMLDivElement>(null);
+  const [element, setElement] = useState<HTMLDivElement | null>(null);
   const [width, setWidth] = useState(0);
   useLayoutEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const measure = () => setWidth(el.clientWidth);
+    if (!element) return;
+    const measure = () => setWidth(element.clientWidth);
     measure();
     const observer = new ResizeObserver(measure);
-    observer.observe(el);
+    observer.observe(element);
     return () => observer.disconnect();
-  }, []);
-  return [ref, width] as const;
+  }, [element]);
+  return [setElement, width] as const;
 }
 
 function TrendChart({ d }: { d: TeamData }) {
