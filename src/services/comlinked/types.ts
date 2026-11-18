@@ -79,6 +79,18 @@ export interface ActivityViewData {
   rows: ActivityRow[];
 }
 
+/** What the status filter can choose: every member, or the members of one status. */
+export type StatusChoice = "All" | MemberStatus;
+
+/** The members of one status as the Activity View lists them: how many members the status holds,
+ * the ones listed, and how many more of them there are to show. */
+export interface MemberGroup {
+  status: MemberStatus;
+  count: number;
+  members: ActivityRow[];
+  more: number;
+}
+
 /** A member the Community Manager can introduce: one that has claimed. */
 export type IntroChoice = Pick<ActivityRow, "id" | "name">;
 

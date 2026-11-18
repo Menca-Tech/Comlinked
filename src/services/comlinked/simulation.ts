@@ -54,6 +54,7 @@ import type {
   IntroChoices,
   LaterItem,
   Member,
+  MemberGroup,
   MemberListEntry,
   MemberStatus,
   Message,
@@ -71,6 +72,7 @@ import type {
   Signal,
   SignalKind,
   SimState,
+  StatusChoice,
   StopState,
   Suggestion,
   TeamData,
@@ -1450,6 +1452,29 @@ export function activityView(): ActivityViewData {
     }),
     rows: rows,
   };
+}
+/** How many members each status lists while the status filter shows them all. */
+export const GROUP_PREVIEW = 6;
+/** The Activity View's members for a choice of the status filter, in the list's own order. "All"
+ * gives every status that has members, each with its full count and its first GROUP_PREVIEW
+ * members. A status gives that whole group, and nothing when no member has it. */
+export function memberGroups(choice: StatusChoice): MemberGroup[] {
+  const rows = activityView().rows;
+  const groups: MemberGroup[] = [];
+  (choice === "All" ? MEMBER_STATUSES : [choice]).forEach(function (status) {
+    const all = rows.filter(function (r) {
+      return r.status === status;
+    });
+    if (!all.length) return;
+    const members = choice === "All" ? all.slice(0, GROUP_PREVIEW) : all;
+    groups.push({
+      status: status,
+      count: all.length,
+      members: members,
+      more: all.length - members.length,
+    });
+  });
+  return groups;
 }
 /** The members an Intro can name, in the network's order: those that have claimed, the ones
  * needing an Intro apart from the rest. */

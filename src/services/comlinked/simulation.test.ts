@@ -74,9 +74,11 @@ import {
   markDigestRead,
   markNotesRead,
   activityView,
+  GROUP_PREVIEW,
   introChoices,
   managerSpike,
   MEMBER_STATUSES,
+  memberGroups,
   memberStatus,
   monthlyTop,
   onSideStep,
@@ -1817,6 +1819,86 @@ describe("the chamber's name and its counts", () => {
 /** The Activity View's figure for members needing an intro, and one member's status in it. */
 const needIntro = () => activityView().tiles.find((t) => t.key === "needIntro")?.value;
 const statusOf = (id: string) => activityView().rows.find((r) => r.id === id)?.status;
+
+describe("the Activity View's members, grouped by status", () => {
+  const counts = () => activityView().counts.map((c) => c.count);
+  const withStatus = (status: string) => activityView().rows.filter((r) => r.status === status);
+  const ids = (rows: { id: string }[]) => rows.map((r) => r.id);
+
+  it("splits the network 20, 16, 4 and 60 on Day 14, adding up to its size", () => {
+    openStop(5);
+    expect(counts()).toEqual([20, 16, 4, 60]);
+    expect(counts().reduce((sum, n) => sum + n, 0)).toBe(NETWORK);
+  });
+
+  it("splits it 0, 0, 0 and 100 on Day 0, when All holds the one group", () => {
+    openStop(1);
+    expect(counts()).toEqual([0, 0, 0, NETWORK]);
+    const groups = memberGroups("All");
+    expect(groups.map((g) => [g.status, g.count])).toEqual([["Not yet claimed", NETWORK]]);
+    expect(groups[0]?.members).toHaveLength(GROUP_PREVIEW);
+    expect(groups[0]?.more).toBe(NETWORK - GROUP_PREVIEW);
+  });
+
+  it("groups All by status in the filters' order, each with its full count and its first six", () => {
+    openStop(5);
+    const groups = memberGroups("All");
+    expect(GROUP_PREVIEW).toBe(6);
+    expect(groups.map((g) => g.status)).toEqual(MEMBER_STATUSES);
+    expect(groups.map((g) => g.count)).toEqual(counts());
+    groups.forEach((g) => {
+      expect([g.status, g.members.length <= GROUP_PREVIEW]).toEqual([g.status, true]);
+      expect([g.status, ids(g.members)]).toEqual([
+        g.status,
+        ids(withStatus(g.status).slice(0, GROUP_PREVIEW)),
+      ]);
+      expect([g.status, g.more]).toEqual([g.status, g.count - g.members.length]);
+    });
+    // Kalayaan Foods leads the active, and the member with a message waiting leads its group.
+    expect(groups[0]?.members[0]?.id).toBe("me");
+    expect(groups[3]?.members[0]).toMatchObject({ id: "north", waiting: true });
+  });
+
+  it("shows every member of a group of six or fewer, with nothing more to show", () => {
+    openStop(5);
+    const intro = memberGroups("All").find((g) => g.status === "Needs an intro");
+    expect(ids(intro?.members ?? [])).toEqual(["lakbay", "bigas", "palengke", "medivant"]);
+    expect(intro?.more).toBe(0);
+  });
+
+  it("gives a chosen status its whole group, and none for a status with no members", () => {
+    openStop(5);
+    MEMBER_STATUSES.forEach((status) => {
+      const groups = memberGroups(status);
+      expect([status, groups.map((g) => g.status)]).toEqual([status, [status]]);
+      expect([status, ids(groups[0]?.members ?? [])]).toEqual([status, ids(withStatus(status))]);
+      expect([status, groups[0]?.count, groups[0]?.more]).toEqual([
+        status,
+        withStatus(status).length,
+        0,
+      ]);
+    });
+    openStop(1);
+    expect(memberGroups("Active")).toEqual([]);
+    expect(memberGroups("Not yet claimed")[0]?.members).toHaveLength(NETWORK);
+  });
+
+  it("moves a member out of Needs an intro in the split and the groups when it is introduced", () => {
+    openStop(5);
+    setForm("introA", "lakbay");
+    setForm("introB", "maple");
+    act.makeIntro();
+    expect(counts()).toEqual([21, 16, 3, 60]);
+    expect(ids(memberGroups("Needs an intro")[0]?.members ?? [])).toEqual([
+      "bigas",
+      "palengke",
+      "medivant",
+    ]);
+    const intro = memberGroups("All").find((g) => g.status === "Needs an intro");
+    expect([intro?.count, intro?.more]).toEqual([3, 0]);
+    expect(ids(memberGroups("Active")[0]?.members ?? [])).toContain("lakbay");
+  });
+});
 
 describe("ECCP's Activity View", () => {
   const tiles = () => activityView().tiles.map((t) => [t.label, t.value, t.of]);
