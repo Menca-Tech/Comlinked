@@ -506,14 +506,14 @@ test.describe("the Pilot Preview", () => {
     await expect(page).toHaveURL(/\/app\/agent$/);
   });
 
-  test("Two weeks in from the guide opens the full Demo as before", async ({ page }) => {
+  test("Two weeks in from the guide opens the full Demo, with pricing off", async ({ page }) => {
     await openStop(page, stop(4));
     await guideAction(page, "Two weeks in");
     await expect(page).toHaveURL(/\/app\/dash$/);
     await expect(storyBar(page)).toHaveCount(0);
     await expect(guideButton(page)).toBeVisible();
     expect(await tabLabels(page)).toEqual(FIVE_TABS);
-    await expect(viewAs(page)).toBeVisible();
+    await expect(viewAs(page)).toHaveCount(0);
     await expect(panelTitles(page)).toHaveText([
       "Next action",
       "Interest Signals",

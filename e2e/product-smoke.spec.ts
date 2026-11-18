@@ -71,33 +71,32 @@ async function claimToMatches(page: Page) {
   await tap(page, "Continue with Google");
 }
 
-/** Claims a new company and opens ComDash, with the pricing tiers off, as for twoWeeksIn(). */
+/** Claims a new company and opens ComDash, with pricing off as the Demo starts. */
 async function claimNewCompany(page: Page) {
   await claimToMatches(page);
   await tap(page, "Go to my ComDash");
   await expect(page.getByRole("heading", { name: "Next action" })).toBeVisible();
-  await withoutPricing(page);
 }
 
-/** Switches possible future pricing off from the guide, so ComDash shows everything the MVP does,
- * with no tier. */
-async function withoutPricing(page: Page) {
+/** Switches possible future pricing on from the guide, which opens ComDash on Free member. */
+async function withPricing(page: Page) {
   await page.getByRole("button", { name: "Demo guide" }).click();
   const toggle = page
     .getByRole("dialog")
     .getByRole("button", { name: "Possible future pricing", exact: true });
-  await toggle.click();
   await expect(toggle).toHaveAttribute("aria-pressed", "false");
+  await toggle.click();
+  await expect(toggle).toHaveAttribute("aria-pressed", "true");
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).toBeHidden();
 }
 
-/** Opens the full Demo two weeks in. Unless a test asks for the pricing tiers, it switches them
- * off, so ComDash names every interested company as the MVP does. */
+/** Opens the full Demo two weeks in, with pricing off as it starts, so ComDash names every
+ * interested company as the MVP does. A test that asks for the pricing tiers switches them on. */
 async function twoWeeksIn(page: Page, { pricing = false } = {}) {
   await page.goto("/app/claim");
   await fromGuide(page, "Two weeks in");
-  if (!pricing) await withoutPricing(page);
+  if (pricing) await withPricing(page);
   await expect(hotCompany(page, "Hapag Kitchen Group")).toBeVisible();
 }
 
@@ -1015,23 +1014,51 @@ test.describe("ComDash", () => {
     await noSidewaysScroll(page);
   });
 
-  test("with possible future pricing off, ComDash names everyone with no tier, as the MVP does", async ({
+  test("the full Demo opens with pricing off: ComDash names everyone with no tier, as the MVP does", async ({
     page,
   }) => {
     await twoWeeksIn(page);
     await expect(page.getByRole("group", { name: "View as" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "See who’s interested" })).toHaveCount(0);
     await openTab(page, "Interest Signals");
     await expect(companyRow(page, "hapag")).toContainText("Hapag Kitchen Group");
+    await expect(page.getByRole("button", { name: "See who", exact: true })).toHaveCount(0);
     await expect(page.getByText(/Intent score/)).toHaveCount(0);
     await expect(page.getByText(/upgrade|unlock|hidden/i)).toHaveCount(0);
     await expect(panel(page, "Alerts")).toContainText("Hapag Kitchen Group");
+    await expectAccessible(page);
   });
 
-  test("a full page load resets the selected view to Free member", async ({ page }) => {
+  test("the guide states each later item's default, and switching pricing off from Growth names everyone again", async ({
+    page,
+  }) => {
+    await twoWeeksIn(page, { pricing: true });
+    await viewButton(page, "Growth").click();
+    await page.getByRole("button", { name: "Demo guide" }).click();
+    const guide = page.getByRole("dialog");
+    await expect(guide).toContainText("Off unless you switch it on.");
+    await expect(guide).toContainText("Off in the Pilot Preview and on in the full demo.");
+    const pricing = guide.getByRole("button", { name: "Possible future pricing", exact: true });
+    await pricing.click();
+    await expect(pricing).toHaveAttribute("aria-pressed", "false");
+    await page.keyboard.press("Escape");
+    await expect(page.getByRole("group", { name: "View as" })).toHaveCount(0);
+    await expect(companyRow(page, "hapag")).toContainText("Hapag Kitchen Group");
+    await expect(page.getByText(/Intent score/)).toHaveCount(0);
+  });
+
+  test("a full page load turns pricing off", async ({ page }) => {
     await twoWeeksIn(page, { pricing: true });
     await viewButton(page, "Pro").click();
     await page.reload();
-    await expect(viewButton(page, "Free member")).toHaveAttribute("aria-pressed", "true");
+    await expect(page.getByRole("heading", { name: "Next action" })).toBeVisible();
+    await expect(page.getByRole("group", { name: "View as" })).toHaveCount(0);
+    await page.getByRole("button", { name: "Demo guide" }).click();
+    await expect(
+      page
+        .getByRole("dialog")
+        .getByRole("button", { name: "Possible future pricing", exact: true }),
+    ).toHaveAttribute("aria-pressed", "false");
   });
 
   test("the presenter guide jumps straight to each ComDash tab", async ({ page }) => {

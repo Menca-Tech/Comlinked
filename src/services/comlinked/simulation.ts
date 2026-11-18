@@ -381,7 +381,7 @@ function fresh(): SimState {
       pro: PLAN_VIEWS.pro.agent?.left ?? 0,
     },
     agentSent: [],
-    laterItems: { pricing: true, previews: true },
+    laterItems: { pricing: false, previews: true },
   };
 }
 export function score() {
@@ -3058,8 +3058,8 @@ export function currentSeat(): Seat | null {
 export function stopLine(stop: PreviewStop) {
   return stop.day === null ? stop.title : dayLabel(stop.day) + " · " + stop.title;
 }
-/** Whether a later item shows: on in the full Demo, and off in the Pilot Preview until the
- * presenter switches it on. */
+/** Whether a later item shows. Pricing starts off everywhere; the previews start on in the full
+ * Demo and off in the Pilot Preview. The presenter can switch either. */
 export function laterItemShown(item: LaterItem) {
   return S.laterItems[item];
 }

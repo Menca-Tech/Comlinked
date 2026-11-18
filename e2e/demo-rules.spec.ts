@@ -52,11 +52,16 @@ async function openAt(page: Page, address: string, heading: string) {
 /** Stop 4: Kalayaan Foods two weeks in, with possible future pricing off. */
 const stopFour = (page: Page) => openAt(page, "/app/dash?stop=4", "Kalayaan Foods Inc.");
 
-/** The full Demo two weeks in, which opens ComDash on the Free member view with the later items
- * showing. */
-async function fullDemoTwoWeeksIn(page: Page) {
+/** The full Demo two weeks in, which opens ComDash with the after-MVP previews showing and
+ * pricing off. With `pricing`, it switches pricing on, which opens the Free member view. */
+async function fullDemoTwoWeeksIn(page: Page, { pricing = false } = {}) {
   await page.goto("/app/claim");
   await fromGuide(page, "Two weeks in");
+  await expect(page.getByRole("heading", { name: "AI Lead Agent" })).toBeVisible();
+  if (!pricing) return;
+  await page.getByRole("button", { name: "Demo guide" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Possible future pricing" }).click();
+  await page.keyboard.press("Escape");
   await expect(page.getByRole("group", { name: "View as" })).toBeVisible();
 }
 
@@ -219,7 +224,7 @@ const SCREENS: Screen[] = [
     name: "Interest Signals on the Free member view",
     at: paths.dashTabs.signals,
     open: async (page) => {
-      await fullDemoTwoWeeksIn(page);
+      await fullDemoTwoWeeksIn(page, { pricing: true });
       await goToComDashTab(page, "Interest Signals", "13 interested companies");
       await expect(page.getByRole("button", { name: "See who", exact: true })).toHaveCount(6);
     },
@@ -228,7 +233,7 @@ const SCREENS: Screen[] = [
     name: "Interest Signals on the Growth view",
     at: paths.dashTabs.signals,
     open: async (page) => {
-      await fullDemoTwoWeeksIn(page);
+      await fullDemoTwoWeeksIn(page, { pricing: true });
       await press(page, "Growth");
       await expect(
         page.getByRole("columnheader", { name: "Intent score and level" }),
@@ -337,7 +342,7 @@ const SCREENS: Screen[] = [
     name: "ComDash Overview with the later items showing",
     at: paths.dashTabs.overview,
     open: async (page) => {
-      await fullDemoTwoWeeksIn(page);
+      await fullDemoTwoWeeksIn(page, { pricing: true });
       await expect(page.getByRole("heading", { name: "AI Lead Agent" })).toBeVisible();
     },
   },

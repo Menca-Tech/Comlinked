@@ -41,16 +41,18 @@ function KeyValue({ label, value }: { label: string; value: string | number }) {
 }
 
 /** The Presenter Guide's switches for what is not in the MVP. */
-const LATER_ITEMS: { item: LaterItem; label: string; note: string }[] = [
+const LATER_ITEMS: { item: LaterItem; label: string; note: string; start: string }[] = [
   {
     item: "pricing",
     label: "Possible future pricing",
     note: "The Free, Growth and Pro switcher on ComDash.",
+    start: "Off unless you switch it on.",
   },
   {
     item: "previews",
     label: "After-MVP previews",
     note: "The AI Lead Agent, the Team Dashboard and the Engine.",
+    start: "Off in the Pilot Preview and on in the full demo.",
   },
 ];
 
@@ -117,8 +119,7 @@ export function DemoGuide({ route }: { route: string }) {
           </div>
           <div className="g-sec">
             <h3>Later items</h3>
-            <p className="a-small">Off in the Pilot Preview and on in the full demo.</p>
-            {LATER_ITEMS.map(({ item, label, note }) => (
+            {LATER_ITEMS.map(({ item, label, note, start }) => (
               <button
                 key={item}
                 type="button"
@@ -130,7 +131,9 @@ export function DemoGuide({ route }: { route: string }) {
               >
                 <span className="g-switch-t">
                   <b>{label}</b>
-                  <small id={`g-later-${item}`}>{note}</small>
+                  <small id={`g-later-${item}`}>
+                    {note} {start}
+                  </small>
                 </span>
                 <span className="g-switch-s" aria-hidden="true">
                   {laterItemShown(item) ? "On" : "Off"}

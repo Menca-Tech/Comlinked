@@ -992,11 +992,14 @@ describe("intent score", () => {
 });
 
 describe("plan views", () => {
-  beforeEach(() => act.demoActive());
+  beforeEach(() => {
+    act.demoActive();
+    act.toggleLaterItem("pricing");
+  });
   const ids = (rows: { company: { id: string } }[]) => rows.map((r) => r.company.id);
   const free = () => interestForView("free");
 
-  it("opens the full Demo on Free member, and shows everything while pricing is off", () => {
+  it("opens on Free member once pricing is on, and shows everything while pricing is off", () => {
     expect(planShown()).toBe("free");
     openStop(4);
     expect(planShown()).toBeNull();
@@ -3004,15 +3007,24 @@ describe("moving between screens", () => {
 describe("the later items", () => {
   const AFTER_MVP = ["agent", "team", "engine"];
 
-  it("are both on in each of the full Demo's starts", () => {
-    const on = { pricing: true, previews: true };
-    expect(getState().laterItems).toEqual(on);
+  it("start with pricing off and the previews on in each of the full Demo's starts", () => {
+    const start = { pricing: false, previews: true };
+    expect(getState().laterItems).toEqual(start);
     act.demoActive();
-    expect(getState().laterItems).toEqual(on);
+    expect(getState().laterItems).toEqual(start);
     openStop(4);
     act.reset();
-    expect(getState().laterItems).toEqual(on);
+    expect(getState().laterItems).toEqual(start);
     expect(getState().preview).toBeNull();
+  });
+
+  it("show no tier while pricing is off, the Free member view once it is switched on, and none after a reset", () => {
+    act.demoActive();
+    expect(planShown()).toBeNull();
+    act.toggleLaterItem("pricing");
+    expect(planShown()).toBe("free");
+    act.reset();
+    expect(planShown()).toBeNull();
   });
 
   it("are both off whenever the Opening or a Stop opens", () => {
@@ -3063,6 +3075,7 @@ describe("the later items", () => {
 
   it("with pricing hidden, keep ComDash on the Free view", () => {
     act.demoActive();
+    act.toggleLaterItem("pricing");
     act.setView("pro");
     expect(getState().view).toBe("pro");
     act.toggleLaterItem("pricing");
