@@ -3804,6 +3804,9 @@
 .cl-product .pp-row {
   align-items: flex-start;
 }
+.cl-product a.a-li {
+  text-decoration: none;
+}
 .cl-product .pp-row .a-li-m {
   display: flex;
   flex-direction: column;

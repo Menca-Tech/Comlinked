@@ -193,6 +193,9 @@ export interface Person {
   phone: string;
 }
 
+/** How a person's name shows to connected Companies: in full, or as an alias ("Ana R."). */
+export type NameShown = "full" | "alias";
+
 /** Where a Contact Request stands: waiting for the person asked, or answered. */
 export type ContactRequestState = "waiting" | "shared" | "declined";
 

@@ -4,12 +4,13 @@ import { PersonCard } from "@/components/product/person-card";
 import { Back, Btn, PageHead, Panel } from "@/components/product/shared";
 import { useSimulation } from "@/components/product/use-simulation";
 import { Switch } from "@/components/ui/switch";
+import type { NameShown } from "@/services/comlinked";
 import { act, aliasOf, contactRequestsToMe, previewOfMe, signedIn } from "@/services/comlinked";
 
 /** The choice between Ana's full name and her alias, as native radio buttons. */
 function NameChoice() {
   const me = signedIn();
-  const choices = [
+  const choices: { value: NameShown; label: string; on: boolean }[] = [
     { value: "full", label: me.name, on: !me.alias },
     { value: "alias", label: aliasOf(me.name), on: me.alias },
   ];

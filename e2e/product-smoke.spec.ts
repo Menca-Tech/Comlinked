@@ -2555,6 +2555,7 @@ test.describe("the account menu, on a phone", () => {
     await expectTargets(sheet.getByRole("navigation"));
     await noSidewaysScroll(page);
     await expectAccessibleIn(page, "[role='dialog']");
+    await expectStill(page, ".cl-guide, .cl-guide *, [data-slot='sheet-overlay']");
     await page.keyboard.press("Escape");
     await expect(sheet).toBeHidden();
     await expect(accountMark(page)).toBeFocused();
@@ -2598,8 +2599,9 @@ test.describe("the account menu, on a phone", () => {
       .click();
     await expect(personRow(page, "Marco Dizon")).toContainText("Primary admin");
     await expect(personRow(page, "Ana Reyes")).toContainText("Owner · Backup admin");
-    // As the backup, Ana can't remove Marco, the primary.
+    // As the backup, Ana can't remove Marco, the primary, or make herself primary again.
     await expect(personRow(page, "Marco Dizon").getByRole("button")).toHaveCount(0);
+    await expect(personRow(page, "Ana Reyes").getByRole("button")).toHaveCount(0);
     await accountMark(page).click();
     await expect(
       page
@@ -2663,8 +2665,10 @@ test.describe("the account menu, on a laptop", () => {
     ]);
     // A dropdown under the mark, its right edge at the mark's.
     const menuBox = await menu.boundingBox();
-    expect(menuBox!.y).toBeGreaterThanOrEqual(markBox!.y + markBox!.height);
-    expect(Math.abs(menuBox!.x + menuBox!.width - (markBox!.x + markBox!.width))).toBeLessThan(2);
+    if (!markBox || !menuBox) throw new Error("The mark and the menu must both be on screen.");
+    expect(menuBox.y).toBeGreaterThanOrEqual(markBox.y + markBox.height);
+    expect(Math.abs(menuBox.x + menuBox.width - (markBox.x + markBox.width))).toBeLessThan(2);
+    await noSidewaysScroll(page);
     await expectTargets(menu);
     await expectAccessibleIn(page, "[role='menu']");
     // The arrow keys move through the items.
@@ -2689,7 +2693,7 @@ test.describe("the account menu, on a laptop", () => {
     await twoWeeksIn(page);
     await openOwnProfile(page);
     await expect(page.getByRole("button", { name: "Assign new rep" })).toHaveCount(0);
-    await page.getByRole("button", { name: /^Admins and authorized users/ }).click();
+    await page.getByRole("link", { name: /^Admins and authorized users/ }).click();
     await expect(heading(page, PEOPLE_HEADING)).toBeVisible();
     await expect(page).toHaveURL(/\/app\/people$/);
     await noSidewaysScroll(page);
@@ -2708,7 +2712,7 @@ test.describe("the account menu, on a laptop", () => {
     await openOwnProfile(page);
     await page.getByRole("switch", { name: "AI Assistant" }).click();
     await expect(page.getByRole("heading", { name: "AI Assistant: Off" })).toBeVisible();
-    await page.getByRole("button", { name: /^Admins and authorized users/ }).click();
+    await page.getByRole("link", { name: /^Admins and authorized users/ }).click();
     await personRow(page, "Marco Dizon")
       .getByRole("button", { name: "Make primary admin" })
       .click();
@@ -2871,5 +2875,56 @@ test.describe("privacy and people at 360 pixels", () => {
     await expect(peopleSection(page)).toBeVisible();
     await noSidewaysScroll(page);
     await expectTargets(peopleSection(page));
+  });
+});
+
+test.describe("privacy and people, by keyboard, with the AI Assistant off, and after a reload", () => {
+  test.use({ viewport: { width: 1280, height: 900 } });
+
+  test("the name choice and the title switch are reached by keyboard with visible focus", async ({
+    page,
+  }) => {
+    await openPrivacy(page);
+    const full = page.getByRole("radio", { name: "Ana Reyes" });
+    await tabTo(page, full);
+    await page.keyboard.press("ArrowDown");
+    await expect(page.getByRole("radio", { name: "Ana R." })).toBeChecked();
+    await expect(previewCard(page).getByText("Ana R.", { exact: true })).toBeVisible();
+    const title = page.getByRole("switch", { name: "Job title" });
+    await tabTo(page, title);
+    await page.keyboard.press("Space");
+    await expect(title).not.toBeChecked();
+    await tabTo(page, waitingSection(page).getByRole("button", { name: /^Share/ }));
+  });
+
+  test("with the AI Assistant off, Share, Decline and Ask work the same", async ({ page }) => {
+    await twoWeeksIn(page);
+    await openOwnProfile(page);
+    await page.getByRole("switch", { name: "AI Assistant" }).click();
+    await expect(page.getByRole("heading", { name: "AI Assistant: Off" })).toBeVisible();
+    await accountMark(page).click();
+    await menuEntry(page, PRIVACY_HEADING).click();
+    await waitingSection(page)
+      .getByRole("button", { name: "Share with Nordhavn Freight Forwarders" })
+      .click();
+    await expect(page.getByText("Shared with Nordhavn Freight Forwarders.")).toBeVisible();
+    await openProfile(page, "Pacific Pack Solutions");
+    await peopleSection(page)
+      .getByRole("button", { name: "Ask for contact details: Joy Fernandez" })
+      .click();
+    await expect(peopleSection(page).getByText("Asked. Joy decides.")).toBeVisible();
+  });
+
+  test("a full page load brings back Ana's name, her title and the waiting request", async ({
+    page,
+  }) => {
+    await openPrivacy(page);
+    await page.getByRole("radio", { name: "Ana R." }).check();
+    await page.getByRole("switch", { name: "Job title" }).click();
+    await page.reload();
+    await expect(heading(page, PRIVACY_HEADING)).toBeVisible();
+    await expect(page.getByRole("radio", { name: "Ana Reyes" })).toBeChecked();
+    await expect(page.getByRole("switch", { name: "Job title" })).toBeChecked();
+    await expect(previewCard(page)).toContainText("Owner · Primary admin");
   });
 });

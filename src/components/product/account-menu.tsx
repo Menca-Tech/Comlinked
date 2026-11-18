@@ -32,6 +32,13 @@ const MANAGE: Entry[] = [
 ];
 const SIGN_OUT: Entry = { label: "Sign out", go: () => act.siteHome() };
 
+/** What either form of the menu takes: the mark that opens it, and whether it is open. */
+interface MenuProps {
+  mark: ReactElement;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
 /** Who is signed in: the company mark, their name, their role and the Company. */
 function AccountHeader() {
   const S = useSimulation();
@@ -50,15 +57,7 @@ function AccountHeader() {
 }
 
 /** The menu as a dropdown under the mark, on a laptop. Its items are reached with the arrow keys. */
-function AccountDropdown({
-  mark,
-  open,
-  onOpenChange,
-}: {
-  mark: ReactElement;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}) {
+function AccountDropdown({ mark, open, onOpenChange }: MenuProps) {
   return (
     <DropdownMenu open={open} onOpenChange={onOpenChange}>
       <DropdownMenuTrigger asChild>{mark}</DropdownMenuTrigger>
@@ -86,15 +85,7 @@ function AccountDropdown({
 }
 
 /** The menu as a sheet from the bottom, on a phone. Its items are buttons, reached with Tab. */
-function AccountSheet({
-  mark,
-  open,
-  onOpenChange,
-}: {
-  mark: ReactElement;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}) {
+function AccountSheet({ mark, open, onOpenChange }: MenuProps) {
   const choose = (entry: Entry) => {
     onOpenChange(false);
     entry.go();

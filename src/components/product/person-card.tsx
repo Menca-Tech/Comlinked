@@ -4,23 +4,27 @@ import { Mono } from "@/components/product/shared";
 import type { PersonView } from "@/services/comlinked";
 import { initials } from "@/services/comlinked";
 
-/** One person as another Company sees them: their initials, shown name, title (unless hidden) and
- * role, their email and phone once shared, and whatever `children` adds. Used for the People
- * section of a profile, as a list item, and for the privacy page's preview of how Ana is seen. */
+/** One person's row: their initials, name, title (when shown) and role, their email and phone
+ * when known, a `badge` after the name, and whatever `children` adds. Used for the People section
+ * of a profile and the people page, as list items, and for the privacy page's preview. */
 export function PersonCard({
   person,
   as: Row = "div",
+  badge,
   children,
 }: {
-  person: PersonView;
+  person: Pick<PersonView, "name" | "title" | "role" | "contact">;
   as?: "div" | "li";
+  badge?: ReactNode;
   children?: ReactNode;
 }) {
   return (
     <Row className="a-li pp-row">
       <Mono plain c={{ ini: initials(person.name) }} cls="sm" />
       <div className="a-li-m">
-        <strong>{person.name}</strong>
+        <strong>
+          {person.name} {badge}
+        </strong>
         <small>{person.title ? `${person.title} · ${person.role}` : person.role}</small>
         {person.contact ? (
           <p className="a-small">

@@ -65,6 +65,7 @@ import type {
   MemberStatus,
   Message,
   MyContactRequests,
+  NameShown,
   NextAction,
   NoteGroup,
   PlanTerms,
@@ -500,10 +501,11 @@ function person(id: string) {
     return p.id === id;
   });
 }
-/** Whether the signed-in person may make someone the primary admin: an admin may, and only the
- * backup admin can be made primary. */
+/** Whether the signed-in person may make someone the primary admin: only the primary admin hands
+ * over, and only to the backup admin. A backup can't make themselves primary, or they could then
+ * remove the admin who covers for them. */
 function mayMakePrimary(target: Person) {
-  return ROLES[signedIn().role].admin && target.role === "backup";
+  return signedIn().role === "primary" && target.role === "backup";
 }
 /** Whether the signed-in person may remove someone. No one removes themselves, no one removes
  * the primary admin, and only the primary admin removes the backup admin. Either admin removes an
@@ -599,10 +601,13 @@ function ownerOf(personId: string) {
   });
 }
 /** The Contact Requests waiting for one of Kalayaan's people, by whom they are for. */
-function waitingFor(personId: string) {
+function requestsTo(personId: string, state: ContactRequest["state"]) {
   return S.contactRequests.filter(function (r) {
-    return r.person === personId && r.from !== "me" && r.state === "waiting";
+    return r.person === personId && r.from !== "me" && r.state === state;
   });
+}
+function waitingFor(personId: string) {
+  return requestsTo(personId, "waiting");
 }
 /** The overnight part of Contact Requests: each person Kalayaan Foods asked shares their details,
  * and each Company newly connected asks its person at Kalayaan. Only the signed-in person is
@@ -618,31 +623,26 @@ function contactRequestsMorning() {
   });
   INCOMING_CONTACT_REQUESTS.forEach(function (r) {
     if (!areConnected(r.from, "me") || !person(r.person) || requestFor(r.from, r.person)) return;
-    S.contactRequests.push({ ...r, day: S.day, state: "waiting" });
-    if (r.person === SIGNED_IN)
-      notify("contact-request", r.from, co(r.from).name + " asked for your email and phone");
+    const request: ContactRequest = { ...r, day: S.day, state: "waiting" };
+    S.contactRequests.push(request);
+    notifyContactRequest(request);
   });
+}
+/** Tells the signed-in person of a Contact Request to them, on the day it arrived. A request to a
+ * colleague waits on the people page instead. */
+function notifyContactRequest(r: ContactRequest) {
+  if (r.person === SIGNED_IN)
+    notify("contact-request", r.from, co(r.from).name + " asked for your email and phone", r.day);
 }
 /** The Contact Requests to the signed-in person: those waiting, and whom they shared with. */
 export function contactRequestsToMe(): MyContactRequests {
-  const mine = S.contactRequests.filter(function (r) {
-    return r.person === SIGNED_IN && r.from !== "me";
-  });
   return {
-    waiting: mine
-      .filter(function (r) {
-        return r.state === "waiting";
-      })
-      .map(function (r) {
-        return { from: r.from, name: co(r.from).name };
-      }),
-    sharedWith: mine
-      .filter(function (r) {
-        return r.state === "shared";
-      })
-      .map(function (r) {
-        return co(r.from).name;
-      }),
+    waiting: waitingFor(SIGNED_IN).map(function (r) {
+      return { from: r.from, name: co(r.from).name };
+    }),
+    sharedWith: requestsTo(SIGNED_IN, "shared").map(function (r) {
+      return co(r.from).name;
+    }),
   };
 }
 /** Answers a Contact Request to the signed-in person. Only the person asked answers. */
@@ -683,8 +683,8 @@ export function engineLog(what: string, why: string) {
   S.log.unshift({ day: S.day, what: what, why: why });
   S.log.length = Math.min(S.log.length, 40);
 }
-export function notify(type: string, cid: string | null, text: string) {
-  S.notes.unshift({ type: type, co: cid, day: S.day, text: text, read: false });
+export function notify(type: string, cid: string | null, text: string, day = S.day) {
+  S.notes.unshift({ type: type, co: cid, day: day, text: text, read: false });
   S.notes.length = Math.min(S.notes.length, 100);
 }
 export function degrees() {
@@ -1340,6 +1340,7 @@ export function seedTwoWeeks() {
     moved: rankBefore - rank(),
     rank: rank(),
   };
+  S.contactRequests.forEach(notifyContactRequest);
   notify("search", "malaya", "Malaya Export Traders found you in search: snacks");
   notify("view", "sari", "Sari Central Wholesale viewed your profile");
   notify("view", "hapag", "Hapag Kitchen Group viewed your profile");
@@ -3099,7 +3100,7 @@ const ACT = {
     emit();
   },
   /** Shows the signed-in person to connected Companies by their full name or by an alias. */
-  chooseName: function (choice: string) {
+  chooseName: function (choice: NameShown) {
     signedIn().alias = choice === "alias";
     emit();
   },

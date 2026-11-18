@@ -133,6 +133,7 @@ import {
   backupAdmin,
   contactRequestsToMe,
   meetingAttendees,
+  KALAYAAN_PEOPLE,
   PEOPLE,
   peopleRows,
   peopleSeenBy,
@@ -365,16 +366,18 @@ describe("roles and what each can do", () => {
     expect(row("liza")?.role).toBe("Authorized user · Sales");
   });
 
-  it("lets only the primary admin remove the backup admin", () => {
+  it("lets only the primary admin remove the backup admin or hand over the primary role", () => {
     act.makePrimary("marco");
-    // Ana is now the backup: she can still remove an Authorized User, but not Marco, the primary.
+    // Ana is now the backup: she can still remove an Authorized User, but she can neither remove
+    // Marco, the primary, nor make herself primary again and then remove him.
     expect(rights()).toEqual([
-      ["ana", true, false],
+      ["ana", false, false],
       ["marco", false, false],
       ["liza", false, true],
       ["paolo", false, true],
     ]);
     act.removePerson("marco");
+    act.makePrimary("ana");
     expect(primaryAdmin().name).toBe("Marco Dizon");
   });
 
@@ -3011,6 +3014,11 @@ describe("the people a Company may see of another", () => {
     expect(names("nordhavn", "me")).toEqual(["Ana Reyes", "Marco Dizon", "Paolo Villanueva"]);
   });
 
+  it("gives every person a different id, so a Contact Request names one person", () => {
+    const ids = [...KALAYAAN_PEOPLE, ...Object.values(PEOPLE).flat()].map((p) => p.id);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
   it("gives every person outside Kalayaan an invented email on their Company's domain and a fake phone", () => {
     expect(Object.keys(PEOPLE)).toEqual(["nordhavn", "maple", "pack", "tala"]);
     Object.entries(PEOPLE).forEach(([id, people]) => {
@@ -3093,6 +3101,14 @@ describe("Contact Requests", () => {
     expect(waitingFor("marco")).toEqual(["Maple Bay Grocers"]);
     expect(waitingFor("ana")).toEqual([]);
     expect(waitingFor("liza")).toEqual([]);
+  });
+
+  it("notifies Ana of Nordhavn's request in the two-weeks-in preset, on the day it arrived", () => {
+    act.demoActive();
+    const notes = getState().notes.filter((n) => n.type === "contact-request");
+    expect(notes.map((n) => [n.co, n.day, n.text])).toEqual([
+      ["nordhavn", 2, "Nordhavn Freight Forwarders asked for your email and phone"],
+    ]);
   });
 
   it("shares Ana's email and phone with Nordhavn alone", () => {

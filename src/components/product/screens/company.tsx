@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Link from "next/link";
 import { Check, ChevronRight } from "lucide-react";
 
 import { focusPanel } from "@/components/product/focus-panel";
@@ -9,6 +10,7 @@ import { useSimulation } from "@/components/product/use-simulation";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import { paths } from "@/paths";
 import type { ProfileField } from "@/services/comlinked";
 import {
   act,
@@ -195,13 +197,13 @@ export function CompanyProfile({ focus }: { focus?: ProfileField }) {
                 })}
               </div>
               <PendingRows />
-              <button type="button" className="a-li a-rule" onClick={() => act.nav("people")}>
+              <Link className="a-li a-rule" href={paths.product.people}>
                 <span className="a-li-m">
                   <strong>Admins and authorized users</strong>
                   <small>Primary admin: {primaryAdmin().name}</small>
                 </span>
                 <ChevronRight className="a-ic" aria-hidden="true" />
-              </button>
+              </Link>
             </section>
             {mine.length ? (
               <section className="a-sec">
