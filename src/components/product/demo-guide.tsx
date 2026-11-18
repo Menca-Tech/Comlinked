@@ -141,10 +141,10 @@ export function DemoGuide({ route }: { route: string }) {
           <div className="g-sec">
             <h3>Start a demo</h3>
             <div className="g-btns">
-              <Btn cls="sm" onClick={() => act.demoNew()}>
+              <Btn cls="o sm" onClick={() => act.demoNew()}>
                 New company
               </Btn>
-              <Btn cls="sm" onClick={() => act.demoActive()}>
+              <Btn cls="o sm" onClick={() => act.demoActive()}>
                 Two weeks in
               </Btn>
             </div>

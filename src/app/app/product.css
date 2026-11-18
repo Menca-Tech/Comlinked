@@ -1,149 +1,31 @@
 /* App Mode styles for the product, ported from the approved HTML mockup. Scoped so the
    marketing site and the /dashboard template are unaffected. Unlayered on purpose, so
-   these rules win over the Tailwind utilities on shadcn controls. */
+   these rules win over the Tailwind utilities on shadcn controls. Every font size, radius, space
+   and colour here is a named value from the Demo's scale, which is defined in ../demo-scale.css. */
 :is(.cl-product, .cl-guide) {
   color-scheme: light;
-
-  /* The scale. Every size, radius and space on a Demo screen is one of these, used by name. */
-  --text-12: 12px; /* count badges, tags, chart axis, initials in a mark */
-  --text-13: 13px; /* notes, captions, labels above figures, details in the compact density */
-  --text-14: 14px; /* details, body text in the compact density, compact buttons */
-  --text-16: 16px; /* body text, company names, navigation, tabs, buttons, inputs */
-  --text-18: 18px; /* section and panel titles */
-  --text-22: 22px; /* the Focus panel's serif line on phones */
-  --text-28: 28px; /* figures, the Focus panel's serif line, the page title on phones */
-  --text-36: 36px; /* page titles on laptops, the two-panel headline on phones */
-  --text-44: 44px; /* the two-panel headline on laptops, the chamber's claimed figure */
-  --leading-tight: 1.15;
-  --leading-title: 1.3;
-  --leading-text: 1.5;
-  --radius-mark: 6px;
-  --radius-control: 10px;
-  --radius-panel: 14px;
-  --radius-pill: 999px;
-  --stroke-2: 2px; /* an underline, a tick, a ring round a small shape */
-  --blur: 5px; /* over a name a "View as" tier hides, as the tier work set it */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 20px;
-  --space-6: 24px;
-  --space-7: 28px;
-  --space-8: 32px;
-  --space-9: 36px;
-  --space-10: 40px;
-  --space-11: 44px;
-  --space-12: 48px;
-  --space-14: 56px;
-  --space-15: 60px;
-  /* Controls: standard, and compact for chips, table actions and the Story Bar. Both are 44px on
-     phones; the laptop sizes are set below. */
-  --control: var(--space-11);
-  --control-compact: var(--space-11);
-  --top-bar: var(--space-14);
-  /* The standard density. A compact panel sets these again, once, for everything inside it. */
-  --panel-pad: var(--space-6);
-  --panel-gap: var(--space-5);
-  --body: var(--text-16);
-  --detail: var(--text-14);
-  --mark: var(--space-10);
-  --row: var(--space-11);
-  /* Layout measures: the page, the two-panel frame, a side column, a column of reading, the
-     timeline drawer, the column beside a screen's main one, and ComMail's list. */
-  --page-width: 1200px;
-  --frame-width: 1040px;
-  --frame-height: 520px;
-  --side-width: 320px;
-  --read-width: 760px;
-  --drawer-width: 420px;
-  --aside-width: 380px;
-  --list-width: 360px;
-
-  --font-title: var(--font-source-serif), Georgia, "Times New Roman", serif;
-  --color-accent-strong: var(--color-cl-navy);
-  --navy-hover: var(--color-cl-accent-strong);
-  --hair: #e2e6ea;
-  --raise: 0 1px 2px rgba(19, 62, 94, 0.06), 0 18px 40px -28px rgba(19, 62, 94, 0.35);
-
-  --color-accent: var(--color-cl-accent);
-  --color-accent-line: var(--color-cl-accent-line);
-  --color-quiet: var(--color-cl-quiet);
-  --color-accent-ink: var(--color-cl-accent-ink);
-  --color-accent-tint: var(--color-cl-accent-tint);
-  --color-error: var(--color-cl-error);
-  --color-error-tint: var(--color-cl-error-tint);
-  --color-grey: var(--color-cl-grey);
-  --color-ink: var(--color-cl-ink);
-  --color-ink-2: var(--color-cl-ink-2);
-  --color-muted: var(--color-cl-muted);
-  --color-night: var(--color-cl-night);
-  --color-on-night-14: var(--color-cl-on-night-14);
-  --color-on-night-24: var(--color-cl-on-night-24);
-  --color-on-night-72: var(--color-cl-on-night-72);
-  --color-on-night-82: var(--color-cl-on-night-82);
-  --color-paper: var(--color-cl-paper);
-  --color-ring-07: var(--color-cl-ring-07);
-  --color-ring-13: var(--color-cl-ring-13);
-  --color-ring-16: var(--color-cl-ring-16);
-  --color-ring-19: var(--color-cl-ring-19);
-  --color-ring-20: var(--color-cl-ring-20);
-  --color-ring-22: var(--color-cl-ring-22);
-  --color-rule: var(--color-cl-rule);
-  --color-shadow: var(--color-cl-shadow);
-  --color-sky: var(--color-cl-sky);
-  --color-sky-strong: var(--color-cl-sky-strong);
-  --color-slot-ink: var(--color-cl-slot-ink);
-  --color-sunken: var(--color-cl-sunken);
-  --color-surface: var(--color-cl-surface);
-  --duration-fast: 150ms;
-  --duration-normal: 250ms;
-  --duration-slow: 400ms;
-  --stagger: 300ms; /* between one Match and the next, in the one staged moment */
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --font-display: var(--font-nunito-sans), "Helvetica Neue", Arial, sans-serif;
-  --font-text: var(--font-nunito-sans), "Helvetica Neue", Arial, sans-serif;
-  /* shadcn light tokens, so a dark operating system setting cannot change the product. */
-
-  --radius: 0.75rem;
-  --background: #f3f5f7;
-  --foreground: #15181b;
-  --card: #ffffff;
-  --card-foreground: #15181b;
-  --popover: #ffffff;
-  --popover-foreground: #15181b;
-  --primary: #1a517a;
-  --primary-foreground: #ffffff;
-  --secondary: #e7ebef;
-  --secondary-foreground: #15181b;
-  --muted: #e7ebef;
-  --muted-foreground: #4a4d50;
-  --accent: #e4f1fa;
-  --accent-foreground: #1a517a;
-  --destructive: #b3261e;
-  --border: #c6c9cc;
-  --input: #838587;
-  --ring: #286fa3;
-  --chart-1: #286fa3;
-  --chart-2: #55a2d4;
-  --chart-3: #1a517a;
-  --chart-4: #86bee3;
-  --chart-5: #838587;
-  --sidebar: #ffffff;
-  --sidebar-foreground: #15181b;
-  --sidebar-primary: #1a517a;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #e4f1fa;
-  --sidebar-accent-foreground: #1a517a;
-  --sidebar-border: #c6c9cc;
-  --sidebar-ring: #286fa3;
-}
-@media (min-width: 900px) {
-  :is(.cl-product, .cl-guide) {
-    --control: var(--space-10);
-    --control-compact: var(--space-8);
-    --top-bar: var(--space-15);
-  }
+  /* shadcn's tokens, pointed at the Demo's colours so a dark operating system setting cannot
+     change the product. shadcn takes 2px off its radius for a control, which gives its controls
+     the control radius. */
+  --radius: calc(var(--radius-control) + var(--stroke-2));
+  --background: var(--color-paper);
+  --foreground: var(--color-ink);
+  --card: var(--color-surface);
+  --card-foreground: var(--color-ink);
+  --popover: var(--color-surface);
+  --popover-foreground: var(--color-ink);
+  --primary: var(--navy-hover);
+  --primary-foreground: var(--color-accent-ink);
+  --secondary: var(--color-sunken);
+  --secondary-foreground: var(--color-ink);
+  --muted: var(--color-sunken);
+  --muted-foreground: var(--color-muted);
+  --accent: var(--color-accent-tint);
+  --accent-foreground: var(--navy-hover);
+  --destructive: var(--color-error);
+  --border: var(--color-rule);
+  --input: var(--color-grey);
+  --ring: var(--color-accent);
 }
 /* The compact density, for data panels: number tiles, tables, charts, side rails, the chamber
    screens and the Team Dashboard. Set once on the panel or the screen that holds them. */
@@ -173,16 +55,11 @@
     field-sizing: fixed;
   }
   [data-slot="tabs"] {
-    gap: 16px;
+    gap: var(--panel-gap);
   }
   .a-surface [data-slot="tabs"],
   [data-slot="tabs-content"].a-stack {
-    gap: 24px;
-  }
-  @media (min-width: 900px) {
-    [data-slot="tabs"] {
-      gap: 24px;
-    }
+    gap: var(--space-5);
   }
   /* These layout classes share names with Tailwind utilities. */
   .w-2,
@@ -212,39 +89,47 @@
     color: var(--color-ink);
     background: var(--color-surface);
   }
+  /* Tabs inside a screen: the Team Dashboard's four and the handoff package's three. They read as
+     the places in the top bar do: ink at 600 on a navy underline that sits on the row's hairline. */
   .ag-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 0 var(--space-6);
     height: auto;
     width: 100%;
-    background: none;
     padding: 0;
     border-radius: 0;
-    justify-content: flex-start;
+    border-bottom: 1px solid var(--hair);
+    background: none;
   }
   .ag-tab {
     flex: none;
     height: auto;
+    min-height: var(--space-11);
+    margin-bottom: -1px;
+    padding: 0;
+    border: 0;
+    border-bottom: var(--stroke-2) solid transparent;
     border-radius: 0;
     background: none;
     box-shadow: none;
-    border-width: 0 0 3px;
-    border-style: solid;
-    border-color: transparent;
+    font: 400 var(--body) / var(--leading-title) var(--font-text);
+    color: var(--color-muted);
+    cursor: pointer;
+    transition:
+      color var(--duration-fast) var(--ease-out),
+      border-color var(--duration-normal) var(--ease-out);
+  }
+  .ag-tab:hover {
+    color: var(--color-ink);
   }
   .ag-tab[aria-selected="true"] {
     background: none;
     box-shadow: none;
-    border-bottom-color: var(--color-accent-strong);
-  }
-  .g-sec h3 {
-    font: 800 16px/22px var(--font-text);
-    margin: 0 0 6px;
     color: var(--color-ink);
-  }
-  .g-tick svg {
-    color: transparent;
-  }
-  .g-step.done .g-tick svg {
-    color: var(--color-accent-ink);
+    font-weight: 600;
+    border-bottom-color: var(--color-accent-strong);
   }
   /* A place in the top bar. The active one is ink at 600 on a navy underline that sits on the
      bar's own hairline. */
@@ -305,8 +190,8 @@
     min-height: 0;
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    padding: 18px;
+    gap: var(--space-4);
+    padding: var(--space-5);
     overflow-y: auto;
   }
   /* A count badge: a small tinted pill with a navy figure. It cannot be tapped. */
@@ -342,7 +227,7 @@
   .w-cards {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: var(--space-6);
     min-width: 0;
   }
   .a-logo {
@@ -352,7 +237,7 @@
     cursor: pointer;
     display: flex;
     align-items: center;
-    min-height: 44px;
+    min-height: var(--space-11);
   }
   .a-logo img {
     height: var(--space-6);
@@ -693,7 +578,7 @@
     flex: none;
     width: var(--space-3);
     height: var(--space-3);
-    border-radius: 50%;
+    border-radius: var(--radius-pill);
     background: radial-gradient(
       circle,
       var(--color-accent) 0 24%,
@@ -732,6 +617,12 @@
     font-weight: 400;
     background: none;
     box-shadow: inset 0 0 0 1px var(--color-rule);
+  }
+  /* A tag may lead with an icon, so a status never rests on its colour alone. */
+  .a-tag .a-ic {
+    width: var(--text-12);
+    height: var(--text-12);
+    margin-right: var(--space-1);
   }
   .a-list {
     display: flex;
@@ -799,7 +690,7 @@
   .a-input:focus {
     outline: none;
     border-color: var(--color-accent-strong);
-    box-shadow: 0 0 0 3px var(--color-accent-tint);
+    box-shadow: 0 0 0 var(--stroke-3) var(--color-accent-tint);
   }
   .a-label {
     display: block;
@@ -866,7 +757,7 @@
     left: var(--space-1);
     width: var(--thumb);
     height: var(--thumb);
-    border-radius: 50%;
+    border-radius: var(--radius-pill);
     background: var(--color-surface);
     border: 1px solid var(--color-grey);
     transition: transform var(--duration-normal) var(--ease-out);
@@ -996,19 +887,26 @@
     margin: 0;
   }
 
+  /* The Presenter Guide: sections on hairlines, each a title over links, switches or figures. */
   .g-sec {
-    border-top: 1px solid var(--color-sunken);
-    padding-top: 14px;
+    border-top: 1px solid var(--hair);
+    padding-top: var(--space-4);
+  }
+  .g-sec h3 {
+    font: 600 var(--text-16) / var(--leading-title) var(--font-text);
+    margin: 0 0 var(--space-2);
+    color: var(--color-ink);
   }
   .g-step {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-3);
     width: 100%;
+    min-height: var(--control-compact);
     background: none;
     border: 0;
-    padding: 7px 0;
-    font: 600 14px/19px var(--font-text);
+    padding: 0;
+    font: 400 var(--text-14) / var(--leading-title) var(--font-text);
     color: var(--color-ink-2);
     text-align: left;
     cursor: pointer;
@@ -1017,56 +915,67 @@
   .g-step:hover {
     color: var(--color-accent-strong);
   }
+  .g-step[aria-current="step"] {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
   .g-step code {
     margin-left: auto;
-    font: 700 12px/16px var(--font-text);
-    color: var(--color-muted);
+    font: 400 var(--text-12) / var(--leading-title) var(--font-text);
+    color: var(--color-quiet);
     white-space: nowrap;
   }
   .g-tick {
     flex: none;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
+    width: var(--space-5);
+    height: var(--space-5);
+    border-radius: var(--radius-pill);
     border: 1px solid var(--color-grey);
     display: grid;
     place-items: center;
-    font: 800 12px/1 var(--font-text);
+    color: transparent;
+  }
+  .g-tick svg {
     color: transparent;
   }
   .g-step.done .g-tick {
     background: var(--color-accent-strong);
     border-color: var(--color-accent-strong);
+  }
+  .g-step.done .g-tick svg {
     color: var(--color-accent-ink);
   }
+  /* A label and its figure on one line. */
   .g-kv {
     display: flex;
     justify-content: space-between;
-    gap: 12px;
-    font-size: 14px;
-    line-height: 22px;
+    gap: var(--space-3);
+    font-size: var(--text-14);
+    line-height: var(--leading-text);
   }
   .g-kv b {
+    font-weight: 600;
     color: var(--color-ink);
     font-variant-numeric: tabular-nums;
   }
   .g-led {
-    font-size: 14px;
-    line-height: 20px;
-    padding: 5px 0;
     display: flex;
-    gap: 8px;
+    gap: var(--space-2);
+    padding: var(--space-1) 0;
+    font-size: var(--text-14);
+    line-height: var(--leading-text);
   }
   .g-led b {
-    color: var(--color-accent-strong);
     flex: none;
-    width: 28px;
+    width: var(--space-7);
+    font-weight: 600;
+    color: var(--color-accent-strong);
     font-variant-numeric: tabular-nums;
   }
   .g-btns {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px;
+    gap: var(--space-2);
   }
   .a-fit {
     flex: none;
@@ -1082,10 +991,11 @@
   .a-n-l {
     display: none;
   }
+  /* The Engine's map: your Company at the centre and the network round it by degree. */
   .e-map {
     display: block;
     width: 100%;
-    max-width: 640px;
+    max-width: var(--map-width);
     margin: 0 auto;
     height: auto;
   }
@@ -1096,7 +1006,7 @@
   }
   .e-line.me {
     stroke: var(--color-accent);
-    stroke-width: 2;
+    stroke-width: var(--stroke-2);
     opacity: 1;
   }
   .e-g {
@@ -1104,11 +1014,11 @@
   }
   .e-g:hover .e-n {
     stroke: var(--color-ink);
-    stroke-width: 2;
+    stroke-width: var(--stroke-2);
   }
   .e-n {
     stroke: var(--color-surface);
-    stroke-width: 2;
+    stroke-width: var(--stroke-2);
   }
   .e-n.d0 {
     fill: var(--color-night);
@@ -1124,7 +1034,7 @@
     stroke: var(--color-rule);
   }
   .e-t {
-    font: 700 11px var(--font-text);
+    font: 600 var(--text-12) var(--font-text);
     pointer-events: none;
   }
   .e-t.d0,
@@ -1136,25 +1046,22 @@
     fill: var(--color-ink);
   }
   .e-t.d0 {
-    font-size: 15px;
-  }
-  .e-t.sm {
-    font-size: 9px;
+    font-size: var(--text-16);
   }
   .e-legend {
-    gap: 6px 18px;
-    font: 600 14px/20px var(--font-text);
+    gap: var(--space-2) var(--space-5);
+    font: 400 var(--text-14) / var(--leading-text) var(--font-text);
     color: var(--color-ink-2);
   }
   .e-legend span {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: var(--space-2);
   }
   .k {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
+    width: var(--space-3);
+    height: var(--space-3);
+    border-radius: var(--radius-pill);
     display: inline-block;
   }
   .k.d0 {
@@ -1186,10 +1093,11 @@
       left: var(--space-6);
     }
   }
+  /* The AI Lead Agent preview's run: its stages, the conversation and the score side by side. */
   .ag-grid {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: var(--space-4);
     min-width: 0;
   }
   .ag-grid > * {
@@ -1201,29 +1109,29 @@
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: var(--space-1);
   }
   .ag-stages li {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 6px;
-    border-radius: 8px;
-    font: 600 14px/19px var(--font-text);
+    gap: var(--space-2);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-control);
+    font: 400 var(--body) / var(--leading-title) var(--font-text);
     color: var(--color-muted);
   }
   .ag-stages li .n {
     flex: none;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
+    width: var(--space-6);
+    height: var(--space-6);
+    border-radius: var(--radius-pill);
     display: grid;
     place-items: center;
     border: 1px solid var(--color-grey);
-    font: 700 12px/1 var(--font-text);
+    font: 600 var(--text-12) / 1 var(--font-text);
   }
   .ag-stages li em {
-    font: 700 12px/16px var(--font-text);
+    font: 600 var(--text-12) / var(--leading-title) var(--font-text);
     font-style: normal;
     color: var(--color-accent-strong);
   }
@@ -1238,93 +1146,83 @@
   .ag-stages li.now {
     background: var(--color-accent-tint);
     color: var(--color-ink);
+    font-weight: 600;
   }
   .ag-stages li.now .n {
     border-color: var(--color-accent-strong);
     color: var(--color-accent-strong);
   }
-  .ag-chip {
-    font: 700 12px/16px var(--font-text);
-    padding: 1px 6px;
-    border-radius: 999px;
-    background: var(--color-sunken);
-    color: var(--color-ink-2);
+  /* A gate in the agent's conversation: what is asked, who approves, and the decision. */
+  .ag-gate {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    border: 1px solid var(--hair);
+    border-radius: var(--radius-control);
+    min-width: 0;
+  }
+  .ag-gate > .a-st {
+    align-self: flex-start;
   }
   .ag-score {
     display: flex;
     align-items: baseline;
-    gap: 6px;
+    gap: var(--space-2);
   }
   .ag-score strong {
-    font: 600 28px/32px var(--font-text);
+    font: 600 var(--text-28) / var(--leading-tight) var(--font-text);
     color: var(--color-ink);
     font-variant-numeric: tabular-nums;
   }
   .ag-score span {
-    font-size: 14px;
+    font-size: var(--detail);
     color: var(--color-muted);
   }
+  /* The score as a bar, with a mark where a meeting is proposed. */
   .ag-meter {
     position: relative;
-    height: 8px;
-    border-radius: 999px;
+    height: var(--space-2);
+    border-radius: var(--radius-pill);
     background: var(--color-sunken);
   }
   .ag-meter i {
     position: absolute;
     inset: 0 auto 0 0;
-    background: var(--color-accent);
-    border-radius: 999px;
-    transition: width var(--duration-slow) var(--ease-out);
+    background: var(--color-accent-strong);
+    border-radius: var(--radius-pill);
+    transition: width var(--duration-normal) var(--ease-out);
   }
   .ag-meter b {
     position: absolute;
-    top: -4px;
-    bottom: -4px;
+    top: calc(var(--space-1) * -1);
+    bottom: calc(var(--space-1) * -1);
     left: 75%;
-    width: 2px;
+    width: var(--stroke-2);
     background: var(--color-ink);
   }
-  .ag-tabs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-    border-bottom: 1px solid var(--color-rule);
-  }
-  .ag-tab {
-    background: none;
-    border: 0;
-    border-bottom: 3px solid transparent;
-    padding: 10px 12px;
-    font: 700 14px/1.2 var(--font-text);
-    color: var(--color-muted);
-    cursor: pointer;
-    min-height: 44px;
-  }
-  .ag-tab[aria-selected="true"] {
-    color: var(--color-ink);
-    font-weight: 800;
-    border-bottom-color: var(--color-accent-strong);
-  }
+  /* A table that scrolls sideways inside its panel when the screen is narrower than it. */
   .ag-table {
     overflow-x: auto;
   }
   .ag-table table {
     width: 100%;
-    min-width: 520px;
+    min-width: calc(var(--frame-width) / 2);
     border-collapse: collapse;
-    font-size: 14px;
+    font-size: var(--body);
+    line-height: var(--leading-text);
   }
   .ag-table th,
   .ag-table td {
     text-align: left;
-    padding: 8px 10px;
+    padding: var(--space-2) var(--space-3);
     border-bottom: 1px solid var(--hair);
     vertical-align: top;
   }
   .ag-table th {
-    font: 600 14px/20px var(--font-text);
-    color: var(--color-muted);
+    font-size: var(--detail);
+    font-weight: 400;
+    color: var(--color-quiet);
   }
   .ag-table td.num,
   .ag-table th.num {
@@ -1338,7 +1236,8 @@
   @media (min-width: 900px) {
     .ag-grid {
       display: grid;
-      grid-template-columns: 230px minmax(0, 1fr) 300px;
+      grid-template-columns: calc(var(--space-15) * 4) minmax(0, 1fr) var(--side-width);
+      gap: var(--space-6);
       align-items: start;
     }
   }
@@ -1349,6 +1248,8 @@
     padding: 0 var(--space-2);
     text-align: right;
   }
+  /* The Team Dashboard's target rows: the goal, where it stands now, its target, a bar and a
+     status. One column on a phone, one line on a laptop. */
   .t-rows {
     display: flex;
     flex-direction: column;
@@ -1356,10 +1257,10 @@
   .t-row {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 8px 12px;
+    gap: var(--space-2) var(--space-3);
     align-items: center;
-    padding: 12px 0;
-    border-top: 1px solid var(--color-rule);
+    padding: var(--space-3) 0;
+    border-top: 1px solid var(--hair);
   }
   .t-row:first-child {
     border-top: 0;
@@ -1370,22 +1271,23 @@
   }
   .t-goal strong {
     display: block;
-    font: 600 16px/22px var(--font-text);
+    font: 600 var(--body) / var(--leading-title) var(--font-text);
     color: var(--color-ink);
+    overflow-wrap: anywhere;
   }
   .t-goal small {
     display: block;
-    font-size: 14px;
-    line-height: 20px;
+    font-size: var(--detail);
+    line-height: var(--leading-text);
     color: var(--color-muted);
   }
   .t-num span {
     display: block;
-    font: 400 12px/16px var(--font-text);
-    color: var(--color-muted);
+    font: 400 var(--detail) / var(--leading-text) var(--font-text);
+    color: var(--color-quiet);
   }
   .t-num b {
-    font: 600 16px/22px var(--font-text);
+    font: 600 var(--body) / var(--leading-title) var(--font-text);
     color: var(--color-ink);
     font-variant-numeric: tabular-nums;
   }
@@ -1395,6 +1297,7 @@
   .t-st {
     grid-column: 1/-1;
   }
+  /* Weekly active companies as a line against the target, drawn at the width it is given. */
   .t-chart {
     position: relative;
   }
@@ -1409,35 +1312,35 @@
     stroke-width: 1;
   }
   .t-axis {
-    font: 600 12px var(--font-text);
-    fill: var(--color-muted);
+    font: 400 var(--text-12) var(--font-text);
+    fill: var(--color-quiet);
   }
   .t-endl {
-    font-weight: 800;
+    font-weight: 600;
     fill: var(--color-ink);
   }
   .t-tl {
     paint-order: stroke;
     stroke: var(--color-surface);
-    stroke-width: 4px;
+    stroke-width: var(--space-1);
     stroke-linejoin: round;
   }
   .t-target {
     stroke: var(--color-grey);
-    stroke-width: 1.5;
+    stroke-width: 1;
     stroke-dasharray: 5 5;
   }
   .t-line {
     fill: none;
-    stroke: var(--color-accent);
-    stroke-width: 2;
+    stroke: var(--color-accent-strong);
+    stroke-width: var(--stroke-2);
     stroke-linecap: round;
     stroke-linejoin: round;
   }
   .t-end {
-    fill: var(--color-accent);
+    fill: var(--color-accent-strong);
     stroke: var(--color-surface);
-    stroke-width: 2;
+    stroke-width: var(--stroke-2);
   }
   .t-cross {
     stroke: var(--color-grey);
@@ -1446,24 +1349,26 @@
   .t-tip {
     position: absolute;
     top: 0;
-    padding: 4px 10px;
-    border-radius: 8px;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-mark);
     background: var(--color-night);
     color: var(--color-paper);
-    font: 700 14px/20px var(--font-text);
+    font: 600 var(--text-13) / var(--leading-text) var(--font-text);
     white-space: nowrap;
     pointer-events: none;
   }
   .t-details summary {
-    font: 700 14px/20px var(--font-text);
-    color: var(--color-ink-2);
+    font: 400 var(--detail) / var(--leading-text) var(--font-text);
+    color: var(--color-accent-strong);
     cursor: pointer;
-    padding: 12px 0;
+    padding: var(--space-3) 0;
   }
   @media (min-width: 900px) {
     .t-row {
-      grid-template-columns: minmax(0, 1.7fr) 110px 110px minmax(90px, 0.8fr) 105px;
-      gap: 16px;
+      grid-template-columns:
+        minmax(0, 1.7fr) calc(var(--space-7) * 4) calc(var(--space-7) * 4)
+        minmax(calc(var(--space-11) * 2), 0.8fr) calc(var(--space-7) * 4);
+      gap: var(--space-4);
     }
     .t-goal,
     .t-bar,
@@ -1526,7 +1431,7 @@
     .w-cards {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 16px;
+      gap: var(--space-6) var(--space-8);
     }
     .w-mail {
       display: grid;
@@ -1540,7 +1445,7 @@
     .a-btn.w-fit {
       width: auto;
       align-self: flex-start;
-      padding: 0 28px;
+      padding: 0 var(--space-7);
     }
     .a-li[aria-current="true"] {
       background: var(--color-accent-tint);
@@ -1556,30 +1461,31 @@
   }
   /* App Mode: compact, one active item per screen, lists straight on the page. */
   :focus-visible:not(.a-input) {
-    outline: 2px solid var(--color-accent-strong);
-    outline-offset: 2px;
+    outline: var(--stroke-2) solid var(--color-accent-strong);
+    outline-offset: var(--stroke-2);
   }
   .a-ic {
     display: block;
-    width: 22px;
-    height: 22px;
+    width: var(--icon);
+    height: var(--icon);
     flex: none;
   }
+  /* The way into the Presenter Guide, outside the Pilot Preview: a round button in the corner,
+     above the bottom tabs on a phone. */
   .demo-guide {
     position: fixed;
-    right: 12px;
-    bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+    right: var(--space-3);
+    bottom: calc(var(--space-15) + var(--space-3) + env(safe-area-inset-bottom, 0px));
     z-index: 30;
-    width: 44px;
-    height: 44px;
+    width: var(--control);
+    height: var(--control);
     padding: 0;
     border: 1px solid var(--color-rule);
-    border-radius: 999px;
+    border-radius: var(--radius-pill);
     background: var(--color-surface);
     color: var(--color-ink-2);
-    font: 600 16px/1 var(--font-text);
+    font: 600 var(--text-16) / 1 var(--font-text);
     cursor: pointer;
-    box-shadow: 0 1px 2px rgba(19, 62, 94, 0.08);
   }
   .demo-guide:hover {
     background: var(--color-paper);
@@ -1664,12 +1570,6 @@
   .a-unclaimed {
     margin-top: var(--space-1);
   }
-  .a-dash-head {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    min-width: 0;
-  }
   .a-sec {
     display: flex;
     flex-direction: column;
@@ -1696,15 +1596,6 @@
     border-top: 0;
     padding-top: 0;
   }
-  .w-dash {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    min-width: 0;
-  }
-  .w-dash .w-col {
-    gap: 24px;
-  }
   .a-page {
     display: flex;
     flex-direction: column;
@@ -1713,21 +1604,12 @@
   }
   .a-page .a-why,
   .a-page .t-sum {
-    margin-top: 2px;
+    margin-top: calc(var(--space-1) / 2);
   }
   .a-h3 {
     font: 600 var(--text-16) / var(--leading-title) var(--font-text);
     color: var(--color-ink);
     margin: 0;
-  }
-  .a-panel {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 16px;
-    background: var(--color-accent-tint);
-    border-radius: 12px;
-    min-width: 0;
   }
   .a-rule {
     border-top: 1px solid var(--hair);
@@ -1754,8 +1636,7 @@
   }
   .a-ask > .a-st,
   .a-card > .a-st,
-  .a-sec > .a-st,
-  .a-panel > .a-st {
+  .a-sec > .a-st {
     align-self: flex-start;
   }
   .a-st.bad {
@@ -1796,12 +1677,13 @@
   .a-ask .a-btn.g {
     margin-right: calc(var(--space-3) * -1);
   }
+  /* Your own Company's row among the search results. */
   .a-li.me {
     background: var(--color-accent-tint);
-    border-radius: 8px;
-    margin: 0 -8px;
-    padding: 12px 8px;
-    width: calc(100% + 16px);
+    border-radius: var(--radius-control);
+    margin: 0 calc(var(--space-2) * -1);
+    padding: var(--space-3) var(--space-2);
+    width: calc(100% + var(--space-4));
     border-top-color: transparent;
   }
   .a-li.me strong {
@@ -1824,25 +1706,27 @@
     flex: 1;
     min-width: 0;
   }
+  /* A line of figures under a page title or above a list. */
   .t-sum {
     margin: 0;
-    font-size: 16px;
-    line-height: 24px;
+    font-size: var(--text-16);
+    line-height: var(--leading-text);
     color: var(--color-ink-2);
   }
   .t-sum b {
-    font-weight: 800;
+    font-weight: 600;
     color: var(--color-ink);
     font-variant-numeric: tabular-nums;
   }
+  /* One Lead's score on the Engine: its name and Fit Score over the parts that add up to it. */
   .e-why {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: var(--space-1);
     min-width: 0;
   }
   .e-why .a-li {
-    padding: 6px 0;
+    padding: var(--space-2) 0;
   }
   .e-why .a-li-r {
     max-width: 60%;
@@ -1856,7 +1740,7 @@
     }
     .a-li.req > .a-row {
       flex-basis: 100%;
-      padding-left: 52px;
+      padding-left: calc(var(--space-9) + var(--space-3));
     }
     .a-li.stack {
       flex-wrap: wrap;
@@ -1870,10 +1754,8 @@
   }
   @media (min-width: 900px) {
     .demo-guide {
-      right: 24px;
-      bottom: 24px;
-      width: 40px;
-      height: 40px;
+      right: var(--space-6);
+      bottom: var(--space-6);
     }
     .a-top-r {
       align-self: stretch;
@@ -1889,31 +1771,10 @@
       font-weight: 600;
       border-bottom-color: var(--color-accent-strong);
     }
-    .a-dash-head {
-      flex-direction: row;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 24px;
-    }
-    .w-dash {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 360px;
-      gap: 24px;
-      align-items: start;
-    }
-    .w-dash .w-col {
-      gap: 24px;
-    }
-    .w-cards {
-      gap: 32px;
-    }
-    .ag-grid {
-      gap: 24px;
-    }
     .ag-thread .a-thread {
-      max-height: 620px;
+      max-height: calc(var(--frame-height) + var(--space-15) + var(--space-10));
       overflow-y: auto;
-      padding-right: 4px;
+      padding-right: var(--space-1);
     }
   }
   .a-head-r {
@@ -2218,25 +2079,22 @@
     max-height: 86vh;
   }
 }
-/* Sonner renders outside the product root. */
+/* Sonner renders outside the product root, so the toast takes the scale by its own class. */
 .cl-toast {
-  background: var(--color-cl-night) !important;
-  color: var(--color-cl-paper) !important;
+  background: var(--color-night) !important;
+  color: var(--color-paper) !important;
   border: 0 !important;
-  border-radius: 12px !important;
-  font:
-    600 16px/22px var(--font-nunito-sans),
-    Arial,
-    sans-serif !important;
+  border-radius: var(--radius-panel) !important;
+  font: 600 var(--text-16) / var(--leading-title) var(--font-text) !important;
 }
 .cl-toast [data-description] {
-  color: var(--color-cl-paper) !important;
+  color: var(--color-paper) !important;
 }
 .cl-toast [data-button] {
-  background: var(--color-cl-sky-strong) !important;
-  color: var(--color-cl-ink) !important;
-  min-height: 44px;
-  border-radius: 10px !important;
+  background: var(--color-sky-strong) !important;
+  color: var(--color-ink) !important;
+  min-height: var(--space-11);
+  border-radius: var(--radius-control) !important;
 }
 
 /* ComDash: the shell gives the route a full-width body, and .cd sets its own width. */
@@ -3391,12 +3249,12 @@
   }
 }
 
-/* The Network Ring component, kept for reuse after leaving ComDash. */
+/* The Network Ring component, kept for reuse after leaving ComDash. No screen draws it today. */
 .cl-product .dv2-ring {
   --ring-deep: var(--color-accent);
   --ring-bright: var(--color-sky);
   position: relative;
-  height: 372px;
+  height: calc(var(--frame-height) * 0.7);
   overflow: hidden;
 }
 .cl-product .dv2-ring svg {
@@ -3414,7 +3272,7 @@
 }
 .cl-product .dv2-orbit.t1 {
   stroke: var(--ring-deep);
-  stroke-width: 1.5;
+  stroke-width: var(--stroke-2);
   opacity: 1;
 }
 .cl-product .dv2-orbit.t3 {
@@ -3425,31 +3283,31 @@
 }
 .cl-product .dv2-spoke {
   stroke: var(--ring-deep);
-  stroke-width: 1.5;
+  stroke-width: var(--stroke-2);
 }
 .cl-product .dv2-center {
   position: absolute;
   left: 0;
   top: 0;
-  width: 64px;
-  height: 64px;
-  margin: -32px 0 0 -32px;
+  width: var(--space-15);
+  height: var(--space-15);
+  margin: calc(var(--space-15) / -2) 0 0 calc(var(--space-15) / -2);
   background: var(--ring-deep);
   color: var(--color-accent-ink);
-  border-radius: 12px;
-  font-size: 18px;
+  border-radius: var(--radius-control);
+  font-size: var(--text-18);
 }
 .cl-product .dv2-node {
   position: absolute;
   left: 0;
   top: 0;
-  width: 72px;
-  margin: -22px 0 0 -36px;
+  width: calc(var(--space-9) * 2);
+  margin: calc(var(--space-11) / -2) 0 0 calc(var(--space-9) * -1);
   padding: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
+  gap: var(--space-1);
   background: none;
   border: 0;
   cursor: pointer;
@@ -3457,8 +3315,8 @@
   color: var(--color-ink);
 }
 .cl-product .dv2-node .a-mono {
-  width: 44px;
-  height: 44px;
+  width: var(--space-11);
+  height: var(--space-11);
   background: var(--color-surface);
 }
 .cl-product .dv2-node.is-open .a-mono,
@@ -3468,19 +3326,19 @@
 .cl-product .dv2-node[aria-current="true"] .a-mono {
   background: var(--color-accent-tint);
   color: var(--ring-deep);
-  outline: 2px solid var(--ring-deep);
+  outline: var(--stroke-2) solid var(--ring-deep);
 }
 .cl-product .dv2-node[aria-current="true"] .dv2-name {
   color: var(--ring-deep);
 }
 .cl-product .dv2-name {
-  font: 600 12px/14px var(--font-text);
+  font: 600 var(--text-12) / var(--leading-tight) var(--font-text);
   text-align: center;
 }
 .cl-product .dv2-name span {
-  padding: 0 3px;
+  padding: 0 var(--space-1);
   background: var(--color-surface);
-  border-radius: 3px;
+  border-radius: var(--radius-mark);
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
 }
@@ -3488,12 +3346,12 @@
   position: absolute;
   left: 0;
   top: 0;
-  min-height: 44px;
-  padding: 0 8px;
+  min-height: var(--space-11);
+  padding: 0 var(--space-2);
   background: none;
   border: 0;
   cursor: pointer;
-  font: 600 14px/20px var(--font-text);
+  font: 600 var(--text-14) / var(--leading-text) var(--font-text);
   color: var(--color-ink-2);
   white-space: nowrap;
 }
@@ -3502,11 +3360,11 @@
 }
 @media (min-width: 900px) {
   .cl-product .dv2-node {
-    width: 124px;
-    margin-left: -62px;
+    width: calc(var(--space-15) * 2);
+    margin-left: calc(var(--space-15) * -1);
   }
   .cl-product .dv2-name {
-    font: 600 14px/18px var(--font-text);
+    font-size: var(--text-14);
   }
 }
 
@@ -3541,7 +3399,7 @@
   position: relative;
   width: var(--space-2);
   height: var(--space-2);
-  border-radius: 50%;
+  border-radius: var(--radius-pill);
   background: var(--color-accent-strong);
 }
 .cl-product .a-story-dots li + li::before {
@@ -3641,7 +3499,7 @@
   width: var(--dot);
   height: var(--dot);
   margin-top: var(--space-2);
-  border-radius: 50%;
+  border-radius: var(--radius-pill);
   box-shadow: inset 0 0 0 var(--stroke-2) var(--color-accent-strong);
 }
 .cl-product .pv-stop {
@@ -3765,11 +3623,11 @@
   margin: 0;
 }
 .cl-product .mi-rows {
-  max-height: 336px;
+  max-height: calc(var(--space-12) * 7);
   overflow-y: auto;
-  padding: 0 12px;
+  padding: 0 var(--space-3);
   border: 1px solid var(--hair);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
 }
 .cl-product .mi-rows button.a-li:hover strong {
   color: var(--color-accent-strong);
@@ -3817,30 +3675,38 @@
     transform: translateY(var(--space-2));
   }
 }
-/* Reduced motion: nothing on a Demo screen transitions or animates. */
+/* Reduced motion: nothing on a Demo screen transitions or animates, and nor does the Presenter
+   Guide or the veil behind it. */
 @media (prefers-reduced-motion: reduce) {
   .cl-product *,
   .cl-product *::before,
-  .cl-product *::after {
+  .cl-product *::after,
+  .cl-guide,
+  .cl-guide *,
+  [data-slot="sheet-overlay"] {
     transition: none !important;
     animation: none !important;
   }
 }
+/* A switch in the Presenter Guide: what it shows, a note, and whether it is on. */
 .cl-guide .g-switch {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: var(--space-3);
   width: 100%;
-  min-height: 44px;
-  margin-top: 8px;
-  padding: 8px 12px;
+  min-height: var(--space-11);
+  margin-top: var(--space-2);
+  padding: var(--space-2) var(--space-3);
   border: 1px solid var(--color-rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--color-surface);
   color: var(--color-ink-2);
   text-align: left;
   cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out);
 }
 .cl-guide .g-switch[aria-pressed="true"] {
   border-color: var(--color-accent-strong);
@@ -3849,15 +3715,18 @@
 .cl-guide .g-switch-t {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  font: 400 13px/18px var(--font-text);
+  font: 400 var(--text-13) / var(--leading-text) var(--font-text);
+  color: var(--color-muted);
 }
 .cl-guide .g-switch-t b {
-  font: 600 14px/19px var(--font-text);
+  font: 600 var(--text-14) / var(--leading-title) var(--font-text);
   color: var(--color-ink);
+}
+.cl-guide .g-switch-t small {
+  font-size: inherit;
 }
 .cl-guide .g-switch-s {
   flex: none;
-  font: 700 13px/1 var(--font-text);
+  font: 600 var(--text-13) / 1 var(--font-text);
   color: var(--color-ink);
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { focusPanel } from "@/components/product/focus-panel";
 import { Back, FitMark, PageHead } from "@/components/product/shared";
 import { useSimulation } from "@/components/product/use-simulation";
 import {
@@ -115,13 +116,11 @@ export function Engine() {
         }
       />
       <div className="w-2">
-        <div className="w-col a-surface">
-          <section className="a-sec">
-            <h2 className="a-h2">Your network</h2>
-            <NetworkMap />
-            <p className="a-small">Select a company to open its profile.</p>
-          </section>
-        </div>
+        <section className="a-card" {...focusPanel(true)}>
+          <h2 className="a-h2">Your network</h2>
+          <NetworkMap />
+          <p className="a-small">Select a company to open its profile.</p>
+        </section>
         <div className="w-col a-surface">
           <section className="a-sec">
             <h2 className="a-h2">Tomorrow’s attention: {a.total}</h2>
@@ -159,7 +158,7 @@ export function Engine() {
           </section>
         </div>
       </div>
-      <section className="a-sec a-surface">
+      <section className="a-sec a-surface" data-density="compact">
         <h2 className="a-h2">Why today’s leads scored what they did</h2>
         <div className="w-cards">
           <article className="e-why">

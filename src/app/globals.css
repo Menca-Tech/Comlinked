@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "./marketing-site.css" layer(components);
+/* The Demo's scale, which its screens and the website's two example panels share. */
+@import "./demo-scale.css";
 
 @custom-variant dark (&:is(.dark *));
 

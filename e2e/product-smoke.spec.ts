@@ -6,6 +6,7 @@ import {
   expectStill,
   focusPanel,
   goToSection,
+  surfaceEdges,
   surfaceShadow,
   tabTo,
   WHITE,
@@ -1692,15 +1693,15 @@ async function openScreen(page: Page, name: "Leads" | "ComMail" | "Asks" | "Wins
 /** One suggested Company on the Connections tab, or one item from the Company's connections. */
 const listed = (page: Page, name: string) => page.getByRole("listitem").filter({ hasText: name });
 
+/** A solid button is filled; an outlined or quiet one sits on white or on nothing. */
+const solid = (page: Page, name: string) =>
+  expect(page.getByRole("button", { name, exact: true }).first()).not.toHaveCSS(
+    "background-color",
+    /^(rgb\(255, 255, 255\)|rgba\(0, 0, 0, 0\))$/,
+  );
+
 test.describe("the member's daily screens, each led by one Focus panel", () => {
   test.use({ viewport: { width: 1280, height: 900 } });
-
-  /** A solid button is filled; an outlined or quiet one sits on white or on nothing. */
-  const solid = (page: Page, name: string) =>
-    expect(page.getByRole("button", { name, exact: true }).first()).not.toHaveCSS(
-      "background-color",
-      /^(rgb\(255, 255, 255\)|rgba\(0, 0, 0, 0\))$/,
-    );
 
   test("Connections: Invitations leads with Accept, and still leads once it is empty", async ({
     page,
@@ -2122,5 +2123,314 @@ test.describe("what the viewer triggers moves briefly, with motion allowed", () 
     expectBrief(ms);
     await chip.click();
     await expect(chip).toHaveAttribute("aria-pressed", "true");
+  });
+});
+
+/** Presses one of the Presenter Guide's buttons and waits for the screen it opens. */
+async function openLater(page: Page, button: string, heading: string) {
+  await guide(page, button);
+  await expect(page.getByRole("heading", { name: heading, level: 1 })).toBeVisible();
+}
+
+const heading = (page: Page, name: string) => page.getByRole("heading", { name, exact: true });
+const presenterGuide = (page: Page) => page.getByRole("dialog", { name: "Presenter guide" });
+/** One of the Team Dashboard's targets, found by the line under its name. */
+const target = (page: Page, measure: string) => page.locator(".t-row", { hasText: measure });
+
+test.describe("the later screens and the Presenter Guide, on the scale and the shared parts", () => {
+  test.use({ viewport: { width: 1280, height: 900 } });
+
+  test("Search: the field leads under the title, above a flat list of marked results, and nothing is raised", async ({
+    page,
+  }) => {
+    await twoWeeksIn(page);
+    await openSearch(page, "food");
+    const own = results(page).locator(".a-li", { hasText: "Kalayaan Foods Inc." });
+    await expect(own).toContainText("Your company");
+    // The field sits on the page, between the title and the panel that holds the results.
+    const title = await heading(page, "Search").boundingBox();
+    const field = await searchField(page).boundingBox();
+    const list = await surfaceEdges(results(page));
+    expect(field?.y ?? 0).toBeGreaterThanOrEqual((title?.y ?? 0) + (title?.height ?? 0));
+    expect(list.top).toBeGreaterThanOrEqual((field?.y ?? 0) + (field?.height ?? 0));
+    expect(await surfaceShadow(results(page))).toBe("none");
+    await expect(focusPanel(page)).toHaveCount(0);
+    // Each result carries its Company's mark, and your own is the solid navy one.
+    const marks = results(page).locator(".a-li [aria-hidden='true']:first-child");
+    expect(await marks.count()).toBe(await results(page).locator(".a-li").count());
+    await expect(own.locator("[aria-hidden='true']").first()).toHaveCSS("color", WHITE);
+
+    // A search that finds nothing says so in one line, in the same flat panel.
+    await searchField(page).fill("zzzz");
+    await expect(results(page)).toHaveText(
+      "No companies match that search. Try a product or an industry.",
+    );
+    expect(await surfaceShadow(results(page))).toBe("none");
+    await expect(focusPanel(page)).toHaveCount(0);
+  });
+
+  test("Notifications: a flat list with its new items marked, and nothing raised", async ({
+    page,
+  }) => {
+    await twoWeeksIn(page);
+    await page.getByRole("button", { name: /^Notifications/ }).click();
+    await expect(heading(page, "Notifications")).toBeVisible();
+    const recent = page.locator("section", { has: heading(page, "Recent") });
+    await expect(recent.getByText("New", { exact: true }).first()).toBeVisible();
+    expect(await surfaceShadow(heading(page, "Recent"))).toBe("none");
+    await expect(focusPanel(page)).toHaveCount(0);
+    // A Connection Request's Accept is the screen's one solid button.
+    await solid(page, "Accept");
+    await expect(page.getByRole("button", { name: "Ignore", exact: true })).toHaveCSS(
+      "background-color",
+      "rgba(0, 0, 0, 0)",
+    );
+  });
+
+  test("Engine: the network is the one raised panel, and the notes beside it and the scores below are flat", async ({
+    page,
+  }) => {
+    await twoWeeksIn(page);
+    await openLater(page, "Engine", "Engine");
+    await expect(focusPanel(page)).toHaveCount(1);
+    await expect(focusPanel(page).getByRole("heading", { name: "Your network" })).toBeVisible();
+    const map = focusPanel(page).getByRole("img", { name: /^Network map of 100 companies/ });
+    await expect(map).toBeVisible();
+    expect(await surfaceShadow(map)).not.toBe("none");
+    for (const title of ["How rank is set", "Why today’s leads scored what they did"]) {
+      expect(await surfaceShadow(heading(page, title))).toBe("none");
+    }
+    // The map says who is who in words as well as colour.
+    await expect(focusPanel(page).getByText("Your company", { exact: true })).toBeVisible();
+    await expect(focusPanel(page).getByText(/^1st: \d+$/)).toBeVisible();
+  });
+
+  test("the AI Lead Agent preview: the Mandate form is the raised panel with Start the agent as its one solid button, and the tag stays", async ({
+    page,
+  }) => {
+    await twoWeeksIn(page);
+    await openLater(page, "AI Lead Agent preview", "AI Lead Agent");
+    await expect(page.locator("main").getByText("Preview: after the MVP")).toBeVisible();
+    const form = focusPanel(page);
+    await expect(form.getByRole("heading", { name: "What should your agent find?" })).toBeVisible();
+    expect(await surfaceShadow(form.getByRole("heading"))).not.toBe("none");
+    await solid(page, "Start the agent");
+    // The match types are chips: pills that can be tapped, the chosen one pressed.
+    const types = form.getByRole("group", { name: "Match type" }).getByRole("button");
+    await expect(types).toHaveCount(4);
+    await expect(types.first()).toHaveCSS("border-radius", "999px");
+    await expect(types.first()).toHaveAttribute("aria-pressed", "true");
+    await types.nth(1).click();
+    await expect(types.nth(1)).toHaveAttribute("aria-pressed", "true");
+    await expect(types.first()).toHaveAttribute("aria-pressed", "false");
+
+    // During the run nothing is raised, and a gate's Approve is the one solid button.
+    await tap(page, "Start the agent");
+    await tap(page, "Play to next gate");
+    await expect(page.getByText("Waiting for your approval", { exact: true })).toBeVisible();
+    await expect(page.locator("main").getByText("Preview: after the MVP")).toBeVisible();
+    await expect(focusPanel(page)).toHaveCount(0);
+    await solid(page, "Approve");
+    for (const name of ["Decline", "Next step", "Play to next gate"]) {
+      await expect(page.getByRole("button", { name, exact: true })).toHaveCSS(
+        "background-color",
+        WHITE,
+      );
+    }
+    // Nothing is confirmed until a person approves it.
+    await tap(page, "Approve");
+    await expect(page.getByText("Approved by Ana Reyes")).toBeVisible();
+  });
+
+  test("After the MVP: flat lists under their headings, with nothing raised", async ({ page }) => {
+    await twoWeeksIn(page);
+    await openLater(page, "What’s next", "After the MVP");
+    await expect(focusPanel(page)).toHaveCount(0);
+    for (const title of ["Phase 2", "Later", "When needed", "If chambers ask"]) {
+      expect(await surfaceShadow(heading(page, title))).toBe("none");
+    }
+    await expect(page.getByRole("button", { name: "Open the preview" })).toHaveCSS(
+      "background-color",
+      WHITE,
+    );
+  });
+
+  test("the Team Dashboard: compact, with On track and Behind as tags with their icons, and nothing raised", async ({
+    page,
+  }) => {
+    await twoWeeksIn(page);
+    await openLater(page, "ComLinked team dashboard", "Team dashboard");
+    await expect(focusPanel(page)).toHaveCount(0);
+    expect(await surfaceShadow(heading(page, "Pilot targets"))).toBe("none");
+    // The compact density: a target's name at 14 and its note at 13.
+    const adoption = target(page, "Invited companies that claim within 14 days");
+    await expect(adoption.getByText("Adoption", { exact: true })).toHaveCSS("font-size", "14px");
+    await expect(adoption.getByText("Invited companies that claim within 14 days")).toHaveCSS(
+      "font-size",
+      "13px",
+    );
+    // A status is a tag: a 12px pill with an icon and its label, so colour is never the only cue.
+    const statuses: [Locator, string][] = [
+      [adoption, "On track"],
+      [target(page, "Deals confirmed by both companies"), "Behind"],
+    ];
+    for (const [row, label] of statuses) {
+      const tag = row.getByText(label, { exact: true });
+      await expect(tag).toHaveCSS("font-size", "12px");
+      await expect(tag).toHaveCSS("border-radius", "999px");
+      await expect(tag.locator("svg")).toBeVisible();
+    }
+    // The chart is drawn one to one, so its axis reads at the size it is set in.
+    const drawn = await page
+      .locator("#t-trend")
+      .evaluate(
+        (svg: SVGSVGElement) => svg.getBoundingClientRect().width / svg.viewBox.baseVal.width,
+      );
+    expect(drawn).toBeCloseTo(1, 1);
+    // The chosen tab reads as the chosen place in the top bar does.
+    const safety = page.getByRole("tab", { name: "Network safety" });
+    await safety.click();
+    await expect(safety).toHaveCSS("font-weight", "600");
+    await expect(heading(page, "Unusual points")).toBeVisible();
+    await page.getByRole("button", { name: "Flag", exact: true }).first().click();
+    const flagged = page.getByText("Flagged", { exact: true });
+    await expect(flagged).toHaveCSS("font-size", "12px");
+    await expect(flagged.locator("svg")).toBeVisible();
+    await expect(focusPanel(page)).toHaveCount(0);
+  });
+
+  test("the Team Dashboard on the first day keeps its layout and says what will appear", async ({
+    page,
+  }) => {
+    await page.goto("/app/team");
+    await expect(heading(page, "Team dashboard")).toBeVisible();
+    await expect(page.getByText("The trend starts after the first simulated day.")).toBeVisible();
+    await expect(page.locator(".t-row")).toHaveCount(10);
+    await expect(page.getByText("No staff actions yet.")).toBeVisible();
+    await expect(page.getByRole("tab")).toHaveCount(4);
+    await expect(focusPanel(page)).toHaveCount(0);
+    await noSidewaysScroll(page);
+  });
+
+  test("the Presenter Guide opens and closes with G, with outlined presets and switches that turn", async ({
+    page,
+  }) => {
+    await twoWeeksIn(page);
+    await page.keyboard.press("g");
+    const sheet = presenterGuide(page);
+    await expect(sheet).toBeVisible();
+    // Its presets are the shared compact button, outlined, so the guide adds no solid button.
+    for (const name of ["New company", "Two weeks in"]) {
+      const preset = sheet.getByRole("button", { name, exact: true });
+      await expect(preset).toHaveCSS("background-color", WHITE);
+      await expect(preset).toHaveCSS("font-size", "14px");
+      await expect(preset).toHaveCSS("border-radius", "10px");
+    }
+    // Each switch says what it shows and whether it is on, and turns when pressed.
+    for (const name of ["Possible future pricing", "After-MVP previews"]) {
+      const toggle = sheet.getByRole("button", { name, exact: true });
+      const wasOn = (await toggle.getAttribute("aria-pressed")) === "true";
+      await expect(toggle).toContainText(wasOn ? "On" : "Off");
+      await expect(toggle).toHaveCSS("border-radius", "10px");
+      await toggle.click();
+      await expect(toggle).toHaveAttribute("aria-pressed", String(!wasOn));
+      await expect(toggle).toContainText(wasOn ? "Off" : "On");
+      await toggle.click();
+      await expect(toggle).toHaveAttribute("aria-pressed", String(wasOn));
+    }
+    await page.keyboard.press("g");
+    await expect(sheet).toBeHidden();
+    // A preset still starts the Demo over.
+    await guide(page, "New company");
+    await expect(heading(page, "Your company is already here")).toBeVisible();
+  });
+
+  test("a very long company name at 360 pixels wraps inside its row on the Team Dashboard", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 360, height: 800 });
+    await twoWeeksIn(page);
+    await openLater(page, "ComLinked team dashboard", "Team dashboard");
+    await page.getByRole("tab", { name: "Companies needing help" }).click();
+    const rows = page.locator(".a-li.stack");
+    await expect(rows.first()).toBeVisible();
+    const names = await rows.locator("strong").allInnerTexts();
+    const longest = names.reduce((long, name) => (name.length > long.length ? name : long));
+    const row = rows.filter({ hasText: longest }).first();
+    for (const width of [360, 320]) {
+      await page.setViewportSize({ width, height: 800 });
+      const box = await row.boundingBox();
+      const name = await row.locator("strong").boundingBox();
+      expect(name?.x ?? -1).toBeGreaterThanOrEqual(box?.x ?? 0);
+      expect((name?.x ?? 0) + (name?.width ?? 0)).toBeLessThanOrEqual(
+        (box?.x ?? 0) + (box?.width ?? 0),
+      );
+      expect((box?.x ?? 0) + (box?.width ?? 0)).toBeLessThanOrEqual(width);
+      await noSidewaysScroll(page);
+    }
+  });
+
+  test("from the keyboard each later screen is usable in order with a visible focus ring, and G opens and closes the guide", async ({
+    page,
+  }) => {
+    await twoWeeksIn(page);
+    await openSearch(page, "food");
+    await tabTo(page, results(page).getByRole("button", { name: /Kapwa Snack Foods/ }));
+    await page.getByRole("button", { name: /^Notifications/ }).click();
+    await tabTo(page, page.getByRole("button", { name: "Accept", exact: true }));
+    await openLater(page, "Engine", "Engine");
+    await tabTo(page, page.getByRole("button", { name: "Back to ComDash" }));
+    await openLater(page, "What’s next", "After the MVP");
+    await tabTo(page, page.getByRole("button", { name: "Open the preview" }));
+    await page.keyboard.press("Enter");
+    await expect(heading(page, "AI Lead Agent")).toBeVisible();
+    await tabTo(page, page.getByRole("button", { name: "Start the agent" }));
+    await page.keyboard.press("Enter");
+    await tabTo(page, page.getByRole("button", { name: "Play to next gate" }));
+    await page.keyboard.press("Enter");
+    await tabTo(page, page.getByRole("button", { name: "Approve", exact: true }));
+    await openLater(page, "ComLinked team dashboard", "Team dashboard");
+    await tabTo(page, page.getByRole("tab", { name: "Pilot health" }));
+    await page.keyboard.press("ArrowRight");
+    await expect(heading(page, "Companies waiting on someone")).toBeVisible();
+    await tabTo(page, page.getByRole("button", { name: "Send claim reminder" }).first());
+
+    await page.keyboard.press("g");
+    const sheet = presenterGuide(page);
+    await expect(sheet).toBeVisible();
+    await tabTo(page, sheet.getByRole("button", { name: "Possible future pricing", exact: true }));
+    await page.keyboard.press("g");
+    await expect(sheet).toBeHidden();
+  });
+
+  test("with reduced motion nothing on the later screens or the Presenter Guide transitions or animates", async ({
+    page,
+  }) => {
+    await twoWeeksIn(page);
+    await openSearch(page, "food");
+    await expectStill(page);
+    await page.getByRole("button", { name: /^Notifications/ }).click();
+    await expect(heading(page, "Notifications")).toBeVisible();
+    await expectStill(page);
+    await openLater(page, "Engine", "Engine");
+    await expectStill(page);
+    await openLater(page, "What’s next", "After the MVP");
+    await expectStill(page);
+    await openLater(page, "AI Lead Agent preview", "AI Lead Agent");
+    await expectStill(page);
+    await tap(page, "Start the agent");
+    await tap(page, "Play to next gate");
+    await expect(page.getByText("Waiting for your approval", { exact: true })).toBeVisible();
+    await expectStill(page);
+    await openLater(page, "ComLinked team dashboard", "Team dashboard");
+    for (const name of ["Companies needing help", "Network safety", "AI and agent"]) {
+      await page.getByRole("tab", { name }).click();
+      await expectStill(page);
+    }
+    await page.locator(".demo-guide").click();
+    await expect(presenterGuide(page)).toBeVisible();
+    await expectStill(page, ".cl-guide, .cl-guide *, [data-slot='sheet-overlay']");
+    await page.keyboard.press("Escape");
+    await expect(presenterGuide(page)).toBeHidden();
   });
 });

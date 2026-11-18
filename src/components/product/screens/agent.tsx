@@ -3,7 +3,9 @@
 import { useEffect, useRef } from "react";
 import { Check, X } from "lucide-react";
 
+import { focusPanel } from "@/components/product/focus-panel";
 import { Back, Btn, PageHead, St } from "@/components/product/shared";
+import { Tag } from "@/components/product/tag";
 import { useSimulation } from "@/components/product/use-simulation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
@@ -28,13 +30,19 @@ function Mandate() {
   const S = useSimulation();
   const f = S.forms;
   return (
-    <section className="a-card">
+    <section className="a-card" {...focusPanel(true)}>
       <h2 className="a-h2">What should your agent find?</h2>
       <div className="a-row" role="group" aria-label="Match type">
         {Object.keys(AGENT_TYPES).map((k) => (
-          <Btn key={k} cls="o sm" aria-pressed={f.agentType === k} onClick={() => act.agentType(k)}>
+          <button
+            key={k}
+            type="button"
+            className="cd-chip"
+            aria-pressed={f.agentType === k}
+            onClick={() => act.agentType(k)}
+          >
             {AGENT_TYPES[k]!.label}
-          </Btn>
+          </button>
         ))}
       </div>
       <div>
@@ -75,11 +83,11 @@ function StepView({ s, A }: { s: AgentStep; A: AgentRun }) {
     return (
       <>
         <div className={cn("a-msg-meta", mine && "me")}>
-          {mine ? m.name : cName} agent · {s.t} <span className="ag-chip">{s.ty}</span>
+          {mine ? m.name : cName} agent · {s.t} <Tag>{s.ty}</Tag>
           {s.tier ? (
             <>
               {" "}
-              <span className="ag-chip">Tier {s.tier}</span>
+              <Tag>Tier {s.tier}</Tag>
             </>
           ) : null}
         </div>
@@ -90,7 +98,7 @@ function StepView({ s, A }: { s: AgentStep; A: AgentRun }) {
   if (s.who === "gate") {
     const decision = A.decisions[s.gate!];
     return (
-      <section className="a-panel">
+      <section className="ag-gate">
         <h3 className="a-h2">{s.h}</h3>
         <p className="a-why">{s.x}</p>
         <p className="a-small">Approver: {m.rep}, Owner</p>
@@ -175,9 +183,9 @@ function Score({ A, steps }: { A: AgentRun; steps: AgentStep[] }) {
         <span>{final ? "/ 100 final" : "/ 90 desk"}</span>
       </div>
       <div>
-        <span className={cn("a-tag", final && bandOf(total) === "Book" && "accent")}>
+        <Tag tone={final && bandOf(total) === "Book" ? "accent" : "grey"}>
           {final ? bandOf(total) : "Shortlisted #1"}
-        </span>
+        </Tag>
       </div>
       <div className="ag-meter">
         <i style={{ width: `${total}%` }} />
@@ -398,7 +406,7 @@ function HandoffPackage({ A, steps }: { A: AgentRun; steps: AgentStep[] }) {
     ["tx", "Transcript"],
   ];
   return (
-    <section className="a-sec a-surface">
+    <section className="a-sec a-surface" data-density="compact">
       <h2 className="a-h2">Handoff package</h2>
       {A.booked ? null : (
         <p className="a-note">
@@ -438,7 +446,7 @@ export function Agent() {
     if (log.current) log.current.scrollTop = log.current.scrollHeight;
   }, [shown, decided]);
   const back = <Back label="Back" onClick={() => act.nav(S.claimed ? "dash" : "home")} />;
-  const tag = <span className="a-tag accent">Preview: after the MVP</span>;
+  const tag = <Tag tone="accent">Preview: after the MVP</Tag>;
   if (!A) {
     return (
       <div className="w-read">
@@ -491,7 +499,7 @@ export function Agent() {
         </span>
       </div>
       <div className="ag-grid">
-        <div className="a-surface">
+        <div className="a-surface" data-density="compact">
           <section className="a-sec">
             <h2 className="a-h2">Stage</h2>
             <ol className="ag-stages">
@@ -520,7 +528,7 @@ export function Agent() {
             ))}
           </div>
         </section>
-        <div className="a-surface">
+        <div className="a-surface" data-density="compact">
           <Score A={A} steps={steps} />
         </div>
       </div>

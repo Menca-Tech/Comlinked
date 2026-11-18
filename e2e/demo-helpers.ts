@@ -17,6 +17,17 @@ export async function surfaceShadow(part: Locator) {
   }, WHITE);
 }
 
+/** Where the white surface an element sits on starts and ends down the page, in pixels. */
+export async function surfaceEdges(part: Locator) {
+  return part.evaluate((el, white) => {
+    let node: Element | null = el;
+    while (node && getComputedStyle(node).backgroundColor !== white) node = node.parentElement;
+    if (!node) throw new Error("The element sits on no white surface.");
+    const box = node.getBoundingClientRect();
+    return { top: box.top, bottom: box.bottom };
+  }, WHITE);
+}
+
 /** Opens one of the Company's sections from its bar and waits for its screen: the top bar on a
  * laptop, the tabs along the bottom on a phone. Only the bar in use is on screen, and a section's
  * count sits after its name in the top bar and before it on a tab. */
@@ -63,10 +74,11 @@ export async function tabTo(page: Page, target: Locator, limit = 60) {
 /** How many things on the page are moving: transitions and animations alike. */
 export const moving = (page: Page) => page.evaluate(() => document.getAnimations().length);
 
-/** Nothing on the screen may move: no element has a transition, and no animation is running. */
-export async function expectStill(page: Page) {
+/** Nothing may move: no element has a transition, and no animation is running. It reads the
+ * Demo's screen unless `parts` names another part of the page. */
+export async function expectStill(page: Page, parts = ".cl-product *") {
   const durations = await page
-    .locator(".cl-product *")
+    .locator(parts)
     .evaluateAll((els) => els.map((el) => getComputedStyle(el).transitionDuration));
   expect(durations.length).toBeGreaterThan(0);
   expect(durations.every((d) => d.split(",").every((x) => parseFloat(x) === 0))).toBe(true);

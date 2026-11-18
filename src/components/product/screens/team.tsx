@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { AlertCircle, Check } from "lucide-react";
 
-import { Btn, PageHead, Panel, St } from "@/components/product/shared";
+import { Btn, PageHead, Panel } from "@/components/product/shared";
+import { Tag } from "@/components/product/tag";
 import { useIsDesktop, useSimulation } from "@/components/product/use-simulation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { TeamData, TeamRow } from "@/services/comlinked";
@@ -19,8 +20,17 @@ import {
   trendPoints,
 } from "@/services/comlinked";
 
-const check = <Check className="a-ic" aria-hidden="true" />;
-const alert = <AlertCircle className="a-ic" aria-hidden="true" />;
+/** A status as a tag: good in the blue tint with a check, needing attention in the error tint with
+ * an alert, each with its label, so colour is never the only cue. */
+function StatusTag({ good, children }: { good: boolean; children: ReactNode }) {
+  const Icon = good ? Check : AlertCircle;
+  return (
+    <Tag tone={good ? "accent" : "error"}>
+      <Icon className="a-ic" aria-hidden="true" />
+      {children}
+    </Tag>
+  );
+}
 
 function MetricRows({ rows }: { rows: TeamRow[] }) {
   return (
@@ -43,9 +53,7 @@ function MetricRows({ rows }: { rows: TeamRow[] }) {
             <i style={{ width: `${Math.round(r.ratio * 100)}%` }} />
           </div>
           <div className="t-st">
-            <St kind={r.ok ? "good" : "bad"} icon={r.ok ? check : alert}>
-              {r.ok ? "On track" : "Behind"}
-            </St>
+            <StatusTag good={r.ok}>{r.ok ? "On track" : "Behind"}</StatusTag>
           </div>
         </div>
       ))}
@@ -56,14 +64,32 @@ function MetricRows({ rows }: { rows: TeamRow[] }) {
 /** Five grid lines from none to the whole network; every other one is labelled. */
 const GRID_LINES = [0, 1, 2, 3, 4].map((step) => (NETWORK * step) / 4);
 
+/** The width an element is drawn at, and the ref that measures it. It is 0 until measured. */
+function useWidth() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(0);
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const measure = () => setWidth(el.clientWidth);
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+  return [ref, width] as const;
+}
+
 function TrendChart({ d }: { d: TeamData }) {
   const isWeb = useIsDesktop();
   const [hover, setHover] = useState<number | null>(null);
+  const [chart, width] = useWidth();
   const pts = trendPoints(d);
   if (pts.length < 2) {
     return <p className="a-empty">The trend starts after the first simulated day.</p>;
   }
-  const W = isWeb ? 640 : 360;
+  // Drawn at the width it is given, so the axis text keeps its size on any screen.
+  const W = width || (isWeb ? 640 : 360);
   const H = 200;
   const L = 32;
   const R = 40;
@@ -82,7 +108,7 @@ function TrendChart({ d }: { d: TeamData }) {
   const point = hover === null ? null : pts[hover];
   return (
     <>
-      <div className="t-chart">
+      <div className="t-chart" ref={chart}>
         <svg
           id="t-trend"
           viewBox={`0 0 ${W} ${H}`}
@@ -123,10 +149,10 @@ function TrendChart({ d }: { d: TeamData }) {
             </text>
           ))}
           <line className="t-target" x1={L} x2={W - R} y1={ty.toFixed(1)} y2={ty.toFixed(1)} />
+          <path className="t-line" d={path} />
           <text className="t-axis t-tl" x={L + 6} y={(ty - 6).toFixed(1)}>
             Target {targetV}
           </text>
-          <path className="t-line" d={path} />
           <circle
             className="t-end"
             cx={sx(pts.length - 1).toFixed(1)}
@@ -251,15 +277,9 @@ function SafetyTab({ d }: { d: TeamData }) {
                   <small>Earned {s.pts} points in one day</small>
                 </span>
                 {state ? (
-                  state === "ok" ? (
-                    <St kind="good" icon={check}>
-                      Cleared
-                    </St>
-                  ) : (
-                    <St kind="bad" icon={alert}>
-                      Flagged
-                    </St>
-                  )
+                  <StatusTag good={state === "ok"}>
+                    {state === "ok" ? "Cleared" : "Flagged"}
+                  </StatusTag>
                 ) : (
                   <span className="a-row">
                     <Btn cls="o sm" onClick={() => act.teamSpike(`${s.id}|ok`)}>
@@ -350,7 +370,7 @@ export function Team() {
     <>
       <PageHead
         title="Team dashboard"
-        tail={<span className="a-tag accent">Preview: after the MVP</span>}
+        tail={<Tag tone="accent">Preview: after the MVP</Tag>}
         sub={
           <p className="t-sum">
             <b>Day {d.D}</b> of the 90-day {CHAMBER.shortName} pilot ·{" "}
@@ -361,7 +381,7 @@ export function Team() {
           </p>
         }
       />
-      <Tabs value={t.tab} onValueChange={(tab) => act.teamTab(tab)}>
+      <Tabs value={t.tab} onValueChange={(tab) => act.teamTab(tab)} data-density="compact">
         <TabsList className="ag-tabs">
           {TABS.map(([value, label]) => (
             <TabsTrigger key={value} value={value} className="ag-tab">

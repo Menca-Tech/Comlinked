@@ -71,19 +71,19 @@ export function Search() {
   return (
     <div className="w-read">
       <PageHead title="Search" />
+      <div>
+        <label className="a-label" htmlFor="f-query">
+          Industry, product or need
+        </label>
+        <Input
+          className="a-input"
+          id="f-query"
+          value={S.forms.query}
+          onChange={(event) => setForm("query", event.target.value)}
+        />
+      </div>
       <Panel>
-        <div>
-          <label className="a-label" htmlFor="f-query">
-            Industry, product or need
-          </label>
-          <Input
-            className="a-input"
-            id="f-query"
-            value={S.forms.query}
-            onChange={(event) => setForm("query", event.target.value)}
-          />
-        </div>
-        <div id="search-results" className="a-stack">
+        <div id="search-results">
           <Results />
         </div>
       </Panel>
