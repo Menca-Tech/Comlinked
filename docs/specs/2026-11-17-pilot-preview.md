@@ -307,7 +307,7 @@ The pricing switcher, the AI Lead Agent, the Team Dashboard and the Engine do no
 
 - **Two switches in the Presenter Guide.** "Possible future pricing" controls the Free, Growth and Pro switcher. "After-MVP previews" controls the AI Lead Agent tab and Overview card, the Team Dashboard and the Engine.
 - **Off in the Pilot Preview, on in the full Demo.** Starting the Pilot Preview sets both off.
-- **With previews off,** ComDash shows four tabs and the Overview shows three cards, and the addresses of the hidden screens open the ComDash Overview. With pricing off, ComDash stays on the Free view.
+- **With previews off,** ComDash shows four tabs and the Overview shows three cards, and the addresses of the hidden screens open the ComDash Overview. With pricing off, ComDash shows everything the MVP does, with no tier. Switched on, it opens on the Free member tier, whose names are blurred (changed 2026-11-18; see the [ComDash spec](2026-11-11-comdash-redesign.md)).
 
 ### Opening and the ask
 

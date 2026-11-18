@@ -262,3 +262,7 @@ Terms from the [ComLinked MVP Build Plan](docs/specs/2026-10-11-mvp-build-plan.m
 - **Site Mode** — the spacious form of the Design System, used on public pages.
 
 - **App Mode** — the compact form of the Design System, used on signed-in screens.
+
+- **Focus panel** — the one panel on a screen that holds the thing to act on now,
+  set apart from every other panel. Avoid "lead" for this, since a Lead is a
+  Company, and "active", which is a Company's status in the Activity View.

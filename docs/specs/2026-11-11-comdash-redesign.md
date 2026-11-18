@@ -5,6 +5,14 @@
 **Source:** grilling session of 2026-11-11, based on the ComDash prototype the user supplied (`comdash-prototype.html`, kept outside the repo in the user's Downloads folder)
 **Feature IDs:** L2 (ComDash interest signals), D2 (daily lead list, via Next action), D4 (freshness nudges), C-series connections, A-series AI drafts
 
+> **Changed 2026-11-18 (user): the "View as" tiers now copy the prototype.** This replaces user story 14 and every line below that says Free shows everything. While possible future pricing shows, the Interest Signals tab follows the prototype's `ComDash Interest Signals` tiers:
+>
+> - **Free member** lists six interested companies with names, levels and signals blurred, a "See who" button on each, an upgrade box, weekly alerts without names and five search terms.
+> - **Growth** names the user's own chamber with intent scores, highest first, and hides other chambers behind "Unlock on Pro". It adds "Send my agent" with 10 engagements a month, and a "Compare Pro" box.
+> - **Pro** names every chamber, with 40 engagements a month.
+>
+> The full Demo opens on Free member. With possible future pricing switched off, as in the Pilot Preview, ComDash shows everything the MVP does, with no tier. This contradicts the plan's "free for everyone, with no payments or blurred names" and the For Chambers promise of no tiers. Richard must agree before ECCP sees the tiers.
+
 ## Problem Statement
 
 A company owner opening ComLinked lands on ComDash, the home screen. Today it centres on the Network Ring, the Activity Score and rank, and a short "Who's interested" list. The product owner has a newer prototype of the MVP ComDash that answers the owner's real question better: who is looking at my company, how interested are they, how did they find me, and what should I do next. The current screen doesn't show how interest builds from being found to being contacted, which search terms bring people in, or which interested companies are worth a reply today. Its parts are also spread across separate screens instead of one home with clear sections.

@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ComLinked Demo Flow Map</title>
+<style>
+  :root {
+    --ink: #15181b; --ink-2: #33373b; --muted: #5a5e62; --rule: #c6c9cc; --hair: #e2e6ea;
+    --paper: #f3f5f7; --surface: #ffffff; --sunken: #e7ebef;
+    --accent: #286fa3; --accent-strong: #133e5e; --tint: #e4f1fa; --sky: #55a2d4;
+    --cm: #6a4c93; --cm-tint: #efe9f7; --member: #1f6f4a; --member-tint: #e5f3ec;
+    --eccp: #8a5a00; --eccp-tint: #fbf1dc; --none: #5a5e62; --none-tint: #eceef0;
+    --warn: #b3261e; --warn-tint: #fceeee;
+    --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ink: #e8eaed; --ink-2: #c9cdd2; --muted: #9aa0a6; --rule: #3b4249; --hair: #2c3238;
+      --paper: #15181b; --surface: #1d2125; --sunken: #262b30;
+      --accent: #6fb0e0; --accent-strong: #9cc9ec; --tint: #1c2d3b; --sky: #6fb3df;
+      --cm: #c3a6ea; --cm-tint: #2c2338; --member: #7fd1a8; --member-tint: #1a2e25;
+      --eccp: #e8be6a; --eccp-tint: #33290f; --none: #b0b5ba; --none-tint: #262b30;
+      --warn: #ff9a8f; --warn-tint: #3a1f1c;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 15px/1.5 var(--sans); }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 32px 16px 56px; display: flex; flex-direction: column; gap: 28px; }
+  header h1 { margin: 0; font: 600 32px/1.15 var(--serif); letter-spacing: -0.01em; }
+  header p { margin: 6px 0 0; color: var(--muted); max-width: 78ch; }
+  .kicker { font: 700 12px/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+  h2 { margin: 0 0 4px; font: 600 22px/1.2 var(--serif); }
+  .lede { margin: 0 0 14px; color: var(--muted); max-width: 80ch; }
+  section { background: var(--surface); border: 1px solid var(--hair); border-radius: 16px; padding: 22px; }
+  a { color: var(--accent); text-underline-offset: 3px; }
+  code, .addr { font: 12.5px/1.4 var(--mono); }
+  .addr { color: var(--muted); word-break: break-all; }
+
+  /* Overview: entry points */
+  .entry { display: grid; grid-template-columns: 1fr auto 1fr; gap: 14px 18px; align-items: center; }
+  .src { background: var(--sunken); border-radius: 12px; padding: 12px 14px; }
+  .src b { display: block; }
+  .arrow { color: var(--accent); font-size: 22px; text-align: center; }
+  .dest { border: 2px solid var(--accent); border-radius: 12px; padding: 12px 14px; background: var(--tint); }
+  .dest b { display: block; color: var(--accent-strong); }
+  .guide-row { grid-column: 1 / -1; border: 1px dashed var(--rule); border-radius: 12px; padding: 10px 14px; color: var(--ink-2); }
+
+  /* Seats legend */
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 14px; margin: 4px 0 16px; }
+  .seat { display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px; border-radius: 999px; font: 600 12.5px/20px var(--sans); white-space: nowrap; }
+  .seat::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+  .s-cm { color: var(--cm); background: var(--cm-tint); }
+  .s-member { color: var(--member); background: var(--member-tint); }
+  .s-eccp { color: var(--eccp); background: var(--eccp-tint); }
+  .s-none { color: var(--none); background: var(--none-tint); }
+
+  /* Pilot Preview lane */
+  .lane { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 12px; position: relative; }
+  .stop { position: relative; background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .stop .n { font: 700 12px/1 var(--sans); color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
+  .stop h3 { margin: 0; font: 600 15px/1.3 var(--sans); }
+  .stop p { margin: 0; font-size: 13px; line-height: 1.45; color: var(--ink-2); }
+  .stop .day { font: 700 13px/1 var(--mono); color: var(--accent-strong); }
+  .stop .seat, .side .seat { align-self: flex-start; white-space: normal; line-height: 16px; padding-top: 3px; padding-bottom: 3px; }
+  .stop:not(:last-child)::after {
+    content: "→"; position: absolute; right: -11px; top: 22px; color: var(--accent); font-size: 15px; background: var(--paper); line-height: 1; padding: 1px 0; z-index: 1;
+  }
+  .stop.key { border: 2px solid var(--accent); }
+  .branch { margin-top: 12px; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 12px; }
+  .branch .side { grid-column: 3 / span 4; border: 2px dashed var(--cm); background: var(--cm-tint); border-radius: 12px; padding: 12px; position: relative; }
+  .branch .side::before { content: "↳ side step from Stop 5"; display: block; font: 700 12px/1 var(--sans); color: var(--cm); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .04em; }
+  .branch .explore { grid-column: 7; }
+  .chrome { margin-top: 14px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .note { background: var(--sunken); border-radius: 10px; padding: 10px 12px; font-size: 13.5px; }
+  .note b { display: block; margin-bottom: 2px; }
+
+  /* Full Demo loop */
+  .loop { display: grid; grid-template-columns: 1.1fr 1.1fr 1.6fr 1.6fr; gap: 14px; align-items: stretch; }
+  .step { border: 1px solid var(--rule); border-radius: 12px; padding: 12px; position: relative; }
+  .step h3 { margin: 0 0 4px; font: 600 15px/1.3 var(--sans); }
+  .step p, .step li { margin: 0; font-size: 13px; color: var(--ink-2); }
+  .step ul { margin: 6px 0 0; padding-left: 18px; }
+  .step:not(:last-child)::after { content: "→"; position: absolute; right: -12px; top: 18px; color: var(--accent); background: var(--surface); line-height: 1; }
+  .tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .tab { font: 600 12px/1 var(--sans); padding: 5px 8px; border-radius: 6px; background: var(--tint); color: var(--accent-strong); }
+  .tab.later { background: var(--none-tint); color: var(--muted); }
+  .cycle { margin-top: 12px; border: 2px solid var(--sky); border-radius: 12px; padding: 10px 14px; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; }
+  .cycle b { color: var(--accent-strong); }
+
+  /* Guide and switches */
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .guide { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .g { border: 1px solid var(--hair); border-radius: 10px; padding: 10px 12px; }
+  .g b { display: block; font-size: 13.5px; }
+  .g span { font-size: 13px; color: var(--ink-2); }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; vertical-align: top; padding: 8px 8px; border-bottom: 1px solid var(--hair); }
+  th { font: 700 11.5px/1.4 var(--sans); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  td:first-child { font-weight: 600; white-space: nowrap; }
+  .blur { filter: blur(3px); user-select: none; }
+  .pill { display: inline-block; padding: 1px 8px; border-radius: 999px; font: 700 11px/18px var(--sans); text-transform: uppercase; letter-spacing: .04em; background: var(--accent-strong); color: #fff; }
+
+  /* Rules */
+  .rules { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  .rule { border-radius: 12px; padding: 12px 14px; background: var(--sunken); }
+  .rule b { display: block; margin-bottom: 4px; }
+  .rule p { margin: 0; font-size: 13.5px; color: var(--ink-2); }
+  .rule.warn { background: var(--warn-tint); }
+  .rule.warn b { color: var(--warn); }
+  footer { color: var(--muted); font-size: 13px; }
+
+  @media (max-width: 1080px) {
+    .lane, .branch { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .branch .side, .branch .explore { grid-column: auto / span 2; }
+    .stop:not(:last-child)::after, .step:not(:last-child)::after { display: none; }
+    .loop { grid-template-columns: 1fr 1fr; }
+    .rules { grid-template-columns: 1fr 1fr; }
+    .chrome { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 720px) {
+    .entry { grid-template-columns: 1fr; }
+    .arrow { transform: rotate(90deg); }
+    .lane, .branch, .loop, .two, .guide, .rules { grid-template-columns: 1fr; }
+    .branch .side, .branch .explore { grid-column: auto; }
+    header h1 { font-size: 26px; }
+    section { padding: 16px; }
+    table { font-size: 12.5px; }
+  }
+  @media print {
+    body { background: #fff; }
+    .wrap { padding: 0; gap: 14px; }
+    section { break-inside: avoid; border-color: #ccc; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">ComLinked · Demo flow map · 2026-11-18</div>
+    <h1>How the Demo flows</h1>
+    <p>The Demo is the Next.js app under <code>/app</code>, a simulation that runs in the browser with invented data. Nothing is sent or stored, and sign-in is pretend. The older single-file HTML mockup in <code>docs/mockup/</code> is frozen as a backup. Links below open your local server at <code>localhost:3001</code> while it runs.</p>
+  </header>
+
+  <section aria-labelledby="h-entry">
+    <h2 id="h-entry">Two ways in</h2>
+    <p class="lede">Visitors reach the Demo from the website. The presenter can also open any address directly.</p>
+    <div class="entry">
+      <div class="src"><b>Website · “Join”</b><span class="addr">home page, join form</span></div>
+      <div class="arrow" aria-hidden="true">→</div>
+      <div class="dest"><b>Full Demo</b>One member company’s daily loop, free to click around. <a href="http://localhost:3001/app/claim">/app/claim</a></div>
+
+      <div class="src"><b>Website · “Request a pilot”</b><span class="addr">For Chambers page, pilot form</span></div>
+      <div class="arrow" aria-hidden="true">→</div>
+      <div class="dest"><b>Pilot Preview</b>A guided story for ECCP’s Chamber Leader, about 10 minutes. <a href="http://localhost:3001/app/preview">/app/preview</a></div>
+
+      <div class="guide-row"><b>Presenter Guide</b> (G key, or the Demo guide button outside the Pilot Preview) works in both: it jumps anywhere, moves time, flips the later items and resets.</div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-pp">
+    <h2 id="h-pp">Pilot Preview: the story for ECCP</h2>
+    <p class="lede">An Opening and six Stops, each with its own address that prepares its state, so a reload or a forwarded link reopens the right Stop. Next in the Story Bar walks it in order.</p>
+    <div class="legend" aria-label="Whose view each Stop shows">
+      <span class="seat s-cm">Community Manager (ComLinked, for ECCP)</span>
+      <span class="seat s-member">Kalayaan Foods, the member</span>
+      <span class="seat s-eccp">ECCP, read-only</span>
+      <span class="seat s-none">No Seat</span>
+    </div>
+
+    <div class="lane">
+      <article class="stop">
+        <span class="n">Opening</span>
+        <h3>A preview for ECCP</h3>
+        <span class="seat s-none">No Seat</span>
+        <p>ECCP has not joined. Every company, person and figure is invented. Lists the six Stops. Start.</p>
+        <a class="addr" href="http://localhost:3001/app/preview">/app/preview</a>
+      </article>
+      <article class="stop">
+        <span class="n">Stop 1</span><span class="day">Day 0</span>
+        <h3>Member List becomes profiles</h3>
+        <span class="seat s-cm">Community Manager</span>
+        <p>100 profiles built, claim links ready for ECCP to send. ECCP’s view on Day 0: nobody claimed yet.</p>
+        <a class="addr" href="http://localhost:3001/app/chamber?stop=1">/app/chamber?stop=1</a>
+      </article>
+      <article class="stop key">
+        <span class="n">Stop 2</span><span class="day">Day 1</span>
+        <h3>A member claims</h3>
+        <span class="seat s-member">Member</span>
+        <p>ECCP’s claim message → claim and sign in → three matches, one Nordhavn → send the first message. The one live flow.</p>
+        <a class="addr" href="http://localhost:3001/app/claim?stop=2">/app/claim?stop=2</a>
+      </article>
+      <article class="stop">
+        <span class="n">Stop 3</span><span class="day">Day 2</span>
+        <h3>The next morning</h3>
+        <span class="seat s-member">Member</span>
+        <p>The 8:00 digest: new leads, who viewed her, how her rank moved.</p>
+        <a class="addr" href="http://localhost:3001/app/digest?stop=3">/app/digest?stop=3</a>
+      </article>
+      <article class="stop">
+        <span class="n">Stop 4</span><span class="day">Day 14</span>
+        <h3>Two weeks in</h3>
+        <span class="seat s-member">Member</span>
+        <p>ComDash: who is interested by name, the deal with Nordhavn, the win on the Success Wall.</p>
+        <a class="addr" href="http://localhost:3001/app/dash?stop=4">/app/dash?stop=4</a>
+      </article>
+      <article class="stop key">
+        <span class="n">Stop 5</span><span class="day">Day 14</span>
+        <h3>ECCP’s view</h3>
+        <span class="seat s-eccp">ECCP, read-only</span>
+        <p>40 of 100 claimed · 20 active · 4 need an intro · 3 deals · 2 wins. Filter members by status. Nothing private.</p>
+        <a class="addr" href="http://localhost:3001/app/chamber?stop=5">/app/chamber?stop=5</a>
+      </article>
+      <article class="stop">
+        <span class="n">Stop 6</span>
+        <h3>What a pilot asks</h3>
+        <span class="seat s-none">No Seat</span>
+        <p>ECCP gives its Member List and one contact. Free for ECCP and members. Email Richard.</p>
+        <a class="addr" href="http://localhost:3001/app/preview/ask?stop=6">/app/preview/ask?stop=6</a>
+      </article>
+    </div>
+
+    <div class="branch">
+      <div class="side">
+        <span class="seat s-cm">Community Manager</span>
+        <p style="margin:6px 0 0;font-size:13px">“See the community manager’s side” in the Story Bar shows the same screen with the tools: member import, an introduction, an announcement, unusual points. One introduction is ready. Sending it takes “need an intro” from 4 to 3. “Back to ECCP’s view” returns.</p>
+      </div>
+      <div class="note explore"><b>After Stop 6</b>“Explore on your own” opens the member’s side on Day 14. A one-line bar offers “Back to stop 6”.</div>
+    </div>
+
+    <div class="chrome">
+      <div class="note"><b>Story Bar</b>The blue strip under the top bar: day and title, whose Seat, “N of 6”, Back and Next. Screen readers hear each change.</div>
+      <div class="note"><b>Top bar follows the Seat</b>The member’s own bar on Stops 2 to 4, “Community manager for ECCP” on Stop 1, “ECCP, read-only” on Stop 5.</div>
+      <div class="note"><b>Later items hidden</b>Pricing tiers and after-MVP screens stay off here until the presenter presses G and switches them on.</div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-full">
+    <h2 id="h-full">Full Demo: one member’s daily loop</h2>
+    <p class="lede">Start as a new company or jump two weeks in, then move freely. Every screen works. A full page reload starts the Demo over.</p>
+    <div class="loop">
+      <div class="step">
+        <h3>1 · Claim</h3>
+        <p>“Your company is already here” → check the profile → tick the authorization box → pretend sign-in.</p>
+      </div>
+      <div class="step">
+        <h3>2 · Meet 3 matches</h3>
+        <p>Each with a reason to meet. Connect, Message or Skip. The AI drafts; a person sends.</p>
+      </div>
+      <div class="step">
+        <h3>3 · ComDash</h3>
+        <p>The home screen, in five tabs.</p>
+        <div class="tabs">
+          <span class="tab">Overview</span><span class="tab">Interest Signals</span><span class="tab later">AI Lead Agent · after MVP</span><span class="tab">Connections</span><span class="tab">Profile</span>
+        </div>
+      </div>
+      <div class="step">
+        <h3>4 · The rest of the loop</h3>
+        <ul>
+          <li><b>Leads</b>: five new matches a day</li>
+          <li><b>ComMail</b>: conversations, AI drafts, “We met” and “We did business”</li>
+          <li><b>Asks</b>: post a need, answer others</li>
+          <li><b>Wins</b>: testimonials, Success Wall, Monthly Top Companies</li>
+          <li><b>Search</b>, <b>Notifications</b>, your company profile</li>
+        </ul>
+      </div>
+    </div>
+    <div class="cycle">
+      <b>↻ Next morning</b>
+      <span>The guide runs a simulated night: a new lead list, the morning digest, other companies viewing, messaging, claiming and posting wins. Then the loop starts again.</span>
+    </div>
+  </section>
+
+  <div class="two">
+    <section aria-labelledby="h-guide">
+      <h2 id="h-guide">Presenter Guide</h2>
+      <p class="lede">Press G anywhere. Outside the Pilot Preview there is also a Demo guide button.</p>
+      <div class="guide">
+        <div class="g"><b>Pilot Preview</b><span>Jump to the Opening or any Stop.</span></div>
+        <div class="g"><b>Later items</b><span>Possible future pricing; after-MVP previews.</span></div>
+        <div class="g"><b>Start a demo</b><span>New company, or Two weeks in.</span></div>
+        <div class="g"><b>ComDash tabs</b><span>Jump straight to a tab.</span></div>
+        <div class="g"><b>Walk the loop</b><span>11 steps, ticked as you go, ending at the chamber tools.</span></div>
+        <div class="g"><b>Move time</b><span>Next morning, or 14 days ahead.</span></div>
+        <div class="g"><b>After-MVP screens</b><span>AI Lead Agent, Team Dashboard, Engine, What’s next.</span></div>
+        <div class="g"><b>Reset</b><span>Start over, or go back to the website.</span></div>
+      </div>
+    </section>
+
+    <section aria-labelledby="h-tiers">
+      <h2 id="h-tiers">Possible future pricing: “View as”</h2>
+      <p class="lede">A demo of pricing ideas, labelled “Not in the MVP”. It changes the Interest Signals tab only. On in the full Demo, which opens on Free member; off in the Pilot Preview, where ComDash shows every name.</p>
+      <table>
+        <thead><tr><th>Tier</th><th>Interested companies</th><th>Extras</th></tr></thead>
+        <tbody>
+          <tr><td>Free member</td><td><span class="blur">Hidden company name</span> six rows, blurred, each with “See who”</td><td>Upgrade box. Weekly alerts without names. Five search terms.</td></tr>
+          <tr><td>Growth</td><td>Own chamber named, with intent score <span class="pill">Hot</span>, highest first. Other chambers blurred, “Unlock on Pro”.</td><td>“Send my agent”, 7 of 10 left this month. “Compare Pro” box.</td></tr>
+          <tr><td>Pro</td><td>Every chamber named. Other chambers grouped at the top.</td><td>“Send my agent”, 31 of 40 left.</td></tr>
+        </tbody>
+      </table>
+      <p class="lede" style="margin:12px 0 0">Blurring names conflicts with the plan’s “free for everyone, no blurred names” rule. Richard should agree before ECCP sees it.</p>
+    </section>
+  </div>
+
+  <section aria-labelledby="h-rules">
+    <h2 id="h-rules">Rules worth knowing</h2>
+    <div class="rules">
+      <div class="rule"><b>Reloads</b><p>A reload restarts the full Demo, but inside the Pilot Preview it reopens the Stop you were on.</p></div>
+      <div class="rule"><b>Repeatable</b><p>Every Stop and every start builds the same state each time, so nothing surprises the presenter.</p></div>
+      <div class="rule"><b>Honest by design</b><p>A company that has not claimed shows basics only and never acts. Wins appear only from their day. “Example data” stays on every screen.</p></div>
+      <div class="rule warn"><b>Before sharing</b><p>46 invented company names still need renaming, and 10 more need checking. Nothing goes to ECCP until Richard signs off.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    Sources: the <a href="../specs/2026-11-17-pilot-preview.md">Pilot Preview spec</a>, the <a href="../specs/2026-11-11-comdash-redesign.md">ComDash spec</a> and the <a href="2026-11-17-pilot-preview-run-of-show.md">Run of Show</a>. All companies, people and figures in the Demo are invented.
+  </footer>
+</div>
+</body>
+</html>

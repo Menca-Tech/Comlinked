@@ -1,0 +1,1933 @@
+<!doctype html>
+<!--
+  PROTOTYPE. Throwaway. Not part of the app, never published.
+  Question: what should "quiet and exact" look like on the Demo's screens?
+  Three Demo screens redrawn with invented example data, with six open choices switchable from the
+  bar at the bottom (also kept in the address, so a reload keeps your picks).
+  Left and right arrow keys change the screen. T shows today's screen for comparison.
+-->
+<html
+  lang="en"
+  data-screen="overview"
+  data-layout="a"
+  data-type="a"
+  data-surface="a"
+  data-marks="b"
+  data-chart="a"
+  data-bar="a"
+  data-today="0"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>ComLinked Demo: premium specimen (prototype)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700&family=Source+Serif+4:opsz,wght@8..60,500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        /* App Mode's own colours. Nothing new except one quieter text tier. */
+        --navy: #133e5e;
+        --navy-2: #1a517a;
+        --accent: #286fa3;
+        --sky: #55a2d4;
+        --tint: #e4f1fa;
+        --tint-line: #b9d5ea;
+        --ink: #15181b;
+        --ink-2: #3a3d40;
+        --muted: #4a4d50;
+        --quiet: #62676c;
+        --rule: #c6c9cc;
+        --hair: #e2e6ea;
+        --sunken: #e7ebef;
+        --paper: #f3f5f7;
+        --surface: #ffffff;
+        --error: #b3261e;
+        --error-tint: #fceeee;
+        --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+        --sans: "Nunito Sans", "Helvetica Neue", Arial, sans-serif;
+        /* One scale: eight sizes, three radii, one spacing step of 4. */
+        --r-s: 6px;
+        --r-m: 10px;
+        --r-l: 14px;
+        --raise: 0 1px 2px rgba(19, 62, 94, 0.06), 0 18px 40px -28px rgba(19, 62, 94, 0.35);
+        --raise-soft: 0 1px 2px rgba(19, 62, 94, 0.05), 0 12px 28px -24px rgba(19, 62, 94, 0.28);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink-2);
+        font: 400 16px/1.5 var(--sans);
+        -webkit-font-smoothing: antialiased;
+        padding-bottom: 150px;
+      }
+      h1,
+      h2,
+      h3,
+      p,
+      ul,
+      ol {
+        margin: 0;
+        padding: 0;
+      }
+      ul,
+      ol {
+        list-style: none;
+      }
+      button {
+        font: inherit;
+        color: inherit;
+        cursor: pointer;
+      }
+      a {
+        color: inherit;
+      }
+      :focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+      .wrap {
+        max-width: 1224px;
+        margin: 0 auto;
+        padding: 0 32px;
+      }
+
+      /* Which screen shows. */
+      .screen {
+        display: none;
+      }
+      html[data-screen="overview"][data-today="0"] .screen[data-name="overview"],
+      html[data-screen="eccp"][data-today="0"] .screen[data-name="eccp"],
+      html[data-screen="opening"][data-today="0"] .screen[data-name="opening"],
+      html[data-screen="ask"][data-today="0"] .screen[data-name="ask"] {
+        display: block;
+      }
+      .today {
+        display: none;
+      }
+      html[data-today="1"] .today {
+        display: block;
+      }
+      .today img {
+        display: none;
+        width: 100%;
+        max-width: 1280px;
+        margin: 0 auto;
+      }
+      html[data-screen="overview"] .today img[data-name="overview"],
+      html[data-screen="eccp"] .today img[data-name="eccp"],
+      html[data-screen="opening"] .today img[data-name="opening"],
+      html[data-screen="ask"] .today img[data-name="ask"] {
+        display: block;
+      }
+      html[data-layout="a"] .only-b,
+      html[data-layout="b"] .only-a {
+        display: none !important;
+      }
+
+      /* App bar: one white header, hairline under, no shadow. */
+      .bar {
+        background: var(--surface);
+        border-bottom: 1px solid var(--hair);
+      }
+      .bar .wrap {
+        display: flex;
+        align-items: center;
+        gap: 28px;
+        height: 60px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .brand img {
+        height: 24px;
+        width: auto;
+        display: block;
+      }
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        height: 22px;
+        padding: 0 9px;
+        border-radius: 999px;
+        font: 600 12px/1 var(--sans);
+        white-space: nowrap;
+      }
+      .tag.example {
+        background: var(--sunken);
+        color: var(--muted);
+        font-weight: 400;
+      }
+      .nav {
+        display: flex;
+        gap: 26px;
+        align-self: stretch;
+      }
+      .nav a {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 15px;
+        color: var(--muted);
+        text-decoration: none;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -1px;
+      }
+      .nav a[aria-current="page"] {
+        color: var(--ink);
+        font-weight: 600;
+        border-bottom-color: var(--navy);
+      }
+      .count {
+        min-width: 20px;
+        height: 20px;
+        padding: 0 6px;
+        border-radius: 999px;
+        background: var(--tint);
+        color: var(--navy-2);
+        font: 600 12px/20px var(--sans);
+        text-align: center;
+      }
+      .bar .right {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        font-size: 15px;
+        color: var(--muted);
+      }
+      .bar .right span {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .self {
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        background: var(--navy);
+        color: #fff;
+        display: grid;
+        place-items: center;
+        font: 600 12px/1 var(--sans);
+        letter-spacing: 0.04em;
+      }
+
+      /* Story Bar. A: a slim second row of the header. B: a slim navy strip. */
+      .story .wrap {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        min-height: 48px;
+        padding-top: 6px;
+        padding-bottom: 6px;
+      }
+      .steps {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        flex: none;
+      }
+      .steps i {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--navy);
+        display: block;
+      }
+      .steps i + i {
+        margin-left: 14px;
+        position: relative;
+      }
+      .steps i + i::before {
+        content: "";
+        position: absolute;
+        right: 100%;
+        top: 50%;
+        width: 14px;
+        height: 1px;
+        background: var(--rule);
+      }
+      .steps i.next {
+        background: transparent;
+        box-shadow: inset 0 0 0 1px var(--rule);
+      }
+      .steps i.now {
+        width: 9px;
+        height: 9px;
+        box-shadow: 0 0 0 3px var(--tint-line);
+      }
+      .story .what {
+        font-size: 15px;
+        color: var(--ink);
+        min-width: 0;
+      }
+      .story .what b {
+        font-weight: 600;
+      }
+      .story .what .seat {
+        color: var(--quiet);
+        margin-left: 10px;
+      }
+      .story .move {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: none;
+        font-size: 14px;
+        color: var(--quiet);
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 40px;
+        padding: 0 18px;
+        border-radius: var(--r-m);
+        border: 1px solid transparent;
+        background: none;
+        font: 600 15px/1 var(--sans);
+        text-decoration: none;
+        white-space: nowrap;
+      }
+      .btn.solid {
+        background: var(--navy);
+        color: #fff;
+      }
+      .btn.line {
+        border-color: var(--rule);
+        background: var(--surface);
+        color: var(--ink);
+      }
+      .btn.quiet {
+        color: var(--navy-2);
+        padding: 0 10px;
+      }
+      .btn.sm {
+        height: 32px;
+        padding: 0 14px;
+        font-size: 14px;
+        border-radius: 8px;
+      }
+      html[data-bar="a"] .story {
+        background: var(--surface);
+        border-bottom: 1px solid var(--hair);
+      }
+      html[data-bar="b"] .story {
+        background: var(--navy);
+      }
+      html[data-bar="b"] .story .what,
+      html[data-bar="b"] .story .what .seat,
+      html[data-bar="b"] .story .move {
+        color: #fff;
+      }
+      html[data-bar="b"] .story .what .seat,
+      html[data-bar="b"] .story .move {
+        color: rgba(243, 245, 247, 0.78);
+      }
+      html[data-bar="b"] .steps i {
+        background: #fff;
+      }
+      html[data-bar="b"] .steps i.next {
+        background: transparent;
+        box-shadow: inset 0 0 0 1px rgba(243, 245, 247, 0.5);
+      }
+      html[data-bar="b"] .steps i.now {
+        box-shadow: 0 0 0 3px rgba(85, 162, 212, 0.45);
+      }
+      html[data-bar="b"] .steps i + i::before {
+        background: rgba(243, 245, 247, 0.3);
+      }
+      html[data-bar="b"] .story .btn.line {
+        background: #fff;
+        border-color: #fff;
+        color: var(--navy);
+      }
+      html[data-bar="b"] .story .btn.quiet {
+        color: #fff;
+      }
+
+      /* Page head. */
+      .head {
+        padding: 40px 0 0;
+      }
+      .head h1 {
+        font: 500 36px/1.15 var(--serif);
+        letter-spacing: -0.01em;
+        color: var(--ink);
+      }
+      .head .meta {
+        margin-top: 6px;
+        font-size: 15px;
+        color: var(--quiet);
+      }
+      .tabs {
+        display: flex;
+        gap: 28px;
+        margin-top: 24px;
+        border-bottom: 1px solid var(--hair);
+      }
+      .tabs a {
+        padding: 10px 0 12px;
+        font-size: 15px;
+        color: var(--muted);
+        text-decoration: none;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -1px;
+      }
+      .tabs a[aria-current="page"] {
+        color: var(--ink);
+        font-weight: 600;
+        border-bottom-color: var(--navy);
+      }
+
+      /* Panels. Surface A: hairline, only the lead is raised. Surface B: all raised, lead on tint. */
+      .panel {
+        background: var(--surface);
+        border-radius: var(--r-l);
+        padding: 24px;
+      }
+      html[data-surface="a"] .panel {
+        border: 1px solid var(--hair);
+      }
+      html[data-surface="a"] .panel.lead {
+        border-color: transparent;
+        box-shadow: var(--raise);
+      }
+      html[data-surface="b"] .panel {
+        box-shadow: var(--raise-soft);
+      }
+      html[data-surface="b"] .panel.lead {
+        background: var(--tint);
+        box-shadow: none;
+      }
+      .panel > header {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+      .panel h2 {
+        font: 600 18px/1.3 var(--sans);
+        color: var(--ink);
+      }
+      .panel .go {
+        font: 600 14px/1.3 var(--sans);
+        color: var(--navy-2);
+        text-decoration: none;
+      }
+      .panel .go:hover {
+        text-decoration: underline;
+      }
+      .note {
+        font-size: 13px;
+        color: var(--quiet);
+      }
+
+      /* Lead panel: the one thing to do. */
+      .lead {
+        padding: 28px;
+        margin-top: 28px;
+      }
+      .lead .kicker {
+        display: flex;
+        justify-content: space-between;
+        font-size: 14px;
+        color: var(--quiet);
+      }
+      .lead .kicker b {
+        font-weight: 600;
+        color: var(--navy-2);
+      }
+      .lead h2 {
+        font: 500 28px/1.2 var(--serif);
+        letter-spacing: -0.005em;
+        margin-top: 10px;
+      }
+      .lead p.body {
+        margin-top: 8px;
+        max-width: 60ch;
+      }
+      .lead .btn {
+        margin-top: 20px;
+      }
+      .lead .why {
+        margin-top: 22px;
+        padding-top: 14px;
+        border-top: 1px solid var(--hair);
+      }
+      html[data-surface="b"] .lead .why {
+        border-top-color: var(--tint-line);
+      }
+
+      /* Figures. Type A: sans. Type B: serif. */
+      .stats {
+        display: flex;
+        gap: 36px;
+        flex-wrap: wrap;
+      }
+      .stat .k {
+        font-size: 13px;
+        color: var(--quiet);
+      }
+      .fig {
+        display: block;
+        margin-top: 2px;
+        font: 600 28px/1.15 var(--sans);
+        letter-spacing: -0.015em;
+        color: var(--ink);
+      }
+      html[data-type="b"] .fig {
+        font: 500 30px/1.1 var(--serif);
+        letter-spacing: 0;
+      }
+      .stat .d {
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .stat .d b {
+        font-weight: 600;
+        color: var(--navy-2);
+      }
+
+      /* Grids for the Overview. */
+      .grid {
+        display: grid;
+        gap: 20px;
+        margin-top: 20px;
+      }
+      .grid.two {
+        grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+        align-items: start;
+      }
+      .grid.three {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .stack {
+        display: grid;
+        gap: 20px;
+      }
+
+      /* Visibility: bars (A) or a line (B). */
+      .viz {
+        margin-top: 20px;
+      }
+      .viz svg {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+      html[data-chart="a"] .viz .line,
+      html[data-chart="b"] .viz .bars {
+        display: none;
+      }
+      .viz .axis {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 6px;
+        font-size: 12px;
+        color: var(--quiet);
+      }
+      .viz .note {
+        margin-top: 8px;
+      }
+
+      /* Lists of Companies. */
+      .sub {
+        margin-top: 22px;
+        padding-top: 16px;
+        border-top: 1px solid var(--hair);
+        font: 600 13px/1.3 var(--sans);
+        color: var(--quiet);
+      }
+      .rows > li {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 11px 0;
+        border-bottom: 1px solid var(--hair);
+      }
+      .rows > li:last-child {
+        border-bottom: 0;
+        padding-bottom: 0;
+      }
+      .rows .who {
+        min-width: 0;
+        flex: 1;
+      }
+      .rows .name {
+        display: block;
+        font: 600 15px/1.3 var(--sans);
+        color: var(--ink);
+        text-decoration: none;
+      }
+      .rows a.name:hover {
+        text-decoration: underline;
+      }
+      .rows .where {
+        display: block;
+        font-size: 13px;
+        color: var(--quiet);
+      }
+      .rows.cols {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: 32px;
+      }
+      .rows.cols > li:nth-last-child(-n + 2) {
+        border-bottom: 0;
+        padding-bottom: 0;
+      }
+
+      /* Company marks. A: white tile, hairline. B: tint when claimed, dashed when not. */
+      .mark {
+        flex: none;
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        display: grid;
+        place-items: center;
+        font: 600 11.5px/1 var(--sans);
+        letter-spacing: 0.05em;
+      }
+      html[data-marks="a"] .mark {
+        background: var(--surface);
+        border: 1px solid var(--rule);
+        color: var(--ink-2);
+      }
+      html[data-marks="b"] .mark {
+        background: var(--tint);
+        color: var(--navy);
+      }
+      html[data-marks="b"] .mark.unclaimed {
+        background: transparent;
+        border: 1px dashed var(--rule);
+        color: var(--quiet);
+      }
+
+      /* Status tags: tinted pills, never tappable. */
+      .tag.hot {
+        background: var(--navy);
+        color: #fff;
+      }
+      .tag.active {
+        background: var(--tint);
+        color: var(--navy-2);
+      }
+      .tag.quiet {
+        background: var(--sunken);
+        color: var(--muted);
+      }
+      .tag.intro {
+        background: var(--error-tint);
+        color: var(--error);
+      }
+      .tag.unclaimed,
+      .tag.readonly {
+        box-shadow: inset 0 0 0 1px var(--rule);
+        color: var(--muted);
+        font-weight: 400;
+      }
+
+      .meter {
+        height: 6px;
+        border-radius: 3px;
+        background: var(--sunken);
+        margin-top: 14px;
+        overflow: hidden;
+      }
+      .meter i {
+        display: block;
+        height: 100%;
+        background: var(--navy);
+        border-radius: 3px;
+      }
+      .foot {
+        margin-top: 28px;
+        font-size: 13px;
+        color: var(--quiet);
+      }
+
+      /* ECCP's view: the compact density. */
+      .compact .panel {
+        padding: 18px 20px;
+      }
+      .compact .panel h2 {
+        font-size: 16px;
+      }
+      .title-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .tiles {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 28px;
+      }
+      .tiles .panel {
+        padding: 16px 18px;
+      }
+      .tiles .fig {
+        font-size: 26px;
+      }
+      html[data-type="b"] .tiles .fig {
+        font-size: 28px;
+      }
+      .fig small {
+        font: 400 14px/1 var(--sans);
+        letter-spacing: 0;
+        color: var(--quiet);
+      }
+      .cols-main {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 328px;
+        gap: 20px;
+        margin-top: 20px;
+        align-items: start;
+      }
+      .chips {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-bottom: 8px;
+      }
+      .chip {
+        height: 30px;
+        padding: 0 12px;
+        border-radius: 999px;
+        border: 1px solid var(--rule);
+        background: var(--surface);
+        font: 400 13px/1 var(--sans);
+        color: var(--muted);
+      }
+      .chip b {
+        font-weight: 600;
+        margin-left: 4px;
+      }
+      .chips.keyed {
+        margin: 14px 0 0;
+      }
+      .chip i {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 2px;
+        margin-right: 7px;
+      }
+      .chip[aria-pressed="true"] {
+        border-color: var(--navy);
+        background: var(--tint);
+        color: var(--navy);
+        font-weight: 600;
+      }
+      .members > li {
+        padding: 8px 0;
+      }
+      .members .name {
+        font-size: 14px;
+      }
+      .members .mark {
+        width: 30px;
+        height: 30px;
+        font-size: 10.5px;
+        border-radius: 7px;
+      }
+      .more {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid var(--hair);
+      }
+      .group + .group {
+        margin-top: 18px;
+        padding-top: 16px;
+        border-top: 1px solid var(--hair);
+      }
+      .group > header {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        margin-bottom: 2px;
+      }
+      .group h3 {
+        font: 600 14px/1.3 var(--sans);
+        color: var(--ink);
+      }
+      .group .n {
+        font-size: 13px;
+        color: var(--quiet);
+      }
+      .group .all {
+        margin-left: auto;
+        font: 600 13px/1.3 var(--sans);
+        color: var(--navy-2);
+        background: none;
+        border: 0;
+        padding: 0;
+      }
+      /* The claimed band (layout B): one figure and how the 100 split. */
+      .band {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 40px;
+        align-items: end;
+        margin-top: 28px;
+      }
+      .band .fig.big {
+        font-size: 44px;
+        line-height: 1;
+      }
+      html[data-type="b"] .band .fig.big {
+        font-size: 48px;
+      }
+      .split {
+        display: flex;
+        height: 10px;
+        border-radius: 5px;
+        overflow: hidden;
+        margin-top: 16px;
+        gap: 2px;
+      }
+      .split i {
+        display: block;
+      }
+      .split .s-active {
+        background: var(--navy);
+      }
+      .split .s-quiet {
+        background: var(--sky);
+      }
+      .split .s-intro {
+        background: var(--error);
+      }
+      .split .s-unclaimed {
+        background: var(--sunken);
+      }
+      .legend {
+        display: flex;
+        gap: 22px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .legend li {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .legend i {
+        width: 9px;
+        height: 9px;
+        border-radius: 2px;
+        display: block;
+      }
+      .legend b {
+        font-weight: 600;
+        color: var(--ink);
+      }
+      .band .side {
+        display: flex;
+        gap: 36px;
+      }
+      .wins > li {
+        padding: 12px 0;
+        border-bottom: 1px solid var(--hair);
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      .wins > li:first-child {
+        padding-top: 0;
+      }
+      .wins > li:last-child {
+        border-bottom: 0;
+        padding-bottom: 0;
+      }
+      .wins b {
+        font-weight: 600;
+        color: var(--ink);
+      }
+      .wins .by {
+        display: block;
+        margin-top: 4px;
+        font-size: 13px;
+        color: var(--quiet);
+      }
+      .top > li {
+        display: flex;
+        gap: 10px;
+        padding: 7px 0;
+        font-size: 14px;
+        border-bottom: 1px solid var(--hair);
+      }
+      .top > li:last-child {
+        border-bottom: 0;
+        padding-bottom: 0;
+      }
+      .top .rank {
+        width: 18px;
+        color: var(--quiet);
+      }
+      .top .co {
+        flex: 1;
+        color: var(--ink);
+      }
+      .top li:first-child .co {
+        font-weight: 600;
+      }
+      .top .pts {
+        color: var(--muted);
+      }
+
+      /* Opening A: an invitation in two panels, like the claim steps. */
+      .invite {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+        max-width: 1040px;
+        margin: 56px auto 0;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: var(--raise);
+        background: var(--surface);
+      }
+      .invite .navy {
+        position: relative;
+        background: var(--navy);
+        color: #fff;
+        padding: 48px 44px;
+        display: flex;
+        flex-direction: column;
+        min-height: 520px;
+        overflow: hidden;
+      }
+      .invite .navy svg {
+        position: absolute;
+        right: -150px;
+        bottom: -150px;
+        width: 460px;
+        height: 460px;
+      }
+      .invite h1 {
+        position: relative;
+        font: 500 44px/1.1 var(--serif);
+        letter-spacing: -0.015em;
+      }
+      .invite .navy p {
+        position: relative;
+        margin-top: 16px;
+        font-size: 17px;
+        line-height: 1.55;
+        color: rgba(243, 245, 247, 0.88);
+        max-width: 34ch;
+      }
+      .invite .navy .honest {
+        margin-top: auto;
+        padding-top: 20px;
+        border-top: 1px solid rgba(243, 245, 247, 0.24);
+        font-size: 14px;
+        color: rgba(243, 245, 247, 0.88);
+        max-width: none;
+      }
+      .invite .plan {
+        padding: 44px 44px 40px;
+      }
+      .plan h2 {
+        font: 600 18px/1.3 var(--sans);
+        color: var(--ink);
+      }
+      .timeline {
+        margin-top: 18px;
+      }
+      .timeline li {
+        display: grid;
+        grid-template-columns: 64px 18px minmax(0, 1fr);
+        column-gap: 12px;
+        align-items: start;
+        padding-bottom: 20px;
+        position: relative;
+      }
+      .timeline li:last-child {
+        padding-bottom: 0;
+      }
+      .timeline .day {
+        font: 600 14px/1.5 var(--sans);
+        color: var(--navy-2);
+      }
+      .timeline .dot {
+        width: 9px;
+        height: 9px;
+        margin: 7px auto 0;
+        border-radius: 50%;
+        background: var(--surface);
+        box-shadow: inset 0 0 0 2px var(--navy);
+        position: relative;
+        z-index: 1;
+      }
+      .timeline li:not(:last-child)::after {
+        content: "";
+        position: absolute;
+        left: 84.5px;
+        top: 16px;
+        bottom: -7px;
+        width: 1px;
+        background: var(--rule);
+      }
+      .timeline .t {
+        font-size: 16px;
+        line-height: 1.5;
+        color: var(--ink);
+      }
+      .timeline .s {
+        display: block;
+        font-size: 13px;
+        color: var(--quiet);
+      }
+      .plan .btn {
+        margin-top: 28px;
+        height: 44px;
+        padding: 0 28px;
+      }
+
+      /* Opening B: a letter on paper with the walk laid out across the page. */
+      .letter {
+        max-width: 960px;
+        margin: 72px auto 0;
+      }
+      .letter h1 {
+        font: 500 48px/1.08 var(--serif);
+        letter-spacing: -0.02em;
+        color: var(--ink);
+      }
+      .letter .intro {
+        margin-top: 16px;
+        font-size: 18px;
+        line-height: 1.55;
+        max-width: 56ch;
+      }
+      .letter .honest {
+        margin-top: 24px;
+        padding: 14px 18px;
+        border: 1px solid var(--hair);
+        border-radius: var(--r-m);
+        background: var(--surface);
+        font-size: 15px;
+        color: var(--ink);
+        max-width: 64ch;
+      }
+      .walk {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        margin-top: 44px;
+        border-top: 1px solid var(--rule);
+      }
+      .walk li {
+        position: relative;
+        padding: 18px 16px 0 0;
+      }
+      .walk li::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: -5px;
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--paper);
+        box-shadow: inset 0 0 0 2px var(--navy);
+      }
+      .walk .day {
+        display: block;
+        font: 600 14px/1.4 var(--sans);
+        color: var(--navy-2);
+      }
+      .walk .t {
+        display: block;
+        margin-top: 4px;
+        font-size: 15px;
+        line-height: 1.4;
+        color: var(--ink);
+      }
+      .letter .btn {
+        margin-top: 40px;
+        height: 44px;
+        padding: 0 28px;
+      }
+
+      /* The ask A: closes the walk in the same two panels the Opening uses. */
+      .gives {
+        position: relative;
+        display: grid;
+        gap: 20px;
+        margin-top: 32px;
+      }
+      .gives li {
+        display: grid;
+        grid-template-columns: 30px minmax(0, 1fr);
+        column-gap: 10px;
+        font-size: 16px;
+        line-height: 1.5;
+        color: rgba(243, 245, 247, 0.88);
+      }
+      .gives .n {
+        font: 500 24px/1.15 var(--serif);
+        color: #fff;
+      }
+      .gives b {
+        display: block;
+        font-weight: 600;
+        font-size: 18px;
+        color: #fff;
+      }
+      .plain {
+        margin-top: 8px;
+      }
+      .plain li {
+        position: relative;
+        padding: 5px 0 5px 18px;
+        font-size: 16px;
+        color: var(--ink);
+      }
+      .plain li::before {
+        content: "";
+        position: absolute;
+        left: 1px;
+        top: 14px;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--navy);
+      }
+      .plan h2 + .plain + h2 {
+        margin-top: 24px;
+      }
+      .acts {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 28px;
+      }
+      .acts .btn {
+        margin-top: 0;
+        height: 44px;
+        padding: 0 24px;
+      }
+      .contact {
+        margin-top: 12px;
+        font-size: 14px;
+        color: var(--quiet);
+      }
+      /* The ask B: three columns on paper, like a short term sheet. */
+      .terms {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 20px;
+        margin-top: 36px;
+      }
+      .terms .panel.lead {
+        margin-top: 0;
+        padding: 24px;
+      }
+      .terms .panel h2 {
+        margin-bottom: 4px;
+      }
+      .terms .num li {
+        padding: 8px 0;
+        font-size: 16px;
+        color: var(--ink-2);
+      }
+      .terms .num b {
+        display: block;
+        font-weight: 600;
+        color: var(--ink);
+      }
+      .free {
+        margin-top: 32px;
+        font: 500 22px/1.3 var(--serif);
+        color: var(--ink);
+      }
+      @media (max-width: 900px) {
+        .terms {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+
+      /* The control bar. Deliberately unlike the design, so it is not judged as part of it. */
+      .dock {
+        position: fixed;
+        left: 50%;
+        bottom: 12px;
+        transform: translateX(-50%);
+        z-index: 20;
+        width: max-content;
+        max-width: calc(100vw - 16px);
+        background: #101214;
+        color: #f3f5f7;
+        border-radius: 14px;
+        padding: 8px 10px 9px;
+        box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.55);
+        font: 400 12px/1.2 "Helvetica Neue", Arial, sans-serif;
+      }
+      .dock .row {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+      .dock .grp {
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        flex: none;
+      }
+      .dock .lbl {
+        margin-right: 4px;
+        color: #a9b0b6;
+      }
+      .dock button {
+        height: 26px;
+        padding: 0 9px;
+        border-radius: 7px;
+        border: 0;
+        background: #2a2f34;
+        color: #f3f5f7;
+        font: inherit;
+      }
+      .dock button[aria-pressed="true"] {
+        background: #f3f5f7;
+        color: #101214;
+        font-weight: 700;
+      }
+      .dock .grp.off {
+        opacity: 0.32;
+        pointer-events: none;
+      }
+      .dock .cap {
+        margin-top: 7px;
+        color: #c9cfd4;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .dock .cap b {
+        color: #fff;
+        font-weight: 700;
+      }
+
+      @media (max-width: 900px) {
+        .wrap {
+          padding: 0 16px;
+        }
+        .nav,
+        .bar .right span {
+          display: none;
+        }
+        .story .wrap {
+          flex-wrap: wrap;
+        }
+        .story .move {
+          margin-left: 0;
+          flex-wrap: wrap;
+          flex: 1 1 100%;
+        }
+        .story .what .seat {
+          display: block;
+          margin-left: 0;
+        }
+        .head h1 {
+          font-size: 28px;
+        }
+        .grid.two,
+        .grid.three,
+        .cols-main,
+        .band,
+        .invite {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .tiles {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .rows.cols {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .rows.cols > li:nth-last-child(2) {
+          border-bottom: 1px solid var(--hair);
+          padding-bottom: 11px;
+        }
+        .invite .navy {
+          min-height: 0;
+          padding: 32px 24px;
+        }
+        .invite .plan {
+          padding: 28px 24px;
+        }
+        .invite h1,
+        .letter h1 {
+          font-size: 34px;
+        }
+        .walk {
+          grid-template-columns: minmax(0, 1fr);
+          border-top: 0;
+          border-left: 1px solid var(--rule);
+          margin-left: 4px;
+        }
+        .walk li {
+          padding: 0 0 18px 20px;
+        }
+        .walk li::before {
+          left: -5px;
+          top: 6px;
+        }
+        .tabs {
+          overflow-x: auto;
+        }
+        .tabs a {
+          white-space: nowrap;
+        }
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        .btn,
+        .chip,
+        .dock button {
+          transition:
+            background-color 150ms,
+            border-color 150ms,
+            color 150ms;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ───────────── Today's screens, for comparison (press T) ───────────── -->
+    <div class="today">
+      <img data-name="overview" src="today/today-overview.png" alt="Today's ComDash Overview" />
+      <img data-name="eccp" src="today/today-eccp.png" alt="Today's ECCP view" />
+      <img data-name="opening" src="today/today-opening.png" alt="Today's Opening" />
+      <img data-name="ask" src="today/today-ask.png" alt="Today's ask" />
+    </div>
+
+    <!-- ───────────── Screen 1: ComDash Overview (Stop 4) ───────────── -->
+    <section class="screen" data-name="overview">
+      <div class="bar">
+        <div class="wrap">
+          <div class="brand">
+            <img src="../../public/assets/comlinked-logo.png" alt="ComLinked" />
+            <span class="tag example">Example data</span>
+          </div>
+          <nav class="nav" aria-label="Main">
+            <a href="#" aria-current="page">ComDash</a>
+            <a href="#">Leads <span class="count">5</span></a>
+            <a href="#">ComMail <span class="count">1</span></a>
+            <a href="#">Asks <span class="count">1</span></a>
+            <a href="#">Wins</a>
+          </nav>
+          <div class="right">
+            <span>Notifications <span class="count">6</span></span>
+            <span>Search</span>
+            <div class="self" aria-label="Kalayaan Foods Inc.">KF</div>
+          </div>
+        </div>
+      </div>
+      <div class="story">
+        <div class="wrap">
+          <div class="steps" aria-hidden="true"><i></i><i></i><i></i><i class="now"></i><i class="next"></i><i class="next"></i></div>
+          <p class="what">
+            <b>Day 14 · The member, two weeks in</b
+            ><span class="seat">You’re seeing Kalayaan Foods, an ECCP member.</span>
+          </p>
+          <div class="move">
+            <span>4 of 6</span>
+            <button class="btn quiet sm" type="button">Back</button>
+            <button class="btn line sm" type="button">Next</button>
+          </div>
+        </div>
+      </div>
+
+      <main class="wrap">
+        <div class="head">
+          <h1>Kalayaan Foods Inc.</h1>
+          <p class="meta">Food manufacturing · Quezon City · ECCP member</p>
+          <nav class="tabs" aria-label="ComDash">
+            <a href="#" aria-current="page">Overview</a>
+            <a href="#">Interest Signals</a>
+            <a href="#">Connections</a>
+            <a href="#">Profile</a>
+          </nav>
+        </div>
+
+        <section class="panel lead" aria-labelledby="na-title">
+          <p class="kicker"><b>Next action</b><span>Priority 2 of 8</span></p>
+          <h2 id="na-title">Finish today’s leads</h2>
+          <p class="body">5 of 5 leads still need a Connect, Message or Skip.</p>
+          <a class="btn solid" href="#">Open today’s leads</a>
+          <p class="note why">Shown because no drafts are waiting and today’s leads aren’t finished.</p>
+        </section>
+
+        <!-- Layout A: Interest Signals takes the wide column; Connections and Profile stack beside it. -->
+        <div class="grid two only-a">
+          <section class="panel">
+            <header>
+              <h2>Interest Signals</h2>
+              <a class="go" href="#">Open Interest Signals</a>
+            </header>
+            <div class="stats">
+              <div class="stat"><span class="k">Interested companies</span><span class="fig">13</span><span class="d"><b>4 Hot</b></span></div>
+              <div class="stat"><span class="k">Messages</span><span class="fig">3</span><span class="d">last 7 days</span></div>
+              <div class="stat"><span class="k">Search appearances</span><span class="fig">3</span><span class="d">last 7 days</span></div>
+            </div>
+            <div class="viz" data-viz></div>
+            <h3 class="sub">Hot companies</h3>
+            <ul class="rows" data-hot></ul>
+          </section>
+          <div class="stack">
+            <section class="panel">
+              <header>
+                <h2>Connections</h2>
+                <a class="go" href="#">Open Connections</a>
+              </header>
+              <div class="stats">
+                <div class="stat"><span class="k">Connections</span><span class="fig">4</span></div>
+                <div class="stat"><span class="k">Pending requests</span><span class="fig">2</span><span class="d">1 incoming, 1 outgoing</span></div>
+              </div>
+            </section>
+            <section class="panel">
+              <header>
+                <h2>Profile</h2>
+                <a class="go" href="#">Open Profile</a>
+              </header>
+              <div class="stats">
+                <div class="stat"><span class="k">Profile completeness</span><span class="fig">90%</span></div>
+                <div class="stat"><span class="k">Profile gaps</span><span class="fig">1</span></div>
+              </div>
+              <div class="meter"><i style="width: 90%"></i></div>
+              <p class="note" style="margin-top: 12px"><b style="font-weight: 600; color: var(--ink)">Missing:</b> a photo of your work.</p>
+            </section>
+          </div>
+        </div>
+
+        <!-- Layout B: three even summaries, then the Hot companies across the full width. -->
+        <div class="only-b">
+          <div class="grid three">
+            <section class="panel">
+              <header>
+                <h2>Interest Signals</h2>
+                <a class="go" href="#">Open</a>
+              </header>
+              <div class="stats" style="gap: 24px">
+                <div class="stat"><span class="k">Interested</span><span class="fig">13</span><span class="d"><b>4 Hot</b></span></div>
+                <div class="stat"><span class="k">Messages</span><span class="fig">3</span><span class="d">last 7 days</span></div>
+                <div class="stat"><span class="k">Search</span><span class="fig">3</span><span class="d">last 7 days</span></div>
+              </div>
+              <div class="viz" data-viz data-short></div>
+            </section>
+            <section class="panel">
+              <header>
+                <h2>Connections</h2>
+                <a class="go" href="#">Open</a>
+              </header>
+              <div class="stats">
+                <div class="stat"><span class="k">Connections</span><span class="fig">4</span></div>
+                <div class="stat"><span class="k">Pending requests</span><span class="fig">2</span><span class="d">1 incoming, 1 outgoing</span></div>
+              </div>
+            </section>
+            <section class="panel">
+              <header>
+                <h2>Profile</h2>
+                <a class="go" href="#">Open</a>
+              </header>
+              <div class="stats">
+                <div class="stat"><span class="k">Profile completeness</span><span class="fig">90%</span></div>
+                <div class="stat"><span class="k">Profile gaps</span><span class="fig">1</span></div>
+              </div>
+              <div class="meter"><i style="width: 90%"></i></div>
+              <p class="note" style="margin-top: 12px"><b style="font-weight: 600; color: var(--ink)">Missing:</b> a photo of your work.</p>
+            </section>
+          </div>
+          <section class="panel" style="margin-top: 20px">
+            <header>
+              <h2>Hot companies</h2>
+              <a class="go" href="#">Open Interest Signals</a>
+            </header>
+            <ul class="rows cols" data-hot></ul>
+          </section>
+        </div>
+
+        <p class="foot">Sample ComDash. All companies, people and figures are example data.</p>
+      </main>
+    </section>
+
+    <!-- ───────────── Screen 2: ECCP's view (Stop 5) ───────────── -->
+    <section class="screen compact" data-name="eccp">
+      <div class="bar">
+        <div class="wrap">
+          <div class="brand">
+            <img src="../../public/assets/comlinked-logo.png" alt="ComLinked" />
+            <span class="tag example">Example data</span>
+          </div>
+          <div class="right"><span>ECCP, read-only</span></div>
+        </div>
+      </div>
+      <div class="story">
+        <div class="wrap">
+          <div class="steps" aria-hidden="true"><i></i><i></i><i></i><i></i><i class="now"></i><i class="next"></i></div>
+          <p class="what">
+            <b>Day 14 · ECCP’s view</b><span class="seat">You’re seeing ECCP’s own view. It is read-only.</span>
+          </p>
+          <div class="move">
+            <button class="btn quiet sm" type="button">See the community manager’s side</button>
+            <span>5 of 6</span>
+            <button class="btn quiet sm" type="button">Back</button>
+            <button class="btn line sm" type="button">Next</button>
+          </div>
+        </div>
+      </div>
+
+      <main class="wrap">
+        <div class="head">
+          <div class="title-row">
+            <h1>Day 14 of the pilot</h1>
+            <span class="tag readonly">Read-only</span>
+          </div>
+          <p class="meta">ECCP on ComLinked</p>
+        </div>
+
+        <!-- Layout A: five even tiles, then the first 12 members. -->
+        <div class="tiles only-a">
+          <div class="panel stat"><span class="k">Claimed</span><span class="fig">40 <small>of 100</small></span></div>
+          <div class="panel stat"><span class="k">Active</span><span class="fig">20</span></div>
+          <div class="panel stat"><span class="k">Needs an intro</span><span class="fig">4</span></div>
+          <div class="panel stat"><span class="k">Deals confirmed</span><span class="fig">3</span></div>
+          <div class="panel stat"><span class="k">Wins posted</span><span class="fig">2</span></div>
+        </div>
+
+        <!-- Layout B: one figure leads, with how the 100 members split. -->
+        <section class="panel lead band only-b" aria-label="Where ECCP's members stand">
+          <div>
+            <span class="k note">Claimed</span>
+            <span class="fig big">40 <small>of 100</small></span>
+            <div class="split" aria-hidden="true">
+              <i class="s-active" style="flex: 20"></i><i class="s-quiet" style="flex: 16"></i
+              ><i class="s-intro" style="flex: 4"></i><i class="s-unclaimed" style="flex: 60"></i>
+            </div>
+            <!-- Decided 2026-11-18: the legend is the status filter. -->
+            <div class="chips keyed" role="group" aria-label="Filter by status">
+              <button class="chip" aria-pressed="true" type="button">All<b>100</b></button>
+              <button class="chip" aria-pressed="false" type="button"><i style="background: var(--navy)"></i>Active<b>20</b></button>
+              <button class="chip" aria-pressed="false" type="button"><i style="background: var(--sky)"></i>Quiet<b>16</b></button>
+              <button class="chip" aria-pressed="false" type="button"><i style="background: var(--error)"></i>Needs an intro<b>4</b></button>
+              <button class="chip" aria-pressed="false" type="button"><i style="background: var(--sunken); box-shadow: inset 0 0 0 1px var(--rule)"></i>Not yet claimed<b>60</b></button>
+            </div>
+          </div>
+          <div class="side">
+            <div class="stat"><span class="k">Deals confirmed</span><span class="fig">3</span></div>
+            <div class="stat"><span class="k">Wins posted</span><span class="fig">2</span></div>
+          </div>
+        </section>
+
+        <div class="cols-main">
+          <section class="panel">
+            <header><h2>100 members</h2></header>
+
+            <div class="only-a">
+              <div class="chips" role="group" aria-label="Filter members">
+                <button class="chip" aria-pressed="true" type="button">All<b>100</b></button>
+                <button class="chip" aria-pressed="false" type="button">Active<b>20</b></button>
+                <button class="chip" aria-pressed="false" type="button">Quiet<b>16</b></button>
+                <button class="chip" aria-pressed="false" type="button">Needs an intro<b>4</b></button>
+                <button class="chip" aria-pressed="false" type="button">Not yet claimed<b>60</b></button>
+              </div>
+              <ul class="rows members" data-members="first"></ul>
+              <div class="more">
+                <span class="note">Showing 12 of 100</span>
+                <button class="btn line sm" type="button">Show all 100 members</button>
+              </div>
+            </div>
+
+            <div class="only-b" data-groups></div>
+          </section>
+
+          <div class="stack">
+            <section class="panel">
+              <header><h2>Success wall</h2></header>
+              <ul class="wins">
+                <li>
+                  <b>We needed a forwarder for our first shipment of banana chips to Europe.</b> We met
+                  through a day-one match, and the shipment left Manila within two weeks.
+                  <span class="by">Kalayaan Foods Inc. with Nordhavn Freight Forwarders</span>
+                </li>
+                <li>
+                  <b>We needed a European wine supplier for our restaurant and events.</b> A reply on
+                  the Asks board turned into a twelve-month supply agreement.
+                  <span class="by">Regalia Business Hotel with Vinoteca Wine Importers</span>
+                </li>
+              </ul>
+            </section>
+            <section class="panel">
+              <header><h2>Monthly top companies</h2></header>
+              <p class="note" style="margin: -8px 0 10px">ECCP, month 1. For recognition only, and it resets each month.</p>
+              <ol class="top" data-top></ol>
+            </section>
+          </div>
+        </div>
+      </main>
+    </section>
+
+    <!-- ───────────── Screen 3: the Opening (Stop 0) ───────────── -->
+    <section class="screen" data-name="opening">
+      <div class="bar">
+        <div class="wrap">
+          <div class="brand">
+            <img src="../../public/assets/comlinked-logo.png" alt="ComLinked" />
+            <span class="tag example">Example data</span>
+          </div>
+        </div>
+      </div>
+
+      <main class="wrap">
+        <!-- Layout A: an invitation, in the two panels the claim steps already use. -->
+        <div class="invite only-a">
+          <div class="navy">
+            <svg viewBox="0 0 460 460" fill="none" aria-hidden="true">
+              <g stroke="#55a2d4" stroke-opacity="0.2">
+                <circle cx="230" cy="230" r="60" />
+                <circle cx="230" cy="230" r="110" />
+                <circle cx="230" cy="230" r="160" />
+                <circle cx="230" cy="230" r="210" />
+              </g>
+            </svg>
+            <h1>A preview<br />for ECCP</h1>
+            <p>
+              It shows how a ComLinked pilot could run for ECCP’s members, from the first day to two
+              weeks in.
+            </p>
+            <p class="honest">
+              ECCP has not joined ComLinked. Every company, person and figure here is invented.
+            </p>
+          </div>
+          <div class="plan">
+            <h2>The 6 stops</h2>
+            <ol class="timeline" data-stops="rail"></ol>
+            <a class="btn solid" href="#">Start</a>
+          </div>
+        </div>
+
+        <!-- Layout B: a letter on paper, with the walk laid out across the page. -->
+        <div class="letter only-b">
+          <h1>A preview for ECCP</h1>
+          <p class="intro">
+            It shows how a ComLinked pilot could run for ECCP’s members, from the first day to two
+            weeks in.
+          </p>
+          <p class="honest">
+            ECCP has not joined ComLinked. Every company, person and figure here is invented.
+          </p>
+          <ol class="walk" data-stops="walk"></ol>
+          <a class="btn solid" href="#">Start</a>
+        </div>
+      </main>
+    </section>
+
+    <!-- ───────────── Screen 4: the ask (Stop 6) ───────────── -->
+    <section class="screen" data-name="ask">
+      <div class="bar">
+        <div class="wrap">
+          <div class="brand">
+            <img src="../../public/assets/comlinked-logo.png" alt="ComLinked" />
+            <span class="tag example">Example data</span>
+          </div>
+        </div>
+      </div>
+      <div class="story">
+        <div class="wrap">
+          <div class="steps" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i class="now"></i></div>
+          <p class="what"><b>What a pilot asks of ECCP</b></p>
+          <div class="move">
+            <span>6 of 6</span>
+            <button class="btn quiet sm" type="button">Back</button>
+            <button class="btn line sm" type="button">Start again</button>
+          </div>
+        </div>
+      </div>
+
+      <main class="wrap">
+        <!-- Layout A: the same two panels as the Opening, so the walk closes the way it opened. -->
+        <div class="invite only-a">
+          <div class="navy">
+            <svg viewBox="0 0 460 460" fill="none" aria-hidden="true">
+              <g stroke="#55a2d4" stroke-opacity="0.2">
+                <circle cx="230" cy="230" r="60" />
+                <circle cx="230" cy="230" r="110" />
+                <circle cx="230" cy="230" r="160" />
+                <circle cx="230" cy="230" r="210" />
+              </g>
+            </svg>
+            <h1>What a pilot<br />asks of ECCP</h1>
+            <ol class="gives" aria-label="ECCP gives two things">
+              <li><span class="n">1</span><span><b>Your Member List.</b>Company names and websites only.</span></li>
+              <li><span class="n">2</span><span><b>One contact.</b>They send each member its claim link from ECCP’s own address.</span></li>
+            </ol>
+            <p class="honest" style="font: 500 20px/1.35 var(--serif); color: #fff">The pilot is free for ECCP and its members.</p>
+          </div>
+          <div class="plan">
+            <h2>ComLinked does the rest</h2>
+            <ul class="plain">
+              <li>Builds each company’s profile.</li>
+              <li>Supplies the community manager.</li>
+              <li>Makes introductions, so no member goes without a lead.</li>
+            </ul>
+            <h2>What your members get</h2>
+            <ul class="plain">
+              <li>A profile built for them</li>
+              <li>Matches on the first day</li>
+              <li>New leads every morning</li>
+              <li>Interest shown by name</li>
+            </ul>
+            <div class="acts">
+              <a class="btn solid" href="#">Email Richard</a>
+              <a class="btn line" href="#">Explore on your own</a>
+            </div>
+            <p class="contact">presenter@comlinked.example</p>
+          </div>
+        </div>
+
+        <!-- Layout B: three columns on paper, with what ECCP gives leading. -->
+        <div class="letter only-b" style="max-width: 1040px">
+          <h1>What a pilot asks of ECCP</h1>
+          <div class="terms">
+            <section class="panel lead">
+              <h2>ECCP gives two things</h2>
+              <ol class="num">
+                <li><b>1. Your Member List.</b>Company names and websites only.</li>
+                <li><b>2. One contact.</b>They send each member its claim link from ECCP’s own address.</li>
+              </ol>
+            </section>
+            <section class="panel">
+              <h2>ComLinked does the rest</h2>
+              <ul class="plain">
+                <li>Builds each company’s profile.</li>
+                <li>Supplies the community manager.</li>
+                <li>Makes introductions, so no member goes without a lead.</li>
+              </ul>
+            </section>
+            <section class="panel">
+              <h2>What your members get</h2>
+              <ul class="plain">
+                <li>A profile built for them</li>
+                <li>Matches on the first day</li>
+                <li>New leads every morning</li>
+                <li>Interest shown by name</li>
+              </ul>
+            </section>
+          </div>
+          <p class="free">The pilot is free for ECCP and its members.</p>
+          <div class="acts" style="margin-top: 20px">
+            <a class="btn solid" href="#">Email Richard</a>
+            <a class="btn line" href="#">Explore on your own</a>
+          </div>
+          <p class="contact">presenter@comlinked.example</p>
+        </div>
+      </main>
+    </section>
+
+    <!-- ───────────── The control bar ───────────── -->
+    <div class="dock" role="region" aria-label="Specimen controls">
+      <div class="row">
+        <div class="grp" data-axis="screen">
+          <span class="lbl">Screen</span>
+          <button data-v="overview">ComDash</button><button data-v="eccp">ECCP’s view</button
+          ><button data-v="opening">Opening</button><button data-v="ask">The ask</button>
+        </div>
+        <div class="grp" data-axis="layout"><span class="lbl">Layout</span><button data-v="a">A</button><button data-v="b">B</button></div>
+        <div class="grp" data-axis="type"><span class="lbl">Figures</span><button data-v="a">A</button><button data-v="b">B</button></div>
+        <div class="grp" data-axis="surface"><span class="lbl">Panels</span><button data-v="a">A</button><button data-v="b">B</button></div>
+        <div class="grp" data-axis="marks"><span class="lbl">Marks</span><button data-v="a">A</button><button data-v="b">B</button></div>
+        <div class="grp" data-axis="chart"><span class="lbl">Chart</span><button data-v="a">A</button><button data-v="b">B</button></div>
+        <div class="grp" data-axis="bar"><span class="lbl">Story Bar</span><button data-v="a">A</button><button data-v="b">B</button></div>
+        <div class="grp" data-axis="today"><button data-v="1" data-toggle>Today (T)</button></div>
+      </div>
+      <p class="cap" data-cap></p>
+    </div>
+
+    <script>
+      // Throwaway prototype script: fills the lists from the Demo's example data and wires the bar.
+      const root = document.documentElement;
+      const NAMES = {
+        layout: {
+          overview: { a: "wide Interest Signals, two stacked beside it", b: "three even summaries, Hot companies below" },
+          eccp: { a: "five tiles, first 12 members", b: "one claimed figure with the split, members grouped by status" },
+          opening: { a: "invitation in two panels", b: "letter on paper with the walk across" },
+          ask: { a: "two panels, matching the Opening", b: "three columns on paper" },
+        },
+        type: { a: "sans figures", b: "serif figures" },
+        surface: { a: "hairline panels, only the lead raised", b: "all panels raised, the lead on blue tint" },
+        marks: { a: "white tile", b: "blue tint when claimed, dashed when not" },
+        chart: { a: "day bars", b: "line with area" },
+        bar: { a: "second row of the header", b: "navy strip" },
+      };
+      const APPLIES = {
+        overview: ["layout", "type", "surface", "marks", "chart", "bar"],
+        eccp: ["layout", "type", "surface", "marks", "bar"],
+        opening: ["layout"],
+        ask: ["layout", "bar"],
+      };
+      const AXES = ["screen", "layout", "type", "surface", "marks", "chart", "bar", "today"];
+      const SCREENS = ["overview", "eccp", "opening", "ask"];
+      // The layout pick is kept per screen. These defaults are the picks made on 2026-11-18.
+      const LAYOUT = { overview: "a", eccp: "b", opening: "a", ask: "a" };
+
+      const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+      const initials = (n) => n.split(" ").filter((w) => /^[A-Z]/.test(w)).slice(0, 2).map((w) => w[0]).join("");
+      const mark = (n, unclaimed) => `<span class="mark${unclaimed ? " unclaimed" : ""}" aria-hidden="true">${initials(n)}</span>`;
+
+      // Hot companies on the Overview.
+      const HOT = [
+        ["Hapag Kitchen Group", "Restaurant group · Taguig City"],
+        ["Luntian Foods Inc.", "Organic food distribution · Marikina City"],
+        ["Pacific Pack Solutions", "Packaging · Pasig City"],
+        ["Nordhavn Freight Forwarders", "Freight forwarding · Quezon City"],
+      ];
+      document.querySelectorAll("[data-hot]").forEach((ul) => {
+        ul.innerHTML = HOT.map(
+          ([n, w]) =>
+            `<li>${mark(n)}<span class="who"><a class="name" href="#">${esc(n)}</a><span class="where">${esc(w)}</span></span><span class="tag hot">Hot</span></li>`,
+        ).join("");
+      });
+
+      // Visibility over 14 days: 7 search appearances and recommendations, at most 2 in a day.
+      const DAYS = [0, 0, 0, 0, 2, 0, 1, 0, 0, 1, 0, 2, 0, 1];
+      document.querySelectorAll("[data-viz]").forEach((box) => {
+        const W = 560, H = box.hasAttribute("data-short") ? 56 : 64, step = W / DAYS.length, top = 2;
+        const y = (v) => H - 2 - (v / top) * (H - 14);
+        const bars = DAYS.map((v, i) => {
+          const x = i * step + step / 2 - 9;
+          return v
+            ? `<rect x="${x}" y="${y(v)}" width="18" height="${H - 2 - y(v)}" rx="3" fill="#133e5e"/>`
+            : `<rect x="${x}" y="${H - 4}" width="18" height="2" rx="1" fill="#c6c9cc"/>`;
+        }).join("");
+        const pts = DAYS.map((v, i) => [i * step + step / 2, y(v)]);
+        const path = pts.map(([px, py], i) => `${i ? "L" : "M"}${px} ${py}`).join(" ");
+        const last = pts[pts.length - 1];
+        box.innerHTML = `
+          <svg class="bars" viewBox="0 0 ${W} ${H}" role="img" aria-label="Search appearances and recommendations by day">${bars}</svg>
+          <svg class="line" viewBox="0 0 ${W} ${H}" role="img" aria-label="Search appearances and recommendations by day">
+            <path d="${path} L${last[0]} ${H - 2} L${pts[0][0]} ${H - 2}Z" fill="#e4f1fa"/>
+            <path d="${path}" fill="none" stroke="#133e5e" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+            <circle cx="${last[0]}" cy="${last[1]}" r="4" fill="#133e5e" stroke="#fff" stroke-width="2"/>
+          </svg>
+          <div class="axis"><span>Day 1</span><span>Day 14</span></div>
+          <p class="note">7 search appearances and recommendations over 14 days since you claimed your profile, with at most 2 in a day.</p>`;
+      });
+
+      // ECCP's members, in today's order: active, quiet, needs an intro, not yet claimed.
+      const GROUPS = [
+        ["Active", "active", 20, ["Kalayaan Foods Inc.", "Maple Bay Grocers", "Pacific Pack Solutions", "Luntian Foods Inc.", "Kainan Catering Co.", "Buhay Pharmacy Chain", "Tanim Farm Cooperative", "Kapwa Snack Foods", "Lasa Frozen Foods", "Tamis Confectionery", "Nordhavn Freight Forwarders", "Heliotek Solar"]],
+        ["Quiet", "quiet", 16, ["Tala Print and Label", "Sari Central Wholesale", "Hapag Kitchen Group", "Malaya Export Traders", "Hilaga Spice Traders", "Bukas Office Canteens"]],
+        ["Needs an intro", "intro", 4, ["Lakbay Hotels", "Bigasan Rice Mills", "Palengke Online", "Medivant Pharma Distribution"]],
+        ["Not yet claimed", "unclaimed", 60, ["Northline Logistics", "Bayan Cold Storage", "Tibay Crates and Pallets", "Sinag Energy Systems", "Agos Water Services", "Dalay Fleet Rentals"]],
+      ];
+      const row = (n, label, cls, extra, tagged = true) =>
+        `<li>${mark(n, cls === "unclaimed")}<span class="who"><span class="name">${esc(n)}</span>${extra ? `<span class="where">${extra}</span>` : ""}</span>${tagged ? `<span class="tag ${cls}">${label}</span>` : ""}</li>`;
+      document.querySelector('[data-members="first"]').innerHTML = GROUPS[0][3].map((n) => row(n, "Active", "active")).join("");
+      document.querySelector("[data-groups]").innerHTML = GROUPS.map(([label, cls, total, names]) => {
+        const shown = names.slice(0, cls === "intro" ? 4 : 6);
+        return `<div class="group"><header><h3>${label}</h3><span class="n">${total}</span>${
+          total > shown.length ? `<button class="all" type="button">Show all ${total}</button>` : ""
+        }</header><ul class="rows members cols">${shown
+          .map((n) => row(n, label, cls, n === "Northline Logistics" ? "A member is waiting" : "", false))
+          .join("")}</ul></div>`;
+      }).join("");
+
+      const TOP = [["Kalayaan Foods Inc.", 123], ["Kapwa Snack Foods", 98], ["Lasa Frozen Foods", 77], ["Tamis Confectionery", 72], ["Luntian Foods Inc.", 69], ["Maple Bay Grocers", 61], ["Kainan Catering Co.", 61], ["Tanim Farm Cooperative", 59], ["Nordhavn Freight Forwarders", 58], ["Lumen Shared Services", 58]];
+      document.querySelector("[data-top]").innerHTML = TOP.map(
+        ([n, p], i) => `<li><span class="rank">${i + 1}</span><span class="co">${esc(n)}</span><span class="pts">${p} points</span></li>`,
+      ).join("");
+
+      // The six Stops.
+      const STOPS = [
+        ["Day 0", "ECCP’s member list becomes profiles", "The community manager’s view"],
+        ["Day 1", "A member claims its profile", "A member’s view"],
+        ["Day 2", "The next morning", "A member’s view"],
+        ["Day 14", "The member, two weeks in", "A member’s view"],
+        ["Day 14", "ECCP’s view", "ECCP’s own view"],
+        ["", "What a pilot asks of ECCP", ""],
+      ];
+      document.querySelector('[data-stops="rail"]').innerHTML = STOPS.map(
+        ([d, t]) => `<li><span class="day">${d}</span><span class="dot"></span><span class="t">${t}</span></li>`,
+      ).join("");
+      document.querySelector('[data-stops="walk"]').innerHTML = STOPS.map(
+        ([d, t]) => `<li><span class="day">${d || "&nbsp;"}</span><span class="t">${t}</span></li>`,
+      ).join("");
+
+      // The bar: picks live in the address, so a reload or a shared file path keeps them.
+      const params = new URLSearchParams(location.search);
+      AXES.forEach((a) => {
+        if (a !== "layout" && params.has(a)) root.dataset[a] = params.get(a);
+      });
+      SCREENS.forEach((k) => {
+        if (params.has("layout_" + k)) LAYOUT[k] = params.get("layout_" + k);
+      });
+      function render() {
+        const s = root.dataset.screen;
+        root.dataset.layout = LAYOUT[s];
+        document.querySelectorAll(".dock .grp").forEach((g) => {
+          const axis = g.dataset.axis;
+          g.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(root.dataset[axis] === b.dataset.v)));
+          const used = axis === "screen" || axis === "today" || APPLIES[s].includes(axis);
+          g.classList.toggle("off", !used || (root.dataset.today === "1" && axis !== "screen" && axis !== "today"));
+        });
+        const label = { layout: "Layout", type: "Figures", surface: "Panels", marks: "Marks", chart: "Chart", bar: "Story Bar" };
+        document.querySelector("[data-cap]").innerHTML =
+          root.dataset.today === "1"
+            ? "<b>Today’s screen</b>, as the Demo shows it now. Press T to go back."
+            : APPLIES[s]
+                .map((a) => {
+                  const v = root.dataset[a];
+                  const name = a === "layout" ? NAMES.layout[s][v] : NAMES[a][v];
+                  return `<b>${label[a]} ${v.toUpperCase()}</b> ${name}`;
+                })
+                .join(" &nbsp;·&nbsp; ");
+        const q = new URLSearchParams();
+        AXES.forEach((a) => a !== "layout" && q.set(a, root.dataset[a]));
+        SCREENS.forEach((k) => q.set("layout_" + k, LAYOUT[k]));
+        history.replaceState(null, "", "?" + q.toString());
+      }
+      function set(axis, v) {
+        if (axis === "layout") LAYOUT[root.dataset.screen] = v;
+        else root.dataset[axis] = v;
+        render();
+      }
+      document.querySelectorAll(".dock button").forEach((b) => {
+        b.addEventListener("click", () => {
+          const axis = b.parentElement.dataset.axis;
+          if (b.hasAttribute("data-toggle")) set(axis, root.dataset[axis] === "1" ? "0" : "1");
+          else set(axis, b.dataset.v);
+        });
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.target.matches("input, textarea, [contenteditable]")) return;
+        const i = SCREENS.indexOf(root.dataset.screen);
+        if (e.key === "ArrowRight") set("screen", SCREENS[(i + 1) % SCREENS.length]);
+        if (e.key === "ArrowLeft") set("screen", SCREENS[(i + SCREENS.length - 1) % SCREENS.length]);
+        if (e.key.toLowerCase() === "t") set("today", root.dataset.today === "1" ? "0" : "1");
+      });
+      render();
+    </script>
+  </body>
+</html>
