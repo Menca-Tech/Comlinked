@@ -18,6 +18,8 @@ const expect = defaultExpect.configure({ timeout: 15_000 });
 
 /** The scale's font sizes, in pixels. */
 const SCALE = [12, 13, 14, 16, 18, 22, 28, 36, 44];
+/** The scale's weights: the sans face at 400 and 600, and the serif at 500. */
+const WEIGHTS = [400, 500, 600];
 const LAPTOP = { width: 1280, height: 900 };
 const PHONE = { width: 390, height: 844 };
 const NARROW_PHONE = { width: 360, height: 800 };
@@ -486,7 +488,7 @@ async function readScreen(page: Page, within: string) {
       }
       return true;
     };
-    const text: { words: string; size: number; capitals: boolean }[] = [];
+    const text: { words: string; size: number; weight: number; capitals: boolean }[] = [];
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
     for (let node = walker.nextNode(); node; node = walker.nextNode()) {
       const words = node.textContent?.trim() ?? "";
@@ -496,6 +498,7 @@ async function readScreen(page: Page, within: string) {
       text.push({
         words: words.slice(0, 40),
         size: parseFloat(style.fontSize),
+        weight: Number(style.fontWeight),
         capitals: style.textTransform === "uppercase",
       });
     }
@@ -518,6 +521,8 @@ async function expectRules(page: Page, within: string) {
   expect(text.length).toBeGreaterThan(0);
   const offScale = text.filter((t) => !SCALE.includes(t.size));
   expect(offScale, "text sizes off the scale").toEqual([]);
+  const heavy = text.filter((t) => !WEIGHTS.includes(t.weight));
+  expect(heavy, "text in a weight the scale does not use").toEqual([]);
   const capitals = text.filter((t) => t.capitals);
   expect(capitals, "text set in capitals").toEqual([]);
   expect(await page.locator("[data-focus-panel]").count(), "Focus panels").toBeLessThanOrEqual(1);

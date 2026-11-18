@@ -29,7 +29,7 @@ export function WhatsNext() {
             <h2 className="a-h2">{when}</h2>
             <div className="a-list">
               {NEXT_UP.filter((n) => n[2] === when).map((n) => (
-                <div className="a-li a-later stack" key={n[0]}>
+                <div className="a-li stack" key={n[0]}>
                   <span className="a-li-m">
                     <strong>{n[0]}</strong>
                     <small>{n[1]}</small>

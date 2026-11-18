@@ -50,6 +50,11 @@
   min-height: 100vh;
 }
 :is(.cl-product, .cl-guide) {
+  /* The sans face is set at 400 and 600 only, so emphasis is 600 and never the browser's bold. */
+  b,
+  strong {
+    font-weight: 600;
+  }
   /* Controls and guide layout for the shadcn primitives. */
   .a-input {
     field-sizing: fixed;
@@ -954,7 +959,6 @@
     line-height: var(--leading-text);
   }
   .g-kv b {
-    font-weight: 600;
     color: var(--color-ink);
     font-variant-numeric: tabular-nums;
   }
@@ -968,7 +972,6 @@
   .g-led b {
     flex: none;
     width: var(--space-7);
-    font-weight: 600;
     color: var(--color-accent-strong);
     font-variant-numeric: tabular-nums;
   }
@@ -1692,8 +1695,9 @@
   .a-li.me + .a-li {
     border-top-color: transparent;
   }
+  /* A notification that has been read. */
   .a-li.read .a-li-m strong {
-    font-weight: 500;
+    font-weight: 400;
     color: var(--color-ink-2);
   }
   .a-profile {
@@ -1714,7 +1718,6 @@
     color: var(--color-ink-2);
   }
   .t-sum b {
-    font-weight: 600;
     color: var(--color-ink);
     font-variant-numeric: tabular-nums;
   }
