@@ -46,11 +46,9 @@ function websiteOf(id: string) {
 /** A person with an invented email on their Company's example domain and a visibly fake phone:
  * zeros after Metro Manila's area code, then their number in the Demo. Connected Companies see
  * their full name and title until they choose otherwise. */
-function personAt(
-  domain: string,
-  phoneNumber: number,
-  person: Pick<Person, "id" | "name" | "title" | "role"> & Partial<Pick<Person, "alias">>,
-): Person {
+/** A person as the data writes them: who they are, and whether they show an alias. */
+type PersonEntry = Pick<Person, "id" | "name" | "title" | "role"> & Partial<Pick<Person, "alias">>;
+function personAt(domain: string, phoneNumber: number, person: PersonEntry): Person {
   const first = (person.name.split(" ")[0] ?? person.name).toLowerCase();
   return {
     alias: false,
@@ -74,6 +72,36 @@ export const KALAYAAN_PEOPLE: Person[] = (
 ).map(function ([id, name, title, role], i) {
   return personAt(KALAYAAN_WEBSITE, i + 1, { id: id, name: name, title: title, role: role });
 });
+/** The people of the Companies Kalayaan Foods meets first: its day-one Matches and the Companies
+ * it is connected to two weeks in. Any other Company has none listed yet. Giving a Company people
+ * is a change here only. */
+const PEOPLE_ENTRIES: Record<string, PersonEntry[]> = {
+  nordhavn: [
+    { id: "mette", name: "Mette Lindholm", title: "Managing director", role: "primary" },
+    { id: "jonas", name: "Jonas Brandt", title: "Export sales manager", role: "sales" },
+  ],
+  maple: [
+    { id: "carmela", name: "Carmela Lopez", title: "General manager", role: "primary" },
+    { id: "dennis", name: "Dennis Ramos", title: "Category buyer", role: "procurement" },
+  ],
+  pack: [
+    { id: "ramon", name: "Ramon Castillo", title: "General manager", role: "primary" },
+    { id: "joy", name: "Joy Fernandez", title: "Account manager", role: "sales" },
+  ],
+  tala: [{ id: "rosario", name: "Rosario Mendoza", title: "Owner", role: "primary", alias: true }],
+};
+/** Each listed Company's people, with emails on its website's domain. Phones run in tens by
+ * Company: 11 and 12 for the first, 21 for the second, and so on. */
+export const PEOPLE: Record<string, Person[]> = Object.fromEntries(
+  Object.entries(PEOPLE_ENTRIES).map(function ([id, entries], c) {
+    return [
+      id,
+      entries.map(function (entry, i) {
+        return personAt(websiteOf(id), (c + 1) * 10 + i + 1, entry);
+      }),
+    ];
+  }),
+);
 /** The person the Demo is signed in as. There is no switching person. */
 export const SIGNED_IN = "ana";
 

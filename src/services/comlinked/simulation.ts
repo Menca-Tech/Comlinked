@@ -21,6 +21,7 @@ import {
   EXAMPLE_COMPANIES,
   NEW_BOOST,
   OTHER_CHAMBER_COMPANIES,
+  PEOPLE,
   PLAN_VIEWS,
   POOL,
   PROFILE_UPDATES,
@@ -48,6 +49,7 @@ import type {
   ConnectionItem,
   ConnectionItemKind,
   ConnectionRow,
+  ContactRequest,
   CountRow,
   DashAlert,
   Funnel,
@@ -66,9 +68,11 @@ import type {
   NoteGroup,
   PlanTerms,
   PlanUpsell,
+  PeopleShown,
   Person,
   PersonRole,
   PersonRow,
+  PersonView,
   PlanView,
   PreviewStop,
   ProfileField,
@@ -387,6 +391,7 @@ function fresh(): SimState {
     preview: null,
     exploring: false,
     sideStepShown: false,
+    contactRequests: [],
     agentLeft: {
       free: PLAN_VIEWS.free.agent?.left ?? 0,
       growth: PLAN_VIEWS.growth.agent?.left ?? 0,
@@ -522,6 +527,60 @@ export function peopleRows(): PersonRow[] {
     };
   });
 }
+/* ---------- What a Company may see of another's people ---------- */
+/** A person's alias: their first name and the initial of their last, such as "Ana R.". */
+function aliasOf(name: string) {
+  const last = name.split(" ").slice(1).pop();
+  return last ? firstName(name) + " " + last.charAt(0) + "." : name;
+}
+/** A Company's people: Kalayaan Foods' own ("me"), or those its data lists for another. */
+function peopleOf(owner: string): Person[] {
+  return owner === "me" ? S.me.people : (PEOPLE[owner] ?? []);
+}
+/** Whether two Companies are connected. Kalayaan Foods is one side of every Connection the Demo
+ * holds. */
+function areConnected(a: string, b: string) {
+  if (a === "me") return S.conn[b] === "connected";
+  return b === "me" && S.conn[a] === "connected";
+}
+/** The Contact Request a Company made for one person, if it made one. */
+function requestFor(from: string, personId: string): ContactRequest | undefined {
+  return S.contactRequests.find(function (r) {
+    return r.from === from && r.person === personId;
+  });
+}
+/** A person as a viewer sees them, given the viewer's Contact Request for them, if any. Email and
+ * phone show only once the person shared them, and a decline still reads as asked. */
+function personSeen(p: Person, request: ContactRequest | undefined): PersonView {
+  const shared = request?.state === "shared";
+  return {
+    id: p.id,
+    name: p.alias ? aliasOf(p.name) : p.name,
+    firstName: firstName(p.name),
+    title: p.showTitle ? p.title : null,
+    role: ROLES[p.role].label,
+    contact: shared ? { email: p.email, phone: p.phone } : null,
+    ask: shared ? "shared" : request ? "asked" : "open",
+  };
+}
+/** What one Company (the viewer, "me" for Kalayaan Foods) may see of another's people: only the
+ * basics before the owner claims, no people until the two are connected, then each person as they
+ * choose to be seen. Every screen that shows people asks here. */
+export function peopleSeenBy(viewer: string, owner: string): PeopleShown {
+  if (!hasClaimed(owner)) return { kind: "basics" };
+  if (!areConnected(viewer, owner)) return { kind: "not-connected" };
+  return {
+    kind: "people",
+    people: peopleOf(owner).map(function (p) {
+      return personSeen(p, requestFor(viewer, p.id));
+    }),
+  };
+}
+/** How a connected Company sees Ana before she has shared her details with it. */
+export function previewOfMe(): PersonView {
+  return personSeen(signedIn(), undefined);
+}
+
 /** How a message Kalayaan Foods sent is signed in ComMail. */
 export function signature() {
   return signedIn().name + " for your company";
@@ -2935,6 +2994,17 @@ const ACT = {
     if (!target || !mayMakePrimary(target)) return;
     primaryAdmin().role = "backup";
     target.role = "primary";
+    emit();
+  },
+  /** Shows the signed-in person to connected Companies by their full name or by an alias. */
+  chooseName: function (choice: string) {
+    signedIn().alias = choice === "alias";
+    emit();
+  },
+  /** Shows or hides the signed-in person's job title from connected Companies. */
+  toggleTitle: function () {
+    const me = signedIn();
+    me.showTitle = !me.showTitle;
     emit();
   },
   /** Takes a person's access away. Every Connection stays with the company. */

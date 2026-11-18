@@ -193,6 +193,41 @@ export interface Person {
   phone: string;
 }
 
+/** Where a Contact Request stands: waiting for the person asked, or answered. */
+export type ContactRequestState = "waiting" | "shared" | "declined";
+
+/** A connected Company's ask for one person's email and phone, which only that person answers. */
+export interface ContactRequest {
+  /** The Company that asked: "me" for Kalayaan Foods, or another Company's id. */
+  from: string;
+  /** The person asked, by id. */
+  person: string;
+  day: number;
+  state: ContactRequestState;
+}
+
+/** What a viewer can do about a person's email and phone: ask, wait for an answer, or read them.
+ * A declined request reads as still asked: the person who asked isn't told. */
+export type ContactAsk = "open" | "asked" | "shared";
+
+/** One person as another Company sees them: their shown name (an alias, if they chose one), their
+ * title unless hidden, their role, and their email and phone once they shared them with the
+ * viewer. */
+export interface PersonView {
+  id: string;
+  name: string;
+  firstName: string;
+  title: string | null;
+  role: string;
+  contact: Pick<Person, "email" | "phone"> | null;
+  ask: ContactAsk;
+}
+
+/** What one Company may see of another's people: nothing beyond the basics before it claims, no
+ * people until the two are connected, then each person as they choose to be seen. */
+export type PeopleShown =
+  { kind: "basics" } | { kind: "not-connected" } | { kind: "people"; people: PersonView[] };
+
 /** One person on the people page: their role's label and plain line, whether they are the
  * signed-in person, and what the signed-in person may do to them. */
 export interface PersonRow {
@@ -696,6 +731,8 @@ export interface SimState {
   exploring: boolean;
   /** Whether the Stop's side step is open, showing the same screen in another Seat. */
   sideStepShown: boolean;
+  /** Every Contact Request made this session, asked by Kalayaan Foods or asked of its people. */
+  contactRequests: ContactRequest[];
   /** The demo tiers' AI Lead Agent engagements left this month, and the Companies sent to. */
   agentLeft: Record<PlanView, number>;
   agentSent: string[];

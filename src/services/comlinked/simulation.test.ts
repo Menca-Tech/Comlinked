@@ -132,7 +132,10 @@ import {
   approver,
   backupAdmin,
   meetingAttendees,
+  PEOPLE,
   peopleRows,
+  peopleSeenBy,
+  previewOfMe,
   primaryAdmin,
   roleLabel,
   signature,
@@ -2903,6 +2906,120 @@ describe("what a Company may see of another", () => {
     );
     expect(hasClaimed(company.id)).toBe(false);
     expect(matchReason(company)).toContain(" works in payroll and HR, ");
+  });
+});
+
+describe("the people a Company may see of another", () => {
+  const names = (viewer: string, owner: string) => {
+    const seen = peopleSeenBy(viewer, owner);
+    return seen.kind === "people" ? seen.people.map((p) => p.name) : seen.kind;
+  };
+
+  it("shows no people of a Company that isn't connected, or whose request is still pending", () => {
+    newCompany();
+    expect(peopleSeenBy("me", "nordhavn")).toEqual({ kind: "not-connected" });
+    act.connect("tala");
+    expect(getState().conn.tala).toBe("pending");
+    expect(peopleSeenBy("me", "tala")).toEqual({ kind: "not-connected" });
+  });
+
+  it("shows a connected Company's people with their shown name, title and role, and no contact", () => {
+    act.demoActive();
+    expect(peopleSeenBy("me", "nordhavn")).toEqual({
+      kind: "people",
+      people: [
+        {
+          id: "mette",
+          name: "Mette Lindholm",
+          firstName: "Mette",
+          title: "Managing director",
+          role: "Primary admin",
+          contact: null,
+          ask: "open",
+        },
+        {
+          id: "jonas",
+          name: "Jonas Brandt",
+          firstName: "Jonas",
+          title: "Export sales manager",
+          role: "Authorized user · Sales",
+          contact: null,
+          ask: "open",
+        },
+      ],
+    });
+    expect(names("me", "maple")).toEqual(["Carmela Lopez", "Dennis Ramos"]);
+    expect(names("me", "pack")).toEqual(["Ramon Castillo", "Joy Fernandez"]);
+  });
+
+  it("shows a person who uses an alias by that alias", () => {
+    act.demoActive();
+    expect(names("me", "tala")).toEqual(["Rosario M."]);
+  });
+
+  it("says a connected Company with no people listed has none yet", () => {
+    act.demoActive();
+    act.acceptReq("lakbay");
+    expect(peopleSeenBy("me", "lakbay")).toEqual({ kind: "people", people: [] });
+  });
+
+  it("keeps a Company that has not claimed to its basics, with no people", () => {
+    act.demoActive();
+    expect(hasClaimed("north")).toBe(false);
+    expect(peopleSeenBy("me", "north")).toEqual({ kind: "basics" });
+  });
+
+  it("shows Kalayaan's people only to the Companies it is connected to", () => {
+    act.demoActive();
+    expect(names("nordhavn", "me")).toEqual([
+      "Ana Reyes",
+      "Marco Dizon",
+      "Liza Manalo",
+      "Paolo Villanueva",
+    ]);
+    // Lakbay Hotels' Connection Request is still waiting, and Hapag Kitchen Group never sent one.
+    expect(peopleSeenBy("lakbay", "me")).toEqual({ kind: "not-connected" });
+    expect(peopleSeenBy("hapag", "me")).toEqual({ kind: "not-connected" });
+  });
+
+  it("shows Ana by her alias, and leaves her title out once she hides it", () => {
+    act.demoActive();
+    const ana = () => {
+      const seen = peopleSeenBy("nordhavn", "me");
+      return seen.kind === "people" ? seen.people[0] : undefined;
+    };
+    expect(previewOfMe()).toMatchObject({
+      name: "Ana Reyes",
+      title: "Owner",
+      role: "Primary admin",
+    });
+    act.chooseName("alias");
+    expect(ana()).toMatchObject({ name: "Ana R.", firstName: "Ana", title: "Owner" });
+    expect(previewOfMe()).toMatchObject({ name: "Ana R.", title: "Owner" });
+    act.toggleTitle();
+    expect(ana()).toMatchObject({ name: "Ana R.", title: null });
+    expect(previewOfMe()).toMatchObject({ name: "Ana R.", title: null, contact: null });
+    act.chooseName("full");
+    act.toggleTitle();
+    expect(ana()).toMatchObject({ name: "Ana Reyes", title: "Owner" });
+  });
+
+  it("drops a removed person from what connected Companies see", () => {
+    act.demoActive();
+    act.removePerson("liza");
+    expect(names("nordhavn", "me")).toEqual(["Ana Reyes", "Marco Dizon", "Paolo Villanueva"]);
+  });
+
+  it("gives every person outside Kalayaan an invented email on their Company's domain and a fake phone", () => {
+    expect(Object.keys(PEOPLE)).toEqual(["nordhavn", "maple", "pack", "tala"]);
+    Object.entries(PEOPLE).forEach(([id, people]) => {
+      expect(people.length).toBeGreaterThanOrEqual(1);
+      expect(people.length).toBeLessThanOrEqual(2);
+      people.forEach((p) => {
+        expect(p.email.endsWith("@" + co(id).website)).toBe(true);
+        expect(p.phone).toMatch(/^\+63 2 0000 \d{4}$/);
+      });
+    });
   });
 });
 
