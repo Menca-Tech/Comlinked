@@ -1,9 +1,10 @@
 "use client";
 
-import type { ReactNode } from "react";
+import type { AnimationEvent, ReactNode } from "react";
 import { Check, Clock } from "lucide-react";
 
 import { ClaimMark } from "@/components/product/claim-mark";
+import { focusPanel } from "@/components/product/focus-panel";
 import {
   BasicsLine,
   Btn,
@@ -52,10 +53,10 @@ function LeadActions({ c }: { c: Company }) {
   );
 }
 
-/** The selected Lead in full, inside the list on a phone. */
-function LeadCard({ c }: { c: Company }) {
+/** The selected Lead in full, as the Focus panel in its place in the list on a phone. */
+function LeadCard({ c, turn }: { c: Company; turn?: number }) {
   return (
-    <article className="a-lead active a-lead-open" data-lead={c.id}>
+    <article className="a-card a-lead-open" data-lead={c.id} data-turn={turn} {...focusPanel(true)}>
       <LeadHead c={c} />
       <WhyMeet c={c} />
       <ReasonList c={c} />
@@ -65,7 +66,7 @@ function LeadCard({ c }: { c: Company }) {
   );
 }
 
-/** The selected Lead in full: the right-hand panel on a laptop. */
+/** The selected Lead in full, inside the Focus panel beside the list on a laptop. */
 function LeadDetail({ c }: { c: Company }) {
   const view = publicView(c);
   return (
@@ -129,24 +130,23 @@ function leadOutcome(c: Company, conn: ConnStatus | undefined, action: string | 
   return null;
 }
 
-function LeadRow({ c, selected }: { c: Company; selected: boolean }) {
+/** A Lead as a row in the list: what was done with it, or a row that selects it. */
+function LeadRow({ c, selected, turn }: { c: Company; selected: boolean; turn?: number }) {
   const S = useSimulation();
-  const isWeb = useIsDesktop();
   const score = <FitMark score={fit(c).score} />;
   const outcome = leadOutcome(c, S.conn[c.id], S.leadAct[c.id]);
   if (outcome) {
     return (
-      <article className="a-lead done" data-lead={c.id}>
+      <article className="a-lead done" data-lead={c.id} data-turn={turn}>
         <CoBtn c={c} detail={outcome.result} cls="sm" />
         {score}
         {outcome.tail}
       </article>
     );
   }
-  if (selected && !isWeb) return <LeadCard c={c} />;
   const reason = matchReason(c);
   return (
-    <article className={cn("a-lead pick", selected && "sel")} data-lead={c.id}>
+    <article className={cn("a-lead pick", selected && "sel")} data-lead={c.id} data-turn={turn}>
       <button
         type="button"
         className="a-pick"
@@ -168,29 +168,89 @@ function LeadRow({ c, selected }: { c: Company; selected: boolean }) {
   );
 }
 
-/** Ranked list beside the selected company on a laptop; a single opening list on a phone. */
-export function LeadBoard({ ids, finished }: { ids: string[]; finished: ReactNode }) {
+/** What the Focus panel says once every Lead is done: one formal line, a note and the way on. */
+export function LeadsDone({
+  title,
+  note,
+  children,
+}: {
+  title: string;
+  note: string;
+  children: ReactNode;
+}) {
+  return (
+    <>
+      <h2 className="a-formal">{title}</h2>
+      <p className="a-why">{note}</p>
+      <div className="a-acts">{children}</div>
+    </>
+  );
+}
+
+/** The ranked list beside the selected Company on a laptop. On a phone the selected Company sits
+ * in its place in the list. Either way the selected Company is the screen's Focus panel and the
+ * rows are flat; once every Lead is done, the Focus panel holds `finished`. With `staged`, the
+ * Leads arrive one after another, and `onArrived` is called when the last has, or as soon as the
+ * viewer acts. */
+export function LeadBoard({
+  ids,
+  finished,
+  staged = false,
+  onArrived,
+}: {
+  ids: string[];
+  finished: ReactNode;
+  staged?: boolean;
+  onArrived?: () => void;
+}) {
   const isWeb = useIsDesktop();
   const selected = selectedLead(ids);
-  const rows = (
-    <div className="a-leads">
-      {ids.map((id) => (
-        <LeadRow key={id} c={co(id)} selected={id === selected} />
-      ))}
-    </div>
-  );
+  const turn = (id: string) => (staged ? ids.indexOf(id) : undefined);
+  const rows = (list: string[]) =>
+    list.length ? (
+      <Panel cls="a-board-list">
+        <div className="a-leads">
+          {list.map((id) => (
+            <LeadRow key={id} c={co(id)} selected={id === selected} turn={turn(id)} />
+          ))}
+        </div>
+      </Panel>
+    ) : null;
+  const lastArrived = (event: AnimationEvent) => {
+    const last = String(ids.length - 1);
+    if (event.target instanceof HTMLElement && event.target.dataset.turn === last) onArrived?.();
+  };
+  const arrival = staged
+    ? {
+        "data-arriving": "",
+        onAnimationEnd: lastArrived,
+        onPointerDownCapture: onArrived,
+        onKeyDownCapture: onArrived,
+      }
+    : undefined;
   if (!isWeb) {
+    const at = selected ? ids.indexOf(selected) : ids.length;
     return (
-      <>
-        {selected ? null : finished}
-        <Panel>{rows}</Panel>
-      </>
+      <div className="w-board" {...arrival}>
+        {selected ? null : (
+          <section className="a-card" {...focusPanel(true)}>
+            {finished}
+          </section>
+        )}
+        {rows(ids.slice(0, at))}
+        {selected ? <LeadCard c={co(selected)} turn={turn(selected)} /> : null}
+        {rows(ids.slice(at + 1))}
+      </div>
     );
   }
   return (
-    <div className="w-board">
-      <Panel cls="a-board-list">{rows}</Panel>
-      <aside className="a-surface a-detail">
+    <div className="w-board" {...arrival}>
+      {rows(ids)}
+      <aside
+        className="a-surface a-detail"
+        data-turn={staged ? 0 : undefined}
+        {...focusPanel(true)}
+      >
         {selected ? <LeadDetail c={co(selected)} /> : finished}
       </aside>
     </div>

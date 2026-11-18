@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 
+import { focusPanel } from "@/components/product/focus-panel";
 import { Btn, Mono, PageHead, Panel } from "@/components/product/shared";
 import { useSimulation } from "@/components/product/use-simulation";
 import { act, cap, digestLine, markDigestRead, POOL, TOTAL } from "@/services/comlinked";
@@ -17,7 +18,8 @@ function Count({ label, n }: { label: string; n: number }) {
   );
 }
 
-// D1: the Morning Digest.
+// D1: the Morning Digest. The rank line and the way to today's leads lead it, as the Focus panel;
+// who viewed the Company and what else happened overnight sit in a flat panel below.
 export function Digest() {
   const S = useSimulation();
   useEffect(() => markDigestRead(), [S.digest]);
@@ -26,14 +28,14 @@ export function Digest() {
     return (
       <div className="w-read">
         <PageHead title="Morning digest" />
-        <Panel>
+        <section className="a-card" {...focusPanel(true)}>
           <p className="a-why">
             Your first digest arrives tomorrow at 8:00 a.m., by push notification and email.
           </p>
           <Btn cls="block w-fit" onClick={() => act.morning("1")}>
             Go to next morning
           </Btn>
-        </Panel>
+        </section>
       </div>
     );
   }
@@ -43,19 +45,21 @@ export function Digest() {
         title="Morning digest"
         tail={<span className="a-small">8:00 a.m., by push and email</span>}
       />
-      <Panel>
-        <div className="a-rankline">
-          <span className="a-rank">#{d.rank}</span>
-          <span className="a-rank-cap">
+      <section className="a-card" aria-label="Today" {...focusPanel(true)}>
+        <p className="a-formal">
+          #{d.rank}{" "}
+          <span className="a-dim">
             of {TOTAL} in {S.me.category}
           </span>
-        </div>
+        </p>
         <p className="a-why" id="digest-sum">
           {cap(digestLine())}.
         </p>
         <Btn cls="block w-fit" onClick={() => act.nav("leads")}>
           Open today’s lead list
         </Btn>
+      </section>
+      <Panel>
         <section className="a-sec">
           <h2 className="a-h2">Who viewed you</h2>
           <div className="a-list">

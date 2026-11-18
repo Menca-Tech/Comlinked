@@ -27,6 +27,45 @@ async function openAt(page: Page, address: string, heading: string) {
   await expect(page.locator("main h1")).toHaveText(heading);
 }
 
+/** Opens one of the Company's sections from its bar: the top bar on a laptop, the tabs along the
+ * bottom on a phone. Only the bar in use is on screen, and a section's count sits after its name
+ * in the top bar and before it on a tab. */
+async function openSection(page: Page, name: string, heading: string) {
+  await page
+    .getByRole("navigation")
+    .getByRole("button", { name: new RegExp(`^(\\d+ )?${name}( \\d+)?$`) })
+    .click();
+  await expect(page.locator("main h1")).toHaveText(heading);
+}
+
+/** Stop 4: Kalayaan Foods two weeks in, with possible future pricing off. */
+const twoWeeksIn = (page: Page) => openAt(page, "/app/dash?stop=4", "Kalayaan Foods Inc.");
+
+/** Stop 2's claim, as far as the step headed `heading`. */
+async function claimAsFarAs(page: Page, heading: string) {
+  await openAt(page, "/app/claim?stop=2", "Your company profile on ComLinked is ready");
+  const steps: [string, () => Promise<void>][] = [
+    ["Your company is already here", () => press(page, "Claim your profile")],
+    ["Check your company profile", () => press(page, "Claim your profile")],
+    [
+      "Sign in",
+      async () => {
+        await page.getByRole("checkbox").check();
+        await press(page, "Confirm and claim");
+      },
+    ],
+    ["Meet your 3 matches today", () => press(page, "Continue with Google")],
+  ];
+  for (const [title, go] of steps) {
+    await go();
+    await expect(page.locator("main h1")).toHaveText(title);
+    if (title === heading) return;
+  }
+  throw new Error(`The claim has no step headed "${heading}".`);
+}
+
+const press = (page: Page, name: string) => page.getByRole("button", { name, exact: true }).click();
+
 const SCREENS: Screen[] = [
   { name: "the Opening", open: (page) => openAt(page, "/app/preview", "A preview for ECCP") },
   {
@@ -52,6 +91,46 @@ const SCREENS: Screen[] = [
   {
     name: "the ask",
     open: (page) => openAt(page, "/app/preview/ask?stop=6", "What a pilot asks of ECCP"),
+  },
+  {
+    name: "Stop 2's message from ECCP",
+    open: (page) => openAt(page, "/app/claim?stop=2", "Your company profile on ComLinked is ready"),
+  },
+  {
+    name: "the claim's first step",
+    open: (page) => claimAsFarAs(page, "Your company is already here"),
+  },
+  {
+    name: "the claim's profile check",
+    open: (page) => claimAsFarAs(page, "Check your company profile"),
+  },
+  { name: "the claim's sign-in", open: (page) => claimAsFarAs(page, "Sign in") },
+  {
+    name: "the day-one Matches",
+    open: (page) => claimAsFarAs(page, "Meet your 3 matches today"),
+  },
+  {
+    name: "the Morning Digest",
+    open: (page) => openAt(page, "/app/digest?stop=3", "Morning digest"),
+  },
+  {
+    name: "Leads",
+    open: async (page) => {
+      await twoWeeksIn(page);
+      await openSection(page, "Leads", "Today’s leads");
+    },
+  },
+  {
+    name: "another Company's profile",
+    open: async (page) => {
+      await twoWeeksIn(page);
+      await openSection(page, "Leads", "Today’s leads");
+      const lead = page
+        .getByRole("article")
+        .filter({ has: page.getByRole("button", { name: "Skip" }) });
+      await lead.getByRole("button").first().click();
+      await expect(page.getByRole("button", { name: "Back", exact: true })).toBeVisible();
+    },
   },
 ];
 

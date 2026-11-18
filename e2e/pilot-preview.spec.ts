@@ -2100,6 +2100,355 @@ test.describe("the four reference screens from the keyboard and with reduced mot
   });
 });
 
+const WHITE = "rgb(255, 255, 255)";
+const MATCHES_HEADING = "Meet your 3 matches today";
+const matchCards = (page: Page) => page.locator("[data-lead]");
+
+/** The shadow of the white surface an element sits on: "none" for a flat panel. */
+async function surfaceShadow(part: Locator) {
+  return part.evaluate((el) => {
+    let node: Element | null = el;
+    while (node && getComputedStyle(node).backgroundColor !== "rgb(255, 255, 255)") {
+      node = node.parentElement;
+    }
+    return node ? getComputedStyle(node).boxShadow : "no surface";
+  });
+}
+
+/** Presses Tab until the keyboard reaches `target`, which must then show its focus. */
+async function tabTo(page: Page, target: Locator, limit = 40) {
+  for (let presses = 0; presses < limit; presses++) {
+    await page.keyboard.press("Tab");
+    if (await target.evaluate((el) => el === document.activeElement)) {
+      await hasVisibleFocus(page);
+      return;
+    }
+  }
+  throw new Error("The keyboard never reached it.");
+}
+
+/** Notes every arrival the page draws from now on: which Match, when it started and when it
+ * ended. The Demo moves between its screens without a page load, so the notes survive the claim. */
+async function watchArrivals(page: Page) {
+  await page.evaluate(() => {
+    const seen: { lead: string; type: string; at: number }[] = [];
+    Object.assign(window, { arrivalsSeen: seen });
+    for (const type of ["animationstart", "animationend"]) {
+      document.addEventListener(type, (event) => {
+        const lead = event.target instanceof HTMLElement ? event.target.dataset.lead : undefined;
+        if (lead) seen.push({ lead, type, at: performance.now() });
+      });
+    }
+  });
+}
+
+const arrivals = (page: Page) =>
+  page.evaluate(
+    () =>
+      (window as unknown as { arrivalsSeen: { lead: string; type: string; at: number }[] })
+        .arrivalsSeen,
+  );
+
+/** How many things on the page are moving: transitions and arrivals alike. */
+const moving = (page: Page) => page.evaluate(() => document.getAnimations().length);
+/** How many Matches are still arriving. A button's own transition is not an arrival. */
+const arriving = (page: Page) =>
+  page.evaluate(
+    () => document.getAnimations().filter((motion) => motion instanceof CSSAnimation).length,
+  );
+
+/** Stop 2 from the message to the Matches, noting what arrives. */
+async function claimAtStopTwo(page: Page) {
+  await openStop(page, stop(2));
+  await claimMessage(page).getByRole("button", { name: "Claim your profile" }).click();
+  await expect(mainHeading(page)).toHaveText(FIRST_CLAIM_SCREEN);
+  await watchArrivals(page);
+  await claimFromFirstScreen(page);
+  await expect(mainHeading(page)).toHaveText(MATCHES_HEADING);
+}
+
+test.describe("Stop 2, the claim in two panels and the day-one Matches", () => {
+  const CLAIM_STEPS = [
+    { heading: FIRST_CLAIM_SCREEN, action: "Claim your profile" },
+    { heading: "Check your company profile", action: "Confirm and claim" },
+    { heading: "Sign in", action: "Email me a sign-in link" },
+  ];
+  /** The white action panel is each step's Focus panel, and the navy one comes before it. */
+  const action = (page: Page) => focusPanel(page);
+  const navy = (page: Page) => page.locator(":has(+ [data-focus-panel])");
+
+  /** Walks the three claim steps, calling `check` on each. */
+  async function eachClaimStep(
+    page: Page,
+    check: (step: (typeof CLAIM_STEPS)[number]) => Promise<void>,
+  ) {
+    await openStop(page, stop(2));
+    await claimMessage(page).getByRole("button", { name: "Claim your profile" }).click();
+    for (const step of CLAIM_STEPS) {
+      await expect(mainHeading(page)).toHaveText(step.heading);
+      await check(step);
+      if (step.heading === "Check your company profile") await page.locator("#claim-auth").check();
+      if (step !== CLAIM_STEPS[CLAIM_STEPS.length - 1]) {
+        await action(page).getByRole("button", { name: step.action, exact: true }).click();
+      }
+    }
+  }
+
+  test("the message from ECCP is the Focus panel, raised, with Claim your profile in it", async ({
+    page,
+  }) => {
+    await openStop(page, stop(2));
+    await expect(focusPanel(page)).toHaveCount(1);
+    await expect(claimMessage(page)).toHaveAttribute("data-focus-panel", "");
+    await expect(claimMessage(page)).not.toHaveCSS("box-shadow", "none");
+    await expect(
+      claimMessage(page).getByRole("button", { name: "Claim your profile" }),
+    ).toBeVisible();
+  });
+
+  test("each claim step is navy beside white in one frame, and the white action panel leads", async ({
+    page,
+  }) => {
+    await eachClaimStep(page, async (step) => {
+      await expect(action(page)).toHaveCount(1);
+      await expect(action(page)).toHaveCSS("background-color", WHITE);
+      await expect(navy(page)).not.toHaveCSS("background-color", WHITE);
+      await expect(navy(page).getByRole("heading", { level: 1 })).toHaveText(step.heading);
+      await expect(
+        action(page).getByRole("button", { name: step.action, exact: true }),
+      ).toBeVisible();
+      const left = await navy(page).boundingBox();
+      const right = await action(page).boundingBox();
+      expect(Math.round(right?.y ?? 0)).toBe(Math.round(left?.y ?? -1));
+      expect(Math.round(right?.height ?? 0)).toBe(Math.round(left?.height ?? -1));
+      expect(Math.round(right?.x ?? 0)).toBe(Math.round((left?.x ?? 0) + (left?.width ?? 0)));
+    });
+  });
+
+  test("on a phone each claim step stacks navy above white, inset by 16px", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await eachClaimStep(page, async () => {
+      const top = await navy(page).boundingBox();
+      const below = await action(page).boundingBox();
+      expect(top?.x).toBe(16);
+      expect(below?.x).toBe(16);
+      expect(top?.width).toBe(358);
+      expect(below?.width).toBe(358);
+      expect(Math.round(below?.y ?? 0)).toBe(Math.round((top?.y ?? 0) + (top?.height ?? 0)));
+      await noSidewaysScroll(page);
+    });
+  });
+
+  test("with reduced motion the three Matches are simply there after the claim, and nothing moves", async ({
+    page,
+  }) => {
+    await claimAtStopTwo(page);
+    await expect(matchCards(page)).toHaveCount(3);
+    for (const card of await matchCards(page).all()) {
+      await expect(card).toBeVisible();
+      await expect(card).toHaveCSS("opacity", "1");
+    }
+    expect(await moving(page)).toBe(0);
+    expect(await arrivals(page)).toEqual([]);
+  });
+
+  test("the selected Match is the Focus panel, beside a flat list, with Connect as its main action", async ({
+    page,
+  }) => {
+    await claimAtStopTwo(page);
+    await expect(focusPanel(page)).toHaveCount(1);
+    await expect(focusPanel(page)).not.toHaveCSS("box-shadow", "none");
+    await expect(
+      focusPanel(page).getByRole("button", { name: /^Maple Bay Grocers/ }),
+    ).toBeVisible();
+    await expect(
+      focusPanel(page).getByRole("button", { name: "Connect", exact: true }),
+    ).toBeVisible();
+    // The list beside it is flat, with the selected Match marked in it.
+    const selected = page
+      .getByRole("button", { name: /^Maple Bay Grocers/ })
+      .and(page.locator("[aria-current='true']"));
+    await expect(selected).toBeVisible();
+    expect(await surfaceShadow(selected)).toBe("none");
+    // Choosing another Match moves the Focus panel to it.
+    await page.getByRole("button", { name: /^Pacific Pack Solutions/ }).click();
+    await expect(focusPanel(page)).toHaveCount(1);
+    await expect(
+      focusPanel(page).getByRole("button", { name: /^Pacific Pack Solutions/ }),
+    ).toBeVisible();
+  });
+
+  test("once all three are done the Focus panel still shows, holding That’s your first three", async ({
+    page,
+  }) => {
+    await claimAtStopTwo(page);
+    for (let done = 0; done < 3; done++) {
+      await focusPanel(page).getByRole("button", { name: "Skip", exact: true }).click();
+    }
+    await expect(focusPanel(page)).toHaveCount(1);
+    await expect(focusPanel(page).getByRole("heading")).toHaveText("That’s your first three");
+    await expect(focusPanel(page)).toContainText("New leads arrive tomorrow at 8:00 a.m.");
+    await expect(focusPanel(page).getByRole("button")).toHaveText(["Go to my ComDash"]);
+    await expect(page.getByRole("button", { name: "Go to my ComDash" })).toHaveCount(1);
+  });
+
+  test("on a phone the Matches are one column, inset by 16px, with the selected Match leading in place", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await claimAtStopTwo(page);
+    await expect(matchCards(page)).toHaveCount(3);
+    await expect(focusPanel(page)).toHaveCount(1);
+    await expect(focusPanel(page)).toHaveAttribute("data-lead", "maple");
+    const boxes = await Promise.all(
+      (await matchCards(page).all()).map((card) => card.boundingBox()),
+    );
+    const tops = boxes.map((box) => box?.y ?? 0);
+    expect(tops).toEqual([...tops].sort((a, b) => a - b));
+    for (const box of boxes) {
+      expect(box?.x).toBeGreaterThanOrEqual(16);
+      expect((box?.x ?? 0) + (box?.width ?? 0)).toBeLessThanOrEqual(374);
+    }
+    expect((await focusPanel(page).boundingBox())?.x).toBe(16);
+    // The second Match, chosen, takes the Focus panel where it stands in the list.
+    await page.getByRole("button", { name: /^Nordhavn Freight Forwarders/ }).click();
+    await expect(focusPanel(page)).toHaveAttribute("data-lead", "nordhavn");
+    await expect(matchCards(page).nth(1)).toHaveAttribute("data-lead", "nordhavn");
+    await expect(focusPanel(page)).toHaveCount(1);
+    await noSidewaysScroll(page);
+  });
+
+  test("from the keyboard the claim's and the Matches' main actions are reachable with a visible focus ring", async ({
+    page,
+  }) => {
+    await eachClaimStep(page, async (step) => {
+      await mainHeading(page).focus();
+      await tabTo(page, action(page).getByRole("button", { name: step.action, exact: true }));
+    });
+    await action(page).getByRole("button", { name: "Continue with Google" }).click();
+    await expect(mainHeading(page)).toHaveText(MATCHES_HEADING);
+    await tabTo(page, focusPanel(page).getByRole("button", { name: "Connect", exact: true }));
+    await page.keyboard.press("Enter");
+    await expect(matchCards(page).first()).toContainText("Connection Request sent");
+  });
+});
+
+test.describe("the one staged moment, with motion allowed", () => {
+  test.use({ contextOptions: { reducedMotion: "no-preference" } });
+
+  test("after the live claim the three Matches arrive one after another in about a second, once", async ({
+    page,
+  }) => {
+    await claimAtStopTwo(page);
+    // All three are in place from the start, whatever is still arriving.
+    await expect(matchCards(page)).toHaveCount(3);
+    await expect(matchCards(page)).toContainText([
+      "Maple Bay Grocers",
+      "Nordhavn Freight Forwarders",
+      "Pacific Pack Solutions",
+    ]);
+    await expect.poll(() => arrivals(page).then((seen) => seen.length)).toBe(6);
+    expect(await arriving(page)).toBe(0);
+    const seen = await arrivals(page);
+    const starts = seen.filter((a) => a.type === "animationstart");
+    const ends = seen.filter((a) => a.type === "animationend");
+    expect(starts.map((a) => a.lead)).toEqual(["maple", "nordhavn", "pack"]);
+    expect(ends.map((a) => a.lead)).toEqual(["maple", "nordhavn", "pack"]);
+    // Each starts after the one before, and the whole takes about a second.
+    const [first, second, third] = starts.map((a) => a.at);
+    expect((second ?? 0) - (first ?? 0)).toBeGreaterThan(150);
+    expect((third ?? 0) - (second ?? 0)).toBeGreaterThan(150);
+    const whole = (ends[2]?.at ?? 0) - (first ?? 0);
+    expect(whole).toBeGreaterThan(700);
+    expect(whole).toBeLessThan(1600);
+    for (const card of await matchCards(page).all()) {
+      await expect(card).toHaveCSS("opacity", "1");
+    }
+
+    // Left and come back to, the screen stages nothing.
+    await page.getByRole("button", { name: /^Notifications/ }).click();
+    await expect(mainHeading(page)).toHaveText("Notifications");
+    await page.goBack();
+    await expect(mainHeading(page)).toHaveText(MATCHES_HEADING);
+    await expect(matchCards(page)).toHaveCount(3);
+    expect(await arriving(page)).toBe(0);
+    expect(await arrivals(page)).toHaveLength(6);
+  });
+
+  test("a viewer who acts at once is not kept waiting: the Matches are all there", async ({
+    page,
+  }) => {
+    await claimAtStopTwo(page);
+    await focusPanel(page).getByRole("button", { name: "Connect", exact: true }).click();
+    await expect(matchCards(page).first()).toContainText("Connection Request sent");
+    expect(await arriving(page)).toBe(0);
+    for (const card of await matchCards(page).all()) {
+      await expect(card).toHaveCSS("opacity", "1");
+    }
+  });
+
+  test("opened at its own address, the Matches are there at once", async ({ page }) => {
+    await page.goto("/app/matches");
+    await expect(mainHeading(page)).toHaveText(MATCHES_HEADING);
+    await expect(matchCards(page)).toHaveCount(3);
+    expect(await arriving(page)).toBe(0);
+  });
+});
+
+test.describe("Stop 3, the Morning Digest", () => {
+  const viewers = (page: Page) => page.getByRole("heading", { name: "Who viewed you" });
+  const overnight = (page: Page) => page.getByRole("heading", { name: "Also overnight" });
+
+  test("the rank line and Open today’s lead list lead as the Focus panel, and the lists below are flat", async ({
+    page,
+  }) => {
+    await openStop(page, stop(3));
+    await expect(focusPanel(page)).toHaveCount(1);
+    await expect(focusPanel(page)).not.toHaveCSS("box-shadow", "none");
+    await expect(focusPanel(page)).toContainText("#7 of 12 in Food Suppliers");
+    await expect(focusPanel(page)).toContainText(
+      "5 new leads, 2 companies viewed you, you moved up 1 place.",
+    );
+    await expect(focusPanel(page).getByRole("button")).toHaveText(["Open today’s lead list"]);
+    // The rank line is the screen's one serif line under its title.
+    const faces = await page
+      .locator("main")
+      .getByText(/#7|Morning digest|Who viewed you/)
+      .evaluateAll((els) => els.map((el) => getComputedStyle(el).fontFamily.includes("Serif")));
+    expect(faces).toEqual([true, true, false]);
+    for (const heading of [viewers(page), overnight(page)]) {
+      await expect(focusPanel(page).filter({ has: heading })).toHaveCount(0);
+      expect(await surfaceShadow(heading)).toBe("none");
+    }
+    const lead = await focusPanel(page).boundingBox();
+    const list = await viewers(page).boundingBox();
+    expect(list?.y).toBeGreaterThan((lead?.y ?? 0) + (lead?.height ?? 0));
+  });
+
+  test("its button opens today’s leads, where the selected Company is the Focus panel", async ({
+    page,
+  }) => {
+    await openStop(page, stop(3));
+    await mainHeading(page).focus();
+    await tabTo(page, focusPanel(page).getByRole("button", { name: "Open today’s lead list" }));
+    await page.keyboard.press("Enter");
+    await expect(mainHeading(page)).toHaveText("Today’s leads");
+    await expect(focusPanel(page)).toHaveCount(1);
+    await expect(focusPanel(page).getByRole("button", { name: "Skip", exact: true })).toBeVisible();
+  });
+
+  test("on a phone it is one column inset by 16px, the Focus panel first", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await openStop(page, stop(3));
+    const lead = await focusPanel(page).boundingBox();
+    expect(lead?.x).toBe(16);
+    expect(lead?.width).toBe(358);
+    const list = await viewers(page).boundingBox();
+    expect(list?.y).toBeGreaterThan((lead?.y ?? 0) + (lead?.height ?? 0));
+    await noSidewaysScroll(page);
+  });
+});
+
 test.describe("the Run of Show", () => {
   // docs/presentations/2026-11-17-pilot-preview-run-of-show.md: every click it names, in its order.
   test("every click it names is on screen, Stop by Stop", async ({ page }) => {

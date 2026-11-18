@@ -25,7 +25,7 @@ function Body({ n, company }: { n: NextAction; company: string }) {
     case "drafts":
       return (
         <>
-          <p className="cd-big">
+          <p className="a-formal">
             Approve {plural(n.threads.length, "1 draft", "drafts")} from the AI Assistant
           </p>
           <p className="cd-lead">Nothing is sent until you tap Send.</p>
@@ -44,7 +44,7 @@ function Body({ n, company }: { n: NextAction; company: string }) {
     case "leads":
       return (
         <>
-          <p className="cd-big">Finish today’s leads</p>
+          <p className="a-formal">Finish today’s leads</p>
           <p className="cd-lead">
             {n.left} of {n.total} leads still need a Connect, Message or Skip.
           </p>
@@ -56,7 +56,7 @@ function Body({ n, company }: { n: NextAction; company: string }) {
     case "ask":
       return (
         <>
-          <p className="cd-big">
+          <p className="a-formal">
             {plural(n.asks.length, "A connection is", "connections are")} looking for what you sell
           </p>
           <p className="cd-lead">They posted what they need. Reply before other suppliers do.</p>
@@ -73,7 +73,7 @@ function Body({ n, company }: { n: NextAction; company: string }) {
       const c = n.lead.company;
       return (
         <>
-          <p className="cd-big">{c.name} is Hot and hasn’t heard from you</p>
+          <p className="a-formal">{c.name} is Hot and hasn’t heard from you</p>
           <p className="cd-lead">
             {c.ind} · {c.city} · <LevelTag level={n.lead.level} />
           </p>
@@ -90,7 +90,7 @@ function Body({ n, company }: { n: NextAction; company: string }) {
     case "requests":
       return (
         <>
-          <p className="cd-big">
+          <p className="a-formal">
             {plural(n.companies.length, "1 company wants", "companies want")} to connect with{" "}
             {company}
           </p>
@@ -108,7 +108,7 @@ function Body({ n, company }: { n: NextAction; company: string }) {
     case "gap":
       return (
         <>
-          <p className="cd-big">
+          <p className="a-formal">
             Companies searched “{n.gap.term}” {plural(n.gap.count, "once", "times")}
           </p>
           <p className="cd-lead">Your profile doesn’t list it. Add it if you offer it.</p>
@@ -118,7 +118,7 @@ function Body({ n, company }: { n: NextAction; company: string }) {
     case "fresh":
       return (
         <>
-          <p className="cd-big">Your profile hasn’t changed in {n.days} days</p>
+          <p className="a-formal">Your profile hasn’t changed in {n.days} days</p>
           <p className="cd-lead">Add a recent project so companies see what you’re working on.</p>
           <div className="a-acts">
             <Link
@@ -134,7 +134,7 @@ function Body({ n, company }: { n: NextAction; company: string }) {
     case "clear":
       return (
         <>
-          <p className="cd-big">You’re all caught up</p>
+          <p className="a-formal">You’re all caught up</p>
           <p className="cd-lead">
             Drafts, leads, asks, Hot companies, connection requests and profile gaps will show here
             first.

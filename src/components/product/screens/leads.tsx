@@ -1,6 +1,6 @@
 "use client";
 
-import { LeadBoard } from "@/components/product/lead-board";
+import { LeadBoard, LeadsDone } from "@/components/product/lead-board";
 import { Btn, PageHead, Panel, Tally } from "@/components/product/shared";
 import { useSimulation } from "@/components/product/use-simulation";
 import { act } from "@/services/comlinked";
@@ -32,13 +32,9 @@ export function Leads() {
       <LeadBoard
         ids={ids}
         finished={
-          <div className="a-panel">
-            <h2 className="a-h2">Your list is done for today</h2>
-            <p className="a-why">New leads arrive at 8:00 a.m.</p>
-            <div className="a-acts">
-              <Btn onClick={() => act.morning("1")}>Go to next morning</Btn>
-            </div>
-          </div>
+          <LeadsDone title="Your list is done for today" note="New leads arrive at 8:00 a.m.">
+            <Btn onClick={() => act.morning("1")}>Go to next morning</Btn>
+          </LeadsDone>
         }
       />
       {finished ? null : <p className="a-small">New leads arrive at 8:00 a.m.</p>}

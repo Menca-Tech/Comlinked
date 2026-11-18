@@ -4,6 +4,7 @@ import { useState, type ReactNode } from "react";
 
 import { ClaimMessage } from "@/components/product/screens/claim-message";
 import { Btn, Mono, OfferSeek } from "@/components/product/shared";
+import { claimJustFinished } from "@/components/product/staged-arrival";
 import { TwoPanel } from "@/components/product/two-panel";
 import { useSimulation } from "@/components/product/use-simulation";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -24,6 +25,7 @@ function Welcome({
   const S = useSimulation();
   return (
     <TwoPanel
+      focus="main"
       side={
         <>
           {named ? (
@@ -42,8 +44,14 @@ function Welcome({
   );
 }
 
+/** Finishes the claim and opens the day-one Matches, which arrive one after another this once. */
+function finishClaim() {
+  claimJustFinished();
+  act.claimFinish();
+}
+
 // A2 A3: the personal claim link, the profile check and easy sign-in. On the Pilot Preview's
-// claim Stop, the message carrying that link comes first.
+// claim Stop, the message carrying that link comes first. The white action panel leads each step.
 export function Claim() {
   const S = useSimulation();
   const [authorized, setAuthorized] = useState(false);
@@ -115,7 +123,7 @@ export function Claim() {
         <p className="a-why">
           We sent a sign-in link to <b>ana@kalayaanfoods.example</b>.
         </p>
-        <Btn cls="block" onClick={() => act.claimFinish()}>
+        <Btn cls="block" onClick={finishClaim}>
           Open the sign-in link
         </Btn>
       </Welcome>
@@ -130,7 +138,7 @@ export function Claim() {
           </label>
           <Input className="a-input" id="otp" inputMode="numeric" defaultValue="482913" />
         </div>
-        <Btn cls="block" onClick={() => act.claimFinish()}>
+        <Btn cls="block" onClick={finishClaim}>
           Verify and continue
         </Btn>
         <p className="a-small">The number and code are examples.</p>
@@ -140,10 +148,10 @@ export function Claim() {
   return (
     <Welcome title="Sign in" sub="No password to remember on your phone." named>
       <div className="a-stack a-auth">
-        <Btn cls="o block" onClick={() => act.claimFinish()}>
+        <Btn cls="o block" onClick={finishClaim}>
           Continue with Google
         </Btn>
-        <Btn cls="o block" onClick={() => act.claimFinish()}>
+        <Btn cls="o block" onClick={finishClaim}>
           Continue with Facebook
         </Btn>
         <Btn cls="block" onClick={() => act.claimSub("email")}>

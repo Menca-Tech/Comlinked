@@ -264,7 +264,7 @@ test.describe("ComDash", () => {
     await expect(visibility.locator("figcaption")).toHaveText(
       "2 search appearances and recommendations over 1 day since you claimed your profile, with at most 2 in a day.",
     );
-    await expect(page.locator(".a-rank")).toHaveCount(0);
+    await expect(page.getByText(/^#\d+ of \d+ in /)).toHaveCount(0);
     await expect(page.locator(".dv2-ring")).toHaveCount(0);
     await openTab(page, "Interest Signals");
     await expect(page.getByText("Comparisons start after your first two weeks.")).toBeVisible();

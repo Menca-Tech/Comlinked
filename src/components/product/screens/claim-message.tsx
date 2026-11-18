@@ -1,17 +1,19 @@
 "use client";
 
+import { focusPanel } from "@/components/product/focus-panel";
 import { Btn } from "@/components/product/shared";
 import { useSimulation } from "@/components/product/use-simulation";
 import { act, claimMessage } from "@/services/comlinked";
 
-/** The message a member receives from its chamber, laid out as one message in its inbox. Its
- * button opens the Claim. The line under it says whose wording this is. */
+/** The message a member receives from its chamber, laid out as one message in its inbox. It is
+ * the screen's Focus panel, and its button opens the Claim. The line under it says whose wording
+ * this is. */
 export function ClaimMessage() {
   useSimulation();
   const message = claimMessage();
   return (
     <div className="w-read cm-read">
-      <article className="a-card" aria-labelledby="cm-subject">
+      <article className="a-card" aria-labelledby="cm-subject" {...focusPanel(true)}>
         <header className="cm-head">
           <h1 id="cm-subject" className="a-h1">
             {message.subject}
