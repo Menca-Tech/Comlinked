@@ -7,6 +7,8 @@
 
 > **Note, 2026-11-18: how these screens look is now set by the [Demo premium pass](2026-11-18-demo-premium-pass.md).** Its scale, panels, Focus panel, company marks, day-bar charts and motion replace the sizes, surfaces, line chart and four-card Overview described below. What ComDash holds and does is still set here.
 
+> **Changed 2026-11-19: possible future pricing now starts off in the full Demo,** as Richard decided on 2026-11-18 ([admins, privacy and Day 1k spec](2026-11-18-admins-privacy-and-day-1k.md)). ComDash opens with no "View as" switcher and names every interested company, as the MVP does. The tiers below still work, but only once the presenter switches pricing on in the Presenter Guide. They still need Richard's agreement before ECCP sees them.
+
 > **Changed 2026-11-18 (user): the "View as" tiers now copy the prototype.** This replaces user story 14 and every line below that says Free shows everything. While possible future pricing shows, the Interest Signals tab follows the prototype's `ComDash Interest Signals` tiers:
 >
 > - **Free member** lists six interested companies with names, levels and signals blurred, a "See who" button on each, an upgrade box, weekly alerts without names and five search terms.

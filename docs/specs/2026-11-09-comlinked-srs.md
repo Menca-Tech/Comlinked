@@ -1,22 +1,23 @@
 # ComLinked Software Requirements Specification
 
-Version 0.3, Draft for review · 2026-11-18
+Version 0.4, Draft for review · 2026-11-19
 
 ## Document control
 
 | Field       | Value                                                                         |
 | ----------- | ----------------------------------------------------------------------------- |
 | Document    | ComLinked Software Requirements Specification                                 |
-| Version     | 0.3, Draft                                                                    |
-| Date        | 2026-11-18                                                                    |
+| Version     | 0.4, Draft                                                                    |
+| Date        | 2026-11-19                                                                    |
 | Status      | For review by Richard. Not yet approved.                                      |
 | Master copy | `docs/specs/2026-11-09-comlinked-srs.md`. The Word copy is generated from it. |
 
-| Version | Date       | Change                                                                                                                 |
-| ------- | ---------- | ---------------------------------------------------------------------------------------------------------------------- |
-| 0.1     | 2026-11-09 | First draft, from the MVP Build Plan, AI Lead Agent specification, mockup decisions and repository rules.              |
-| 0.2     | 2026-11-10 | ECCP replaces PCCI–Quezon City as the first pilot (section 1.4). OD-01 now asks only about the agent's Canadian pilot. |
-| 0.3     | 2026-11-18 | OD-13 to OD-16 record four choices the Pilot Preview shows, awaiting Richard. No requirement text changed.             |
+| Version | Date       | Change                                                                                                                                                               |
+| ------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0.1     | 2026-11-09 | First draft, from the MVP Build Plan, AI Lead Agent specification, mockup decisions and repository rules.                                                            |
+| 0.2     | 2026-11-10 | ECCP replaces PCCI–Quezon City as the first pilot (section 1.4). OD-01 now asks only about the agent's Canadian pilot.                                               |
+| 0.3     | 2026-11-18 | OD-13 to OD-16 record four choices the Pilot Preview shows, awaiting Richard. No requirement text changed.                                                           |
+| 0.4     | 2026-11-19 | OD-17 to OD-21 record five questions from the meeting with Richard on 2026-11-18: people, admins, contact details and the Chamber Size. No requirement text changed. |
 
 ### How to read this document
 
@@ -929,6 +930,11 @@ The most recent automated checks covered 36 Team Dashboard, 34 AI Lead Agent, 48
 | OD-14 | Who sends the claim links? The Pilot Preview has the Chamber send each link from its own address, so the Member List holds no contact details. Would change FR-A2-01 and FR-CH-02.         | Richard        | A2, member import                   |
 | OD-15 | What shows before a Claim? The Pilot Preview shows only name, industry, city and website until the Company has checked its description. Would change FR-A1-01.                             | Richard        | A1, privacy review                  |
 | OD-16 | May a Match be a Company that has not claimed? The Pilot Preview allows it, with basics only, no Connect, and a message held until the Company claims. Would change FR-L1-01 and FR-L1-03. | Richard        | L1                                  |
+| OD-17 | How many people may a Company have, and is any of that paid later? The Demo gives Kalayaan Foods two admins and two authorized users. Would change ASM-05.                                 | Richard        | C1, people                          |
+| OD-18 | Are the primary and backup admin equal? The Demo lets both accept Connection Requests; only the primary can remove the backup. Would change FR-C1-02.                                      | Richard        | C1                                  |
+| OD-19 | Does only the person share their own contact details? The Demo shares a person's email and phone only when that person answers a Contact Request.                                          | Richard        | C1, privacy review                  |
+| OD-20 | Are names and titles shown to connected Companies by default, with contact details only on request? The Demo also lets a person show an alias or hide their title.                         | Richard        | C1, privacy review                  |
+| OD-21 | Is 1,000 members shown with 100 named Example Companies acceptable for ECCP? The Demo counts chamber-wide figures from the Chamber Size.                                                   | Richard        | Chamber basics, pilot plan          |
 
 ## 15. Out of scope for the MVP
 

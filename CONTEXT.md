@@ -77,11 +77,26 @@ Terms from the [ComLinked MVP Build Plan](docs/specs/2026-10-11-mvp-build-plan.m
   Avoid "member" for this, since that is also an Org Role.
 
 - **Authorized Representative** — a person allowed to act on a Company's behalf.
+  A Company has Company Admins and Authorized Users; both are Authorized
+  Representatives.
+
+- **Company Admin** — an Authorized Representative who can accept Connection
+  Requests and manage the Company's people. A Company has a primary and a backup;
+  only the primary can remove the backup.
+
+- **Authorized User** — an Authorized Representative who can send Connection
+  Requests in one area (sales or procurement) but not accept them.
+
+- **Alias** — a shortened name ("Ana R.") a person can show to connected
+  Companies instead of their full name.
 
 - **Chamber** — a business association whose members join ComLinked together.
 
 - **Chamber Network** — the Companies of one Chamber, within which they can find
   and connect with each other. Each Chamber Network is kept apart from the others.
+
+- **Chamber Size** — how many member Companies a Chamber has, which chamber-wide
+  figures count. A Chamber's own words may say "members" ("1,000 members").
 
 - **Community Manager** — a person assigned to one Chamber who runs its member
   import, supports its Companies with Intros and Asks, and reviews unusual spikes
@@ -204,6 +219,9 @@ Terms from the [ComLinked MVP Build Plan](docs/specs/2026-10-11-mvp-build-plan.m
 
 - **Mutual Connection** — a Company connected to both of two other Companies.
 
+- **Contact Request** — a connected Company's ask for one person's email and
+  phone, which only that person can share.
+
 - **ComMail** — company-to-company messaging.
 
 - **AI Assistant** — the single per-Company on/off feature that writes AI Drafts
@@ -239,6 +257,9 @@ Terms from the [ComLinked MVP Build Plan](docs/specs/2026-10-11-mvp-build-plan.m
 - **Pilot Preview** — a guided walk through the Demo, made for one Chamber
   Leader, showing how a Pilot would run for their Chamber. Avoid "demo" alone for
   this.
+
+- **Example Companies** — the named Companies of the Demo's Chamber Network, 100
+  of a Chamber Size of 1,000. Avoid "the network of 100".
 
 - **Stop** — one step of a Pilot Preview's timeline, set on a named day.
 

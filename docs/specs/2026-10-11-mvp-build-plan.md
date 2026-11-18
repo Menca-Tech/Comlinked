@@ -84,12 +84,12 @@ back, get them talking, or get them sharing wins?
 
 ### 3.4 Talk to other companies
 
-| ID  | Feature             | What the user sees                                                                                                                    | Why it's in the MVP                      |
-| --- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
-| C1  | Company connections | An authorized representative sends a connection request; the other company accepts. Connections belong to the company, not the person | ComLinked's core idea                    |
-| C2  | ComMail             | Company-to-company messaging with ready-made templates (introduction, quote request, partnership)                                     | Turns a lead into a conversation         |
-| C3  | AI Assistant switch | On: AI drafts messages, replies and follow-ups for you to approve. Off: do it all yourself (Section 5)                                | Saves time without taking away control   |
-| C4  | Outcome buttons     | "We met" and "We did business," confirmed by both companies                                                                           | Proves results and triggers testimonials |
+| ID  | Feature             | What the user sees                                                                                                                            | Why it's in the MVP                      |
+| --- | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| C1  | Company connections | An Authorized Representative sends a Connection Request; the other Company's admin accepts. Connections belong to the company, not the person | ComLinked's core idea                    |
+| C2  | ComMail             | Company-to-company messaging with ready-made templates (introduction, quote request, partnership)                                             | Turns a lead into a conversation         |
+| C3  | AI Assistant switch | On: AI drafts messages, replies and follow-ups for you to approve. Off: do it all yourself (Section 5)                                        | Saves time without taking away control   |
+| C4  | Outcome buttons     | "We met" and "We did business," confirmed by both companies                                                                                   | Proves results and triggers testimonials |
 
 ### 3.5 Share the wins (advocacy)
 
@@ -210,6 +210,7 @@ the pilot shows companies coming back on their own.
 | Private browsing mode, multi-company accounts                                                   | Edge cases                                                             | Phase 2                                           |
 | French and other languages; SMS digest                                                          | English is enough for the Philippine pilot                             | Before Quebec, or when needed                     |
 | Events, news feed, member posts                                                                 | Off-topic for leads                                                    | Later, if chambers ask                            |
+| Printing, forwarding and sharing company profiles outside ComLinked                             | Profiles stay within the Chamber Network in the MVP                    | After the MVP                                     |
 
 ## 7. Tech stack and build order
 
@@ -366,6 +367,24 @@ once it is resolved, and record any hard-to-reverse answer as an ADR.
     Superadmin unrestricted access, so the two must be reconciled before a real
     build. Section 3.6's "no custom admin console" still applies to the MVP.
 
+Added 2026-11-19. These five questions come from the
+[admins, privacy and Day 1k spec](2026-11-18-admins-privacy-and-day-1k.md#further-notes).
+The Demo shows them as built; each awaits Richard before anything goes to ECCP.
+
+26. **How many people a Company may have.** The Demo gives Kalayaan Foods four:
+    two admins and two authorized users. Is there a limit, and is any of it paid
+    later?
+27. **Whether the two admins are equal.** The meeting summary said both. It also
+    said the backup can send but not accept. The Demo makes them equal, because a
+    backup only covers a vacation if it can accept.
+28. **Who shares contact details.** In the Demo only the person can share their
+    own email and phone, in answer to a Contact Request.
+29. **The default for connections.** Names and titles show to connected
+    Companies by default, and contact details only on request. A person may show
+    an alias or hide their title.
+30. **1,000 members with 100 named examples.** The Demo counts ECCP's chamber at
+    1,000 and names 100 Example Companies. Is that acceptable for ECCP?
+
 ### Decided since adoption
 
 16. **ECCP is the first pilot.** On 2026-11-10 the European Chamber of Commerce
@@ -374,6 +393,27 @@ once it is resolved, and record any hard-to-reverse answer as an ADR.
     name PCCI–Quezon City; read them as ECCP. Which chambers follow, and in what
     order, is not yet set. The Section 8.1 targets were written for PCCI–Quezon
     City, so check that they still fit.
+
+Added 2026-11-19, from the meeting with Richard on 2026-11-18. The details the
+Demo had to choose are items 26 to 30, awaiting Richard.
+
+21. **Paywall off for now.** The full Demo starts with possible future pricing
+    off, so every name shows. The presenter can switch the tiers on. This matches
+    Section 6.
+22. **A chamber of 1,000.** ECCP has about 1,000 member companies. The Demo
+    counts every chamber-wide figure from that Chamber Size, and names 100
+    Example Companies.
+23. **Admins and authorized users.** A Company has a primary and a backup admin,
+    who accept Connection Requests and manage its people. Authorized users in
+    sales or procurement send Connection Requests but don't accept them. C1 now
+    says so.
+24. **What a Connection shows.** Connected Companies see each other's people by
+    name and title. Contact details show only when the person answers a Contact
+    Request. Profiles stay within the Chamber Network: printing, forwarding and
+    sharing them outside ComLinked waits until after the MVP (Section 6).
+25. **A prominent logo.** A Company can add its logo, which shows large at the
+    top of its profile and adds 10% to Profile Strength (A4). The base drops from
+    65% to 55%, so a complete profile is still 100%.
 
 ### Awaiting Richard: choices in the Pilot Preview
 

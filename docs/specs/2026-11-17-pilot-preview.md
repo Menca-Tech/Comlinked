@@ -9,6 +9,8 @@
 
 > **Note, 2026-11-18: how these screens look is now set by the [Demo premium pass](2026-11-18-demo-premium-pass.md).** The Opening and the ask in two panels, the Story Bar as a slim second row of the header, and the chamber screens' claimed figure over grouped members replace the layouts described below. What each Stop shows, says and does is still set here.
 
+> **Note, 2026-11-19: the chamber is now 1,000, and pricing starts off everywhere.** The [admins, privacy and Day 1k spec](2026-11-18-admins-privacy-and-day-1k.md) counts ECCP at its Chamber Size of 1,000, with 100 named Example Companies. Read every chamber-wide figure below at 1,000: Stop 1 builds 1,000 profiles and 1,000 claim links, and Stop 5 reads 400 of 1,000 claimed, 200 active, 40 need an Intro, with 3 deals confirmed and 2 wins posted. The Member List still shows the 100 named rows. Possible future pricing now starts off in the full Demo too, not only here. The Run of Show gains a likely question at Stop 4: "Who in a company can connect, and what do others see?" Its answer opens the account menu, then the people page and the privacy page. Richard hasn't yet confirmed that 1,000 with 100 named examples suits ECCP (that spec's question 5).
+
 ## Problem Statement
 
 ECCP, the European Chamber of Commerce of the Philippines, is the first Pilot. Nobody at ECCP has seen ComLinked or agreed to anything. The person who decides is ECCP's Chamber Leader, and they will meet ComLinked cold.
@@ -34,11 +36,11 @@ Richard presents it alone in a first meeting, on a laptop or a shared screen. Af
 | Stop | Day     | Seat              | What it shows                                                                                                  |
 | ---- | ------- | ----------------- | -------------------------------------------------------------------------------------------------------------- |
 | 0    | Opening | none              | A preview made for ECCP. ECCP has not joined ComLinked, and every company, person and figure is invented       |
-| 1    | Day 0   | Community Manager | ECCP's Member List becomes 100 Pre-built Profiles, with a claim link per Company ready for ECCP to send        |
+| 1    | Day 0   | Community Manager | ECCP's Member List becomes 1,000 Pre-built Profiles, with a claim link per Company ready for ECCP to send      |
 | 2    | Day 1   | Kalayaan Foods    | The message from ECCP, the Claim, three Matches that day (one is Nordhavn Freight Forwarders), a first message |
 | 3    | Day 2   | Kalayaan Foods    | The 8:00 a.m. Morning Digest                                                                                   |
 | 4    | Day 14  | Kalayaan Foods    | Who is interested, a first export shipment confirmed by both Companies, and a Testimonial on the Success Wall  |
-| 5    | Day 14  | Chamber Contact   | ECCP's read-only Activity View: 40 of 100 claimed, who is active, who needs an Intro, deals, wins              |
+| 5    | Day 14  | Chamber Contact   | ECCP's read-only Activity View: 400 of 1,000 claimed, who is active, who needs an Intro, deals, wins           |
 | 6    | The ask | none              | What a Pilot asks of ECCP: the Member List and one contact, with a button that opens an email to Richard       |
 
 A **Story Bar** sits under the top bar on every screen. It names the day, what is happening and whose Seat is shown, and its Next button moves to the next Stop. Each Stop has its own address, so a reload or a forwarded link opens the right Stop in the right state.
@@ -173,28 +175,28 @@ The pricing switcher, the AI Lead Agent, the Team Dashboard and the Engine do no
 
 ### Happy paths
 
-| Path                                                         | Expected                                                                                                                     |
-| ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
-| Richard opens the Pilot Preview                              | The Opening names ECCP, says ECCP has not joined and that everything is invented, lists the six Stops and offers Start       |
-| Richard presses Start                                        | Stop 1 opens on Day 0 in the Community Manager's Seat with 100 profiles built and 100 claim links ready for ECCP to send     |
-| Richard presses "Run the import again"                       | The Member List shows as names and websites, the build runs to 100, and the result reads as before                           |
-| Richard presses Next from Stop 1                             | Stop 2 opens on Day 1 on the message from ECCP to Ana Reyes of Kalayaan Foods                                                |
-| Richard claims the profile in Stop 2                         | The profile check, the authorization tick and sign-in follow, then three Matches, one of them Nordhavn Freight Forwarders    |
-| Richard sends the AI Draft to Nordhavn                       | The message sends only on Send, and the Match shows as acted on                                                              |
-| Richard presses Next without finishing the Claim             | Stop 3 opens on Day 2 with the Morning Digest, as if the Claim and first message had happened                                |
-| Richard presses Next from Stop 3                             | Stop 4 opens on Day 14 on ComDash, with the Nordhavn deal confirmed by both and the Testimonial on the Success Wall          |
-| Richard presses Next from Stop 4                             | Stop 5 opens ECCP's read-only Activity View: 40 of 100 claimed, 20 active, 4 need an Intro, 3 deals confirmed, 2 wins posted |
-| Richard takes the side step and sends an introduction        | The member's status changes, and ECCP's view then shows 3 needing an Intro                                                   |
-| Richard presses Next from Stop 5                             | Stop 6 shows the two asks, what members get, that the pilot is free, and "Email Richard"                                     |
-| The Leader taps "Email Richard" on the link                  | Their mail app opens a new message to the presenter's address with the subject filled in                                     |
-| The Leader reloads on Stop 4's Interest Signals tab          | Stop 4 reopens at ComDash on Day 14 with the Story Bar showing 4 of 6                                                        |
-| A board member opens the forwarded address of Stop 5         | ECCP's view opens on Day 14 with its figures, with no earlier Stop visited                                                   |
-| The Leader taps "Explore on your own" after Stop 6           | The member's side opens on Day 14, and a slim line offers the way back into the preview                                      |
-| Richard presses G and switches on possible future pricing    | The Free, Growth and Pro switcher appears on ComDash with its "Not in the MVP" note                                          |
-| Richard presses G and switches on the after-MVP previews     | ComDash shows five tabs again, and the AI Lead Agent, Team Dashboard and Engine can be opened                                |
-| Richard picks "Two weeks in" from the Presenter Guide        | The full Demo opens on ComDash on Day 14 with no Story Bar and with the later items showing, as before                       |
-| A visitor submits the website's "Request a pilot" form       | A note says nothing was sent, and the Pilot Preview's Opening follows                                                        |
-| Ana opens a not-yet-claimed Company from her Daily Lead List | Name, industry, city and website show, marked "Not yet claimed", with one reason drawn from her needs and no Connect button  |
+| Path                                                         | Expected                                                                                                                          |
+| ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| Richard opens the Pilot Preview                              | The Opening names ECCP, says ECCP has not joined and that everything is invented, lists the six Stops and offers Start            |
+| Richard presses Start                                        | Stop 1 opens on Day 0 in the Community Manager's Seat with 1,000 profiles built and 1,000 claim links ready for ECCP to send      |
+| Richard presses "Run the import again"                       | The Member List shows as names and websites, the build runs to 100, and the result reads as before                                |
+| Richard presses Next from Stop 1                             | Stop 2 opens on Day 1 on the message from ECCP to Ana Reyes of Kalayaan Foods                                                     |
+| Richard claims the profile in Stop 2                         | The profile check, the authorization tick and sign-in follow, then three Matches, one of them Nordhavn Freight Forwarders         |
+| Richard sends the AI Draft to Nordhavn                       | The message sends only on Send, and the Match shows as acted on                                                                   |
+| Richard presses Next without finishing the Claim             | Stop 3 opens on Day 2 with the Morning Digest, as if the Claim and first message had happened                                     |
+| Richard presses Next from Stop 3                             | Stop 4 opens on Day 14 on ComDash, with the Nordhavn deal confirmed by both and the Testimonial on the Success Wall               |
+| Richard presses Next from Stop 4                             | Stop 5 opens ECCP's read-only Activity View: 400 of 1,000 claimed, 200 active, 40 need an Intro, 3 deals confirmed, 2 wins posted |
+| Richard takes the side step and sends an introduction        | The member's status changes, and ECCP's view then shows 3 needing an Intro                                                        |
+| Richard presses Next from Stop 5                             | Stop 6 shows the two asks, what members get, that the pilot is free, and "Email Richard"                                          |
+| The Leader taps "Email Richard" on the link                  | Their mail app opens a new message to the presenter's address with the subject filled in                                          |
+| The Leader reloads on Stop 4's Interest Signals tab          | Stop 4 reopens at ComDash on Day 14 with the Story Bar showing 4 of 6                                                             |
+| A board member opens the forwarded address of Stop 5         | ECCP's view opens on Day 14 with its figures, with no earlier Stop visited                                                        |
+| The Leader taps "Explore on your own" after Stop 6           | The member's side opens on Day 14, and a slim line offers the way back into the preview                                           |
+| Richard presses G and switches on possible future pricing    | The Free, Growth and Pro switcher appears on ComDash with its "Not in the MVP" note                                               |
+| Richard presses G and switches on the after-MVP previews     | ComDash shows five tabs again, and the AI Lead Agent, Team Dashboard and Engine can be opened                                     |
+| Richard picks "Two weeks in" from the Presenter Guide        | The full Demo opens on ComDash on Day 14 with no Story Bar and with the later items showing, as before                            |
+| A visitor submits the website's "Request a pilot" form       | A note says nothing was sent, and the Pilot Preview's Opening follows                                                             |
+| Ana opens a not-yet-claimed Company from her Daily Lead List | Name, industry, city and website show, marked "Not yet claimed", with one reason drawn from her needs and no Connect button       |
 
 ### Sad paths
 
@@ -209,7 +211,7 @@ The pricing switcher, the AI Lead Agent, the Team Dashboard and the Engine do no
 | The AI Assistant is off in Stop 2                                  | The first message starts as an empty box with the templates, and still sends                                               |
 | The later items are hidden and their address is opened directly    | The ComDash Overview opens                                                                                                 |
 | The Leader opens the Success Wall on Day 1 or Day 2                | A calm empty state says the first win appears when two members confirm a deal                                              |
-| Stop 1's Activity View on Day 0                                    | It reads 0 of 100 claimed, with every member "Not yet claimed" and no wins                                                 |
+| Stop 1's Activity View on Day 0                                    | It reads 0 of 1,000 claimed, with every member "Not yet claimed" and no wins                                               |
 | A status filter matches no member                                  | The list says so in one line                                                                                               |
 | A very long company name on a 360 pixel phone                      | It wraps inside its card, with no sideways scrolling                                                                       |
 | The Story Bar on a 360 pixel phone                                 | Its text wraps to at most two lines, and Next stays fully visible and easy to tap                                          |
@@ -282,7 +284,7 @@ The pricing switcher, the AI Lead Agent, the Team Dashboard and the Engine do no
 ### The Community Manager's import
 
 - **Member List.** The preview before building shows each Company's name and website only.
-- **Result.** "100 profiles built. 100 claim links ready for ECCP to send." Nothing says a link was sent.
+- **Result.** "1,000 profiles built. 1,000 claim links ready for ECCP to send." (100 until 2026-11-19.) Nothing says a link was sent.
 - **Drafts open.** Each built profile opens as today, from the list.
 
 ### ECCP's Activity View
@@ -290,7 +292,7 @@ The pricing switcher, the AI Lead Agent, the Team Dashboard and the Engine do no
 - **Built from ComDash's parts.** It reuses ComDash's number tiles, panels, filter chips and its table that becomes stacked cards on a phone. No new visual language is introduced, and App Mode colours and fonts apply.
 - **Heading.** The chamber's name "on ComLinked", the day of the pilot, and the read-only label. The pilot's length is not stated, since it is not confirmed.
 - **Five tiles.** Claimed (of the network's size), Active, Need an intro, Deals confirmed, Wins posted.
-- **Day 14 figures.** 40 claimed of 100, 20 active, 4 need an Intro, 3 deals confirmed, 2 wins posted. These are where the plan's Section 8.1 targets stand two weeks in: 40% claimed within 14 days, half of claimed Companies active in a week, one in ten without a first-day lead, 20 deals and 10 Testimonials in 90 days.
+- **Day 14 figures.** 400 claimed of 1,000, 200 active, 40 need an Intro, 3 deals confirmed, 2 wins posted (40, 20 and 4 of 100 until 2026-11-19). These are where the plan's Section 8.1 targets stand two weeks in: 40% claimed within 14 days, half of claimed Companies active in a week, one in ten without a first-day lead, 20 deals and 10 Testimonials in 90 days.
 - **One status per member**, by this order: Not yet claimed; Needs an intro (claimed, and still without a Lead); Active (claimed, and acted in the last 7 days); Quiet (claimed otherwise). A member's status never depends on its dealings with Kalayaan Foods.
 - **Filters.** All, Active, Quiet, Needs an intro and Not yet claimed, each with its count. The four statuses add up to the network's size.
 - **Rows.** The Company and its status, and nothing else about it. Not-yet-claimed members with a message waiting are listed first and marked "A member is waiting", without saying who.
