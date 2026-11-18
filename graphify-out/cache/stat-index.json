@@ -1,0 +1,2757 @@
+{
+  ".claude/README.md": {
+    "size": 1283,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926791323541000,
+    "word_count": 176,
+    "hashes": {
+      ".claude/README.md": "b4797f16c216a0778579d097bf4c9a8fad831d4318f6e4929f9283fca91ddfc6"
+    }
+  },
+  ".claude/agents/README.md": {
+    "size": 434,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926791325089000,
+    "word_count": 63,
+    "hashes": {
+      ".claude/agents/README.md": "894c18f57d03cf6f02f7d2d71aab6e9d2fafd428f9980420bad77e7679cb3fec"
+    }
+  },
+  ".claude/commands/handoff.md": {
+    "size": 2843,
+    "mtime_ns": 1794219825241961447,
+    "indexed_at_ns": 1794926791325622000,
+    "word_count": 420,
+    "hashes": {
+      ".claude/commands/handoff.md": "2d21d0dec45a10e9aaadfdddd49f2909fbce631890b36c088389b892bcc9df10"
+    }
+  },
+  ".claude/commands/ship.md": {
+    "size": 383,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926791326105000,
+    "word_count": 61,
+    "hashes": {
+      ".claude/commands/ship.md": "1855176cdb9a66f9f49883bb5d48090b660a2a1fd15a0fb1744071567ca9b39f"
+    }
+  },
+  ".claude/commands/verify.md": {
+    "size": 328,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926791327048000,
+    "word_count": 54,
+    "hashes": {
+      ".claude/commands/verify.md": "bd0017f129df0e47d29b1b1275bd9efcb0d042b719ffdb5ceb596a379a1be4c8"
+    }
+  },
+  ".claude/settings.json": {
+    "size": 487,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926792472545000,
+    "word_count": 41,
+    "hashes": {
+      ".claude/settings.json": "35a5cf6823500fbaf42e12c594a12d4da4defafb1c35fbe93ca9f07ad867d1ac"
+    }
+  },
+  ".claude/skills/README.md": {
+    "size": 8005,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926791327946000,
+    "word_count": 654,
+    "hashes": {
+      ".claude/skills/README.md": "24f324ebd0ab5f70e346c27c87de308c24d7b552dfb654bfe41faaa5eefed542"
+    }
+  },
+  ".claude/skills/anime-js/SKILL.md": {
+    "size": 4921,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926791328825000,
+    "word_count": 640,
+    "hashes": {
+      ".claude/skills/anime-js/SKILL.md": "6bae35d608c850ad5ac68c1a352afb1c6dcfcd7f2204dd1c288001715af0762f"
+    }
+  },
+  ".claude/skills/clean-architecture/SKILL.md": {
+    "size": 5474,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926791329428000,
+    "word_count": 716,
+    "hashes": {
+      ".claude/skills/clean-architecture/SKILL.md": "2269607f7df14c8ccd98efc1051fc8d96f4163dcfe2de939d24e26ff8858be1c"
+    }
+  },
+  ".claude/skills/coding-standards/SKILL.md": {
+    "size": 12034,
+    "mtime_ns": 1793694083252227192,
+    "indexed_at_ns": 1794926791330044000,
+    "word_count": 1433,
+    "hashes": {
+      ".claude/skills/coding-standards/SKILL.md": "3484bd8e715da60e82cd30675202d9b8404886755d2d9e1d0d75a46ebf43e9e7"
+    }
+  },
+  ".claude/skills/data-tables/SKILL.md": {
+    "size": 3179,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926791330690000,
+    "word_count": 401,
+    "hashes": {
+      ".claude/skills/data-tables/SKILL.md": "7a1e3a2f018e645889105de2a035726810a39fc583393f0106dc7a90cf0fbd00"
+    }
+  },
+  ".claude/skills/drizzle-data/SKILL.md": {
+    "size": 5545,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926791331400000,
+    "word_count": 696,
+    "hashes": {
+      ".claude/skills/drizzle-data/SKILL.md": "44cdfadb7f66f9093cb321f5642c51553a3cbb4e4f4f5fcc2105de4aff7680fe"
+    }
+  },
+  ".claude/skills/drizzle-data/references/drizzle-rls.md": {
+    "size": 2414,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926791331918000,
+    "word_count": 327,
+    "hashes": {
+      ".claude/skills/drizzle-data/references/drizzle-rls.md": "6d052c5bd28a003ac7c41fb1dff338a9cedea0ad83a619bd08c62971d7faf766"
+    }
+  },
+  ".claude/skills/forms-validation/SKILL.md": {
+    "size": 3645,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926791332356000,
+    "word_count": 429,
+    "hashes": {
+      ".claude/skills/forms-validation/SKILL.md": "3c139b4a225c0450b913889c9e974d3c390fbbbfdae24279186a8c5f43312312"
+    }
+  },
+  ".claude/skills/nextjs-app-router/SKILL.md": {
+    "size": 5456,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926791332742000,
+    "word_count": 705,
+    "hashes": {
+      ".claude/skills/nextjs-app-router/SKILL.md": "f48094b28a682c8aa9e0c966e2dbef30a17cc8958376d9eb0b49c284630039a9"
+    }
+  },
+  ".claude/skills/nextjs-app-router/references/react-19.md": {
+    "size": 2181,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926791333242000,
+    "word_count": 273,
+    "hashes": {
+      ".claude/skills/nextjs-app-router/references/react-19.md": "5df50fa18952063fe98be9dafb5a59421127a03aea8e5276737846a6b4c915eb"
+    }
+  },
+  ".claude/skills/nextjs-app-router/references/server-actions.md": {
+    "size": 2797,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926791333847000,
+    "word_count": 320,
+    "hashes": {
+      ".claude/skills/nextjs-app-router/references/server-actions.md": "b3d4c24c3337395df4563f014f809ba03e8a1253769f7675f1e4c2718c2e4618"
+    }
+  },
+  ".claude/skills/posthog/SKILL.md": {
+    "size": 6107,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926791334242000,
+    "word_count": 693,
+    "hashes": {
+      ".claude/skills/posthog/SKILL.md": "f9f9fe4c34793a40060798f0a31713f081a7ea13d1ae708f316bf2e5f2133c86"
+    }
+  },
+  ".claude/skills/shadcn-ui/SKILL.md": {
+    "size": 4131,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926791334663000,
+    "word_count": 537,
+    "hashes": {
+      ".claude/skills/shadcn-ui/SKILL.md": "b5d87a1839983cf89867e67a9831d06617c6b8d5e08ea2c1ad7ae00d0310d282"
+    }
+  },
+  ".claude/skills/supabase-auth/SKILL.md": {
+    "size": 5050,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926791335064000,
+    "word_count": 615,
+    "hashes": {
+      ".claude/skills/supabase-auth/SKILL.md": "e50fc0c411393beae9f616ad018997e512c7e50c9e19389e43502f1650663017"
+    }
+  },
+  ".claude/skills/tailwind-v4/SKILL.md": {
+    "size": 4348,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926791335623000,
+    "word_count": 549,
+    "hashes": {
+      ".claude/skills/tailwind-v4/SKILL.md": "d31ca3f82ac7e74c4a384fc5d8a563df840b4c2c520d1fc2e6002bfa455631e6"
+    }
+  },
+  ".claude/skills/tailwind-v4/references/theming.md": {
+    "size": 1883,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926791336048000,
+    "word_count": 235,
+    "hashes": {
+      ".claude/skills/tailwind-v4/references/theming.md": "6cffcb857d0a456a2eb368a83aecbb34c9527f15153c816f83061ffb6516ecef"
+    }
+  },
+  ".claude/skills/testing-e2e/SKILL.md": {
+    "size": 3381,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926791336452000,
+    "word_count": 400,
+    "hashes": {
+      ".claude/skills/testing-e2e/SKILL.md": "3b63d1c4983281e983fe1b922b6517fea24018cec5f958d5b32ee3275ce27348"
+    }
+  },
+  ".claude/skills/testing-unit/SKILL.md": {
+    "size": 4019,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926791336878000,
+    "word_count": 458,
+    "hashes": {
+      ".claude/skills/testing-unit/SKILL.md": "a6658a9a4ec6b646283abe722d9e87395c91ae8b58e813d5b590076d4878d53c"
+    }
+  },
+  ".github/ISSUE_TEMPLATE/bug_report.md": {
+    "size": 380,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926791337356000,
+    "word_count": 64,
+    "hashes": {
+      ".github/ISSUE_TEMPLATE/bug_report.md": "f40f6a21a06a7445f4751554b290fe6083c98aee375a299392aaff82381e84dc"
+    }
+  },
+  ".github/ISSUE_TEMPLATE/feature_request.md": {
+    "size": 330,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926791337807000,
+    "word_count": 50,
+    "hashes": {
+      ".github/ISSUE_TEMPLATE/feature_request.md": "edaaad473ffc4fd0d45c39f972e283c71b03c17225e496245f1c791d24f2d9b8"
+    }
+  },
+  ".github/dependabot.yml": {
+    "size": 308,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926792494211000,
+    "word_count": 26,
+    "hashes": {
+      ".github/dependabot.yml": "0fc752dce1b24df395117194811c29316ec74e79a667fe6d902a13fceb0f6ec8"
+    }
+  },
+  ".github/pull_request_template.md": {
+    "size": 341,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926791338643000,
+    "word_count": 65,
+    "hashes": {
+      ".github/pull_request_template.md": "18bc2a158bb7bb8df1f3e1b59a0aee2b9bd3f5ac6352b03b7d8e80e277b67e70"
+    }
+  },
+  ".github/workflows/ci.yml": {
+    "size": 1325,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926792495394000,
+    "word_count": 145,
+    "hashes": {
+      ".github/workflows/ci.yml": "40bed64d295634d8b880d275dfb392af113749009eea23035f0cdb72c0bf45e6"
+    }
+  },
+  ".github/workflows/codeql.yml": {
+    "size": 779,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926792495895000,
+    "word_count": 74,
+    "hashes": {
+      ".github/workflows/codeql.yml": "3198ef2cd05df7489970503720a4925abd10b9aec7ad7d4d7c87a129dcd818c9"
+    }
+  },
+  ".prettierrc.json": {
+    "size": 185,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926792496246000,
+    "word_count": 14,
+    "hashes": {
+      ".prettierrc.json": "ea3c94c9b9a7e21187b7ced620a9d5e1e1749827d71236efad2ba24bbe135179"
+    }
+  },
+  ".scratch/comdash-redesign/issues/01-session-1-shell-overview-next-action.md": {
+    "size": 12110,
+    "mtime_ns": 1794333401363993489,
+    "indexed_at_ns": 1794926791339186000,
+    "word_count": 1881,
+    "hashes": {
+      ".scratch/comdash-redesign/issues/01-session-1-shell-overview-next-action.md": "f85e3b7ea293e9ae62b239b9dcac3dbb9de3dacd0e26aea172c60cddfd0afa73"
+    }
+  },
+  ".scratch/comdash-redesign/issues/02-session-2-signals-connections-plans-final.md": {
+    "size": 10305,
+    "mtime_ns": 1794333401392810377,
+    "indexed_at_ns": 1794926791339824000,
+    "word_count": 1577,
+    "hashes": {
+      ".scratch/comdash-redesign/issues/02-session-2-signals-connections-plans-final.md": "a09e125adf66cceed0cca0ee6d77d10242e7d142d272332db863254158759ad0"
+    }
+  },
+  ".scratch/comdash-redesign/issues/03-fix-interest-signals-layout.md": {
+    "size": 11714,
+    "mtime_ns": 1794449138319015994,
+    "indexed_at_ns": 1794926791340285000,
+    "word_count": 1819,
+    "hashes": {
+      ".scratch/comdash-redesign/issues/03-fix-interest-signals-layout.md": "0c487e0b2ab87fba25436031a02ec33dbe9f4461143ed392222b4a289d3ff852"
+    }
+  },
+  ".scratch/comdash-redesign/issues/04-interest-signals-exact-prototype.md": {
+    "size": 13792,
+    "mtime_ns": 1794496064691939708,
+    "indexed_at_ns": 1794926791340884000,
+    "word_count": 2143,
+    "hashes": {
+      ".scratch/comdash-redesign/issues/04-interest-signals-exact-prototype.md": "f3e80bf54b765d32bbab884ea44d9e1947c63e976f155ffae59fa6c2cd3270c6"
+    }
+  },
+  ".scratch/pilot-preview/issues/01-claim-day-and-network-of-100.md": {
+    "size": 17454,
+    "mtime_ns": 1794902963263730047,
+    "indexed_at_ns": 1794926791341373000,
+    "word_count": 2813,
+    "hashes": {
+      ".scratch/pilot-preview/issues/01-claim-day-and-network-of-100.md": "4461ae7ca0a378642b1f512c141b7c60aea1f0b25b9a664598d78da0b3af3bb2"
+    }
+  },
+  ".scratch/pilot-preview/issues/02-export-story-and-basics-before-claim.md": {
+    "size": 23339,
+    "mtime_ns": 1794911480058362164,
+    "indexed_at_ns": 1794926791341830000,
+    "word_count": 3918,
+    "hashes": {
+      ".scratch/pilot-preview/issues/02-export-story-and-basics-before-claim.md": "2b8cb4b9cac95fd199ae2f2e8fee8aae5c1b796317e818797465ca21a7175e58"
+    }
+  },
+  ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md": {
+    "size": 24467,
+    "mtime_ns": 1794923631200171728,
+    "indexed_at_ns": 1794926791342308000,
+    "word_count": 4134,
+    "hashes": {
+      ".scratch/pilot-preview/issues/03-walk-the-preview-and-hide-later-items.md": "deb2651f1e5e41b4e6851ad8692f58581a606496d0b40ea553609f80e558d383"
+    }
+  },
+  ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md": {
+    "size": 17109,
+    "mtime_ns": 1794899443512236944,
+    "indexed_at_ns": 1794926791342795000,
+    "word_count": 2790,
+    "hashes": {
+      ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md": "52d8a68b96c6dcf051136d14c898ef90bdb090261797037d1f529001f42b6ec5"
+    }
+  },
+  ".scratch/pilot-preview/issues/05-eccp-activity-view.md": {
+    "size": 17947,
+    "mtime_ns": 1794910515824444792,
+    "indexed_at_ns": 1794926791343243000,
+    "word_count": 2968,
+    "hashes": {
+      ".scratch/pilot-preview/issues/05-eccp-activity-view.md": "4e3619c1931e621f4b0f7d27693c776c7b3ad7ae6328a1974868760340804968"
+    }
+  },
+  ".scratch/pilot-preview/issues/06-names-run-of-show-and-final-check.md": {
+    "size": 16386,
+    "mtime_ns": 1794899617137866595,
+    "indexed_at_ns": 1794926791343981000,
+    "word_count": 2836,
+    "hashes": {
+      ".scratch/pilot-preview/issues/06-names-run-of-show-and-final-check.md": "4b1d860eb473cae1474d1e8de8c20fe92b6569713e99280bb6280a486518e551"
+    }
+  },
+  ".scratch/website-redesign/fast-track/session-1-homepage.md": {
+    "size": 12403,
+    "mtime_ns": 1794219825242308357,
+    "indexed_at_ns": 1794926791344530000,
+    "word_count": 1840,
+    "hashes": {
+      ".scratch/website-redesign/fast-track/session-1-homepage.md": "c1fbc0a538b9763aa4b547ee657a51555ac4450bc9b40462e7cc4dfce26d1fb0"
+    }
+  },
+  ".scratch/website-redesign/fast-track/session-2-pages-and-final-check.md": {
+    "size": 12312,
+    "mtime_ns": 1794209172497606012,
+    "indexed_at_ns": 1794926791345313000,
+    "word_count": 1879,
+    "hashes": {
+      ".scratch/website-redesign/fast-track/session-2-pages-and-final-check.md": "f80745c47b61a27656c9ce00e0981d3f315af7d3072cb3d59133b1e0d491604d"
+    }
+  },
+  ".scratch/website-redesign/issues/01-quiet-authority-foundation.md": {
+    "size": 7878,
+    "mtime_ns": 1794219825242807931,
+    "indexed_at_ns": 1794926791345932000,
+    "word_count": 1193,
+    "hashes": {
+      ".scratch/website-redesign/issues/01-quiet-authority-foundation.md": "66d0725a669b553f686a0bab8c50b5f9b21887451f2d632ab7e5b0ab8cac6e3b"
+    }
+  },
+  ".scratch/website-redesign/issues/02-homepage-hero-network-ring.md": {
+    "size": 6928,
+    "mtime_ns": 1794219825243260298,
+    "indexed_at_ns": 1794926791346470000,
+    "word_count": 1098,
+    "hashes": {
+      ".scratch/website-redesign/issues/02-homepage-hero-network-ring.md": "5ff1895cc140789025850756d0b088ddfc2a0b3a34f2dacb54952d685d1450a5"
+    }
+  },
+  ".scratch/website-redesign/issues/03-network-ring-sequence.md": {
+    "size": 6669,
+    "mtime_ns": 1794219825243587334,
+    "indexed_at_ns": 1794926791347086000,
+    "word_count": 1039,
+    "hashes": {
+      ".scratch/website-redesign/issues/03-network-ring-sequence.md": "31cd242d311201d569dd2f90d98ea924fa88354e9ee244f6b49acb7f98dc8171"
+    }
+  },
+  ".scratch/website-redesign/issues/04-homepage-sections.md": {
+    "size": 6701,
+    "mtime_ns": 1794219825243955702,
+    "indexed_at_ns": 1794926791347609000,
+    "word_count": 1028,
+    "hashes": {
+      ".scratch/website-redesign/issues/04-homepage-sections.md": "47e454da9f0300e097d71d8c604058e3ecea0d0cd55f310c4baeab0635ab358d"
+    }
+  },
+  ".scratch/website-redesign/issues/05-validated-join-form.md": {
+    "size": 6411,
+    "mtime_ns": 1794219825244266905,
+    "indexed_at_ns": 1794926791348331000,
+    "word_count": 975,
+    "hashes": {
+      ".scratch/website-redesign/issues/05-validated-join-form.md": "bd3903598d66818a1bd8b7efe5edfbd8934ea6b3fc4b2b322188f8fac4994098"
+    }
+  },
+  ".scratch/website-redesign/issues/06-homepage-review-with-richard.md": {
+    "size": 4346,
+    "mtime_ns": 1794219825244572149,
+    "indexed_at_ns": 1794926791348861000,
+    "word_count": 694,
+    "hashes": {
+      ".scratch/website-redesign/issues/06-homepage-review-with-richard.md": "b1741538f16bdfeb31131d0045bc1d940f01b187a9f4e25e8b75787adf25d950"
+    }
+  },
+  ".scratch/website-redesign/issues/07-for-chambers-page.md": {
+    "size": 7549,
+    "mtime_ns": 1794219825244866061,
+    "indexed_at_ns": 1794926791349481000,
+    "word_count": 1132,
+    "hashes": {
+      ".scratch/website-redesign/issues/07-for-chambers-page.md": "006dd7282954582a7462fee1615028df30dcfc8e2a6c2d6a0eeda854828c0831"
+    }
+  },
+  ".scratch/website-redesign/issues/08-how-it-works-page.md": {
+    "size": 6164,
+    "mtime_ns": 1794219825245157639,
+    "indexed_at_ns": 1794926791349875000,
+    "word_count": 962,
+    "hashes": {
+      ".scratch/website-redesign/issues/08-how-it-works-page.md": "81b6649a07d33170344cfe0aeff61d79469808be89809583925fcad6a5ec18fd"
+    }
+  },
+  ".scratch/website-redesign/issues/09-comdash-page.md": {
+    "size": 6020,
+    "mtime_ns": 1794219825245432675,
+    "indexed_at_ns": 1794926791350365000,
+    "word_count": 925,
+    "hashes": {
+      ".scratch/website-redesign/issues/09-comdash-page.md": "55c9b28efca5c3f32f8132b9be09ca846afcba4f1046acf5f1487e89ce7ca6f6"
+    }
+  },
+  ".scratch/website-redesign/issues/10-final-cleanup-and-check.md": {
+    "size": 6420,
+    "mtime_ns": 1794219825245723378,
+    "indexed_at_ns": 1794926791351040000,
+    "word_count": 995,
+    "hashes": {
+      ".scratch/website-redesign/issues/10-final-cleanup-and-check.md": "40a51eb37a9c57444b4309603e86a1dd652c358799983d6069145c2d5386b5a2"
+    }
+  },
+  "AGENTS.md": {
+    "size": 1999,
+    "mtime_ns": 1794132538272175472,
+    "indexed_at_ns": 1794926791351548000,
+    "word_count": 287,
+    "hashes": { "AGENTS.md": "aab0f4211def1abe498a750b99cf8be60ded9c655b41f95521f1c2977ac72764" }
+  },
+  "CLAUDE.md": {
+    "size": 3271,
+    "mtime_ns": 1794284238332315438,
+    "indexed_at_ns": 1794926791351975000,
+    "word_count": 477,
+    "hashes": { "CLAUDE.md": "2696043e46f463bf2e60de4d596f48887d6f171dd5b7eca4cfd378123eaa457c" }
+  },
+  "CONTEXT.md": {
+    "size": 11661,
+    "mtime_ns": 1794897602636556359,
+    "indexed_at_ns": 1794926791352385000,
+    "word_count": 1861,
+    "hashes": { "CONTEXT.md": "38fced69b7ae09c1d594d5b5f230e54cac57d5ae2a1b577216dd7a4f0a82caa1" }
+  },
+  "CONTRIBUTING.md": {
+    "size": 908,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926791352813000,
+    "word_count": 130,
+    "hashes": {
+      "CONTRIBUTING.md": "cf85b4be7f298dce7b93a33b4fff037e0aac207fe7f4b7e58f3b488d99b736bd"
+    }
+  },
+  "README.md": {
+    "size": 4635,
+    "mtime_ns": 1794132538630236729,
+    "indexed_at_ns": 1794926791353317000,
+    "word_count": 568,
+    "hashes": { "README.md": "ee44b3259fb8b7d1db064b0544e7c8755ad18ea71ee7ce6efad7d954fb80632e" }
+  },
+  "commitlint.config.ts": {
+    "size": 65,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748339728000,
+    "word_count": 6
+  },
+  "components.json": {
+    "size": 431,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926792496701000,
+    "word_count": 38,
+    "hashes": {
+      "components.json": "bf1d57715f44312a32928a51b580e9e63d2dbcbf1d5e85eea574bde666813e2d"
+    }
+  },
+  "docker-compose.yml": {
+    "size": 644,
+    "mtime_ns": 1793694083279103966,
+    "indexed_at_ns": 1794926792497101000,
+    "word_count": 67,
+    "hashes": {
+      "docker-compose.yml": "aa8efdd02ca6daf03b98a2b1a1b7f835e674c2f2aa447fc59b2a9277e95a7be1"
+    }
+  },
+  "docs/adr/0001-shadcn-tailwind-over-mui-joy.md": {
+    "size": 1807,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926791353814000,
+    "word_count": 278,
+    "hashes": {
+      "docs/adr/0001-shadcn-tailwind-over-mui-joy.md": "707928652691e8af22ed3748557e3e7a97c708b1953b521120da08df7989530b"
+    }
+  },
+  "docs/adr/0002-supabase-only-auth.md": {
+    "size": 1220,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926791354272000,
+    "word_count": 181,
+    "hashes": {
+      "docs/adr/0002-supabase-only-auth.md": "7031253437462fec86c2fc31468adfff7b42d8c143bc9413f6c6df041964b5b4"
+    }
+  },
+  "docs/adr/0003-mock-first-service-seam.md": {
+    "size": 1250,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926791354904000,
+    "word_count": 194,
+    "hashes": {
+      "docs/adr/0003-mock-first-service-seam.md": "defe957baf5af4451cb13178e4c94bb048026c9bbf71d984eb9c6653a51d4fc2"
+    }
+  },
+  "docs/adr/0004-rsc-server-actions-first.md": {
+    "size": 1208,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926791355405000,
+    "word_count": 188,
+    "hashes": {
+      "docs/adr/0004-rsc-server-actions-first.md": "8693623d7400f68afd29658f40a3f576a5612c993fe216bc63f94cd2624d71f3"
+    }
+  },
+  "docs/adr/0005-multi-tenancy.md": {
+    "size": 3107,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926791355803000,
+    "word_count": 440,
+    "hashes": {
+      "docs/adr/0005-multi-tenancy.md": "d890267f8ac52c0464c07dfbd739232021f1d993dd5675bc77c1d4bd516d8fcd"
+    }
+  },
+  "docs/adr/0006-drizzle-data-layer.md": {
+    "size": 3700,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926791356177000,
+    "word_count": 528,
+    "hashes": {
+      "docs/adr/0006-drizzle-data-layer.md": "bfb794eb6de0286030df51308bc1ba7fafe725124e6b4714a173be5d83381ef4"
+    }
+  },
+  "docs/adr/0007-analytics-posthog.md": {
+    "size": 4605,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926791356687000,
+    "word_count": 607,
+    "hashes": {
+      "docs/adr/0007-analytics-posthog.md": "01910b4eb0cf306028113ce18a981b03c6da0e593fd66b1a73c434f8416e7916"
+    }
+  },
+  "docs/adr/0008-free-mvp-product-direction.md": {
+    "size": 2439,
+    "mtime_ns": 1794132506570004165,
+    "indexed_at_ns": 1794926791357472000,
+    "word_count": 364,
+    "hashes": {
+      "docs/adr/0008-free-mvp-product-direction.md": "891f1d00acaa9c3bd8623ecccd9889dc19f51d73a0fd2948e85859427e911144"
+    }
+  },
+  "docs/adr/0009-company-directory-and-chambers.md": {
+    "size": 1903,
+    "mtime_ns": 1794155444475095762,
+    "indexed_at_ns": 1794926791357983000,
+    "word_count": 268,
+    "hashes": {
+      "docs/adr/0009-company-directory-and-chambers.md": "5935806d275e35bbb362f21e6c521c8407a3f91b1542df3ceb80a6c7741dc45d"
+    }
+  },
+  "docs/adr/0010-client-side-product-simulation.md": {
+    "size": 1397,
+    "mtime_ns": 1794196602708186381,
+    "indexed_at_ns": 1794926791358407000,
+    "word_count": 224,
+    "hashes": {
+      "docs/adr/0010-client-side-product-simulation.md": "90e2273039d7fd995cc6bab3319558ae702bd88a61fe7ff9e0aabdf06b963b10"
+    }
+  },
+  "docs/design-system/README.md": {
+    "size": 15710,
+    "mtime_ns": 1794368674441091808,
+    "indexed_at_ns": 1794926791359097000,
+    "word_count": 2364,
+    "hashes": {
+      "docs/design-system/README.md": "ee86a3e39f07b123eee9053090ec3f984a9aef4f8d0fa484e1be468d18929010"
+    }
+  },
+  "docs/presentations/comlinked-stack-overview.pdf": {
+    "size": 183564,
+    "mtime_ns": 1793705316448841944,
+    "indexed_at_ns": 1794926791366869000,
+    "word_count": 0,
+    "hashes": {
+      "docs/presentations/comlinked-stack-overview.pdf": "8a54a07c6c0b35bf4715b4f5a1132fa441ba55ec2cbf6ce213333d09a9aca154"
+    }
+  },
+  "docs/specs/2026-07-15-multi-tenancy.md": {
+    "size": 11847,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926791359660000,
+    "word_count": 1792,
+    "hashes": {
+      "docs/specs/2026-07-15-multi-tenancy.md": "52212177d60dbc5ee603a864393f796b8443d30edf4d9688cea0b33d16cab35d"
+    }
+  },
+  "docs/specs/2026-07-31-coding-standards.md": {
+    "size": 14145,
+    "mtime_ns": 1793694083261231895,
+    "indexed_at_ns": 1794926791360814000,
+    "word_count": 1608,
+    "hashes": {
+      "docs/specs/2026-07-31-coding-standards.md": "bb954bf68ee3df632f0ffddc56981395469e351566950c90296a6edc42dfa1c0"
+    }
+  },
+  "docs/specs/2026-10-11-mvp-build-plan.md": {
+    "size": 30609,
+    "mtime_ns": 1794284238457333687,
+    "indexed_at_ns": 1794926791361659000,
+    "word_count": 4025,
+    "hashes": {
+      "docs/specs/2026-10-11-mvp-build-plan.md": "4b0a2d6e649b099c1a14426c9a28fb10d5ca9d034f8d23155ee7c99613067b25"
+    }
+  },
+  "docs/specs/2026-10-11-mvp-build-plan.pdf": {
+    "size": 404294,
+    "mtime_ns": 1794132507305346663,
+    "indexed_at_ns": 1794926791367620000,
+    "word_count": 0,
+    "hashes": {
+      "docs/specs/2026-10-11-mvp-build-plan.pdf": "fdba63f37d52e9846300029fd14df564291819c5856c9da3d5572d6c25d7b1df"
+    }
+  },
+  "docs/specs/2026-10-21-ai-lead-agent-simulator.html": {
+    "size": 29222,
+    "mtime_ns": 1794151942528022094,
+    "indexed_at_ns": 1794926791362339000,
+    "word_count": 2144,
+    "hashes": {
+      "docs/specs/2026-10-21-ai-lead-agent-simulator.html": "ec3c2709a25f3c606f286549039de303f392711e6cf3c8e802d89a5efbe3e0fa"
+    }
+  },
+  "docs/specs/2026-10-21-ai-lead-agent.pdf": {
+    "size": 824999,
+    "mtime_ns": 1794151942524044815,
+    "indexed_at_ns": 1794926791368650000,
+    "word_count": 0,
+    "hashes": {
+      "docs/specs/2026-10-21-ai-lead-agent.pdf": "6aa3b1957e4c5eb0214bd899136b5841ff5dc836379161cc28d380a0cf128c21"
+    }
+  },
+  "docs/specs/2026-11-08-mvp-feature-status.md": {
+    "size": 31859,
+    "mtime_ns": 1794364147094367771,
+    "indexed_at_ns": 1794926791363051000,
+    "word_count": 3020,
+    "hashes": {
+      "docs/specs/2026-11-08-mvp-feature-status.md": "18927550f7fafea85ecc1aebbfa5fa22b57c54bc4aee3781cd97e7bc55adc2c5"
+    }
+  },
+  "docs/specs/2026-11-09-comlinked-srs.md": {
+    "size": 119401,
+    "mtime_ns": 1794284249308230017,
+    "indexed_at_ns": 1794926791363742000,
+    "word_count": 12983,
+    "hashes": {
+      "docs/specs/2026-11-09-comlinked-srs.md": "641be972e6c234476a69e9489f357b8a0796a32feac69a42b480d4a0ecd4d16c"
+    }
+  },
+  "docs/specs/2026-11-09-website-redesign.md": {
+    "size": 25450,
+    "mtime_ns": 1794209030942209604,
+    "indexed_at_ns": 1794926791364669000,
+    "word_count": 4095,
+    "hashes": {
+      "docs/specs/2026-11-09-website-redesign.md": "8e13a47c1324a609bac9f612aa41e92fc9b489a129f427b9eb3bb0284dc4a58b"
+    }
+  },
+  "docs/specs/2026-11-11-comdash-redesign.md": {
+    "size": 29607,
+    "mtime_ns": 1794449130581714621,
+    "indexed_at_ns": 1794926791365503000,
+    "word_count": 4866,
+    "hashes": {
+      "docs/specs/2026-11-11-comdash-redesign.md": "ca38877e90c94c430eea88f77b3db8a2a1b7d3bc0674a7efabe30e5d606a7633"
+    }
+  },
+  "docs/specs/2026-11-17-pilot-preview.md": {
+    "size": 51544,
+    "mtime_ns": 1794926787638725194,
+    "indexed_at_ns": 1794926791366333000,
+    "hashes": {
+      "docs/specs/2026-11-17-pilot-preview.md": "e96f83a5d4639b75726f5d6014f68758f86c17e758bcf249f42e8b55b588a542"
+    }
+  },
+  "drizzle.config.ts": {
+    "size": 582,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748363028000,
+    "word_count": 63
+  },
+  "drizzle/0000_nifty_norman_osborn.sql": {
+    "size": 384,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926792497487000,
+    "word_count": 48,
+    "hashes": {
+      "drizzle/0000_nifty_norman_osborn.sql": "4c88017c2c4a95e6be52763bc6170575d17c43be52ce2b478937a69df6eb8740"
+    }
+  },
+  "drizzle/meta/0000_snapshot.json": {
+    "size": 1803,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926792497842000,
+    "word_count": 147,
+    "hashes": {
+      "drizzle/meta/0000_snapshot.json": "ecb257c1baba67349f55acec68bbb5698d4ad6b55bb80bc5db76d4237c56d641"
+    }
+  },
+  "drizzle/meta/_journal.json": {
+    "size": 214,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926792498157000,
+    "word_count": 21,
+    "hashes": {
+      "drizzle/meta/_journal.json": "2358ac4c971077e656bf304f341371d935d4d1224949885d26b29313027f5b3b"
+    }
+  },
+  "e2e/a11y.spec.ts": {
+    "size": 1206,
+    "mtime_ns": 1794133417412625951,
+    "indexed_at_ns": 1794926748365046000,
+    "word_count": 160
+  },
+  "e2e/auth-smoke.spec.ts": {
+    "size": 497,
+    "mtime_ns": 1794132870581705759,
+    "indexed_at_ns": 1794926748365314000,
+    "word_count": 56
+  },
+  "e2e/pilot-preview.spec.ts": {
+    "size": 43498,
+    "mtime_ns": 1794926738107101600,
+    "indexed_at_ns": 1794926748365569000,
+    "word_count": 4314
+  },
+  "e2e/product-smoke.spec.ts": {
+    "size": 64173,
+    "mtime_ns": 1794925398243917175,
+    "indexed_at_ns": 1794926748366040000,
+    "word_count": 5788
+  },
+  "e2e/website-redesign.spec.ts": {
+    "size": 34218,
+    "mtime_ns": 1794926347546884104,
+    "indexed_at_ns": 1794926748366577000,
+    "word_count": 3389
+  },
+  "eslint.config.mjs": {
+    "size": 850,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748366986000,
+    "word_count": 76
+  },
+  "lint-staged.config.mjs": {
+    "size": 128,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748367222000,
+    "word_count": 12
+  },
+  "next.config.ts": {
+    "size": 2408,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748367713000,
+    "word_count": 276
+  },
+  "package.json": {
+    "size": 2876,
+    "mtime_ns": 1794204394537296781,
+    "indexed_at_ns": 1794926792498625000,
+    "word_count": 206,
+    "hashes": { "package.json": "796060bcc8ebc3dafc5b91998214ac35080eaf59d7e7ee6c8fff74800c9ea381" }
+  },
+  "playwright.config.ts": {
+    "size": 1016,
+    "mtime_ns": 1794925201191296006,
+    "indexed_at_ns": 1794926748368230000,
+    "word_count": 94
+  },
+  "postcss.config.mjs": {
+    "size": 94,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748368471000,
+    "word_count": 13
+  },
+  "public/assets/dashboard.svg": {
+    "size": 347,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748370696000,
+    "word_count": 29
+  },
+  "public/assets/flag-ae.svg": {
+    "size": 510,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748371218000,
+    "word_count": 46
+  },
+  "public/assets/flag-au.svg": {
+    "size": 2295,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748371572000,
+    "word_count": 162
+  },
+  "public/assets/flag-ca.svg": {
+    "size": 1280,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748371927000,
+    "word_count": 110
+  },
+  "public/assets/flag-de.svg": {
+    "size": 414,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748372274000,
+    "word_count": 38
+  },
+  "public/assets/flag-uk.svg": {
+    "size": 877,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748372657000,
+    "word_count": 71
+  },
+  "public/assets/flag-us.svg": {
+    "size": 9033,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748373008000,
+    "word_count": 511
+  },
+  "public/assets/logo--dark.svg": {
+    "size": 8744,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748374218000,
+    "word_count": 828
+  },
+  "public/assets/logo--light.svg": {
+    "size": 8744,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748374708000,
+    "word_count": 828
+  },
+  "public/assets/logo-accenture--grey.svg": {
+    "size": 3495,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748375137000,
+    "word_count": 314
+  },
+  "public/assets/logo-att--grey.svg": {
+    "size": 4980,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748375533000,
+    "word_count": 486
+  },
+  "public/assets/logo-aws--grey.svg": {
+    "size": 5771,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748375948000,
+    "word_count": 585
+  },
+  "public/assets/logo-bolt--grey.svg": {
+    "size": 1701,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748376401000,
+    "word_count": 155
+  },
+  "public/assets/logo-carpatin.svg": {
+    "size": 1021,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748376764000,
+    "word_count": 103
+  },
+  "public/assets/logo-devias.svg": {
+    "size": 794,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748377167000,
+    "word_count": 72
+  },
+  "public/assets/logo-discord.svg": {
+    "size": 1361,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748377526000,
+    "word_count": 141
+  },
+  "public/assets/logo-facebook.svg": {
+    "size": 1289,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748377878000,
+    "word_count": 125
+  },
+  "public/assets/logo-google.svg": {
+    "size": 1154,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748378225000,
+    "word_count": 115
+  },
+  "public/assets/logo-jwt.svg": {
+    "size": 1498,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748378577000,
+    "word_count": 112
+  },
+  "public/assets/logo-linkedin.svg": {
+    "size": 1612,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748378931000,
+    "word_count": 172
+  },
+  "public/assets/logo-microsoft.svg": {
+    "size": 371,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748379356000,
+    "word_count": 34
+  },
+  "public/assets/logo-samsung--grey.svg": {
+    "size": 3284,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748379708000,
+    "word_count": 298
+  },
+  "public/assets/logo-supabase.svg": {
+    "size": 1112,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748380100000,
+    "word_count": 86
+  },
+  "public/assets/logo-twitter.svg": {
+    "size": 1574,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748380448000,
+    "word_count": 164
+  },
+  "public/assets/logo-visa-card.svg": {
+    "size": 1932,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748380795000,
+    "word_count": 191
+  },
+  "public/assets/logo-visa.svg": {
+    "size": 1741,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748381144000,
+    "word_count": 161
+  },
+  "public/assets/logo-visma--grey.svg": {
+    "size": 1625,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748381597000,
+    "word_count": 127
+  },
+  "public/assets/not-found.svg": {
+    "size": 27942,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748382661000,
+    "word_count": 2856
+  },
+  "public/assets/world-countries.json": {
+    "size": 208460,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926792499050000,
+    "word_count": 24468,
+    "hashes": {
+      "public/assets/world-countries.json": "8b9b1daaaf20dd7773061b0ce5983fa5b89a641cf5f22bea8ce2bca208ae73d1"
+    }
+  },
+  "public/file.svg": {
+    "size": 391,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748385683000,
+    "word_count": 50
+  },
+  "public/globe.svg": {
+    "size": 1035,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748386138000,
+    "word_count": 154
+  },
+  "public/next.svg": {
+    "size": 1375,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748386527000,
+    "word_count": 183
+  },
+  "public/vercel.svg": {
+    "size": 128,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748386905000,
+    "word_count": 12
+  },
+  "public/window.svg": {
+    "size": 385,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748387387000,
+    "word_count": 63
+  },
+  "src/app/(marketing)/auth/sign-in/page.tsx": {
+    "size": 478,
+    "mtime_ns": 1794132923212714888,
+    "indexed_at_ns": 1794926748387820000,
+    "word_count": 64
+  },
+  "src/app/(marketing)/comdash/page.tsx": {
+    "size": 386,
+    "mtime_ns": 1794132862059518331,
+    "indexed_at_ns": 1794926748388102000,
+    "word_count": 51
+  },
+  "src/app/(marketing)/for-chambers/page.tsx": {
+    "size": 421,
+    "mtime_ns": 1794132862171914152,
+    "indexed_at_ns": 1794926748388373000,
+    "word_count": 52
+  },
+  "src/app/(marketing)/how-it-works/page.tsx": {
+    "size": 406,
+    "mtime_ns": 1794132861960012991,
+    "indexed_at_ns": 1794926748388644000,
+    "word_count": 54
+  },
+  "src/app/(marketing)/layout.tsx": {
+    "size": 602,
+    "mtime_ns": 1794209030944075043,
+    "indexed_at_ns": 1794926748388905000,
+    "word_count": 58
+  },
+  "src/app/(marketing)/page.tsx": {
+    "size": 294,
+    "mtime_ns": 1794132861930921568,
+    "indexed_at_ns": 1794926748389163000,
+    "word_count": 39
+  },
+  "src/app/app/agent/page.tsx": {
+    "size": 116,
+    "mtime_ns": 1794196244672483404,
+    "indexed_at_ns": 1794926748389432000,
+    "word_count": 15
+  },
+  "src/app/app/asks/page.tsx": {
+    "size": 113,
+    "mtime_ns": 1794196244670737564,
+    "indexed_at_ns": 1794926748389696000,
+    "word_count": 15
+  },
+  "src/app/app/chamber/page.tsx": {
+    "size": 122,
+    "mtime_ns": 1794196244671600734,
+    "indexed_at_ns": 1794926748389958000,
+    "word_count": 15
+  },
+  "src/app/app/claim/page.tsx": {
+    "size": 116,
+    "mtime_ns": 1794196244669816936,
+    "indexed_at_ns": 1794926748390221000,
+    "word_count": 15
+  },
+  "src/app/app/company/page.tsx": {
+    "size": 136,
+    "mtime_ns": 1794196244671065316,
+    "indexed_at_ns": 1794926748390481000,
+    "word_count": 15
+  },
+  "src/app/app/dash/[...rest]/page.tsx": {
+    "size": 201,
+    "mtime_ns": 1794334199470978197,
+    "indexed_at_ns": 1794926748390756000,
+    "word_count": 28
+  },
+  "src/app/app/dash/agent/page.tsx": {
+    "size": 116,
+    "mtime_ns": 1794334199461541183,
+    "indexed_at_ns": 1794926748391031000,
+    "word_count": 15
+  },
+  "src/app/app/dash/connections/page.tsx": {
+    "size": 144,
+    "mtime_ns": 1794363636084997096,
+    "indexed_at_ns": 1794926748391303000,
+    "word_count": 15
+  },
+  "src/app/app/dash/layout.tsx": {
+    "size": 223,
+    "mtime_ns": 1794334199448667816,
+    "indexed_at_ns": 1794926748391597000,
+    "word_count": 20
+  },
+  "src/app/app/dash/page.tsx": {
+    "size": 122,
+    "mtime_ns": 1794196244670192396,
+    "indexed_at_ns": 1794926748391869000,
+    "word_count": 15
+  },
+  "src/app/app/dash/profile/page.tsx": {
+    "size": 132,
+    "mtime_ns": 1794334199466908840,
+    "indexed_at_ns": 1794926748392170000,
+    "word_count": 15
+  },
+  "src/app/app/dash/signals/page.tsx": {
+    "size": 132,
+    "mtime_ns": 1794363636084785555,
+    "indexed_at_ns": 1794926748392504000,
+    "word_count": 15
+  },
+  "src/app/app/digest/page.tsx": {
+    "size": 119,
+    "mtime_ns": 1794196244671421234,
+    "indexed_at_ns": 1794926748392771000,
+    "word_count": 15
+  },
+  "src/app/app/engine/page.tsx": {
+    "size": 119,
+    "mtime_ns": 1794196244672280445,
+    "indexed_at_ns": 1794926748393033000,
+    "word_count": 15
+  },
+  "src/app/app/layout.tsx": {
+    "size": 359,
+    "mtime_ns": 1794196244672997490,
+    "indexed_at_ns": 1794926748393282000,
+    "word_count": 43
+  },
+  "src/app/app/leads/page.tsx": {
+    "size": 116,
+    "mtime_ns": 1794196244670390147,
+    "indexed_at_ns": 1794926748393541000,
+    "word_count": 15
+  },
+  "src/app/app/mail/page.tsx": {
+    "size": 122,
+    "mtime_ns": 1794196244670562105,
+    "indexed_at_ns": 1794926748393799000,
+    "word_count": 15
+  },
+  "src/app/app/matches/page.tsx": {
+    "size": 122,
+    "mtime_ns": 1794196244670004770,
+    "indexed_at_ns": 1794926748394065000,
+    "word_count": 15
+  },
+  "src/app/app/notifications/page.tsx": {
+    "size": 140,
+    "mtime_ns": 1794196244672011611,
+    "indexed_at_ns": 1794926748394331000,
+    "word_count": 15
+  },
+  "src/app/app/page.tsx": {
+    "size": 147,
+    "mtime_ns": 1794196244672813864,
+    "indexed_at_ns": 1794926748394581000,
+    "word_count": 19
+  },
+  "src/app/app/preview/ask/page.tsx": {
+    "size": 132,
+    "mtime_ns": 1794925201188779861,
+    "indexed_at_ns": 1794926748394852000,
+    "word_count": 15
+  },
+  "src/app/app/preview/page.tsx": {
+    "size": 144,
+    "mtime_ns": 1794916231092597918,
+    "indexed_at_ns": 1794926748395114000,
+    "word_count": 15
+  },
+  "src/app/app/search/page.tsx": {
+    "size": 119,
+    "mtime_ns": 1794196244671236191,
+    "indexed_at_ns": 1794926748395519000,
+    "word_count": 15
+  },
+  "src/app/app/team/page.tsx": {
+    "size": 113,
+    "mtime_ns": 1794196244672658197,
+    "indexed_at_ns": 1794926748395782000,
+    "word_count": 15
+  },
+  "src/app/app/whats-next/page.tsx": {
+    "size": 129,
+    "mtime_ns": 1794196244671766443,
+    "indexed_at_ns": 1794926748396044000,
+    "word_count": 15
+  },
+  "src/app/app/wins/page.tsx": {
+    "size": 113,
+    "mtime_ns": 1794196244670900607,
+    "indexed_at_ns": 1794926748396306000,
+    "word_count": 15
+  },
+  "src/app/apple-icon.tsx": {
+    "size": 522,
+    "mtime_ns": 1794132862409664457,
+    "indexed_at_ns": 1794926748396547000,
+    "word_count": 58
+  },
+  "src/app/auth/callback/route.ts": {
+    "size": 770,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748396845000,
+    "word_count": 85
+  },
+  "src/app/auth/layout.tsx": {
+    "size": 633,
+    "mtime_ns": 1794132929015765767,
+    "indexed_at_ns": 1794926748397115000,
+    "word_count": 59
+  },
+  "src/app/auth/reset-password/page.tsx": {
+    "size": 259,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748397380000,
+    "word_count": 32
+  },
+  "src/app/auth/sign-up-confirm/page.tsx": {
+    "size": 933,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748397646000,
+    "word_count": 96
+  },
+  "src/app/auth/sign-up/page.tsx": {
+    "size": 224,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748397912000,
+    "word_count": 32
+  },
+  "src/app/auth/update-password/page.tsx": {
+    "size": 264,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748398176000,
+    "word_count": 32
+  },
+  "src/app/dashboard/blank/page.tsx": {
+    "size": 561,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748398456000,
+    "word_count": 67
+  },
+  "src/app/dashboard/customers/[customerId]/page.tsx": {
+    "size": 1515,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748398738000,
+    "word_count": 144
+  },
+  "src/app/dashboard/customers/actions.ts": {
+    "size": 1757,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748399032000,
+    "word_count": 149
+  },
+  "src/app/dashboard/customers/create/page.tsx": {
+    "size": 829,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748399316000,
+    "word_count": 85
+  },
+  "src/app/dashboard/customers/page.tsx": {
+    "size": 1186,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748399585000,
+    "word_count": 130
+  },
+  "src/app/dashboard/error.tsx": {
+    "size": 754,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748399848000,
+    "word_count": 106
+  },
+  "src/app/dashboard/layout.tsx": {
+    "size": 1074,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748400104000,
+    "word_count": 110
+  },
+  "src/app/dashboard/loading.tsx": {
+    "size": 1145,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748400362000,
+    "word_count": 133
+  },
+  "src/app/dashboard/page.tsx": {
+    "size": 665,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748400616000,
+    "word_count": 65
+  },
+  "src/app/dashboard/role-settings/page.tsx": {
+    "size": 828,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748400879000,
+    "word_count": 93
+  },
+  "src/app/dashboard/settings/page.tsx": {
+    "size": 764,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748401142000,
+    "word_count": 80
+  },
+  "src/app/dashboard/team/layout.tsx": {
+    "size": 430,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748401404000,
+    "word_count": 39
+  },
+  "src/app/dashboard/team/members/page.tsx": {
+    "size": 354,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748401676000,
+    "word_count": 44
+  },
+  "src/app/dashboard/team/permissions/page.tsx": {
+    "size": 392,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748401948000,
+    "word_count": 44
+  },
+  "src/app/error.tsx": {
+    "size": 494,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748402190000,
+    "word_count": 69
+  },
+  "src/app/global-error.tsx": {
+    "size": 883,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748402432000,
+    "word_count": 121
+  },
+  "src/app/icon.tsx": {
+    "size": 657,
+    "mtime_ns": 1794132862409911163,
+    "indexed_at_ns": 1794926748402805000,
+    "word_count": 79
+  },
+  "src/app/layout.tsx": {
+    "size": 1934,
+    "mtime_ns": 1794196605233569345,
+    "indexed_at_ns": 1794926748403045000,
+    "word_count": 195
+  },
+  "src/app/manifest.ts": {
+    "size": 510,
+    "mtime_ns": 1794132862410337409,
+    "indexed_at_ns": 1794926748403297000,
+    "word_count": 55
+  },
+  "src/app/not-found.tsx": {
+    "size": 652,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748403668000,
+    "word_count": 67
+  },
+  "src/app/opengraph-image.tsx": {
+    "size": 1057,
+    "mtime_ns": 1794132862410119744,
+    "indexed_at_ns": 1794926748403909000,
+    "word_count": 117
+  },
+  "src/app/robots.ts": {
+    "size": 230,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748404156000,
+    "word_count": 28
+  },
+  "src/app/sitemap.ts": {
+    "size": 246,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748404393000,
+    "word_count": 30
+  },
+  "src/components/auth/reset-password-form.tsx": {
+    "size": 3337,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748404656000,
+    "word_count": 293
+  },
+  "src/components/auth/role-guard.tsx": {
+    "size": 734,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748404933000,
+    "word_count": 100
+  },
+  "src/components/auth/sign-in-form.test.tsx": {
+    "size": 2227,
+    "mtime_ns": 1794132916670955944,
+    "indexed_at_ns": 1794926748405191000,
+    "word_count": 212
+  },
+  "src/components/auth/sign-in-form.tsx": {
+    "size": 7140,
+    "mtime_ns": 1794132928897367051,
+    "indexed_at_ns": 1794926748405467000,
+    "word_count": 634
+  },
+  "src/components/auth/sign-up-form.tsx": {
+    "size": 4393,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748405757000,
+    "word_count": 352
+  },
+  "src/components/auth/update-password-form.tsx": {
+    "size": 3446,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748406055000,
+    "word_count": 300
+  },
+  "src/components/dashboard/customer/columns.tsx": {
+    "size": 1747,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748406361000,
+    "word_count": 156
+  },
+  "src/components/dashboard/customer/customer-form.tsx": {
+    "size": 2529,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748406638000,
+    "word_count": 208
+  },
+  "src/components/dashboard/customer/customers-table.test.tsx": {
+    "size": 1185,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748406919000,
+    "word_count": 112
+  },
+  "src/components/dashboard/customer/customers-table.tsx": {
+    "size": 2917,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748407188000,
+    "word_count": 193
+  },
+  "src/components/dashboard/customer/delete-customer-dialog.tsx": {
+    "size": 1415,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748407466000,
+    "word_count": 109
+  },
+  "src/components/dashboard/customer/status-badge.tsx": {
+    "size": 786,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748407738000,
+    "word_count": 85
+  },
+  "src/components/dashboard/layout/nav-config.ts": {
+    "size": 942,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748408005000,
+    "word_count": 114
+  },
+  "src/components/dashboard/layout/side-nav.tsx": {
+    "size": 1859,
+    "mtime_ns": 1794132929031999115,
+    "indexed_at_ns": 1794926748408270000,
+    "word_count": 132
+  },
+  "src/components/dashboard/layout/top-bar.tsx": {
+    "size": 629,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748408545000,
+    "word_count": 69
+  },
+  "src/components/dashboard/layout/user-menu.tsx": {
+    "size": 1591,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748408898000,
+    "word_count": 122
+  },
+  "src/components/dashboard/overview/revenue-chart.tsx": {
+    "size": 1372,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748409198000,
+    "word_count": 113
+  },
+  "src/components/dashboard/overview/stat-cards.tsx": {
+    "size": 1653,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748409471000,
+    "word_count": 142
+  },
+  "src/components/dashboard/role-settings/role-cards.tsx": {
+    "size": 1039,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748409750000,
+    "word_count": 76
+  },
+  "src/components/dashboard/settings/password-form.tsx": {
+    "size": 2772,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748410041000,
+    "word_count": 254
+  },
+  "src/components/dashboard/settings/profile-form.tsx": {
+    "size": 2451,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748410334000,
+    "word_count": 246
+  },
+  "src/components/dashboard/settings/settings-tabs.tsx": {
+    "size": 754,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748410626000,
+    "word_count": 64
+  },
+  "src/components/dashboard/team/members-table.tsx": {
+    "size": 1385,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748410907000,
+    "word_count": 87
+  },
+  "src/components/dashboard/team/permissions-matrix.tsx": {
+    "size": 1778,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748411187000,
+    "word_count": 100
+  },
+  "src/components/dashboard/team/team-tabs.tsx": {
+    "size": 1016,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748411470000,
+    "word_count": 94
+  },
+  "src/components/error-state.test.tsx": {
+    "size": 1455,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748411732000,
+    "word_count": 140
+  },
+  "src/components/error-state.tsx": {
+    "size": 1878,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748411998000,
+    "word_count": 194
+  },
+  "src/components/marketing/activity-view-panel.tsx": {
+    "size": 2258,
+    "mtime_ns": 1794242192379761195,
+    "indexed_at_ns": 1794926748412283000,
+    "word_count": 228
+  },
+  "src/components/marketing/comdash-content.tsx": {
+    "size": 629,
+    "mtime_ns": 1794242192514570406,
+    "indexed_at_ns": 1794926748412562000,
+    "word_count": 57
+  },
+  "src/components/marketing/comdash/climb-section.tsx": {
+    "size": 1465,
+    "mtime_ns": 1794242192510157100,
+    "indexed_at_ns": 1794926748412847000,
+    "word_count": 182
+  },
+  "src/components/marketing/comdash/hero-section.tsx": {
+    "size": 504,
+    "mtime_ns": 1794242192491049761,
+    "indexed_at_ns": 1794926748413138000,
+    "word_count": 52
+  },
+  "src/components/marketing/comdash/signals-section.tsx": {
+    "size": 558,
+    "mtime_ns": 1794242192505061235,
+    "indexed_at_ns": 1794926748413439000,
+    "word_count": 52
+  },
+  "src/components/marketing/daily-lead-loop.tsx": {
+    "size": 1396,
+    "mtime_ns": 1794242192446944537,
+    "indexed_at_ns": 1794926748413713000,
+    "word_count": 176
+  },
+  "src/components/marketing/demo-ribbon.tsx": {
+    "size": 506,
+    "mtime_ns": 1794219825247343474,
+    "indexed_at_ns": 1794926748413998000,
+    "word_count": 52
+  },
+  "src/components/marketing/first-chamber.test.ts": {
+    "size": 1067,
+    "mtime_ns": 1794219825247665718,
+    "indexed_at_ns": 1794926748414336000,
+    "word_count": 131
+  },
+  "src/components/marketing/first-chamber.tsx": {
+    "size": 854,
+    "mtime_ns": 1794219825248089502,
+    "indexed_at_ns": 1794926748414694000,
+    "word_count": 96
+  },
+  "src/components/marketing/footer.tsx": {
+    "size": 6636,
+    "mtime_ns": 1794219825248525369,
+    "indexed_at_ns": 1794926748414968000,
+    "word_count": 395
+  },
+  "src/components/marketing/for-chambers-content.tsx": {
+    "size": 888,
+    "mtime_ns": 1794242192421663578,
+    "indexed_at_ns": 1794926748415301000,
+    "word_count": 66
+  },
+  "src/components/marketing/for-chambers/asks-section.tsx": {
+    "size": 709,
+    "mtime_ns": 1794242192396637402,
+    "indexed_at_ns": 1794926748415589000,
+    "word_count": 90
+  },
+  "src/components/marketing/for-chambers/commitments-section.tsx": {
+    "size": 807,
+    "mtime_ns": 1794242192401791849,
+    "indexed_at_ns": 1794926748415875000,
+    "word_count": 100
+  },
+  "src/components/marketing/for-chambers/hero-section.tsx": {
+    "size": 652,
+    "mtime_ns": 1794242192382705384,
+    "indexed_at_ns": 1794926748416160000,
+    "word_count": 62
+  },
+  "src/components/marketing/for-chambers/how-section.tsx": {
+    "size": 1837,
+    "mtime_ns": 1794242192391564370,
+    "indexed_at_ns": 1794926748416440000,
+    "word_count": 206
+  },
+  "src/components/marketing/for-chambers/members-section.tsx": {
+    "size": 397,
+    "mtime_ns": 1794925143612423620,
+    "indexed_at_ns": 1794926748416727000,
+    "word_count": 41
+  },
+  "src/components/marketing/for-chambers/pilot-section.tsx": {
+    "size": 625,
+    "mtime_ns": 1794242192413773518,
+    "indexed_at_ns": 1794926748417004000,
+    "word_count": 65
+  },
+  "src/components/marketing/for-chambers/questions-section.tsx": {
+    "size": 930,
+    "mtime_ns": 1794242192407001877,
+    "indexed_at_ns": 1794926748417291000,
+    "word_count": 124
+  },
+  "src/components/marketing/form-field.tsx": {
+    "size": 3989,
+    "mtime_ns": 1794220189932142331,
+    "indexed_at_ns": 1794926748417563000,
+    "word_count": 345
+  },
+  "src/components/marketing/form-rules.ts": {
+    "size": 485,
+    "mtime_ns": 1794242194840217785,
+    "indexed_at_ns": 1794926748417843000,
+    "word_count": 62
+  },
+  "src/components/marketing/hero-network-ring.tsx": {
+    "size": 4814,
+    "mtime_ns": 1794219825249037568,
+    "indexed_at_ns": 1794926748418098000,
+    "word_count": 438
+  },
+  "src/components/marketing/home-content.tsx": {
+    "size": 785,
+    "mtime_ns": 1794219825249282105,
+    "indexed_at_ns": 1794926748418383000,
+    "word_count": 66
+  },
+  "src/components/marketing/home/chamber-section.tsx": {
+    "size": 673,
+    "mtime_ns": 1794219825249536975,
+    "indexed_at_ns": 1794926748418657000,
+    "word_count": 69
+  },
+  "src/components/marketing/home/commitments-section.tsx": {
+    "size": 1083,
+    "mtime_ns": 1794242192373301335,
+    "indexed_at_ns": 1794926748418933000,
+    "word_count": 149
+  },
+  "src/components/marketing/home/example-matches.ts": {
+    "size": 745,
+    "mtime_ns": 1794219825249961301,
+    "indexed_at_ns": 1794926748419233000,
+    "word_count": 95
+  },
+  "src/components/marketing/home/first-day-section.tsx": {
+    "size": 2684,
+    "mtime_ns": 1794219825250177505,
+    "indexed_at_ns": 1794926748419506000,
+    "word_count": 203
+  },
+  "src/components/marketing/home/hero-section.tsx": {
+    "size": 1079,
+    "mtime_ns": 1794242192372975804,
+    "indexed_at_ns": 1794926748419782000,
+    "word_count": 92
+  },
+  "src/components/marketing/home/join-section.tsx": {
+    "size": 2536,
+    "mtime_ns": 1794242192373674739,
+    "indexed_at_ns": 1794926748420051000,
+    "word_count": 250
+  },
+  "src/components/marketing/home/leave-section.tsx": {
+    "size": 3238,
+    "mtime_ns": 1794219825251050406,
+    "indexed_at_ns": 1794926748420643000,
+    "word_count": 355
+  },
+  "src/components/marketing/home/questions-section.tsx": {
+    "size": 1225,
+    "mtime_ns": 1794219825251258694,
+    "indexed_at_ns": 1794926748421192000,
+    "word_count": 164
+  },
+  "src/components/marketing/how-it-works-content.tsx": {
+    "size": 859,
+    "mtime_ns": 1794242192480175054,
+    "indexed_at_ns": 1794926748421518000,
+    "word_count": 75
+  },
+  "src/components/marketing/how-it-works/ai-section.tsx": {
+    "size": 845,
+    "mtime_ns": 1794242192475345221,
+    "indexed_at_ns": 1794926748421821000,
+    "word_count": 106
+  },
+  "src/components/marketing/how-it-works/claim-section.tsx": {
+    "size": 3426,
+    "mtime_ns": 1794242192459982544,
+    "indexed_at_ns": 1794926748422112000,
+    "word_count": 314
+  },
+  "src/components/marketing/how-it-works/every-day-section.tsx": {
+    "size": 413,
+    "mtime_ns": 1794242192470530971,
+    "indexed_at_ns": 1794926748422414000,
+    "word_count": 46
+  },
+  "src/components/marketing/how-it-works/first-day-section.tsx": {
+    "size": 831,
+    "mtime_ns": 1794242192465321277,
+    "indexed_at_ns": 1794926748422697000,
+    "word_count": 110
+  },
+  "src/components/marketing/how-it-works/hero-section.tsx": {
+    "size": 494,
+    "mtime_ns": 1794242192454557732,
+    "indexed_at_ns": 1794926748422998000,
+    "word_count": 55
+  },
+  "src/components/marketing/join-form.schema.test.ts": {
+    "size": 1739,
+    "mtime_ns": 1794220189922718709,
+    "indexed_at_ns": 1794926748423274000,
+    "word_count": 180
+  },
+  "src/components/marketing/join-form.schema.ts": {
+    "size": 466,
+    "mtime_ns": 1794220189918334877,
+    "indexed_at_ns": 1794926748423564000,
+    "word_count": 45
+  },
+  "src/components/marketing/join-form.tsx": {
+    "size": 2880,
+    "mtime_ns": 1794242192372310994,
+    "indexed_at_ns": 1794926748423833000,
+    "word_count": 312
+  },
+  "src/components/marketing/marketing-nav.tsx": {
+    "size": 3454,
+    "mtime_ns": 1794219825252367090,
+    "indexed_at_ns": 1794926748424117000,
+    "word_count": 269
+  },
+  "src/components/marketing/pilot-form.schema.test.ts": {
+    "size": 1932,
+    "mtime_ns": 1794220039833078333,
+    "indexed_at_ns": 1794926748424395000,
+    "word_count": 194
+  },
+  "src/components/marketing/pilot-form.schema.ts": {
+    "size": 657,
+    "mtime_ns": 1794220189925940499,
+    "indexed_at_ns": 1794926748424669000,
+    "word_count": 64
+  },
+  "src/components/marketing/pilot-form.tsx": {
+    "size": 2105,
+    "mtime_ns": 1794925201190705595,
+    "indexed_at_ns": 1794926748424935000,
+    "word_count": 241
+  },
+  "src/components/marketing/questions.tsx": {
+    "size": 1279,
+    "mtime_ns": 1794219825252551337,
+    "indexed_at_ns": 1794926748425206000,
+    "word_count": 107
+  },
+  "src/components/marketing/section.tsx": {
+    "size": 5371,
+    "mtime_ns": 1794242195052378987,
+    "indexed_at_ns": 1794926748425493000,
+    "word_count": 581
+  },
+  "src/components/marketing/sign-in-content.tsx": {
+    "size": 974,
+    "mtime_ns": 1794209030953547526,
+    "indexed_at_ns": 1794926748425783000,
+    "word_count": 86
+  },
+  "src/components/marketing/use-single-submit.ts": {
+    "size": 541,
+    "mtime_ns": 1794220189928841123,
+    "indexed_at_ns": 1794926748426069000,
+    "word_count": 80
+  },
+  "src/components/marketing/whos-interested-panel.tsx": {
+    "size": 2752,
+    "mtime_ns": 1794242192485301668,
+    "indexed_at_ns": 1794926748426338000,
+    "word_count": 275
+  },
+  "src/components/product/chamber/member-import.tsx": {
+    "size": 4219,
+    "mtime_ns": 1794926738105321676,
+    "indexed_at_ns": 1794926748426633000,
+    "word_count": 469
+  },
+  "src/components/product/claim-mark.tsx": {
+    "size": 432,
+    "mtime_ns": 1794909984423109588,
+    "indexed_at_ns": 1794926748427095000,
+    "word_count": 66
+  },
+  "src/components/product/comdash/alerts-panel.tsx": {
+    "size": 845,
+    "mtime_ns": 1794494029155587217,
+    "indexed_at_ns": 1794926748427386000,
+    "word_count": 80
+  },
+  "src/components/product/comdash/comdash-frame.tsx": {
+    "size": 1895,
+    "mtime_ns": 1794912987288250809,
+    "indexed_at_ns": 1794926748427669000,
+    "word_count": 195
+  },
+  "src/components/product/comdash/connect-action.tsx": {
+    "size": 751,
+    "mtime_ns": 1794364428273851765,
+    "indexed_at_ns": 1794926748427979000,
+    "word_count": 80
+  },
+  "src/components/product/comdash/connections-tab.tsx": {
+    "size": 699,
+    "mtime_ns": 1794363618206919638,
+    "indexed_at_ns": 1794926748428257000,
+    "word_count": 58
+  },
+  "src/components/product/comdash/count-bars.tsx": {
+    "size": 557,
+    "mtime_ns": 1794334254054939436,
+    "indexed_at_ns": 1794926748428547000,
+    "word_count": 65
+  },
+  "src/components/product/comdash/dash-panel.tsx": {
+    "size": 751,
+    "mtime_ns": 1794334214744029146,
+    "indexed_at_ns": 1794926748428823000,
+    "word_count": 93
+  },
+  "src/components/product/comdash/found-you-as.tsx": {
+    "size": 634,
+    "mtime_ns": 1794334254074340508,
+    "indexed_at_ns": 1794926748429105000,
+    "word_count": 68
+  },
+  "src/components/product/comdash/from-connections.tsx": {
+    "size": 3037,
+    "mtime_ns": 1794364921580927760,
+    "indexed_at_ns": 1794926748429387000,
+    "word_count": 292
+  },
+  "src/components/product/comdash/gap-actions.tsx": {
+    "size": 1123,
+    "mtime_ns": 1794493250463730836,
+    "indexed_at_ns": 1794926748429690000,
+    "word_count": 136
+  },
+  "src/components/product/comdash/industry-panel.tsx": {
+    "size": 686,
+    "mtime_ns": 1794334306374387165,
+    "indexed_at_ns": 1794926748429980000,
+    "word_count": 74
+  },
+  "src/components/product/comdash/interest-action.tsx": {
+    "size": 847,
+    "mtime_ns": 1794493211088682651,
+    "indexed_at_ns": 1794926748430271000,
+    "word_count": 105
+  },
+  "src/components/product/comdash/interest-funnel.tsx": {
+    "size": 1487,
+    "mtime_ns": 1794494029156622851,
+    "indexed_at_ns": 1794926748430555000,
+    "word_count": 142
+  },
+  "src/components/product/comdash/interested-companies.tsx": {
+    "size": 4175,
+    "mtime_ns": 1794493225530354846,
+    "indexed_at_ns": 1794926748430841000,
+    "word_count": 434
+  },
+  "src/components/product/comdash/invitations-panel.tsx": {
+    "size": 1031,
+    "mtime_ns": 1794364920553045410,
+    "indexed_at_ns": 1794926748431151000,
+    "word_count": 100
+  },
+  "src/components/product/comdash/invite-actions.tsx": {
+    "size": 617,
+    "mtime_ns": 1794363666392131213,
+    "indexed_at_ns": 1794926748431428000,
+    "word_count": 69
+  },
+  "src/components/product/comdash/level-filter.tsx": {
+    "size": 1025,
+    "mtime_ns": 1794493238108403258,
+    "indexed_at_ns": 1794926748431697000,
+    "word_count": 111
+  },
+  "src/components/product/comdash/level-tag.tsx": {
+    "size": 521,
+    "mtime_ns": 1794493263320395964,
+    "indexed_at_ns": 1794926748431967000,
+    "word_count": 72
+  },
+  "src/components/product/comdash/manage-connections.tsx": {
+    "size": 1737,
+    "mtime_ns": 1794364920552254662,
+    "indexed_at_ns": 1794926748432236000,
+    "word_count": 174
+  },
+  "src/components/product/comdash/next-action.tsx": {
+    "size": 5234,
+    "mtime_ns": 1794368543983817726,
+    "indexed_at_ns": 1794926748432518000,
+    "word_count": 495
+  },
+  "src/components/product/comdash/plan-switcher.tsx": {
+    "size": 1016,
+    "mtime_ns": 1794364059857542076,
+    "indexed_at_ns": 1794926748432816000,
+    "word_count": 87
+  },
+  "src/components/product/comdash/profile-tab.tsx": {
+    "size": 553,
+    "mtime_ns": 1794334199487210835,
+    "indexed_at_ns": 1794926748433084000,
+    "word_count": 69
+  },
+  "src/components/product/comdash/queue-row.tsx": {
+    "size": 494,
+    "mtime_ns": 1794363584899994388,
+    "indexed_at_ns": 1794926748433349000,
+    "word_count": 61
+  },
+  "src/components/product/comdash/search-terms.tsx": {
+    "size": 1316,
+    "mtime_ns": 1794493250492469726,
+    "indexed_at_ns": 1794926748433614000,
+    "word_count": 131
+  },
+  "src/components/product/comdash/signal-drawer.tsx": {
+    "size": 3572,
+    "mtime_ns": 1794494029155946845,
+    "indexed_at_ns": 1794926748433884000,
+    "word_count": 353
+  },
+  "src/components/product/comdash/signals-tab.test.tsx": {
+    "size": 2822,
+    "mtime_ns": 1794494039512534108,
+    "indexed_at_ns": 1794926748434165000,
+    "word_count": 243
+  },
+  "src/components/product/comdash/signals-tab.tsx": {
+    "size": 1367,
+    "mtime_ns": 1794494029155212422,
+    "indexed_at_ns": 1794926748434444000,
+    "word_count": 116
+  },
+  "src/components/product/comdash/sparkline.tsx": {
+    "size": 1277,
+    "mtime_ns": 1794368881957380994,
+    "indexed_at_ns": 1794926748434716000,
+    "word_count": 183
+  },
+  "src/components/product/comdash/suggestion-panels.tsx": {
+    "size": 1732,
+    "mtime_ns": 1794364920553403285,
+    "indexed_at_ns": 1794926748434991000,
+    "word_count": 174
+  },
+  "src/components/product/comdash/summary-cards.test.tsx": {
+    "size": 2423,
+    "mtime_ns": 1794912864376881273,
+    "indexed_at_ns": 1794926748435267000,
+    "word_count": 229
+  },
+  "src/components/product/comdash/summary-cards.tsx": {
+    "size": 4830,
+    "mtime_ns": 1794912974763026789,
+    "indexed_at_ns": 1794926748435543000,
+    "word_count": 454
+  },
+  "src/components/product/comdash/tabs.ts": {
+    "size": 892,
+    "mtime_ns": 1794912974673980152,
+    "indexed_at_ns": 1794926748435833000,
+    "word_count": 122
+  },
+  "src/components/product/comdash/top-numbers.tsx": {
+    "size": 1421,
+    "mtime_ns": 1794493162762625677,
+    "indexed_at_ns": 1794926748436104000,
+    "word_count": 166
+  },
+  "src/components/product/comdash/visibility-chart.tsx": {
+    "size": 4162,
+    "mtime_ns": 1794494029156301598,
+    "indexed_at_ns": 1794926748436378000,
+    "word_count": 473
+  },
+  "src/components/product/demo-guide.tsx": {
+    "size": 9388,
+    "mtime_ns": 1794922905678959700,
+    "indexed_at_ns": 1794926748436658000,
+    "word_count": 859
+  },
+  "src/components/product/lead-board.tsx": {
+    "size": 5471,
+    "mtime_ns": 1794909987735159453,
+    "indexed_at_ns": 1794926748436963000,
+    "word_count": 631
+  },
+  "src/components/product/network-ring.tsx": {
+    "size": 6471,
+    "mtime_ns": 1794219825253141826,
+    "indexed_at_ns": 1794926748437247000,
+    "word_count": 787
+  },
+  "src/components/product/product-bars.tsx": {
+    "size": 6767,
+    "mtime_ns": 1794925201190120225,
+    "indexed_at_ns": 1794926748437534000,
+    "word_count": 676
+  },
+  "src/components/product/product-shell.tsx": {
+    "size": 7806,
+    "mtime_ns": 1794926738106405972,
+    "indexed_at_ns": 1794926748437818000,
+    "word_count": 892
+  },
+  "src/components/product/screens/agent.tsx": {
+    "size": 16544,
+    "mtime_ns": 1794196604770186150,
+    "indexed_at_ns": 1794926748438122000,
+    "word_count": 1653
+  },
+  "src/components/product/screens/asks.tsx": {
+    "size": 3285,
+    "mtime_ns": 1794196604784726580,
+    "indexed_at_ns": 1794926748438496000,
+    "word_count": 322
+  },
+  "src/components/product/screens/chamber.tsx": {
+    "size": 7343,
+    "mtime_ns": 1794926738105823136,
+    "indexed_at_ns": 1794926748438781000,
+    "word_count": 619
+  },
+  "src/components/product/screens/claim-message.tsx": {
+    "size": 1374,
+    "mtime_ns": 1794925200915428787,
+    "indexed_at_ns": 1794926748439087000,
+    "word_count": 116
+  },
+  "src/components/product/screens/claim.tsx": {
+    "size": 4910,
+    "mtime_ns": 1794926738100523408,
+    "indexed_at_ns": 1794926748439354000,
+    "word_count": 480
+  },
+  "src/components/product/screens/comdash.tsx": {
+    "size": 524,
+    "mtime_ns": 1794368513965693271,
+    "indexed_at_ns": 1794926748439644000,
+    "word_count": 60
+  },
+  "src/components/product/screens/commail.tsx": {
+    "size": 2370,
+    "mtime_ns": 1794909984426060581,
+    "indexed_at_ns": 1794926748439914000,
+    "word_count": 237
+  },
+  "src/components/product/screens/company-view.tsx": {
+    "size": 3979,
+    "mtime_ns": 1794909988055258652,
+    "indexed_at_ns": 1794926748440204000,
+    "word_count": 463
+  },
+  "src/components/product/screens/company.tsx": {
+    "size": 9743,
+    "mtime_ns": 1794334214744706650,
+    "indexed_at_ns": 1794926748440507000,
+    "word_count": 739
+  },
+  "src/components/product/screens/digest.tsx": {
+    "size": 3139,
+    "mtime_ns": 1794196604892615984,
+    "indexed_at_ns": 1794926748440811000,
+    "word_count": 269
+  },
+  "src/components/product/screens/engine.tsx": {
+    "size": 6020,
+    "mtime_ns": 1794902464138900482,
+    "indexed_at_ns": 1794926748441095000,
+    "word_count": 519
+  },
+  "src/components/product/screens/leads.tsx": {
+    "size": 1440,
+    "mtime_ns": 1794908947804066263,
+    "indexed_at_ns": 1794926748441393000,
+    "word_count": 155
+  },
+  "src/components/product/screens/matches.tsx": {
+    "size": 1470,
+    "mtime_ns": 1794908947807603362,
+    "indexed_at_ns": 1794926748441669000,
+    "word_count": 159
+  },
+  "src/components/product/screens/notifications.tsx": {
+    "size": 3418,
+    "mtime_ns": 1794196519819924125,
+    "indexed_at_ns": 1794926748441942000,
+    "word_count": 346
+  },
+  "src/components/product/screens/preview-ask.tsx": {
+    "size": 2592,
+    "mtime_ns": 1794926738101812122,
+    "indexed_at_ns": 1794926748442226000,
+    "word_count": 269
+  },
+  "src/components/product/screens/preview-opening.tsx": {
+    "size": 1255,
+    "mtime_ns": 1794926738102826500,
+    "indexed_at_ns": 1794926748442512000,
+    "word_count": 123
+  },
+  "src/components/product/screens/search.tsx": {
+    "size": 2482,
+    "mtime_ns": 1794909984425743382,
+    "indexed_at_ns": 1794926748442782000,
+    "word_count": 260
+  },
+  "src/components/product/screens/team.tsx": {
+    "size": 13135,
+    "mtime_ns": 1794901251640860283,
+    "indexed_at_ns": 1794926748443060000,
+    "word_count": 1241
+  },
+  "src/components/product/screens/thread.tsx": {
+    "size": 5188,
+    "mtime_ns": 1794908947813550429,
+    "indexed_at_ns": 1794926748443407000,
+    "word_count": 546
+  },
+  "src/components/product/screens/whats-next.tsx": {
+    "size": 1676,
+    "mtime_ns": 1794912987373757139,
+    "indexed_at_ns": 1794926748443698000,
+    "word_count": 158
+  },
+  "src/components/product/screens/wins.tsx": {
+    "size": 5716,
+    "mtime_ns": 1794909380379629950,
+    "indexed_at_ns": 1794926748443967000,
+    "word_count": 413
+  },
+  "src/components/product/shared.tsx": {
+    "size": 6067,
+    "mtime_ns": 1794909984423915355,
+    "indexed_at_ns": 1794926748444243000,
+    "word_count": 773
+  },
+  "src/components/product/story-bar.tsx": {
+    "size": 2972,
+    "mtime_ns": 1794925201189718103,
+    "indexed_at_ns": 1794926748444535000,
+    "word_count": 366
+  },
+  "src/components/product/use-simulation.ts": {
+    "size": 813,
+    "mtime_ns": 1794196244740853369,
+    "indexed_at_ns": 1794926748444818000,
+    "word_count": 89
+  },
+  "src/components/theme/mode-toggle.tsx": {
+    "size": 1150,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748445079000,
+    "word_count": 90
+  },
+  "src/components/theme/theme-provider.tsx": {
+    "size": 299,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748445337000,
+    "word_count": 29
+  },
+  "src/components/ui/avatar.tsx": {
+    "size": 2912,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748445591000,
+    "word_count": 215
+  },
+  "src/components/ui/badge.tsx": {
+    "size": 1773,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748445856000,
+    "word_count": 142
+  },
+  "src/components/ui/breadcrumb.tsx": {
+    "size": 2355,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748446119000,
+    "word_count": 199
+  },
+  "src/components/ui/button.tsx": {
+    "size": 2392,
+    "mtime_ns": 1794132862410566239,
+    "indexed_at_ns": 1794926748446381000,
+    "word_count": 189
+  },
+  "src/components/ui/card.tsx": {
+    "size": 1928,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748446642000,
+    "word_count": 168
+  },
+  "src/components/ui/chart.tsx": {
+    "size": 10458,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748446904000,
+    "word_count": 904
+  },
+  "src/components/ui/checkbox.tsx": {
+    "size": 1218,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748447206000,
+    "word_count": 85
+  },
+  "src/components/ui/dialog.tsx": {
+    "size": 4288,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748447462000,
+    "word_count": 316
+  },
+  "src/components/ui/dropdown-menu.tsx": {
+    "size": 8319,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748447731000,
+    "word_count": 506
+  },
+  "src/components/ui/form.tsx": {
+    "size": 3717,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748448012000,
+    "word_count": 355
+  },
+  "src/components/ui/input.tsx": {
+    "size": 967,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748448278000,
+    "word_count": 70
+  },
+  "src/components/ui/label.tsx": {
+    "size": 609,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748448535000,
+    "word_count": 56
+  },
+  "src/components/ui/select.tsx": {
+    "size": 6316,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748448788000,
+    "word_count": 395
+  },
+  "src/components/ui/separator.tsx": {
+    "size": 701,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748449133000,
+    "word_count": 59
+  },
+  "src/components/ui/sheet.tsx": {
+    "size": 4198,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748449675000,
+    "word_count": 324
+  },
+  "src/components/ui/sidebar.tsx": {
+    "size": 21660,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748450017000,
+    "word_count": 1668
+  },
+  "src/components/ui/skeleton.tsx": {
+    "size": 279,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748450392000,
+    "word_count": 29
+  },
+  "src/components/ui/sonner.tsx": {
+    "size": 1042,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748450770000,
+    "word_count": 98
+  },
+  "src/components/ui/switch.tsx": {
+    "size": 1416,
+    "mtime_ns": 1794196605241813126,
+    "indexed_at_ns": 1794926748451363000,
+    "word_count": 97
+  },
+  "src/components/ui/table.tsx": {
+    "size": 2399,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748451803000,
+    "word_count": 194
+  },
+  "src/components/ui/tabs.tsx": {
+    "size": 3761,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748452210000,
+    "word_count": 218
+  },
+  "src/components/ui/textarea.tsx": {
+    "size": 764,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748452628000,
+    "word_count": 59
+  },
+  "src/components/ui/tooltip.tsx": {
+    "size": 1836,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748452952000,
+    "word_count": 131
+  },
+  "src/config.test.ts": {
+    "size": 951,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748453260000,
+    "word_count": 106
+  },
+  "src/config.ts": {
+    "size": 3436,
+    "mtime_ns": 1794132862408143932,
+    "indexed_at_ns": 1794926748453545000,
+    "word_count": 460
+  },
+  "src/env.server.ts": {
+    "size": 2444,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748453859000,
+    "word_count": 330
+  },
+  "src/env.test.ts": {
+    "size": 2420,
+    "mtime_ns": 1794924985126893144,
+    "indexed_at_ns": 1794926748454156000,
+    "word_count": 221
+  },
+  "src/env.ts": {
+    "size": 4460,
+    "mtime_ns": 1794925007722717574,
+    "indexed_at_ns": 1794926748454442000,
+    "word_count": 457
+  },
+  "src/hooks/use-mobile.ts": {
+    "size": 576,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748454755000,
+    "word_count": 56
+  },
+  "src/instrumentation-client.ts": {
+    "size": 1926,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748455042000,
+    "word_count": 214
+  },
+  "src/lib/analytics/consent.ts": {
+    "size": 1302,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748455355000,
+    "word_count": 188
+  },
+  "src/lib/analytics/server.ts": {
+    "size": 2756,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748455654000,
+    "word_count": 350
+  },
+  "src/lib/auth/actions.ts": {
+    "size": 743,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748455964000,
+    "word_count": 100
+  },
+  "src/lib/auth/session.ts": {
+    "size": 687,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748456263000,
+    "word_count": 94
+  },
+  "src/lib/auth/strategy.ts": {
+    "size": 263,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748456561000,
+    "word_count": 38
+  },
+  "src/lib/authz.server.ts": {
+    "size": 830,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748456847000,
+    "word_count": 109
+  },
+  "src/lib/authz.test.ts": {
+    "size": 854,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748457135000,
+    "word_count": 95
+  },
+  "src/lib/authz.ts": {
+    "size": 1116,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748457415000,
+    "word_count": 152
+  },
+  "src/lib/csp.test.ts": {
+    "size": 2395,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748457703000,
+    "word_count": 245
+  },
+  "src/lib/csp.ts": {
+    "size": 3160,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748457994000,
+    "word_count": 391
+  },
+  "src/lib/db/client.ts": {
+    "size": 1159,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748458319000,
+    "word_count": 169
+  },
+  "src/lib/db/schema.ts": {
+    "size": 1290,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748458620000,
+    "word_count": 159
+  },
+  "src/lib/default-logger.ts": {
+    "size": 145,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748458910000,
+    "word_count": 20
+  },
+  "src/lib/get-site-url.ts": {
+    "size": 472,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748459194000,
+    "word_count": 68
+  },
+  "src/lib/logger.ts": {
+    "size": 1892,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748459476000,
+    "word_count": 237
+  },
+  "src/lib/member-benefits.ts": {
+    "size": 673,
+    "mtime_ns": 1794926738102420624,
+    "indexed_at_ns": 1794926748459773000,
+    "word_count": 109
+  },
+  "src/lib/seo.test.ts": {
+    "size": 1085,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748460061000,
+    "word_count": 98
+  },
+  "src/lib/seo.ts": {
+    "size": 1262,
+    "mtime_ns": 1794132862408559594,
+    "indexed_at_ns": 1794926748460342000,
+    "word_count": 158
+  },
+  "src/lib/supabase/client.ts": {
+    "size": 280,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748460641000,
+    "word_count": 28
+  },
+  "src/lib/supabase/middleware.ts": {
+    "size": 2067,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748460931000,
+    "word_count": 242
+  },
+  "src/lib/supabase/server.ts": {
+    "size": 1107,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748461232000,
+    "word_count": 131
+  },
+  "src/lib/utils.ts": {
+    "size": 169,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748461596000,
+    "word_count": 22
+  },
+  "src/middleware.ts": {
+    "size": 4009,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748461909000,
+    "word_count": 480
+  },
+  "src/paths.ts": {
+    "size": 2537,
+    "mtime_ns": 1794922880878034498,
+    "indexed_at_ns": 1794926748462225000,
+    "word_count": 236
+  },
+  "src/services/comlinked/chamber.ts": {
+    "size": 1490,
+    "mtime_ns": 1794925007723901272,
+    "indexed_at_ns": 1794926748462536000,
+    "word_count": 215
+  },
+  "src/services/comlinked/data.ts": {
+    "size": 26346,
+    "mtime_ns": 1794909984437869093,
+    "indexed_at_ns": 1794926748462839000,
+    "word_count": 3233
+  },
+  "src/services/comlinked/european-members.ts": {
+    "size": 27075,
+    "mtime_ns": 1794908104910566855,
+    "indexed_at_ns": 1794926748463335000,
+    "word_count": 2886
+  },
+  "src/services/comlinked/index.ts": {
+    "size": 461,
+    "mtime_ns": 1794912913185587895,
+    "indexed_at_ns": 1794926748463807000,
+    "word_count": 52
+  },
+  "src/services/comlinked/preview.ts": {
+    "size": 4806,
+    "mtime_ns": 1794922892712988097,
+    "indexed_at_ns": 1794926748464098000,
+    "word_count": 660
+  },
+  "src/services/comlinked/simulation.test.ts": {
+    "size": 99259,
+    "mtime_ns": 1794926738100020407,
+    "indexed_at_ns": 1794926748464431000,
+    "word_count": 9528
+  },
+  "src/services/comlinked/simulation.ts": {
+    "size": 126291,
+    "mtime_ns": 1794926738101363745,
+    "indexed_at_ns": 1794926748465328000,
+    "word_count": 17176
+  },
+  "src/services/comlinked/types.ts": {
+    "size": 14196,
+    "mtime_ns": 1794926738098982111,
+    "indexed_at_ns": 1794926748466522000,
+    "word_count": 2102
+  },
+  "src/services/customers.db.test.ts": {
+    "size": 1564,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748466903000,
+    "word_count": 180
+  },
+  "src/services/customers.db.ts": {
+    "size": 3564,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748467200000,
+    "word_count": 364
+  },
+  "src/services/customers.mock.ts": {
+    "size": 2750,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748467506000,
+    "word_count": 294
+  },
+  "src/services/customers.rls.integration.test.ts": {
+    "size": 6424,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748467813000,
+    "word_count": 744
+  },
+  "src/services/customers.selector.test.ts": {
+    "size": 1608,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748468138000,
+    "word_count": 140
+  },
+  "src/services/customers.test.ts": {
+    "size": 968,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748468427000,
+    "word_count": 102
+  },
+  "src/services/customers.ts": {
+    "size": 2045,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748468712000,
+    "word_count": 189
+  },
+  "src/services/metrics.ts": {
+    "size": 925,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748469001000,
+    "word_count": 132
+  },
+  "src/services/mock/customers.ts": {
+    "size": 2410,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748469298000,
+    "word_count": 219
+  },
+  "src/services/roles.ts": {
+    "size": 1089,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748469583000,
+    "word_count": 122
+  },
+  "src/services/team.ts": {
+    "size": 1851,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748469863000,
+    "word_count": 218
+  },
+  "src/services/types.ts": {
+    "size": 304,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748470147000,
+    "word_count": 41
+  },
+  "src/types/globals/reset.d.ts": {
+    "size": 89,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748470445000,
+    "word_count": 14
+  },
+  "supabase/migrations/20260715132833_init_multitenancy.sql": {
+    "size": 9205,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926792502372000,
+    "word_count": 955,
+    "hashes": {
+      "supabase/migrations/20260715132833_init_multitenancy.sql": "d24db06cbecb12dfc719e0430119c51c223f1bbf2178359ee8868a3cc5f0c1cf"
+    }
+  },
+  "test/stubs/server-only.ts": {
+    "size": 665,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748471448000,
+    "word_count": 96
+  },
+  "tsconfig.json": {
+    "size": 680,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926792502758000,
+    "word_count": 56,
+    "hashes": {
+      "tsconfig.json": "0ea05c413ef0ac277a4eb0cfbda806f68a1fdabb1c45a56b5a48ad4eeea10626"
+    }
+  },
+  "vitest.config.ts": {
+    "size": 2375,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748472244000,
+    "word_count": 257
+  },
+  "vitest.setup.ts": {
+    "size": 43,
+    "mtime_ns": 1793693925000000000,
+    "indexed_at_ns": 1794926748472683000,
+    "word_count": 2
+  }
+}

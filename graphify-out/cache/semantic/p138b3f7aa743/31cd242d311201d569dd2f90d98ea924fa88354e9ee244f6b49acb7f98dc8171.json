@@ -1,0 +1,112 @@
+{
+  "nodes": [
+    {
+      "id": "_scratch_website_redesign_issues_03_network_ring_sequence",
+      "label": "Website redesign 03: Network Ring sequence",
+      "file_type": "document",
+      "source_file": ".scratch/website-redesign/issues/03-network-ring-sequence.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_scratch_website_redesign_issues_03_network_ring_sequence_ring_sequence",
+      "label": "One-time Network Ring sequence",
+      "file_type": "rationale",
+      "source_file": ".scratch/website-redesign/issues/03-network-ring-sequence.md",
+      "source_location": "L47",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "About 1.2 seconds with each piece about 260ms and no bounce; plays once per page load on first intersection; the finished drawing is always the fallback (reduced motion, no JavaScript, no IntersectionObserver, client-side return)."
+    },
+    {
+      "id": "_scratch_website_redesign_issues_03_network_ring_sequence_nonced_inline_script",
+      "label": "Nonced inline arming script",
+      "file_type": "rationale",
+      "source_file": ".scratch/website-redesign/issues/03-network-ring-sequence.md",
+      "source_location": "L39",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Arms the animation before first paint to avoid a flash after hydration; uses the per-request CSP nonce from x-nonce; deliberately not a React client component; never adds unsafe-inline."
+    }
+  ],
+  "edges": [
+    {
+      "source": "_scratch_website_redesign_issues_03_network_ring_sequence",
+      "target": "_scratch_website_redesign_issues_03_network_ring_sequence_ring_sequence",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/03-network-ring-sequence.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_03_network_ring_sequence",
+      "target": "_scratch_website_redesign_issues_03_network_ring_sequence_nonced_inline_script",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/03-network-ring-sequence.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_03_network_ring_sequence",
+      "target": "_scratch_website_redesign_issues_02_homepage_hero_network_ring",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/03-network-ring-sequence.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_03_network_ring_sequence",
+      "target": "docs_specs_2026_11_09_website_redesign",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/03-network-ring-sequence.md",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_03_network_ring_sequence_ring_sequence",
+      "target": "_scratch_website_redesign_issues_02_homepage_hero_network_ring_hero_network_ring",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/03-network-ring-sequence.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_03_network_ring_sequence_nonced_inline_script",
+      "target": "_scratch_website_redesign_issues_03_network_ring_sequence_ring_sequence",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/03-network-ring-sequence.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_03_network_ring_sequence_nonced_inline_script",
+      "target": "src_middleware",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/03-network-ring-sequence.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

@@ -1,0 +1,551 @@
+{
+  "nodes": [
+    {
+      "id": "docs_presentations_comlinked_stack_overview_application_stack_overview",
+      "label": "Application Stack Overview",
+      "file_type": "document",
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Comlinked is built on a production-grade, fully typed TypeScript template with security, testing and CI/CD from the first commit. Faster to build (auth, dashboard, team management, settings and a reference feature ready; one proven pattern), built to scale (server-first rendering, typed data layer, multi-tenant isolation), easy to maintain (strict typing, automated formatting, enforced commit standards, ADRs). No proprietary lock-in in application code."
+    },
+    {
+      "id": "docs_presentations_comlinked_stack_overview_nextjs_react_typescript",
+      "label": "Next.js 15 / React 19 / TypeScript (strict)",
+      "file_type": "concept",
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "App Router with React Server Components: data stays on the server, less code ships to the browser."
+    },
+    {
+      "id": "docs_presentations_comlinked_stack_overview_tailwind_shadcn_radix",
+      "label": "Tailwind CSS v4 / shadcn/ui / Radix",
+      "file_type": "concept",
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Accessible, themeable (light/dark) components the team owns and can customize freely."
+    },
+    {
+      "id": "docs_presentations_comlinked_stack_overview_react_hook_form_zod",
+      "label": "React Hook Form + Zod validation",
+      "file_type": "concept",
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.1-2",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "One schema validates input in the browser and again on the server; all writes go through server-side Zod validation."
+    },
+    {
+      "id": "docs_presentations_comlinked_stack_overview_supabase_auth",
+      "label": "Supabase Auth",
+      "file_type": "concept",
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Managed sign-up, sign-in, password reset, secure cookie sessions and role-based access control."
+    },
+    {
+      "id": "docs_presentations_comlinked_stack_overview_postgresql_drizzle",
+      "label": "PostgreSQL (Supabase) + Drizzle ORM",
+      "file_type": "concept",
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Type-safe queries and versioned migrations; typed ORM queries mean no hand-built SQL strings."
+    },
+    {
+      "id": "docs_presentations_comlinked_stack_overview_tanstack_table_recharts",
+      "label": "TanStack Table + Recharts",
+      "file_type": "concept",
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_presentations_comlinked_stack_overview_posthog",
+      "label": "PostHog product analytics",
+      "file_type": "concept",
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Opt-in and privacy-first; off unless explicitly enabled."
+    },
+    {
+      "id": "docs_presentations_comlinked_stack_overview_testing_stack",
+      "label": "Vitest / Testing Library / Playwright / axe",
+      "file_type": "concept",
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_presentations_comlinked_stack_overview_github_actions_codeql_dependabot",
+      "label": "GitHub Actions / CodeQL / Dependabot",
+      "file_type": "concept",
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.1-2",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Every change is linted, type-checked, tested and built; CodeQL on every PR and weekly, Dependabot weekly updates, locked dependency versions and allow-listed install scripts."
+    },
+    {
+      "id": "docs_presentations_comlinked_stack_overview_vercel_or_docker",
+      "label": "Hosting: Vercel or Docker",
+      "file_type": "concept",
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_presentations_comlinked_stack_overview_defense_in_depth",
+      "label": "Defense in depth (secured at every layer)",
+      "file_type": "rationale",
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.2",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Security is built into the foundation, not added later; each layer enforces its own controls so one failure does not expose the system."
+    },
+    {
+      "id": "docs_presentations_comlinked_stack_overview_role_based_access_control",
+      "label": "Role-based access control (member, manager, admin, superadmin)",
+      "file_type": "rationale",
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.2",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Enforced on the server in route middleware and page code; fails closed, so if auth is unavailable access is denied."
+    },
+    {
+      "id": "docs_presentations_comlinked_stack_overview_row_level_security",
+      "label": "PostgreSQL Row-Level Security",
+      "file_type": "rationale",
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.2",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "RLS on every tenant table so each organization can only read and write its own data, enforced inside the database itself, not only in app code."
+    },
+    {
+      "id": "docs_presentations_comlinked_stack_overview_pkce_sign_in_flow",
+      "label": "PKCE sign-in flow and server-verified sessions",
+      "file_type": "rationale",
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.2",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Session verified with the auth server on every protected request; Secure, SameSite cookies; HTTPS-only in production."
+    },
+    {
+      "id": "docs_presentations_comlinked_stack_overview_browser_hardening",
+      "label": "Browser hardening (nonce CSP, HSTS, frame-deny)",
+      "file_type": "rationale",
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.2",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Strict Content-Security-Policy with a new nonce per request, HSTS (2-year, preload), clickjacking protection, nosniff, Referrer-Policy, Permissions-Policy, COOP/CORP; framework fingerprint header removed."
+    },
+    {
+      "id": "docs_presentations_comlinked_stack_overview_owasp_top_10_mapping",
+      "label": "OWASP Top 10 mapping",
+      "file_type": "concept",
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.2",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_presentations_comlinked_stack_overview_quality_gates",
+      "label": "Quality gates on every change",
+      "file_type": "rationale",
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.2",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Every push and PR runs lint (ESLint), type check (TypeScript strict), unit tests with a coverage floor, E2E + a11y (Playwright, axe), production build and CodeQL security scan."
+    },
+    {
+      "id": "docs_presentations_comlinked_stack_overview_conventional_commits_hooks",
+      "label": "Pre-commit hooks and Conventional Commits",
+      "file_type": "rationale",
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.2",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Pre-commit hooks format code and enforce the Conventional Commits standard before code leaves a developer's machine."
+    },
+    {
+      "id": "docs_presentations_comlinked_stack_overview_multi_tenancy",
+      "label": "Multi-tenancy (organizations and memberships)",
+      "file_type": "rationale",
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.1-2",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Multi-tenant data isolation supports growth from MVP to many customer organizations."
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_presentations_comlinked_stack_overview_application_stack_overview",
+      "target": "docs_presentations_comlinked_stack_overview_nextjs_react_typescript",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.1",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_presentations_comlinked_stack_overview_application_stack_overview",
+      "target": "docs_presentations_comlinked_stack_overview_tailwind_shadcn_radix",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.1",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_presentations_comlinked_stack_overview_application_stack_overview",
+      "target": "docs_presentations_comlinked_stack_overview_react_hook_form_zod",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.1",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_presentations_comlinked_stack_overview_application_stack_overview",
+      "target": "docs_presentations_comlinked_stack_overview_supabase_auth",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.1",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_presentations_comlinked_stack_overview_application_stack_overview",
+      "target": "docs_presentations_comlinked_stack_overview_postgresql_drizzle",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.1",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_presentations_comlinked_stack_overview_application_stack_overview",
+      "target": "docs_presentations_comlinked_stack_overview_tanstack_table_recharts",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.1",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_presentations_comlinked_stack_overview_application_stack_overview",
+      "target": "docs_presentations_comlinked_stack_overview_posthog",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.1",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_presentations_comlinked_stack_overview_application_stack_overview",
+      "target": "docs_presentations_comlinked_stack_overview_testing_stack",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.1",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_presentations_comlinked_stack_overview_application_stack_overview",
+      "target": "docs_presentations_comlinked_stack_overview_github_actions_codeql_dependabot",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.1",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_presentations_comlinked_stack_overview_application_stack_overview",
+      "target": "docs_presentations_comlinked_stack_overview_vercel_or_docker",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.1",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_presentations_comlinked_stack_overview_application_stack_overview",
+      "target": "docs_presentations_comlinked_stack_overview_defense_in_depth",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.2",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_presentations_comlinked_stack_overview_application_stack_overview",
+      "target": "docs_presentations_comlinked_stack_overview_owasp_top_10_mapping",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.2",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_presentations_comlinked_stack_overview_application_stack_overview",
+      "target": "docs_presentations_comlinked_stack_overview_quality_gates",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.2",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_presentations_comlinked_stack_overview_pkce_sign_in_flow",
+      "target": "docs_presentations_comlinked_stack_overview_supabase_auth",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.2",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_presentations_comlinked_stack_overview_role_based_access_control",
+      "target": "docs_presentations_comlinked_stack_overview_supabase_auth",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.1",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_presentations_comlinked_stack_overview_row_level_security",
+      "target": "docs_presentations_comlinked_stack_overview_postgresql_drizzle",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.2",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_presentations_comlinked_stack_overview_row_level_security",
+      "target": "docs_presentations_comlinked_stack_overview_multi_tenancy",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.2",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_presentations_comlinked_stack_overview_postgresql_drizzle",
+      "target": "docs_presentations_comlinked_stack_overview_multi_tenancy",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.1",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_presentations_comlinked_stack_overview_owasp_top_10_mapping",
+      "target": "docs_presentations_comlinked_stack_overview_role_based_access_control",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.2",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_presentations_comlinked_stack_overview_owasp_top_10_mapping",
+      "target": "docs_presentations_comlinked_stack_overview_row_level_security",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.2",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_presentations_comlinked_stack_overview_owasp_top_10_mapping",
+      "target": "docs_presentations_comlinked_stack_overview_react_hook_form_zod",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.2",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_presentations_comlinked_stack_overview_owasp_top_10_mapping",
+      "target": "docs_presentations_comlinked_stack_overview_browser_hardening",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.2",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_presentations_comlinked_stack_overview_owasp_top_10_mapping",
+      "target": "docs_presentations_comlinked_stack_overview_github_actions_codeql_dependabot",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.2",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_presentations_comlinked_stack_overview_owasp_top_10_mapping",
+      "target": "docs_presentations_comlinked_stack_overview_pkce_sign_in_flow",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.2",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_presentations_comlinked_stack_overview_quality_gates",
+      "target": "docs_presentations_comlinked_stack_overview_testing_stack",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.2",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_presentations_comlinked_stack_overview_quality_gates",
+      "target": "docs_presentations_comlinked_stack_overview_github_actions_codeql_dependabot",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.2",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_presentations_comlinked_stack_overview_quality_gates",
+      "target": "docs_presentations_comlinked_stack_overview_conventional_commits_hooks",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.2",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_presentations_comlinked_stack_overview_defense_in_depth",
+      "target": "docs_presentations_comlinked_stack_overview_row_level_security",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.2",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_presentations_comlinked_stack_overview_defense_in_depth",
+      "target": "docs_presentations_comlinked_stack_overview_role_based_access_control",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf",
+      "source_location": "p.2",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "stack_security_layers",
+      "label": "Secured at every layer (defense in depth)",
+      "nodes": [
+        "docs_presentations_comlinked_stack_overview_defense_in_depth",
+        "docs_presentations_comlinked_stack_overview_pkce_sign_in_flow",
+        "docs_presentations_comlinked_stack_overview_role_based_access_control",
+        "docs_presentations_comlinked_stack_overview_row_level_security",
+        "docs_presentations_comlinked_stack_overview_react_hook_form_zod",
+        "docs_presentations_comlinked_stack_overview_browser_hardening",
+        "docs_presentations_comlinked_stack_overview_github_actions_codeql_dependabot"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/presentations/comlinked-stack-overview.pdf"
+    }
+  ]
+}

@@ -1,0 +1,890 @@
+/* Marketing site styles ported from the ComLinked website export.
+   Imported into the components layer so Tailwind utilities still win, matching
+   how the export's inline styles beat its classes. Everything is scoped to
+   .cl-site so the dashboard is unaffected. */
+.cl-site {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-14: 56px;
+  --space-18: 72px;
+  --space-28: 112px;
+  --section-pad: clamp(72px, 4.5rem + 3vw, 112px);
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+  --cl-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --font-text: var(--font-nunito-sans), "Helvetica Neue", Arial, sans-serif;
+  --font-display: var(--font-source-serif), Georgia, "Times New Roman", serif;
+
+  /* The public site's dark ground is the product's navy. */
+  --color-cl-night: var(--color-cl-navy);
+  --color-cl-night-raised: #1a4c70;
+  --color-cl-night-chip: #235a82;
+
+  color-scheme: light;
+  overflow-x: clip;
+
+  a {
+    text-decoration: underline;
+  }
+
+  .cl-rings-top-right {
+    background:
+      radial-gradient(
+        circle at 100% 0%,
+        var(--color-cl-ring-20) 0 70px,
+        transparent 70px 150px,
+        var(--color-cl-ring-22) 150px 152px,
+        transparent 152px 260px,
+        var(--color-cl-ring-19) 260px 262px,
+        transparent 262px 370px,
+        var(--color-cl-ring-16) 370px 372px,
+        transparent 372px 480px,
+        var(--color-cl-ring-13) 480px 482px,
+        transparent 482px 590px,
+        var(--color-cl-ring-10) 590px 592px,
+        transparent 592px 700px,
+        var(--color-cl-ring-07) 700px 702px,
+        transparent 702px 810px
+      ),
+      var(--color-cl-night);
+  }
+  .cl-ring-sky {
+    background: radial-gradient(
+      circle,
+      var(--color-cl-sky) 0 24%,
+      transparent 25% 48%,
+      var(--color-cl-sky) 49% 68%,
+      transparent 69%
+    );
+  }
+  .cl-ring-accent {
+    background: radial-gradient(
+      circle,
+      var(--color-cl-accent) 0 24%,
+      transparent 25% 48%,
+      var(--color-cl-accent) 49% 68%,
+      transparent 69%
+    );
+  }
+  .cl-rings-bottom-8 {
+    background:
+      radial-gradient(
+        circle at 8% 100%,
+        var(--color-cl-ring-20) 0 70px,
+        transparent 70px 150px,
+        var(--color-cl-ring-22) 150px 152px,
+        transparent 152px 260px,
+        var(--color-cl-ring-19) 260px 262px,
+        transparent 262px 370px,
+        var(--color-cl-ring-16) 370px 372px,
+        transparent 372px 480px,
+        var(--color-cl-ring-13) 480px 482px,
+        transparent 482px 590px,
+        var(--color-cl-ring-10) 590px 592px,
+        transparent 592px 700px,
+        var(--color-cl-ring-07) 700px 702px,
+        transparent 702px 810px
+      ),
+      var(--color-cl-night);
+  }
+
+  a {
+    color: var(--color-cl-accent-strong);
+  }
+  a:hover {
+    color: var(--color-cl-accent-hover);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-cl-accent);
+    outline-offset: 3px;
+  }
+  .cl-dark :focus-visible {
+    outline-color: var(--color-cl-sky);
+  }
+  .cl-dark .cl-pad :focus-visible {
+    outline-color: var(--color-cl-accent);
+  }
+  .cl-h1 {
+    font-size: clamp(2.375rem, 1.5rem + 2.8vw, 3.75rem);
+    line-height: 1.07;
+  }
+  .cl-h2 {
+    font-size: clamp(1.875rem, 1.35rem + 1.6vw, 2.625rem);
+    line-height: 1.1;
+  }
+  .cl-sec {
+    padding-top: var(--section-pad);
+    padding-bottom: var(--section-pad);
+  }
+  @media (max-width: 600px) {
+    .cl-pad {
+      padding: var(--space-6) !important;
+    }
+    .cl-hero-pad {
+      padding-top: var(--space-12) !important;
+      padding-bottom: 64px !important;
+    }
+  }
+  .cl-hxl {
+    font-size: clamp(2.5rem, 1.1rem + 4.4vw, 4.75rem);
+    line-height: 1.03;
+  }
+  @media (max-width: 600px) {
+    .cl-cta-pad h2 {
+      margin-bottom: var(--space-12) !important;
+    }
+  }
+  h1,
+  h2,
+  h3,
+  .cl-hxl {
+    font-family: var(--font-display) !important;
+    font-weight: 500 !important;
+    letter-spacing: -0.015em !important;
+  }
+  :is(h1, h2, h3).font-sans {
+    font-family: var(--font-text) !important;
+    font-weight: 800 !important;
+  }
+  .cl-card,
+  .cl-pad {
+    border-radius: 16px;
+  }
+  [aria-label="Example ComDash"],
+  [aria-label="Example company profile"] {
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .cl-btn {
+    border-radius: 999px !important;
+  }
+  [role="alert"] {
+    border-radius: 8px;
+  }
+  ::selection {
+    background: var(--color-cl-accent-tint);
+    color: var(--color-cl-ink);
+  }
+  input,
+  textarea {
+    caret-color: var(--color-cl-accent);
+  }
+  .cl-btn {
+    white-space: nowrap;
+  }
+  footer .cl-navl {
+    white-space: nowrap;
+    display: inline-flex !important;
+    align-items: center;
+    min-height: 44px;
+  }
+  h1,
+  h2 {
+    text-wrap: balance;
+  }
+  button:disabled,
+  .cl-btn[aria-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  input:disabled,
+  select:disabled,
+  textarea:disabled {
+    background: var(--color-cl-sunken);
+    color: var(--color-cl-muted);
+    cursor: not-allowed;
+  }
+  .cl-skip {
+    position: absolute;
+    left: -9999px;
+    top: 8px;
+    z-index: 50;
+    background: var(--color-cl-ink);
+    color: var(--color-cl-paper);
+    padding: var(--space-3) var(--space-4);
+    border-radius: 999px;
+    font: 700 14px var(--font-text);
+    text-decoration: none;
+  }
+  .cl-skip:focus {
+    left: 16px;
+  }
+  .cl-site-nav {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    background: var(--color-cl-surface);
+    border-bottom: 1px solid var(--color-cl-rule);
+  }
+  .cl-nav-in {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--space-5);
+    height: 72px;
+    display: flex;
+    align-items: center;
+    gap: var(--space-10);
+  }
+  .cl-nav-brand {
+    display: block;
+    flex: none;
+  }
+  .cl-nav-brand img {
+    height: 32px;
+    width: auto;
+    display: block;
+  }
+  .cl-nav-desk {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+  }
+  nav.cl-nav-desk {
+    margin-right: auto;
+  }
+  .cl-nav-act {
+    gap: var(--space-6);
+  }
+  .cl-nav-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font: 700 15px/1 var(--font-text);
+    color: var(--color-cl-ink-2);
+    text-decoration: none;
+    padding: var(--space-3) 0;
+    white-space: nowrap;
+    transition: color var(--duration-fast) ease-out;
+  }
+  .cl-nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 6px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--color-cl-accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--duration-normal) var(--cl-ease-out);
+  }
+  .cl-nav-link:hover {
+    color: var(--color-cl-ink);
+  }
+  .cl-nav-link:hover::after {
+    transform: scaleX(1);
+  }
+  .cl-nav-link[aria-current="page"] {
+    color: var(--color-cl-ink);
+  }
+  .cl-nav-link[aria-current="page"]::after {
+    transform: scaleX(1);
+  }
+  .cl-nav-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    padding: 0 var(--space-6);
+    border-radius: 999px;
+    background: var(--color-cl-navy);
+    color: var(--color-cl-accent-ink) !important;
+    font: 700 15px/1 var(--font-text);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .cl-nav-mob {
+    display: none;
+  }
+  .cl-mnav {
+    margin-left: auto;
+    position: static;
+  }
+  .cl-mnav summary {
+    list-style: none;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    height: 44px;
+    padding: 0 var(--space-5);
+    border: 1px solid var(--color-cl-ink);
+    border-radius: 999px;
+    font: 700 15px/1 var(--font-text);
+    color: var(--color-cl-ink);
+    cursor: pointer;
+    user-select: none;
+  }
+  .cl-mnav summary::-webkit-details-marker {
+    display: none;
+  }
+  .cl-mnav-ico {
+    display: inline-grid;
+    gap: var(--space-1);
+    width: 16px;
+  }
+  .cl-mnav-ico i {
+    display: block;
+    height: 2px;
+    border-radius: 2px;
+    background: currentColor;
+    transition:
+      transform var(--duration-normal) ease-out,
+      opacity var(--duration-normal) ease-out;
+  }
+  .cl-mnav[open] .cl-mnav-ico i:nth-child(1) {
+    transform: translateY(6px) rotate(45deg);
+  }
+  .cl-mnav[open] .cl-mnav-ico i:nth-child(2) {
+    opacity: 0;
+  }
+  .cl-mnav[open] .cl-mnav-ico i:nth-child(3) {
+    transform: translateY(-6px) rotate(-45deg);
+  }
+  .cl-mnav-panel {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    background: var(--color-cl-surface);
+    border-bottom: 1px solid var(--color-cl-rule);
+    padding: var(--space-2) var(--space-5) var(--space-6);
+    box-shadow: 0 24px 40px -24px var(--color-cl-shadow);
+  }
+  .cl-mnav-panel nav {
+    display: flex;
+    flex-direction: column;
+  }
+  .cl-mnav-link {
+    font: 800 22px/1.2 var(--font-text);
+    color: var(--color-cl-ink);
+    text-decoration: none;
+    padding: var(--space-4) 0;
+    border-bottom: 1px solid var(--color-cl-rule);
+  }
+  .cl-mnav-link[aria-current="page"] {
+    color: var(--color-cl-accent);
+  }
+  .cl-mnav-cta {
+    width: 100%;
+    height: 52px;
+    margin-top: var(--space-5);
+  }
+  @media (max-width: 900px) {
+    .cl-nav-desk {
+      display: none !important;
+    }
+    .cl-nav-mob {
+      display: block;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cl-nav-link::after,
+    .cl-mnav-ico i {
+      transition: none;
+    }
+  }
+  .cl-navl {
+    transition: color var(--duration-fast) var(--cl-ease-out);
+  }
+  .cl-navl:hover {
+    color: var(--color-cl-ink) !important;
+  }
+  .cl-btn {
+    transition:
+      background-color var(--duration-fast) var(--cl-ease-out),
+      color var(--duration-fast) var(--cl-ease-out),
+      border-color var(--duration-fast) var(--cl-ease-out),
+      transform var(--duration-fast) var(--cl-ease-out);
+  }
+  .cl-btn:hover {
+    filter: brightness(0.92);
+  }
+  .cl-btn:active {
+    transform: scale(0.985);
+  }
+  .cl-btn-o:hover {
+    filter: none;
+    background: var(--color-cl-ink) !important;
+    color: var(--color-cl-surface) !important;
+  }
+  .cl-btn-od:hover {
+    filter: none;
+    background: var(--color-cl-paper) !important;
+    color: var(--color-cl-ink) !important;
+  }
+  .cl-fld {
+    transition:
+      border-color var(--duration-fast) ease-out,
+      box-shadow var(--duration-fast) ease-out;
+  }
+  .cl-fld:hover {
+    border-color: var(--color-cl-ink) !important;
+  }
+  .cl-fld:focus {
+    outline: none;
+    border-color: var(--color-cl-accent) !important;
+    box-shadow: inset 0 0 0 1px var(--color-cl-accent);
+  }
+  .cl-card {
+    transition: border-color var(--duration-normal) var(--cl-ease-out);
+  }
+  .cl-card:hover {
+    border-color: var(--color-cl-accent) !important;
+  }
+  .cl-pop0 {
+    display: inline-block;
+  }
+  .cl-nr {
+    --ring-duration: 260ms;
+    --ring-step: 120ms;
+    --ring-match-start: 200ms;
+    --ring-line-start: 700ms;
+    --ring-ease: var(--cl-ease-out);
+    --ring-chip: 48px;
+    position: relative;
+    aspect-ratio: 1;
+  }
+  .cl-nr-lines {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .cl-nr-orbit {
+    fill: none;
+    stroke: var(--color-cl-on-night-14);
+    stroke-width: 0.25;
+  }
+  .cl-nr-line {
+    stroke: var(--color-cl-sky-strong);
+    stroke-width: 0.35;
+  }
+  .cl-nr-node {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+    width: 34%;
+    transform: translate(-50%, calc(var(--ring-chip) / -2));
+    text-align: center;
+  }
+  .cl-nr-node[data-ring-part="connection"] {
+    width: 27%;
+  }
+  .cl-nr-chip {
+    display: grid;
+    place-items: center;
+    width: var(--ring-chip);
+    height: var(--ring-chip);
+    border-radius: 10px;
+    background: var(--color-cl-night-chip);
+    color: var(--color-cl-paper);
+    font: 800 14px var(--font-text);
+  }
+  .cl-nr-node[data-ring-part="centre"] .cl-nr-chip {
+    background: var(--color-cl-paper);
+    color: var(--color-cl-navy);
+  }
+  .cl-nr-node[data-ring-part="connection"] .cl-nr-chip {
+    background: var(--color-cl-night-raised);
+    color: var(--color-cl-on-night-82);
+    border: 1px solid var(--color-cl-on-night-24);
+  }
+  .cl-nr-name {
+    padding: 0 var(--space-1);
+    background: var(--color-cl-night);
+    color: var(--color-cl-paper);
+    font: 700 13px/17px var(--font-text);
+    overflow-wrap: anywhere;
+  }
+  .cl-nr-node[data-ring-part="connection"] .cl-nr-name {
+    color: var(--color-cl-on-night-82);
+    font-weight: 600;
+  }
+  .cl-nr-short {
+    display: none;
+  }
+  @media (max-width: 600px) {
+    .cl-nr-full,
+    .cl-nr-orbit-outer {
+      display: none;
+    }
+    /* Not display: none, which would restart the sequence when a phone is rotated. */
+    .cl-nr-node[data-ring-phone="false"] {
+      visibility: hidden;
+    }
+    .cl-nr-short {
+      display: block;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .cl-nr[data-ring] .cl-nr-node {
+      opacity: 0;
+    }
+    .cl-nr[data-ring] .cl-nr-line {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .cl-nr[data-ring="playing"] .cl-nr-node {
+      animation: ring-appear var(--ring-duration) var(--ring-ease) forwards;
+    }
+    .cl-nr[data-ring="playing"] [data-ring-part="match"] {
+      animation-delay: calc(var(--ring-match-start) + var(--ring-step) * var(--ring-index));
+    }
+    .cl-nr[data-ring="playing"] [data-ring-part="connection"] {
+      animation-delay: calc(var(--ring-line-start) + var(--ring-step) * var(--ring-index));
+    }
+    .cl-nr[data-ring="playing"] .cl-nr-line {
+      animation: ring-draw var(--ring-duration) var(--ring-ease) forwards;
+      animation-delay: calc(var(--ring-line-start) + var(--ring-step) * var(--ring-index));
+    }
+  }
+  .cl-loop-steps {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: var(--space-8);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cl-loop-step {
+    position: relative;
+    min-width: 0;
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--color-cl-rule);
+  }
+  .cl-loop-step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: -5px;
+    right: calc(var(--space-8) / -2 - 4px);
+    width: 9px;
+    height: 9px;
+    border-top: 1.5px solid var(--color-cl-accent);
+    border-right: 1.5px solid var(--color-cl-accent);
+    transform: rotate(45deg);
+  }
+  .cl-loop-number {
+    display: block;
+    margin-bottom: var(--space-2);
+    color: var(--color-cl-accent-strong);
+    font: 700 22px/28px var(--font-text);
+  }
+  .cl-loop-return {
+    position: relative;
+    margin: var(--space-6) 0 0;
+    padding: var(--space-3) var(--space-5);
+    border: 1px solid var(--color-cl-accent);
+    border-top: 0;
+    border-radius: 0 0 16px 16px;
+    color: var(--color-cl-accent-strong);
+    font: 700 15px/22px var(--font-text);
+    text-align: center;
+  }
+  .cl-loop-return::before {
+    content: "";
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    width: 9px;
+    height: 9px;
+    border-top: 1.5px solid var(--color-cl-accent);
+    border-left: 1.5px solid var(--color-cl-accent);
+    transform: rotate(45deg);
+  }
+  @media (max-width: 900px) {
+    .cl-loop-steps {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+    }
+    .cl-loop-step {
+      padding: var(--space-4) 0 var(--space-4) var(--space-12);
+      border-top: 0;
+      border-left: 1px solid var(--color-cl-rule);
+    }
+    .cl-loop-step:not(:last-child)::after {
+      top: auto;
+      right: auto;
+      bottom: -4px;
+      left: -5px;
+      transform: rotate(135deg);
+    }
+    .cl-loop-number {
+      position: absolute;
+      left: var(--space-4);
+      margin: 0;
+    }
+    .cl-loop-return {
+      margin-top: 0;
+      border: 0;
+      border-left: 1px solid var(--color-cl-accent);
+      border-radius: 0;
+      padding-left: var(--space-12);
+      text-align: left;
+    }
+    .cl-loop-return::before {
+      display: none;
+    }
+  }
+  .cl-faq summary::-webkit-details-marker {
+    display: none;
+  }
+  .cl-faq-mark {
+    display: inline-block;
+    transition: transform var(--duration-normal) var(--cl-ease-out);
+  }
+  .cl-faq[open] .cl-faq-mark {
+    transform: rotate(45deg);
+  }
+  .cl-faq summary:hover {
+    color: var(--color-cl-accent) !important;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation: none !important;
+      transition: none !important;
+    }
+    .ln,
+    .check {
+      stroke-dashoffset: 0;
+    }
+    .nd,
+    .fade,
+    .cl-pop0,
+    .cl-mrow {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+/* Section links land clear of the sticky navigation. */
+html:has(.cl-site) {
+  scroll-padding-top: 88px;
+}
+
+/* The two example panels, on the ComDash and For Chambers pages: small pictures of the Demo.
+   Every size, radius and colour is one of the Demo's named values, defined in demo-scale.css,
+   so a change to the scale reaches the picture too. The rules themselves are the website's own:
+   it shares no part with the Demo. */
+.cl-site {
+  .cl-example {
+    position: relative;
+    min-width: 0;
+    padding: var(--space-6);
+    border: 1px solid var(--hair);
+    border-radius: var(--radius-panel);
+    background: var(--color-surface);
+    color: var(--color-ink-2);
+    font-family: var(--font-text);
+  }
+  .ex-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+  .ex-title {
+    margin: 0;
+    padding-right: calc(var(--space-12) * 2);
+    font: 600 var(--text-18) / var(--leading-title) var(--font-text);
+    color: var(--color-ink);
+  }
+  .ex-note {
+    margin: 0;
+    font: 400 var(--text-13) / var(--leading-text) var(--font-text);
+    color: var(--color-quiet);
+  }
+  /* A figure: its label above, the figure in the sans face. */
+  .ex-figs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3) var(--space-8);
+  }
+  .ex-fig {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .ex-k {
+    font: 400 var(--text-13) / var(--leading-text) var(--font-text);
+    color: var(--color-quiet);
+  }
+  .ex-v,
+  .ex-claimed {
+    font: 600 var(--text-28) / var(--leading-tight) var(--font-text);
+    color: var(--color-ink);
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+  .ex-claimed {
+    font-size: var(--text-44);
+    line-height: 1;
+  }
+  .ex-of {
+    font: 400 var(--text-14) / 1 var(--font-text);
+    color: var(--color-quiet);
+  }
+  /* How the members split by status, in proportion, over each status's count in words. */
+  .ex-split {
+    display: flex;
+    gap: var(--stroke-2);
+    height: var(--space-3);
+    margin: var(--space-4) 0 var(--space-3);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+  }
+  .ex-key {
+    display: block;
+  }
+  .ex-key.active {
+    background: var(--color-accent-strong);
+  }
+  .ex-key.quiet {
+    background: var(--color-sky);
+  }
+  .ex-key.intro {
+    background: var(--color-error);
+  }
+  .ex-key.unclaimed {
+    background: var(--color-sunken);
+  }
+  .ex-counts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font: 400 var(--text-13) / var(--leading-text) var(--font-text);
+    color: var(--color-muted);
+  }
+  .ex-counts li {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .ex-counts b {
+    font-weight: 600;
+    color: var(--color-ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .ex-dot {
+    flex: none;
+    width: var(--space-2);
+    height: var(--space-2);
+    border-radius: var(--radius-mark);
+  }
+  .ex-dot.unclaimed {
+    box-shadow: inset 0 0 0 1px var(--color-rule);
+  }
+  /* Companies in a flat list on hairlines, each with its mark and a tag. */
+  .ex-rows {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .ex-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) 0;
+    border-top: 1px solid var(--hair);
+  }
+  .ex-row:last-child {
+    padding-bottom: 0;
+  }
+  .ex-row-t {
+    flex: 1;
+    min-width: 0;
+  }
+  .ex-name {
+    font: 600 var(--text-14) / var(--leading-title) var(--font-text);
+    color: var(--color-ink);
+    overflow-wrap: anywhere;
+  }
+  .ex-detail {
+    font: 400 var(--text-13) / var(--leading-text) var(--font-text);
+    color: var(--color-muted);
+  }
+  /* A Company's mark: pale blue once it has claimed, a dashed outline until then. */
+  .ex-mark {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: var(--space-8);
+    height: var(--space-8);
+    border-radius: var(--radius-mark);
+    background: var(--color-accent-tint);
+    color: var(--color-accent-strong);
+    font: 600 var(--text-12) / 1 var(--font-text);
+  }
+  .ex-mark.unclaimed {
+    background: none;
+    border: 1px dashed var(--color-rule);
+    color: var(--color-quiet);
+  }
+  /* A tag: a small pill. Grey unless it takes a tone. */
+  .ex-tag {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 var(--space-2);
+    border-radius: var(--radius-pill);
+    background: var(--color-sunken);
+    color: var(--color-muted);
+    font: 600 var(--text-12) / var(--space-5) var(--font-text);
+    white-space: nowrap;
+  }
+  .ex-tag.accent {
+    background: var(--color-accent-tint);
+    color: var(--color-accent-strong);
+  }
+  .ex-tag.solid {
+    background: var(--color-accent-strong);
+    color: var(--color-accent-ink);
+  }
+  .ex-tag.error {
+    background: var(--color-error-tint);
+    color: var(--color-error);
+  }
+  .ex-tag.line {
+    font-weight: 400;
+    background: none;
+    box-shadow: inset 0 0 0 1px var(--color-rule);
+  }
+}
+@keyframes ring-appear {
+  to {
+    opacity: 1;
+  }
+}
+@keyframes ring-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes fade {
+  to {
+    opacity: 1;
+  }
+}

@@ -10,6 +10,9 @@ Built from
 - **RBAC** — role guards enforced in middleware and components
 - **Tests + CI** — Vitest, Testing Library, Playwright, and a GitHub Actions pipeline
 
+The product vision, MVP scope and build order are in the
+[ComLinked MVP Build Plan](docs/specs/2026-10-11-mvp-build-plan.md).
+
 Decisions behind the stack are recorded in [`docs/adr/`](docs/adr). Shared
 vocabulary is in [`CONTEXT.md`](CONTEXT.md). Coding standards are in
 [`docs/specs/2026-07-31-coding-standards.md`](docs/specs/2026-07-31-coding-standards.md).

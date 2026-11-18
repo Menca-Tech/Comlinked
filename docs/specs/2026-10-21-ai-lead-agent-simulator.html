@@ -1,0 +1,339 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>ComLinked Lead Agent Simulator</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a working console. Stage rail left, live agent thread centre, scorecard right; handoff package below. ComLinked brand tokens. */
+:root{
+  --bg:#f5f7fa; --surface:#ffffff; --line:#dde2e9; --fg:#3f4043; --muted:#6e7176;
+  --cta:#396BB4; --cta-ink:#ffffff; --sky:#57A2D2; --teal:#00AEC5; --green:#8EC741; --lime:#D8E028;
+  --ke-bg:#e8f0fa; --np-bg:#e3f6f9; --gate-bg:#fbfbe6; --gate-line:#c9cf2a; --good:#5f9a23; --warn:#a37f00;
+  --font:"Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#15181d; --surface:#1d2128; --line:#2f353f; --fg:#e4e6ea; --muted:#9aa0a9;
+  --cta:#5b8fd9; --cta-ink:#0d1420; --sky:#6fb3df; --teal:#3cc4d8; --green:#9bd25a; --lime:#d8e028;
+  --ke-bg:#1f2c40; --np-bg:#18333a; --gate-bg:#2b2c18; --gate-line:#a9ae25; --good:#9bd25a; --warn:#d8b84a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#15181d; --surface:#1d2128; --line:#2f353f; --fg:#e4e6ea; --muted:#9aa0a9;
+  --cta:#5b8fd9; --cta-ink:#0d1420; --sky:#6fb3df; --teal:#3cc4d8; --green:#9bd25a; --lime:#d8e028;
+  --ke-bg:#1f2c40; --np-bg:#18333a; --gate-bg:#2b2c18; --gate-line:#a9ae25; --good:#9bd25a; --warn:#d8b84a; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--font);font-size:15px;line-height:1.55}
+.wrap{max-width:1240px;margin:0 auto;padding-block:24px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:20px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;color:var(--muted);letter-spacing:.01em}
+.ring{width:22px;height:22px;border-radius:50%;border:3px solid var(--sky);box-shadow:inset 0 0 0 3px var(--surface),inset 0 0 0 7px var(--cta)}
+h1{font-size:clamp(22px,3vw,30px);line-height:1.2;margin:6px 0 4px;text-wrap:balance}
+.sub{color:var(--muted);margin:0;max-width:68ch}
+.pair{display:flex;gap:10px;flex-wrap:wrap}
+.co{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px;min-width:0}
+.co b{display:block;font-size:14px}.co span{font-size:12.5px;color:var(--muted)}
+.co.ke{border-left:4px solid var(--cta)}.co.np{border-left:4px solid var(--teal)}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button{font:inherit;font-weight:600;font-size:14px;border-radius:8px;padding:9px 16px;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--fg)}
+button.primary{background:var(--cta);border-color:var(--cta);color:var(--cta-ink)}
+button:disabled{opacity:.45;cursor:default}
+button:focus-visible,.tab:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+.counter{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-left:4px}
+.grid{display:grid;grid-template-columns:220px minmax(0,1fr) 290px;gap:16px;align-items:start}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0}
+.label{font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+ol.stages{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+ol.stages li{display:grid;grid-template-columns:24px 1fr;gap:8px;align-items:center;padding:6px 6px;border-radius:8px;font-size:13.5px;color:var(--muted)}
+ol.stages li .n{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;font-family:var(--mono);font-size:11px}
+ol.stages li.done{color:var(--fg)} ol.stages li.done .n{background:var(--green);border-color:var(--green);color:#1d2a0c}
+ol.stages li.now{background:var(--ke-bg);color:var(--fg);font-weight:600} ol.stages li.now .n{border-color:var(--cta);color:var(--cta)}
+ol.stages li.gate .t::after{content:"human";margin-left:6px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:var(--gate-bg);border:1px solid var(--gate-line);color:var(--fg);padding:0 5px;border-radius:4px}
+.thread{display:flex;flex-direction:column;gap:12px;max-height:640px;overflow-y:auto;padding-right:4px;scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){.thread{scroll-behavior:auto}.item{animation:none!important}}
+.item{animation:rise .3s ease-out both;max-width:88%;min-width:0}
+@keyframes rise{from{transform:translateY(6px);opacity:.3}to{transform:none;opacity:1}}
+.meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12px;color:var(--muted);margin-bottom:4px}
+.meta time{font-family:var(--mono)}
+.chip{font-family:var(--mono);font-size:10.5px;padding:1px 6px;border-radius:4px;border:1px solid var(--line);color:var(--muted)}
+.chip.t1{border-color:var(--sky);color:var(--sky)} .chip.t2{border-color:var(--gate-line);background:var(--gate-bg);color:var(--fg)}
+.bubble{padding:10px 14px;border-radius:12px;font-size:14.5px}
+.ke{align-self:flex-start}.ke .bubble{background:var(--ke-bg);border-top-left-radius:3px}
+.np{align-self:flex-end}.np .bubble{background:var(--np-bg);border-top-right-radius:3px}.np .meta{justify-content:flex-end}
+.sys{align-self:center;max-width:100%;width:100%}
+.sys .bubble{background:transparent;border:1px dashed var(--line);font-size:13.5px;color:var(--muted);text-align:center}
+.gatecard{align-self:stretch;max-width:100%;background:var(--gate-bg);border:1.5px solid var(--gate-line);border-radius:12px;padding:14px 16px}
+.gatecard h3{margin:0 0 4px;font-size:14.5px}.gatecard p{margin:0 0 10px;font-size:14px}
+.gatecard .who{font-size:12.5px;color:var(--muted);margin-bottom:10px}
+.gatecard .done{font-size:13.5px;font-weight:600;color:var(--good)}
+.shortlist{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:6px}
+.shortlist td{padding:6px 8px;border-top:1px solid var(--line);text-align:left}
+.shortlist td.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+.booked{align-self:stretch;max-width:100%;border:1.5px solid var(--green);border-radius:12px;padding:14px 16px;background:var(--surface)}
+.booked h3{margin:0 0 6px;font-size:15px;color:var(--good)}
+.booked p{margin:0;font-size:14px}
+.score-big{display:flex;align-items:baseline;gap:6px;margin-bottom:4px}
+.score-big strong{font-size:44px;line-height:1;font-variant-numeric:tabular-nums;color:var(--fg)}
+.score-big span{color:var(--muted);font-size:14px}
+.band{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted);margin-bottom:12px}
+.band.book{background:var(--green);border-color:var(--green);color:#1d2a0c}
+.meter{position:relative;height:8px;background:var(--line);border-radius:4px;margin:4px 0 16px}
+.meter i{position:absolute;inset:0 auto 0 0;background:var(--cta);border-radius:4px;transition:width .5s}
+.meter .thr{position:absolute;top:-4px;bottom:-4px;left:75%;width:2px;background:var(--fg)}
+.meter .thrl{position:absolute;top:12px;left:75%;transform:translateX(-50%);font-size:10.5px;font-family:var(--mono);color:var(--muted)}
+.cats{display:flex;flex-direction:column;gap:9px;margin-top:22px}
+.cat{display:grid;grid-template-columns:1fr auto;gap:2px 8px;font-size:12.5px}
+.cat .v{font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--muted)}
+.cat .bar{grid-column:1/-1;height:5px;background:var(--line);border-radius:3px;overflow:hidden}
+.cat .bar i{display:block;height:100%;background:var(--sky);width:0;transition:width .5s}
+.cat.q .bar i{background:var(--teal)}
+.note{font-size:12px;color:var(--muted);margin:14px 0 0}
+.pkg .tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--line);margin-bottom:16px}
+.tab{background:none;border:none;border-bottom:3px solid transparent;border-radius:0;padding:10px 14px;color:var(--muted)}
+.tab[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--cta)}
+.pkg h2{font-size:19px;margin:0 0 4px}
+.pkg .intro{color:var(--muted);margin:0 0 14px;max-width:72ch}
+.tablewrap{overflow-x:auto}
+table.doc{border-collapse:collapse;width:100%;font-size:14px;min-width:520px}
+table.doc th,table.doc td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+table.doc th{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:700}
+table.doc td.num{font-family:var(--mono);text-align:right;font-variant-numeric:tabular-nums}
+table.doc tr.total td{font-weight:700;border-bottom:none}
+.pkgcols{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-top:18px}
+.pkgcols h3{font-size:14.5px;margin:0 0 6px}
+.pkgcols ul{margin:0;padding-left:18px;font-size:14px;display:flex;flex-direction:column;gap:6px}
+.tx{display:flex;flex-direction:column;gap:10px;font-size:14px}
+.tx div{display:grid;grid-template-columns:62px 1fr;gap:10px}
+.tx time{font-family:var(--mono);font-size:12.5px;color:var(--muted);padding-top:2px}
+.tx em{color:var(--muted)}
+.locked{font-size:13px;color:var(--muted);border:1px dashed var(--line);border-radius:8px;padding:8px 12px;margin-bottom:14px}
+.fict{font-size:12px;color:var(--muted)}
+@media (max-width:1000px){.grid{grid-template-columns:1fr 1fr}.thread-panel{grid-column:1/-1;order:-1}}
+@media (max-width:640px){.grid{grid-template-columns:1fr}.item{max-width:96%}ol.stages{display:grid;grid-template-columns:1fr 1fr}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <div class="brand"><span class="ring" aria-hidden="true"></span>comlinked · AI Lead Agent</div>
+      <h1>Supplier match simulation: Kusina Express Foods finds a packaging supplier</h1>
+      <p class="sub">Step through what two companies' AI agents do from discovery to a booked meeting. You play the human approvers at both gates.</p>
+    </div>
+    <div class="pair">
+      <div class="co ke"><b>Kusina Express Foods</b><span>Initiator · Mississauga · PCCC member</span></div>
+      <div class="co np"><b>NorthPack Solutions</b><span>Counterparty · Brampton · PCCC associate</span></div>
+    </div>
+  </header>
+
+  <div class="controls">
+    <button class="primary" id="next">Next step</button>
+    <button id="play">Play to next gate</button>
+    <button id="all">Show full run</button>
+    <button id="reset">Restart</button>
+    <span class="counter" id="counter"></span>
+  </div>
+
+  <div class="grid">
+    <aside class="panel" aria-label="Workflow stages">
+      <p class="label">Workflow stage</p>
+      <ol class="stages" id="stages"></ol>
+    </aside>
+
+    <section class="panel thread-panel" aria-label="Agent conversation">
+      <p class="label">Agent-to-agent thread · Tue, Jan 12, 2027 (ET)</p>
+      <div class="thread" id="thread" aria-live="polite"></div>
+    </section>
+
+    <aside class="panel" aria-label="Match score">
+      <p class="label">Match score · NorthPack</p>
+      <div class="score-big"><strong id="score">0</strong><span id="scoreOf">/ 90 desk</span></div>
+      <span class="band" id="band">Not scored</span>
+      <div class="meter" aria-hidden="true"><i id="meter" style="width:0%"></i><span class="thr"></span><span class="thrl">75</span></div>
+      <div class="cats" id="cats"></div>
+      <p class="note">Categories 1 to 6 are scored before contact. Category 7 is added after the agents talk. A meeting is proposed only at 75 or more.</p>
+    </aside>
+  </div>
+
+  <section class="panel pkg" aria-label="Handoff package">
+    <p class="label">Handoff package · sent to all four attendees at booking</p>
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" id="tab-report" aria-selected="true" data-p="report">Selection report</button>
+      <button class="tab" role="tab" id="tab-agenda" aria-selected="false" data-p="agenda">Meeting agenda</button>
+      <button class="tab" role="tab" id="tab-tx" aria-selected="false" data-p="tx">Transcript</button>
+    </div>
+    <div id="locked" class="locked">Preview: in the live product these three documents are generated at stage 8, when the meeting is booked.</div>
+
+    <div data-panel="report">
+      <h2>Why NorthPack Solutions: 86/100</h2>
+      <p class="intro">NorthPack is the best supplier match for Kusina's recyclable tray requirement. It is local, stocks two of the three sizes, fits the approved price band, and can deliver before the retailer's April deadline.</p>
+      <div class="tablewrap"><table class="doc">
+        <thead><tr><th>Category</th><th>Max</th><th>NorthPack</th><th>GreenForm</th><th>Pacific Rim</th></tr></thead>
+        <tbody id="rtable"></tbody>
+      </table></div>
+      <div class="pkgcols">
+        <div><h3>Why NorthPack was chosen</h3><ul>
+          <li>Two of three sizes are stock, freezer-rated and recyclable.</li>
+          <li>2 to 3 week lead time meets the mid-March target with about a month to spare.</li>
+          <li>Indicative pricing for stock sizes sits inside Kusina's approved $0.18 to $0.24 band.</li>
+          <li>28 km away on weekly GTA routes, no freight charge over 5,000 units.</li>
+          <li>Can supply the food-contact letters the retailer requires.</li>
+        </ul></div>
+        <div><h3>Why the others ranked lower</h3><ul>
+          <li><b>GreenForm (66):</b> minimum order of 100,000 per size, and a 2-day reply time.</li>
+          <li><b>Pacific Rim (64):</b> importer with 8 to 10 week lead times, which risks the April deadline.</li>
+          <li>Both stay in Nurture as back-up suppliers.</li>
+        </ul></div>
+        <div><h3>Risks to raise in the meeting</h3><ul>
+          <li>The two-compartment tray is a near match. A failed fit trial means 6 to 8 weeks of custom tooling.</li>
+          <li>No price yet for the two-compartment size.</li>
+          <li>New relationship: NorthPack may run a credit check before net 30.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div data-panel="agenda" hidden>
+      <h2>Kusina Express Foods × NorthPack Solutions</h2>
+      <p class="intro">Wednesday, January 20, 2027 · 14:00 to 14:45 ET · Google Meet. Attendees: Maricel Dizon (Owner), Jun Reyes (Procurement Lead), Sarah Whitfield (VP Sales), Raj Malhotra (Technical Account Manager).</p>
+      <div class="tablewrap"><table class="doc">
+        <thead><tr><th>Time (ET)</th><th>Item</th><th>Lead</th></tr></thead>
+        <tbody>
+          <tr><td>14:00</td><td>Introductions and goal of the call</td><td>Maricel Dizon</td></tr>
+          <tr><td>14:05</td><td>Kusina's requirement: three sizes, about 40,000 trays a month, April retailer deadline</td><td>Jun Reyes</td></tr>
+          <tr><td>14:15</td><td>NorthPack's options: two stock trays, two-compartment fit-test result, compliance letters</td><td>Raj Malhotra</td></tr>
+          <tr><td>14:30</td><td>Commercials: indicative pricing, MOQ, delivery every two weeks, net 30</td><td>Sarah Whitfield, Jun Reyes</td></tr>
+          <tr><td>14:40</td><td>Agree next steps and owners</td><td>All</td></tr>
+        </tbody>
+      </table></div>
+      <div class="pkgcols">
+        <div><h3>Before the meeting</h3><ul>
+          <li>Kusina couriers 5 current trays and a sample product to NorthPack by Fri, Jan 15 (Jun Reyes).</li>
+          <li>NorthPack sends spec sheets and compliance letters by Mon, Jan 18 (Raj Malhotra).</li>
+          <li>All attendees read the transcript and selection report.</li>
+        </ul></div>
+        <div><h3>Proposed next steps</h3><ul>
+          <li>Freezer fit trial on Kusina's line by Feb 5 (Jun Reyes, Raj Malhotra).</li>
+          <li>Formal quote for all three sizes by Feb 10 (Sarah Whitfield).</li>
+          <li>Purchase decision by Feb 20 (Maricel Dizon).</li>
+          <li>First delivery by Mar 10 (NorthPack).</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div data-panel="tx" hidden>
+      <h2>Agent conversation transcript</h2>
+      <p class="intro">Every message, approval and score change, in order. Messages are stored append-only and cannot be edited.</p>
+      <div class="tx" id="tx"></div>
+    </div>
+    <p class="fict">All companies, people and figures in this simulation are fictional.</p>
+  </section>
+</div>
+
+<script>
+const STAGES=[["Mandate set-up"],["Discover"],["Desk score"],["Engage"],["Qualify"],["Gate A: confidential info",1],["Final score"],["Gate B: meeting",1],["Book and hand off"],["Outcome and learning"]];
+const CATS=[["Need and offer fit",25,23],["Capacity and commercial fit",15,13],["Proximity and logistics",10,9],["Credibility and trust",15,12],["Intent and timing",15,13],["Relationship and network",10,7],["Agent qualification",10,9]];
+const OTHERS=[[21,9,6,13,8,5,4],[17,12,7,10,9,6,3]];
+const K="Kusina agent",N="NorthPack agent";
+const S=[
+ {st:0,who:"sys",t:"08:00",x:"Kusina's mandate is active: supplier match, recyclable freezer-safe trays, about 40,000 a month, lead time 4 weeks or less, ready by mid-March. Approvers: Maricel Dizon (Owner), Jun Reyes (Procurement Lead)."},
+ {st:1,who:"sys",t:"08:30",x:"Searched the PCCC directory. 14 packaging companies found; 5 passed the knock-out check."},
+ {st:2,who:"short",t:"08:41",x:"Desk scores (out of 90). The agent engages the top three in parallel.",desk:true},
+ {st:3,who:"ke",t:"09:02",ty:"INTRO",x:"Hi, I'm the ComLinked AI agent for Kusina Express Foods, a PCCC member in Mississauga. I'm reaching out on their behalf about a possible supply relationship for recyclable, freezer-safe food trays. Is NorthPack open to new buyer inquiries in that category?"},
+ {st:3,who:"np",t:"09:03",ty:"MANDATE_CHECK",x:"Hello, I'm the AI agent for NorthPack Solutions. Yes, food-grade trays for Ontario buyers is within my mandate. Before we go further, what are you packaging, and is it frozen, chilled or shelf-stable?"},
+ {st:4,who:"ke",t:"09:03",ty:"QUALIFY_A",x:"Frozen, ready-to-cook Filipino foods: lumpia, siopao and pancit kits. They're in non-recyclable imported trays today. Kusina needs a recyclable replacement, about 40,000 trays a month across three sizes."},
+ {st:4,who:"np",t:"09:04",ty:"QUALIFY_Q",x:"That fits our line. We make recyclable PET trays rated for freezer use, plus matching lidding film. What's driving the switch, and what's your timeline?"},
+ {st:4,who:"ke",t:"09:05",ty:"QUALIFY_Q",x:"A regional grocery chain needs recyclable packaging from April 2027 as a condition of listing. Kusina wants production-ready supply by mid-March. What are your standard lead times and minimum order quantities?"},
+ {st:4,who:"np",t:"09:06",ty:"QUALIFY_A",tier:1,x:"Stock trays ship in 2 to 3 weeks. Minimum order is 10,000 units per size for stock items. Custom tooling takes 6 to 8 weeks. Do your three sizes match standard dimensions, and do you need printing on the trays?"},
+ {st:4,who:"ke",t:"09:07",ty:"QUALIFY_A",tier:1,x:"Two are standard single-compartment sizes, roughly 8 × 6 inches and 9 × 9 inches. The third is a two-compartment tray for combo meals. No printing; branding goes on a paper sleeve."},
+ {st:4,who:"np",t:"09:08",ty:"QUALIFY_Q",x:"Both single-compartment sizes are in our stock line. We have a two-compartment tray that's a close match, but it would need a fit test with your product. To check we're in range, can you share a target price per tray?"},
+ {st:5,who:"ke",t:"09:08",ty:"DISCLOSURE_PENDING",x:"Pricing is confidential for Kusina, so I've asked their Procurement Lead for approval to share a target range. I'll come back today."},
+ {st:5,who:"gate",t:"09:08",gate:"A",h:"Gate A · Share confidential information?",p:"Kusina's agent wants to share the target landed cost range per tray ($0.18 to $0.24, delivered to Mississauga) with NorthPack Solutions.",whoA:"Approver: Jun Reyes, Procurement Lead, Kusina Express Foods",btn:"Approve as Jun Reyes, range only",ok:"11:41 · Approved by Jun Reyes. Condition: share the range only; don't name the current supplier."},
+ {st:5,who:"ke",t:"11:42",ty:"DISCLOSURE_GRANT",tier:2,x:"Thanks for waiting. I'm approved to share that Kusina's target is $0.18 to $0.24 per tray, depending on size, delivered to Mississauga. Indicative and non-binding. Can NorthPack work within that band?"},
+ {st:5,who:"np",t:"11:44",ty:"QUALIFY_A",x:"For the two stock sizes at 10,000+ units, our indicative pricing falls within that band. The two-compartment tray would need a quote from our sales team. To be clear, I can't quote binding prices."},
+ {st:4,who:"np",t:"11:45",ty:"QUALIFY_Q",x:"A few questions from our side. How long has Kusina been operating, what payment terms do you expect, and does the retailer need specific food-safety documents?"},
+ {st:4,who:"ke",t:"11:46",ty:"QUALIFY_A",x:"Kusina has operated since 2015 and has a verified ComLinked profile. Standard terms of net 30 would be expected. The retailer asks for food-contact compliance letters from the packaging supplier."},
+ {st:4,who:"np",t:"11:47",ty:"QUALIFY_Q",x:"We can provide food-contact compliance letters for all stock trays, and our plant is food-safety certified. Net 30 works for approved accounts. How often do you want deliveries, and how much storage do you have?"},
+ {st:4,who:"ke",t:"11:48",ty:"QUALIFY_A",x:"Every two weeks would be ideal. Warehouse space is tight, so smaller, frequent drops are better than bulk orders."},
+ {st:4,who:"np",t:"11:49",ty:"QUALIFY_A",x:"We run weekly delivery routes across the GTA, and Mississauga is covered. There's no extra freight charge for orders over 5,000 units."},
+ {st:6,who:"sys",t:"11:49",x:"Qualification complete. Category 7 scored 9/10. Final match score 86/100: Book.",final:true},
+ {st:7,who:"ke",t:"11:50",ty:"MEETING_PROPOSAL",x:"This looks like a strong fit. I'd like to propose a 45-minute video call with Kusina's Owner and Procurement Lead and your sales team, to review samples and the two-compartment option. Slots: Tue, Jan 19 at 10:00, Wed, Jan 20 at 14:00, or Thu, Jan 21 at 10:30 (ET)."},
+ {st:7,who:"np",t:"11:51",ty:"DISCLOSURE_PENDING",x:"Thanks. My mandate needs our VP Sales to confirm meetings. I've sent her the request."},
+ {st:7,who:"gate",t:"11:51",gate:"B1",h:"Gate B · Confirm the meeting (NorthPack side)",p:"Kusina Express Foods proposes a 45-minute video call. Pick of the three slots: Wed, Jan 20, 14:00 ET. Add Raj Malhotra as attendee.",whoA:"Approver: Sarah Whitfield, VP Sales, NorthPack Solutions",btn:"Approve as Sarah Whitfield",ok:"14:10 · Approved by Sarah Whitfield. Wed, Jan 20 at 14:00 ET, with Raj Malhotra."},
+ {st:7,who:"np",t:"14:12",ty:"MEETING_ACCEPT",x:"Wednesday, January 20 at 14:00 ET works. Sarah Whitfield and Raj Malhotra will join. It would help if Kusina could courier five current trays and a sample product by Friday, January 15, so Raj can test the two-compartment fit before the call."},
+ {st:7,who:"gate",t:"14:12",gate:"B2",h:"Gate B · Confirm the meeting (Kusina side)",p:"NorthPack accepted Wed, Jan 20, 14:00 to 14:45 ET on Google Meet, and asks for 5 sample trays by Fri, Jan 15.",whoA:"Approver: Maricel Dizon, Owner, Kusina Express Foods",btn:"Approve as Maricel Dizon",ok:"14:31 · Approved by Maricel Dizon."},
+ {st:8,who:"booked",t:"14:32",ty:"MEETING_BOOKED",x:"Wednesday, January 20, 2027 · 14:00 to 14:45 ET · Google Meet. Invites sent to Maricel Dizon, Jun Reyes, Sarah Whitfield and Raj Malhotra, with the handoff package attached."},
+ {st:9,who:"sys",t:"Jan 21",x:"24 hours after the meeting, the agent asks each side one question: proceed, follow up later, or not a fit. The answers recalibrate future scoring."}
+];
+const $=id=>document.getElementById(id);
+let shown=0, approved={};
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;")}
+function renderStages(cur){
+  $("stages").innerHTML=STAGES.map((s,i)=>`<li class="${i<cur?'done':i===cur?'now':''} ${s[1]?'gate':''}"><span class="n">${i}</span><span class="t">${s[0]}</span></li>`).join("");
+}
+function renderCats(desk,final){
+  $("cats").innerHTML=CATS.map((c,i)=>{const on=i<6?desk:final;const v=on?c[2]:0;return `<div class="cat ${i===6?'q':''}"><span>${i+1}. ${c[0]}</span><span class="v">${on?v:'–'}/${c[1]}</span><span class="bar"><i style="width:${v/c[1]*100}%"></i></span></div>`}).join("");
+}
+function renderScore(desk,final){
+  const s=final?86:desk?77:0;
+  $("score").textContent=s; $("scoreOf").textContent=final?"/ 100 final":"/ 90 desk";
+  $("meter").style.width=(final?86:desk?77:0)+"%";
+  const b=$("band"); b.className="band"+(final?" book":""); b.textContent=final?"Book: 75 or more":desk?"Desk score: shortlisted #1":"Not scored";
+  renderCats(desk,final);
+}
+function item(s,i){
+  const d=document.createElement("div");
+  if(s.who==="ke"||s.who==="np"){
+    d.className="item "+s.who;
+    const tier=s.tier?`<span class="chip t${s.tier}">Tier ${s.tier}</span>`:"";
+    d.innerHTML=`<div class="meta"><b>${s.who==="ke"?K:N}</b><time>${s.t}</time><span class="chip">${s.ty}</span>${tier}</div><div class="bubble">${esc(s.x)}</div>`;
+  } else if(s.who==="gate"){
+    d.className="item gatecard";
+    const done=approved[s.gate];
+    d.innerHTML=`<h3>${s.h}</h3><p>${esc(s.p)}</p><div class="who">${s.whoA}</div>`+(done?`<div class="done">✓ ${esc(s.ok)}</div>`:`<button class="primary" data-g="${s.gate}">${s.btn}</button>`);
+  } else if(s.who==="short"){
+    d.className="item sys";
+    d.innerHTML=`<div class="bubble" style="text-align:left"><time style="font-family:var(--mono)">${s.t}</time> · ${s.x}<table class="shortlist"><tr><td>NorthPack Solutions, Brampton</td><td class="num">77</td></tr><tr><td>GreenForm Packaging</td><td class="num">62</td></tr><tr><td>Pacific Rim Pack Trading</td><td class="num">61</td></tr></table></div>`;
+  } else if(s.who==="booked"){
+    d.className="item booked";
+    d.innerHTML=`<h3>✓ Meeting booked · ${s.t}</h3><p>${esc(s.x)}</p>`;
+  } else {
+    d.className="item sys";
+    d.innerHTML=`<div class="bubble"><time style="font-family:var(--mono)">${s.t}</time> · ${esc(s.x)}</div>`;
+  }
+  return d;
+}
+function blocked(){const last=S[shown-1];return last&&last.who==="gate"&&!approved[last.gate]}
+function render(){
+  const th=$("thread"); th.innerHTML="";
+  S.slice(0,shown).forEach((s,i)=>th.appendChild(item(s,i)));
+  th.scrollTop=th.scrollHeight;
+  const cur=shown?S[shown-1].st:0;
+  renderStages(shown>=S.length?10:cur);
+  const desk=S.slice(0,shown).some(s=>s.desk), fin=S.slice(0,shown).some(s=>s.final);
+  renderScore(desk,fin);
+  const end=shown>=S.length, blk=blocked();
+  $("next").disabled=end||blk; $("play").disabled=end||blk;
+  $("counter").textContent=blk?"Waiting for human approval":end?"Run complete":`Step ${shown} of ${S.length}`;
+  $("locked").hidden=S.slice(0,shown).some(s=>s.who==="booked");
+  renderTx();
+}
+function step(){if(shown<S.length&&!blocked()){shown++;render()}}
+$("next").onclick=step;
+$("play").onclick=()=>{while(shown<S.length&&!blocked()){shown++} render()};
+$("all").onclick=()=>{S.forEach(s=>{if(s.gate)approved[s.gate]=1});shown=S.length;render()};
+$("reset").onclick=()=>{approved={};shown=3;render()};
+$("thread").addEventListener("click",e=>{const g=e.target.closest("button[data-g]");if(g){approved[g.dataset.g]=1;render()}});
+function renderTx(){
+  $("tx").innerHTML=S.map(s=>{
+    if(s.who==="ke"||s.who==="np")return `<div><time>${s.t}</time><span><b>${s.who==="ke"?K+" → NorthPack":N+" → Kusina"}</b> · ${s.ty}${s.tier?" · Tier "+s.tier:""}<br>${esc(s.x)}</span></div>`;
+    if(s.who==="gate")return `<div><time>${s.t}</time><span><em>${s.h}. ${esc(s.ok)}</em></span></div>`;
+    if(s.who==="booked")return `<div><time>${s.t}</time><span><b>Platform · MEETING_BOOKED</b><br>${esc(s.x)}</span></div>`;
+    return `<div><time>${s.t}</time><span><em>${esc(s.x)}</em></span></div>`;
+  }).join("");
+}
+const rows=CATS.map((c,i)=>`<tr><td>${i+1}. ${c[0]}</td><td class="num">${c[1]}</td><td class="num">${c[2]}</td><td class="num">${OTHERS[0][i]}</td><td class="num">${OTHERS[1][i]}</td></tr>`).join("");
+$("rtable").innerHTML=rows+`<tr class="total"><td>Total</td><td class="num">100</td><td class="num">86 Book</td><td class="num">66 Nurture</td><td class="num">64 Nurture</td></tr>`;
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected",x===t));
+  document.querySelectorAll("[data-panel]").forEach(p=>p.hidden=p.dataset.panel!==t.dataset.p);
+});
+shown=3; render();
+</script>
+
+</body></html>

@@ -1,0 +1,364 @@
+{
+  "nodes": [
+    {
+      "id": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100",
+      "label": "Pilot Preview 01: One claim day per Company, and a network of 100 under ECCP's name",
+      "file_type": "document",
+      "source_file": ".scratch/pilot-preview/issues/01-claim-day-and-network-of-100.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_claim_day",
+      "label": "One claim day per Company",
+      "file_type": "rationale",
+      "source_file": ".scratch/pilot-preview/issues/01-claim-day-and-network-of-100.md",
+      "source_location": "L77",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Replaces two disagreeing sources (AGENT_STATUS 'unclaimed' and teamRec's claimDay formula) with one claim day held with each Company's data and read through one function (hasClaimed / claimDayOf)."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_never_acts_rule",
+      "label": "Unclaimed Company never acts",
+      "file_type": "rationale",
+      "source_file": ".scratch/pilot-preview/issues/01-claim-day-and-network-of-100.md",
+      "source_location": "L78",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "A Company that has not claimed sends no signal, message or Connection Request, accepts none, replies to none, posts no Ask, holds no points and is not in rank() or Monthly Top Companies; tested across 30 mornings."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_network_of_100",
+      "label": "Network of 100 Companies under ECCP",
+      "file_type": "concept",
+      "source_file": ".scratch/pilot-preview/issues/01-claim-day-and-network-of-100.md",
+      "source_location": "L79",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Kalayaan Foods, the 39 original Companies and 60 European-style members brought from the mockup's network.js, each with an invented website on a reserved example domain."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_chamber_setting",
+      "label": "Chamber setting (chamber.ts)",
+      "file_type": "rationale",
+      "source_file": ".scratch/pilot-preview/issues/01-claim-day-and-network-of-100.md",
+      "source_location": "L71",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Short name ECCP, full name European Chamber of Commerce of the Philippines, sender name ECCP Membership and presenter first name Richard; renaming the chamber changes one file; ECCP appears as text only, never a logo."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_claim_schedule",
+      "label": "Claim schedule (40 of 100 claimed on Day 14)",
+      "file_type": "rationale",
+      "source_file": ".scratch/pilot-preview/issues/01-claim-day-and-network-of-100.md",
+      "source_location": "L80",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Nobody before Day 1; at least eight others including the Matches by Day 1; the eleven ranked food suppliers by Day 1; exactly 40 on Day 14 including Nordhavn and 15+ European-style members; some never claim. Stop and report if the constraints cannot all hold."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_shares_my_trade_rule",
+      "label": "Shared-trade rule for leads (sharesMyTrade)",
+      "file_type": "rationale",
+      "source_file": ".scratch/pilot-preview/issues/01-claim-day-and-network-of-100.md",
+      "source_location": "L147",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "The Daily Lead List and overnight attention draw only on Companies that buy what Kalayaan offers, sell what it seeks or sell the same; keeps the 60 new members out of its leads."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_mockup_data_rules",
+      "label": "Mockup network data rules as Vitest cases",
+      "file_type": "concept",
+      "source_file": ".scratch/pilot-preview/issues/01-claim-day-and-network-of-100.md",
+      "source_location": "L79",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "60 new unique ids; none trades in what Kalayaan buys or sells; each links to at most one original; no new pair of originals; every new member has a connection."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_kalayaan_foods",
+      "label": "Kalayaan Foods (story Company)",
+      "file_type": "concept",
+      "source_file": ".scratch/pilot-preview/issues/01-claim-day-and-network-of-100.md",
+      "source_location": "L45",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_eccp",
+      "label": "ECCP (European Chamber of Commerce of the Philippines)",
+      "file_type": "concept",
+      "source_file": ".scratch/pilot-preview/issues/01-claim-day-and-network-of-100.md",
+      "source_location": "L71",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100",
+      "target": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_claim_day",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/01-claim-day-and-network-of-100.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100",
+      "target": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_never_acts_rule",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/01-claim-day-and-network-of-100.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100",
+      "target": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_network_of_100",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/01-claim-day-and-network-of-100.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100",
+      "target": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_chamber_setting",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/01-claim-day-and-network-of-100.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100",
+      "target": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_claim_schedule",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/01-claim-day-and-network-of-100.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100",
+      "target": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_shares_my_trade_rule",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/01-claim-day-and-network-of-100.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100",
+      "target": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_mockup_data_rules",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/01-claim-day-and-network-of-100.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100",
+      "target": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_kalayaan_foods",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/01-claim-day-and-network-of-100.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100",
+      "target": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_eccp",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/01-claim-day-and-network-of-100.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100",
+      "target": "docs_specs_2026_11_17_pilot_preview",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/01-claim-day-and-network-of-100.md",
+      "source_location": "L49",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100",
+      "target": "docs_adr_0010_client_side_product_simulation",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/01-claim-day-and-network-of-100.md",
+      "source_location": "L49",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_claim_day",
+      "target": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_never_acts_rule",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/01-claim-day-and-network-of-100.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_claim_schedule",
+      "target": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_claim_day",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/01-claim-day-and-network-of-100.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_network_of_100",
+      "target": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_chamber_setting",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/01-claim-day-and-network-of-100.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_network_of_100",
+      "target": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_mockup_data_rules",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/01-claim-day-and-network-of-100.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_network_of_100",
+      "target": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_kalayaan_foods",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/01-claim-day-and-network-of-100.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_chamber_setting",
+      "target": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_eccp",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/01-claim-day-and-network-of-100.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_shares_my_trade_rule",
+      "target": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_kalayaan_foods",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/01-claim-day-and-network-of-100.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_claim_day",
+      "target": "src_services_comlinked_simulation",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/01-claim-day-and-network-of-100.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_chamber_setting",
+      "target": "src_services_comlinked_chamber",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/01-claim-day-and-network-of-100.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_network_of_100",
+      "target": "src_services_comlinked_european_members",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/01-claim-day-and-network-of-100.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_shares_my_trade_rule",
+      "target": "src_services_comlinked_simulation_sharesmytrade",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/01-claim-day-and-network-of-100.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_service_seam",
+      "target": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_claim_day",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".scratch/pilot-preview/issues/01-claim-day-and-network-of-100.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_chamber_setting",
+      "target": "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check_richard",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/01-claim-day-and-network-of-100.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

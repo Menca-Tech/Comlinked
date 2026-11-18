@@ -1,0 +1,60 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_agents_readme",
+      "label": "Project subagents README",
+      "file_type": "document",
+      "source_file": ".claude/agents/README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_agents_readme_project_subagent_convention",
+      "label": "Project subagent convention (one markdown file per agent)",
+      "file_type": "rationale",
+      "source_file": ".claude/agents/README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Repo relies on global agents; add a project subagent only when a need is genuinely local."
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_agents_readme",
+      "target": "_claude_agents_readme_project_subagent_convention",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/agents/README.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_agents_readme",
+      "target": "claude",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/agents/README.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_readme_planning_executer_workflow",
+      "target": "_claude_agents_readme_project_subagent_convention",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": ".claude/agents/README.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

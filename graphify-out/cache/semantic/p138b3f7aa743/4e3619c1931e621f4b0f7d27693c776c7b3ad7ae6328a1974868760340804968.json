@@ -1,0 +1,360 @@
+{
+  "nodes": [
+    {
+      "id": "_scratch_pilot_preview_issues_05_eccp_activity_view",
+      "label": "Pilot Preview 05: ECCP's Activity View",
+      "file_type": "document",
+      "source_file": ".scratch/pilot-preview/issues/05-eccp-activity-view.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_05_eccp_activity_view_activity_view",
+      "label": "ECCP Activity View",
+      "file_type": "concept",
+      "source_file": ".scratch/pilot-preview/issues/05-eccp-activity-view.md",
+      "source_location": "L53",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "The chamber's own screen built from ComDash's parts: five figures, one status per member, filters, and a side column of wins and Monthly Top Companies. It shows totals and status only so the Chamber Leader can promise members their dealings stay private."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_05_eccp_activity_view_member_status",
+      "label": "One status per member",
+      "file_type": "rationale",
+      "source_file": ".scratch/pilot-preview/issues/05-eccp-activity-view.md",
+      "source_location": "L85",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Order: Not yet claimed; Needs an intro (claimed, no Lead); Active (claimed and acted in the last 7 days); Quiet. Never depends on dealings with Kalayaan; introductions by the Community Manager or staff are recorded in one place."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_05_eccp_activity_view_day_14_figures",
+      "label": "Day 14 figures 40 / 20 / 4 / 3 / 2",
+      "file_type": "rationale",
+      "source_file": ".scratch/pilot-preview/issues/05-eccp-activity-view.md",
+      "source_location": "L67",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Claimed 40 of 100, active 20, need an intro 4, deals 3, wins 2: where the plan's 90-day targets stand two weeks in. No pilot targets, no on-track labels, no pilot length."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_05_eccp_activity_view_community_manager_side_step",
+      "label": "Community manager side step",
+      "file_type": "concept",
+      "source_file": ".scratch/pilot-preview/issues/05-eccp-activity-view.md",
+      "source_location": "L94",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "From Stop 5 a link opens the same day in the Community Manager's Seat with an introduction prepared; sending it removes that member from Needs an intro."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_05_eccp_activity_view_community_manager_tools",
+      "label": "Community Manager tools",
+      "file_type": "concept",
+      "source_file": ".scratch/pilot-preview/issues/05-eccp-activity-view.md",
+      "source_location": "L93",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Member import, Make an introduction, Announcement to all members (audience equals the number claimed) and Unusual points; absent in the read-only Chamber Contact Seat."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_05_eccp_activity_view_team_dashboard_agreement",
+      "label": "Team Dashboard agrees with the Activity View",
+      "file_type": "rationale",
+      "source_file": ".scratch/pilot-preview/issues/05-eccp-activity-view.md",
+      "source_location": "L86",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "The Team Dashboard's weekly active figure and its queue read the same status function, so the two screens agree on any day."
+    }
+  ],
+  "edges": [
+    {
+      "source": "_scratch_pilot_preview_issues_05_eccp_activity_view",
+      "target": "_scratch_pilot_preview_issues_05_eccp_activity_view_activity_view",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/05-eccp-activity-view.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_05_eccp_activity_view",
+      "target": "_scratch_pilot_preview_issues_05_eccp_activity_view_member_status",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/05-eccp-activity-view.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_05_eccp_activity_view",
+      "target": "_scratch_pilot_preview_issues_05_eccp_activity_view_day_14_figures",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/05-eccp-activity-view.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_05_eccp_activity_view",
+      "target": "_scratch_pilot_preview_issues_05_eccp_activity_view_community_manager_side_step",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/05-eccp-activity-view.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_05_eccp_activity_view",
+      "target": "_scratch_pilot_preview_issues_05_eccp_activity_view_community_manager_tools",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/05-eccp-activity-view.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_05_eccp_activity_view",
+      "target": "_scratch_pilot_preview_issues_05_eccp_activity_view_team_dashboard_agreement",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/05-eccp-activity-view.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_05_eccp_activity_view",
+      "target": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/05-eccp-activity-view.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_05_eccp_activity_view",
+      "target": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/05-eccp-activity-view.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_05_eccp_activity_view",
+      "target": "docs_specs_2026_11_17_pilot_preview",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/05-eccp-activity-view.md",
+      "source_location": "L57",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_05_eccp_activity_view",
+      "target": "docs_design_system_readme",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/05-eccp-activity-view.md",
+      "source_location": "L57",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_05_eccp_activity_view_activity_view",
+      "target": "_scratch_pilot_preview_issues_05_eccp_activity_view_member_status",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/05-eccp-activity-view.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_05_eccp_activity_view_activity_view",
+      "target": "_scratch_pilot_preview_issues_05_eccp_activity_view_day_14_figures",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/05-eccp-activity-view.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_05_eccp_activity_view_activity_view",
+      "target": "_scratch_pilot_preview_issues_05_eccp_activity_view_community_manager_side_step",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/05-eccp-activity-view.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_05_eccp_activity_view_activity_view",
+      "target": "_scratch_pilot_preview_issues_05_eccp_activity_view_community_manager_tools",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/05-eccp-activity-view.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_05_eccp_activity_view_activity_view",
+      "target": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_eccp",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/05-eccp-activity-view.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_05_eccp_activity_view_activity_view",
+      "target": "_scratch_comdash_redesign_issues_04_interest_signals_exact_prototype_six_tiles",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/05-eccp-activity-view.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_05_eccp_activity_view_activity_view",
+      "target": "_scratch_comdash_redesign_issues_03_fix_interest_signals_layout_level_filter",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/05-eccp-activity-view.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_05_eccp_activity_view_activity_view",
+      "target": "src_components_product_screens_chamber",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/05-eccp-activity-view.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_05_eccp_activity_view_member_status",
+      "target": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_claim_day",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/05-eccp-activity-view.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_05_eccp_activity_view_member_status",
+      "target": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim_waiting_for_claim",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/05-eccp-activity-view.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_05_eccp_activity_view_day_14_figures",
+      "target": "_scratch_pilot_preview_issues_02_export_story_and_basics_before_claim_dated_wins_and_deals",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/05-eccp-activity-view.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_05_eccp_activity_view_day_14_figures",
+      "target": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_claim_schedule",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/05-eccp-activity-view.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_05_eccp_activity_view_community_manager_side_step",
+      "target": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_seats",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/05-eccp-activity-view.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_05_eccp_activity_view_community_manager_tools",
+      "target": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_member_list_import",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/05-eccp-activity-view.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_05_eccp_activity_view_team_dashboard_agreement",
+      "target": "_scratch_pilot_preview_issues_05_eccp_activity_view_member_status",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/05-eccp-activity-view.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_interest_level_rule",
+      "target": "_scratch_pilot_preview_issues_05_eccp_activity_view_member_status",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": ".scratch/pilot-preview/issues/05-eccp-activity-view.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_05_eccp_activity_view_activity_view",
+      "target": "_scratch_website_redesign_issues_07_for_chambers_page_activity_view_panel",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".scratch/pilot-preview/issues/05-eccp-activity-view.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

@@ -1,0 +1,29 @@
+{
+  "nodes": [
+    {
+      "id": "$graphify-root$_drizzle_0000_nifty_norman_osborn_sql",
+      "label": "0000_nifty_norman_osborn.sql",
+      "file_type": "code",
+      "source_file": "drizzle/0000_nifty_norman_osborn.sql",
+      "source_location": null
+    },
+    {
+      "id": "$graphify-root$_drizzle_0000_nifty_norman_osborn_customers",
+      "label": "\"customers\"",
+      "file_type": "code",
+      "source_file": "drizzle/0000_nifty_norman_osborn.sql",
+      "source_location": "L2"
+    }
+  ],
+  "edges": [
+    {
+      "source": "$graphify-root$_drizzle_0000_nifty_norman_osborn_sql",
+      "target": "$graphify-root$_drizzle_0000_nifty_norman_osborn_customers",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "drizzle/0000_nifty_norman_osborn.sql",
+      "source_location": "L2",
+      "weight": 1.0
+    }
+  ]
+}

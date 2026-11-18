@@ -1,0 +1,60 @@
+{
+  "nodes": [
+    {
+      "id": "docs_adr_0004_rsc_server_actions_first",
+      "label": "ADR 0004: RSC + Server Actions as the default data pattern",
+      "file_type": "document",
+      "source_file": "docs/adr/0004-rsc-server-actions-first.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_adr_0004_rsc_server_actions_first_rsc_reads_server_action_writes",
+      "label": "RSC reads, zod-validated Server Action writes",
+      "file_type": "rationale",
+      "source_file": "docs/adr/0004-rsc-server-actions-first.md",
+      "source_location": "L18",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "One default so every feature and coding agent writes screens the same way; minimal client bundle; TanStack Query stays an opt-in per project."
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_adr_0004_rsc_server_actions_first",
+      "target": "docs_adr_0004_rsc_server_actions_first_rsc_reads_server_action_writes",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0004-rsc-server-actions-first.md",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0004_rsc_server_actions_first_rsc_reads_server_action_writes",
+      "target": "context_service_seam",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0004-rsc-server-actions-first.md",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_adr_0004_rsc_server_actions_first_rsc_reads_server_action_writes",
+      "target": "context_reference_feature",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/adr/0004-rsc-server-actions-first.md",
+      "source_location": "L27",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

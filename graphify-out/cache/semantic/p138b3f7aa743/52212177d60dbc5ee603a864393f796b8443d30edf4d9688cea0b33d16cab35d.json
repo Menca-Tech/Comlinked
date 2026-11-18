@@ -1,0 +1,518 @@
+{
+  "nodes": [
+    {
+      "id": "docs_specs_2026_07_15_multi_tenancy",
+      "label": "Spec: Multi-tenant foundation (organizations, memberships, RLS)",
+      "file_type": "document",
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_07_15_multi_tenancy_organization",
+      "label": "Organization",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L20",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_07_15_multi_tenancy_membership",
+      "label": "Membership",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L20",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_07_15_multi_tenancy_active_organization",
+      "label": "Active Organization",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L83",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Server-resolved from the active_org cookie, validated against the caller's Memberships, falling back to the first Membership or the empty state. It only selects among the caller's own Organizations: a selector, never a security boundary."
+    },
+    {
+      "id": "docs_specs_2026_07_15_multi_tenancy_active_org_cookie",
+      "label": "active_org HTTP-only cookie",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L84",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_07_15_multi_tenancy_org_role",
+      "label": "Org Role (owner / admin / member)",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L23",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_07_15_multi_tenancy_platform_role_superadmin",
+      "label": "Platform Role: superadmin",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L25",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Platform staff access transcends Organizations for support and system management and is independent of any Org Role; read from app_metadata."
+    },
+    {
+      "id": "docs_specs_2026_07_15_multi_tenancy_rls_isolation_boundary",
+      "label": "RLS as the tenant isolation boundary",
+      "file_type": "rationale",
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L76",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Tenant isolation is enforced by Postgres RLS, not application code, so a forged or stale Active-Organization cookie cannot cross tenants. RLS must be tested against real Postgres because mocking the DB tests nothing about isolation."
+    },
+    {
+      "id": "docs_specs_2026_07_15_multi_tenancy_getactiveorg",
+      "label": "getActiveOrg()",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L90",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_07_15_multi_tenancy_requireorgrole",
+      "label": "requireOrgRole(...roles)",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L91",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_07_15_multi_tenancy_isplatformsuperadmin",
+      "label": "isPlatformSuperadmin()",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L92",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_07_15_multi_tenancy_hasorgrole",
+      "label": "hasOrgRole(role, ...allowed)",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L93",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Pure, unit-testable predicate and the primary logic seam for tenancy authorization."
+    },
+    {
+      "id": "docs_specs_2026_07_15_multi_tenancy_in_action_authorization",
+      "label": "In-action authorization in tenant Server Actions",
+      "file_type": "rationale",
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L98",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Defense in depth over RLS; addresses the audit finding that the reference mutations had no in-action authz."
+    },
+    {
+      "id": "docs_specs_2026_07_15_multi_tenancy_customers_reference_feature",
+      "label": "Customers reference feature (copy-me slice)",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L17",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_07_15_multi_tenancy_workspace_switcher",
+      "label": "Workspace switcher",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L105",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_07_15_multi_tenancy_invitations",
+      "label": "Email invitations",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L72",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_07_15_multi_tenancy_onboarding_create_org",
+      "label": "Create-Organization onboarding",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L102",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_07_15_multi_tenancy_service_seam",
+      "label": "Mock Service Seam (default for un-wired features)",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L29",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_07_15_multi_tenancy_delivery_t1_t6",
+      "label": "Sequenced delivery T1-T6",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L110",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_07_15_multi_tenancy_cross_tenant_integration_tests",
+      "label": "Service-seam integration tests against local Supabase",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L123",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "The defining assertions are negative: a member of Org A cannot read or write Org B's Customers, and a member cannot perform an admin-gated write."
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_specs_2026_07_15_multi_tenancy",
+      "target": "docs_adr_0005_multi_tenancy",
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_15_multi_tenancy",
+      "target": "context",
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_15_multi_tenancy",
+      "target": "docs_specs_2026_07_15_multi_tenancy_organization",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_15_multi_tenancy",
+      "target": "docs_specs_2026_07_15_multi_tenancy_rls_isolation_boundary",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_15_multi_tenancy",
+      "target": "docs_specs_2026_07_15_multi_tenancy_customers_reference_feature",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_15_multi_tenancy",
+      "target": "docs_specs_2026_07_15_multi_tenancy_delivery_t1_t6",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_15_multi_tenancy_membership",
+      "target": "docs_specs_2026_07_15_multi_tenancy_organization",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L68",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_15_multi_tenancy_membership",
+      "target": "docs_specs_2026_07_15_multi_tenancy_org_role",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L69",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_15_multi_tenancy_active_org_cookie",
+      "target": "docs_specs_2026_07_15_multi_tenancy_active_organization",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L84",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_15_multi_tenancy_getactiveorg",
+      "target": "docs_specs_2026_07_15_multi_tenancy_active_organization",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L90",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_15_multi_tenancy_hasorgrole",
+      "target": "docs_specs_2026_07_15_multi_tenancy_org_role",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L93",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_15_multi_tenancy_requireorgrole",
+      "target": "docs_specs_2026_07_15_multi_tenancy_org_role",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L91",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_15_multi_tenancy_requireorgrole",
+      "target": "docs_specs_2026_07_15_multi_tenancy_hasorgrole",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_15_multi_tenancy_isplatformsuperadmin",
+      "target": "docs_specs_2026_07_15_multi_tenancy_platform_role_superadmin",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L92",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_15_multi_tenancy_rls_isolation_boundary",
+      "target": "docs_specs_2026_07_15_multi_tenancy_active_organization",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L160",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_15_multi_tenancy_customers_reference_feature",
+      "target": "docs_specs_2026_07_15_multi_tenancy_rls_isolation_boundary",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L58",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_15_multi_tenancy_customers_reference_feature",
+      "target": "docs_adr_0003_mock_first_service_seam",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L96",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_15_multi_tenancy_in_action_authorization",
+      "target": "docs_specs_2026_07_15_multi_tenancy_getactiveorg",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_15_multi_tenancy_workspace_switcher",
+      "target": "docs_specs_2026_07_15_multi_tenancy_active_org_cookie",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L106",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_15_multi_tenancy_onboarding_create_org",
+      "target": "docs_specs_2026_07_15_multi_tenancy_org_role",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L103",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_15_multi_tenancy_invitations",
+      "target": "docs_specs_2026_07_15_multi_tenancy_membership",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_15_multi_tenancy_cross_tenant_integration_tests",
+      "target": "docs_specs_2026_07_15_multi_tenancy_rls_isolation_boundary",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L135",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_15_multi_tenancy_hasorgrole",
+      "target": "src_lib_authz_test",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L122",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_15_multi_tenancy_getactiveorg",
+      "target": "src_lib_authz_server",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L94",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_15_multi_tenancy_hasorgrole",
+      "target": "src_lib_authz",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L94",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_15_multi_tenancy_cross_tenant_integration_tests",
+      "target": "e2e_auth_smoke_spec",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": "L132",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_07_15_multi_tenancy_service_seam",
+      "target": "docs_adr_0003_mock_first_service_seam",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "multi_tenancy_authz_helpers",
+      "label": "Server-side tenancy authorization helpers",
+      "nodes": [
+        "docs_specs_2026_07_15_multi_tenancy_getactiveorg",
+        "docs_specs_2026_07_15_multi_tenancy_requireorgrole",
+        "docs_specs_2026_07_15_multi_tenancy_isplatformsuperadmin",
+        "docs_specs_2026_07_15_multi_tenancy_hasorgrole"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-07-15-multi-tenancy.md"
+    }
+  ]
+}

@@ -55,8 +55,235 @@ else — no implementation details, no decisions. Decisions live in `docs/adr/`.
   unrestricted, cross-Organization access, including system-management screens
   ordinary Users never see.
 
-- **Dashboard Shell** — the authenticated application frame (sidebar, top bar,
-  theme toggle, user menu) that hosts feature screens.
+- **Dashboard Shell** — the authenticated application frame that hosts a Company's
+  feature screens: a top bar on desktop, bottom tabs on a phone, and a user menu.
 
 - **Marketing Landing** — the public, unauthenticated entry page shown to
   visitors who are not signed in.
+
+## Product language
+
+Terms from the [ComLinked MVP Build Plan](docs/specs/2026-10-11-mvp-build-plan.md).
+
+- **ComLinked** — the product: a network where Companies find leads, talk to each
+  other and share their wins. The repository is named Comlinked; the product is
+  spelled ComLinked.
+
+### Participants
+
+- **Company** — a business listed on ComLinked, and the party that owns its
+  Connections and reputation. Its profile is shared across its Chamber Network, and
+  claiming it links the Company to one Organization, which holds its private data.
+  Avoid "member" for this, since that is also an Org Role.
+
+- **Authorized Representative** — a person allowed to act on a Company's behalf.
+  A Company has Company Admins and Authorized Users; both are Authorized
+  Representatives.
+
+- **Company Admin** — an Authorized Representative who can accept Connection
+  Requests and manage the Company's people. A Company has a primary and a backup;
+  only the primary can remove the backup.
+
+- **Authorized User** — an Authorized Representative who can send Connection
+  Requests in one area (sales or procurement) but not accept them.
+
+- **Alias** — a shortened name ("Ana R.") a person can show to connected
+  Companies instead of their full name.
+
+- **Chamber** — a business association whose members join ComLinked together.
+
+- **Chamber Network** — the Companies of one Chamber, within which they can find
+  and connect with each other. Each Chamber Network is kept apart from the others.
+
+- **Chamber Size** — how many member Companies a Chamber has, which chamber-wide
+  figures count. A Chamber's own words may say "members" ("1,000 members").
+
+- **Community Manager** — a person assigned to one Chamber who runs its member
+  import, supports its Companies with Intros and Asks, and reviews unusual spikes
+  in points. During the Pilot, ComLinked supplies the Community Manager, who still
+  acts within that one Chamber only.
+
+- **Chamber Leader** — the person who decides whether a Chamber joins ComLinked.
+  Distinct from a Community Manager, who supports its Companies day to day.
+
+- **Chamber Contact** — the person a Chamber names to work with ComLinked during
+  a Pilot. Hands over the Member List, sends each Company its claim link from the
+  Chamber's own address, and can see the Activity View but not act from it.
+  Distinct from the Chamber Leader, who decides, and the Community Manager, who
+  does the daily work.
+
+- **Member List** — the list of its Companies a Chamber hands to ComLinked for
+  the member import: company names and websites, with no contact details.
+
+- **Activity View** — the one screen showing which of a Chamber's Companies have
+  claimed, which are active and which need an Intro. The Community Manager acts
+  from it; the Chamber Contact only reads it. Distinct from the Team Dashboard,
+  which is for ComLinked Staff.
+
+- **ComLinked Staff** — people working for ComLinked itself, who can step in when a
+  Company is waiting. Avoid "team" alone: that means an Organization's members.
+
+- **Team Dashboard** — ComLinked Staff's view across a Chamber's Companies, showing
+  activity and status but never private conversations or confidential items.
+
+- **Pilot** — the first 90-day launch, at ECCP (the European Chamber of Commerce
+  of the Philippines).
+
+### Getting listed
+
+- **Pre-built Profile** — a draft Company profile built by AI from public sources
+  before the Company joins. Until the Company claims it, other Companies see only
+  its public basics (name, industry, city and website), marked "Not yet claimed".
+
+- **Claim** — a Company taking over its Pre-built Profile through a personal link.
+
+- **Profile Strength** — a 0–100% measure of how complete a Company's profile is.
+
+- **Partner Invite** — a Company's invitation to an existing customer or supplier
+  to join ComLinked.
+
+### Leads
+
+- **Lead** — a Company surfaced to another as a potential business contact,
+  through a Match, an Interest Signal, an Ask or an Intro.
+
+- **Match** — a Company recommended to another as relevant, with a Match Reason.
+
+- **Match Reason** — the one-line "why you should meet" attached to a Match.
+
+- **Fit Score** — a 0–100 measure of how well a Match suits a Company.
+
+- **Match Score** — the AI Lead Agent's seven-category assessment of a candidate
+  out of 100. Avoid using it for the quick Fit Score shown on Leads.
+
+- **Interest Signal** — a named record that another Company found this one in
+  search, viewed its profile, saved its profile, messaged it or was recommended
+  it.
+
+- **Interest Level** — how strongly another Company is showing interest, judged
+  over the last 14 days: **Hot** if it messaged or showed interest on 3 or more
+  separate days, **Warm** if it showed interest on 2 separate days or saved the
+  profile, **New** after one Interest Signal. Avoid "intent", which belongs to
+  the AI Lead Agent's scoring.
+
+- **ComDash** — a Company's home screen for its Interest Signals, interested
+  Companies, Connections and next best action. The Activity Score and rank are
+  shown elsewhere.
+
+- **Ask** — a business need posted by a Company for others to respond to. Asks
+  appear on the **Asks Board**.
+
+- **Intro** — an introduction between two Companies made by a Community Manager.
+
+### Daily habit
+
+- **Daily Lead Loop** — the five-step cycle every MVP feature supports: Morning
+  Digest, act on Leads, talk and close, share the win, rank rises.
+
+- **Morning Digest** — the 8:00 a.m. summary of new Leads, profile views and rank
+  change.
+
+- **Daily Lead List** — the five new Matches a Company gets each day, each to
+  Connect, Message or Skip.
+
+- **Activity Score** — the points a Company has earned from qualifying actions in
+  the last 30 days.
+
+- **Search Rank** — a Company's position in search results: relevance first,
+  raised by its Activity Score.
+
+- **New Member Boost** — the equal 30-day visibility boost every new Company gets.
+
+- **Freshness Nudge** — a prompt to update a profile that has gone unchanged.
+
+- **Notification** — an alert about one event, or a group of similar events, kept
+  in a Company's notification center.
+
+- **Monthly Top Companies** — a Chamber's leaderboard of its 10 most active
+  Companies, for recognition only.
+
+### Talking and closing
+
+- **Connection** — an accepted link between two Companies, owned by the Companies
+  rather than the people who made it.
+
+- **Connection Request** — one Company's pending ask to form a Connection, which
+  the other Company accepts or ignores. Avoid "invitation": that is a Partner Invite
+  or a Membership invitation.
+
+- **Connection Degree** — how many Connections separate two Companies: 1st is
+  connected, 2nd shares a Connection, 3rd is one step further.
+
+- **Network Ring** — a view with one Company at the centre, its Connections and today's
+  Leads around it by Connection Degree. Distinct from the logo ring, a brand mark only.
+
+- **Mutual Connection** — a Company connected to both of two other Companies.
+
+- **Contact Request** — a connected Company's ask for one person's email and
+  phone, which only that person can share.
+
+- **ComMail** — company-to-company messaging.
+
+- **AI Assistant** — the single per-Company on/off feature that writes AI Drafts
+  for four jobs: intro, reply, follow-up and polish.
+
+- **AI Draft** — text written by the AI Assistant, labelled as AI until a person
+  edits or sends it.
+
+- **AI Lead Agent** — a post-MVP agent that finds, qualifies and books meetings with
+  other Companies on one Company's behalf. Distinct from the AI Assistant, which
+  only drafts for a person.
+
+- **Mandate** — a Company's written instructions to its AI Lead Agent: what to look
+  for, who approves, and its limits.
+
+- **Outcome** — a result confirmed by both Companies: "We met" or "We did
+  business."
+
+### Sharing wins
+
+- **Testimonial** — a Company's short account of a confirmed deal: what it needed
+  and what happened.
+
+- **Success Wall** — the display of recent Testimonials and deals on the Wins tab
+  and on both Companies' profiles, with the latest shown as Recent Wins on ComDash.
+  Avoid "home feed": ComDash is the home screen, and a news feed is postponed.
+
+### Showing ComLinked
+
+- **Demo** — ComLinked running on invented Companies, with nothing stored or
+  sent. Distinct from the mockup, the frozen HTML file kept as a backup.
+
+- **Pilot Preview** — a guided walk through the Demo, made for one Chamber
+  Leader, showing how a Pilot would run for their Chamber. Avoid "demo" alone for
+  this.
+
+- **Example Companies** — the named Companies of the Demo's Chamber Network, 100
+  of a Chamber Size of 1,000. Avoid "the network of 100".
+
+- **Stop** — one step of a Pilot Preview's timeline, set on a named day.
+
+- **Seat** — whose view a Stop shows: the Community Manager's, a Company's or the
+  Chamber Contact's.
+
+- **Story Bar** — the strip on every Stop that names the day, what is happening
+  and whose Seat is shown, and leads to the next Stop.
+
+- **Presenter Guide** — the presenter's own controls for steering the Demo, kept
+  out of the way of someone following a Pilot Preview.
+
+- **Run of Show** — the presenter's one-page script for a Pilot Preview: what to
+  do and say at each Stop, and the answers to likely questions.
+
+### Design
+
+- **ComLinked Design System** — the one set of brand rules, drawn from the logo,
+  shared by the public website and the app. It has two modes.
+
+- **Site Mode** — the spacious form of the Design System, used on public pages.
+
+- **App Mode** — the compact form of the Design System, used on signed-in screens.
+
+- **Focus panel** — the one panel on a screen that holds the thing to act on now,
+  set apart from every other panel. Avoid "lead" for this, since a Lead is a
+  Company, and "active", which is a Company's status in the Activity View.

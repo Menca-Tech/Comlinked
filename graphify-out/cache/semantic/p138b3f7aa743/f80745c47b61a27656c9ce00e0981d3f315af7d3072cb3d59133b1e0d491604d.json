@@ -1,0 +1,140 @@
+{
+  "nodes": [
+    {
+      "id": "_scratch_website_redesign_fast_track_session_2_pages_and_final_check",
+      "label": "Website redesign fast track, session 2: remaining pages, final check and review pack",
+      "file_type": "document",
+      "source_file": ".scratch/website-redesign/fast-track/session-2-pages-and-final-check.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_scratch_website_redesign_fast_track_session_2_pages_and_final_check_site_review_pack",
+      "label": "Site review pack (site-review.md)",
+      "file_type": "concept",
+      "source_file": ".scratch/website-redesign/fast-track/session-2-pages-and-final-check.md",
+      "source_location": "L66",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Screenshots of five pages at two sizes plus the ring sequence, how to open the site, the demo path, a judging checklist, four headlines and the chamber button wording for Richard, open items and a blank decision section."
+    }
+  ],
+  "edges": [
+    {
+      "source": "_scratch_website_redesign_fast_track_session_2_pages_and_final_check",
+      "target": "_scratch_website_redesign_fast_track_session_2_pages_and_final_check_site_review_pack",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/fast-track/session-2-pages-and-final-check.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_fast_track_session_2_pages_and_final_check",
+      "target": "_scratch_website_redesign_fast_track_session_1_homepage",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/fast-track/session-2-pages-and-final-check.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_fast_track_session_2_pages_and_final_check",
+      "target": "_scratch_website_redesign_issues_06_homepage_review_with_richard",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/fast-track/session-2-pages-and-final-check.md",
+      "source_location": "L49",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_fast_track_session_2_pages_and_final_check",
+      "target": "_scratch_website_redesign_issues_07_for_chambers_page",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/fast-track/session-2-pages-and-final-check.md",
+      "source_location": "L49",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_fast_track_session_2_pages_and_final_check",
+      "target": "_scratch_website_redesign_issues_08_how_it_works_page",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/fast-track/session-2-pages-and-final-check.md",
+      "source_location": "L49",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_fast_track_session_2_pages_and_final_check",
+      "target": "_scratch_website_redesign_issues_09_comdash_page",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/fast-track/session-2-pages-and-final-check.md",
+      "source_location": "L49",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_fast_track_session_2_pages_and_final_check",
+      "target": "_scratch_website_redesign_issues_10_final_cleanup_and_check",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/fast-track/session-2-pages-and-final-check.md",
+      "source_location": "L49",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_fast_track_session_2_pages_and_final_check",
+      "target": "docs_specs_2026_11_09_website_redesign",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/fast-track/session-2-pages-and-final-check.md",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_fast_track_session_2_pages_and_final_check",
+      "target": "docs_specs_2026_11_08_mvp_feature_status",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/fast-track/session-2-pages-and-final-check.md",
+      "source_location": "L65",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_fast_track_session_2_pages_and_final_check_site_review_pack",
+      "target": "_scratch_website_redesign_issues_06_homepage_review_with_richard_homepage_review_pack",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/fast-track/session-2-pages-and-final-check.md",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_fast_track_session_2_pages_and_final_check_site_review_pack",
+      "target": "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check_richard",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/fast-track/session-2-pages-and-final-check.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

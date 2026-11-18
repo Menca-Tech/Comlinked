@@ -1,0 +1,130 @@
+{
+  "nodes": [
+    {
+      "id": "_scratch_website_redesign_issues_10_final_cleanup_and_check",
+      "label": "Website redesign 10: Final clean-up and site-wide check",
+      "file_type": "document",
+      "source_file": ".scratch/website-redesign/issues/10-final-cleanup-and-check.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_scratch_website_redesign_issues_10_final_cleanup_and_check_site_wide_checks",
+      "label": "Site-wide checks",
+      "file_type": "rationale",
+      "source_file": ".scratch/website-redesign/issues/10-final-cleanup-and-check.md",
+      "source_location": "L45",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "No placeholder text, '312' absent, exactly one navy band per page, the blue headline accent only on /, and unused tokens removed only after searching for remaining uses."
+    }
+  ],
+  "edges": [
+    {
+      "source": "_scratch_website_redesign_issues_10_final_cleanup_and_check",
+      "target": "_scratch_website_redesign_issues_10_final_cleanup_and_check_site_wide_checks",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/10-final-cleanup-and-check.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_10_final_cleanup_and_check",
+      "target": "_scratch_website_redesign_issues_07_for_chambers_page",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/10-final-cleanup-and-check.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_10_final_cleanup_and_check",
+      "target": "_scratch_website_redesign_issues_08_how_it_works_page",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/10-final-cleanup-and-check.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_10_final_cleanup_and_check",
+      "target": "_scratch_website_redesign_issues_09_comdash_page",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/10-final-cleanup-and-check.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_10_final_cleanup_and_check",
+      "target": "docs_specs_2026_11_09_website_redesign",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/10-final-cleanup-and-check.md",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_10_final_cleanup_and_check",
+      "target": "docs_design_system_readme",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/10-final-cleanup-and-check.md",
+      "source_location": "L38",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_10_final_cleanup_and_check",
+      "target": "docs_specs_2026_11_08_mvp_feature_status",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/10-final-cleanup-and-check.md",
+      "source_location": "L38",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_10_final_cleanup_and_check_site_wide_checks",
+      "target": "_scratch_website_redesign_issues_01_quiet_authority_foundation_quiet_authority",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/10-final-cleanup-and-check.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_10_final_cleanup_and_check_site_wide_checks",
+      "target": "_scratch_website_redesign_issues_02_homepage_hero_network_ring_hero_promise",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/10-final-cleanup-and-check.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_10_final_cleanup_and_check_site_wide_checks",
+      "target": "_scratch_website_redesign_issues_02_homepage_hero_network_ring_hero_network_ring",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/10-final-cleanup-and-check.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

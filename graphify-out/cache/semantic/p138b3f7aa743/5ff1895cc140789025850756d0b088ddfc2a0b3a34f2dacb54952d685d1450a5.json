@@ -1,0 +1,174 @@
+{
+  "nodes": [
+    {
+      "id": "_scratch_website_redesign_issues_02_homepage_hero_network_ring",
+      "label": "Website redesign 02: Homepage hero with the Network Ring",
+      "file_type": "document",
+      "source_file": ".scratch/website-redesign/issues/02-homepage-hero-network-ring.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_scratch_website_redesign_issues_02_homepage_hero_network_ring_hero_network_ring",
+      "label": "Homepage hero Network Ring drawing",
+      "file_type": "rationale",
+      "source_file": ".scratch/website-redesign/issues/02-homepage-hero-network-ring.md",
+      "source_location": "L50",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Static inline-SVG server component: Kalayaan Foods at the centre with Maple Bay Grocers, Pacific Pack Solutions and Northline Logistics as Matches; does not reuse the product ring so the website stays light; laptop and phone drawings come from one typed array."
+    },
+    {
+      "id": "_scratch_website_redesign_issues_02_homepage_hero_network_ring_example_tag",
+      "label": "ExampleTag",
+      "file_type": "concept",
+      "source_file": ".scratch/website-redesign/issues/02-homepage-hero-network-ring.md",
+      "source_location": "L63",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "One exported tag in section.tsx marking example visuals, reused by tickets 04, 07 and 09."
+    },
+    {
+      "id": "_scratch_website_redesign_issues_02_homepage_hero_network_ring_hero_promise",
+      "label": "Hero promise: Your first business leads within 24 hours.",
+      "file_type": "concept",
+      "source_file": ".scratch/website-redesign/issues/02-homepage-hero-network-ring.md",
+      "source_location": "L40",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "The only place on the site with the logo blue headline accent; two paths, Join ComLinked free and Bring ComLinked to your chamber."
+    }
+  ],
+  "edges": [
+    {
+      "source": "_scratch_website_redesign_issues_02_homepage_hero_network_ring",
+      "target": "_scratch_website_redesign_issues_02_homepage_hero_network_ring_hero_network_ring",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/02-homepage-hero-network-ring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_02_homepage_hero_network_ring",
+      "target": "_scratch_website_redesign_issues_02_homepage_hero_network_ring_example_tag",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/02-homepage-hero-network-ring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_02_homepage_hero_network_ring",
+      "target": "_scratch_website_redesign_issues_02_homepage_hero_network_ring_hero_promise",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/02-homepage-hero-network-ring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_02_homepage_hero_network_ring",
+      "target": "_scratch_website_redesign_issues_01_quiet_authority_foundation",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/02-homepage-hero-network-ring.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_02_homepage_hero_network_ring",
+      "target": "docs_specs_2026_11_09_website_redesign",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/02-homepage-hero-network-ring.md",
+      "source_location": "L38",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_02_homepage_hero_network_ring_hero_network_ring",
+      "target": "_scratch_website_redesign_issues_01_quiet_authority_foundation_section_components",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/02-homepage-hero-network-ring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_02_homepage_hero_network_ring_hero_network_ring",
+      "target": "_scratch_website_redesign_issues_02_homepage_hero_network_ring_example_tag",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/02-homepage-hero-network-ring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_02_homepage_hero_network_ring_hero_network_ring",
+      "target": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_kalayaan_foods",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/02-homepage-hero-network-ring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_02_homepage_hero_network_ring_hero_network_ring",
+      "target": "src_components_marketing_hero_network_ring",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/02-homepage-hero-network-ring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_02_homepage_hero_network_ring_hero_network_ring",
+      "target": "src_components_product_network_ring",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/02-homepage-hero-network-ring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_02_homepage_hero_network_ring_example_tag",
+      "target": "src_components_marketing_section",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/02-homepage-hero-network-ring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_02_homepage_hero_network_ring_hero_network_ring",
+      "target": "_scratch_website_redesign_fast_track_session_1_homepage_comdash_ring_motion_fix",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".scratch/website-redesign/issues/02-homepage-hero-network-ring.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

@@ -1,0 +1,2602 @@
+import AxeBuilder from "@axe-core/playwright";
+import { expect, test, type Locator, type Page } from "@playwright/test";
+
+import {
+  expectStill,
+  focusPanel,
+  expectVisibleFocus,
+  moving,
+  surfaceShadow,
+  tabTo,
+  WHITE,
+} from "./demo-helpers";
+
+// The Pilot Preview (docs/specs/2026-11-17-pilot-preview.md, tickets 03 and 04). Each Stop has its
+// own address that prepares its state, so unlike the product smoke tests these may open a Stop
+// with page.goto. Moving around inside a Stop is done by clicking, since a full load of an address
+// with no Stop in it starts the full Demo.
+const BLOCKING_IMPACTS = new Set(["serious", "critical"]);
+
+test.use({ contextOptions: { reducedMotion: "reduce" }, viewport: { width: 1280, height: 900 } });
+test.setTimeout(180_000);
+
+const COMPANY_SEAT = "You’re seeing Kalayaan Foods, an ECCP member.";
+const OPENING = "/app/preview";
+const STOPS = [
+  {
+    n: 1,
+    path: "/app/chamber?stop=1",
+    line: "Day 0 · ECCP’s member list becomes profiles",
+    seat: "You’re seeing ComLinked’s community manager, working for ECCP.",
+    heading: "Day 0 of the pilot",
+  },
+  {
+    n: 2,
+    path: "/app/claim?stop=2",
+    line: "Day 1 · A member claims its profile",
+    seat: COMPANY_SEAT,
+    heading: "Your company profile on ComLinked is ready",
+  },
+  {
+    n: 3,
+    path: "/app/digest?stop=3",
+    line: "Day 2 · The next morning",
+    seat: COMPANY_SEAT,
+    heading: "Morning digest",
+  },
+  {
+    n: 4,
+    path: "/app/dash?stop=4",
+    line: "Day 14 · The member, two weeks in",
+    seat: COMPANY_SEAT,
+    heading: "Kalayaan Foods Inc.",
+  },
+  {
+    n: 5,
+    path: "/app/chamber?stop=5",
+    line: "Day 14 · ECCP’s view",
+    seat: "You’re seeing ECCP’s own view. It is read-only.",
+    heading: "Day 14 of the pilot",
+  },
+  {
+    n: 6,
+    path: "/app/preview/ask?stop=6",
+    line: "What a pilot asks of ECCP",
+    seat: null,
+    heading: "What a pilot asks of ECCP",
+  },
+] as const;
+type Stop = (typeof STOPS)[number];
+const stop = (n: Stop["n"]) => STOPS.find((s) => s.n === n) ?? STOPS[0];
+const FOUR_TABS = ["Overview", "Interest Signals", "Connections", "Profile"];
+const FIVE_TABS = ["Overview", "Interest Signals", "AI Lead Agent", "Connections", "Profile"];
+
+/** An address as a pattern for the end of the page's URL. */
+const at = (path: string) => new RegExp(`${path.replace(/[?.]/g, "\\$&")}$`);
+
+const storyBar = (page: Page) => page.getByRole("region", { name: "Pilot Preview" });
+const nextLink = (page: Page) => storyBar(page).getByRole("link", { name: /^(Next|Start again)$/ });
+const backLink = (page: Page) => storyBar(page).getByRole("link", { name: "Back", exact: true });
+const mainHeading = (page: Page) => page.locator("main h1");
+const banner = (page: Page) => page.getByRole("banner").first();
+const tabRow = (page: Page) => page.getByRole("navigation", { name: "ComDash sections" });
+/** A section in the Company's top bar, whose name may end with a count. */
+const section = (page: Page, name: string) =>
+  page
+    .getByRole("navigation", { name: "Product main" })
+    .getByRole("button", { name: new RegExp(`^${name}`) });
+const viewAs = (page: Page) => page.getByRole("group", { name: "View as" });
+const guideButton = (page: Page) => page.getByRole("button", { name: "Demo guide" });
+const guideDialog = (page: Page) => page.getByRole("dialog");
+const announcer = (page: Page) => page.locator(".cl-product > [aria-live='polite']");
+const FIRST_CLAIM_SCREEN = "Your company is already here";
+const EXAMPLE_WORDING = "Example wording. ECCP approves the real message.";
+const IMPORT_RESULT = "1,000 profiles built. 1,000 claim links ready for ECCP to send.";
+/** The line under the member list's heading, saying it names only the examples. */
+const EXAMPLE_LINE = "Showing the 100 example members of 1,000";
+/** The line after the Member List's named rows, counting the rest of the chamber. */
+const REST_LINE = "and 900 more from the Member List";
+/** The presenter's address the test server is started with, in playwright.config.ts. */
+const PRESENTER_ADDRESS = "presenter@comlinked.example";
+const EXPLORING = "Pilot Preview · exploring";
+/** The member import's own section: the innermost one under its heading, inside the community
+ * manager's tools. */
+const memberImport = (page: Page) =>
+  page.locator("section", { has: page.getByRole("heading", { name: "Member import" }) }).last();
+const memberListBox = (page: Page) => page.getByRole("group", { name: "Member List" });
+/** The Member List's named rows: each Company's name and website. */
+const namedRows = (page: Page) =>
+  memberListBox(page)
+    .locator(".a-li")
+    .filter({ has: page.locator("strong") });
+const claimMessage = (page: Page) =>
+  page.getByRole("article", { name: "Your company profile on ComLinked is ready" });
+const emailLink = (page: Page) => page.getByRole("link", { name: "Email Richard", exact: true });
+const exploreLink = (page: Page) =>
+  page.getByRole("link", { name: "Explore on your own", exact: true });
+const wayBack = (page: Page) => storyBar(page).getByRole("link", { name: "Back to stop 6" });
+const MANAGER_SEAT = "You’re seeing ComLinked’s community manager, working for ECCP.";
+/** The chamber screen's Focus panel: the claimed figure over the split, and the results beside it. */
+const figures = (page: Page) => page.getByRole("region", { name: "The pilot in figures" });
+/** One figure there, whose text is its label followed by what it reads. */
+const figure = (page: Page, label: string) =>
+  figures(page).getByText(label, { exact: true }).locator("..");
+/** The split bar's segments, one for each status that has members. */
+const splitSegments = (page: Page) => figures(page).locator(".av-split > *");
+const statusFilter = (page: Page) => page.getByRole("group", { name: "Filter by status" });
+const chip = (page: Page, status: string) =>
+  statusFilter(page).getByRole("button", { name: new RegExp(`^${status} [\\d,]+$`) });
+const STATUSES = ["Active", "Quiet", "Needs an intro", "Not yet claimed"];
+const STATUS_NAME = /^(Active|Quiet|Needs an intro|Not yet claimed)$/;
+/** The member list's groups: one for each status that has members, under its heading. */
+const groups = (page: Page) => page.getByRole("region", { name: STATUS_NAME });
+const group = (page: Page, status: string) =>
+  page.getByRole("region", { name: status, exact: true });
+const groupHeadings = (page: Page) => groups(page).getByRole("heading");
+const memberRows = (page: Page) => groups(page).getByRole("listitem");
+const memberRow = (page: Page, name: string) => memberRows(page).filter({ hasText: name });
+/** The heading a member is listed under: its status, in words. */
+const statusOf = (page: Page, name: string) =>
+  groups(page).filter({ hasText: name }).getByRole("heading");
+/** The panel holding the member list, under its count of members. */
+const membersPanel = (page: Page) =>
+  page.locator("section", { has: page.getByRole("heading", { name: /^[\d,]+ members$/ }) });
+const showAll = (page: Page, examples: number) =>
+  page.getByRole("button", { name: `Show all ${examples} examples`, exact: true });
+/** The titles of the panels on a screen, in order. */
+const panelTitles = (page: Page) => page.locator("main").getByRole("heading", { level: 2 });
+const sideColumn = (page: Page) =>
+  page.getByRole("complementary", { name: "Wins and top companies" });
+const sideStep = (page: Page) =>
+  storyBar(page).getByRole("button", { name: "See the community manager’s side" });
+const backToView = (page: Page) =>
+  storyBar(page).getByRole("button", { name: "Back to ECCP’s view" });
+
+/** Claims Kalayaan Foods' profile from the first claim screen, ending on its Matches. */
+async function claimFromFirstScreen(page: Page) {
+  await page.getByRole("button", { name: "Claim your profile" }).click();
+  await page.locator("#claim-auth").check();
+  await page.getByRole("button", { name: "Confirm and claim" }).click();
+  await page.getByRole("button", { name: "Continue with Google" }).click();
+  await expect(page).toHaveURL(/\/app\/matches$/);
+}
+
+async function expectStop(page: Page, s: Stop) {
+  await expect(page).toHaveURL(at(s.path));
+  await expect(storyBar(page)).toContainText(s.line);
+  await expect(storyBar(page)).toContainText(`${s.n} of 6`);
+  if (s.seat) await expect(storyBar(page)).toContainText(s.seat);
+  await expect(mainHeading(page)).toHaveText(s.heading);
+}
+
+/** Day 0 as the chamber screen shows it: nobody claimed, no results, and every member not yet
+ * claimed, under the one heading. */
+async function expectDayZero(page: Page) {
+  await expect(figure(page, "Claimed")).toHaveText("Claimed0 of 1,000");
+  await expect(figure(page, "Deals confirmed")).toHaveText("Deals confirmed0");
+  await expect(figure(page, "Wins posted")).toHaveText("Wins posted0");
+  await expect(statusFilter(page).getByRole("button")).toHaveText([
+    "All 1,000",
+    "Active 0",
+    "Quiet 0",
+    "Needs an intro 0",
+    "Not yet claimed 1,000",
+  ]);
+  await expect(page.getByRole("heading", { name: "1,000 members" })).toBeVisible();
+  await expect(membersPanel(page)).toContainText(EXAMPLE_LINE);
+  await expect(groupHeadings(page)).toHaveText(["Not yet claimed"]);
+}
+
+async function expectOpening(page: Page) {
+  await expect(page).toHaveURL(at(OPENING));
+  await expect(mainHeading(page)).toHaveText("A preview for ECCP");
+  await expect(storyBar(page)).toHaveCount(0);
+}
+
+async function openStop(page: Page, s: Stop) {
+  await page.goto(s.path);
+  await expectStop(page, s);
+}
+
+/** Opens the Presenter Guide with the G key, the only way in while in the Pilot Preview. */
+async function presenterGuide(page: Page) {
+  await page.locator("body").press("g");
+  await expect(guideDialog(page)).toBeVisible();
+}
+
+async function closeGuide(page: Page) {
+  await page.keyboard.press("Escape");
+  await expect(guideDialog(page)).toBeHidden();
+}
+
+async function guideAction(page: Page, name: string) {
+  await presenterGuide(page);
+  await guideDialog(page).getByRole("button", { name, exact: true }).click();
+  await expect(guideDialog(page)).toBeHidden();
+}
+
+async function flipSwitch(page: Page, name: string, on: boolean) {
+  await presenterGuide(page);
+  const toggle = guideDialog(page).getByRole("button", { name, exact: true });
+  await toggle.click();
+  await expect(toggle).toHaveAttribute("aria-pressed", String(on));
+  await expect(toggle).toContainText(on ? "On" : "Off");
+  await closeGuide(page);
+}
+
+async function tabLabels(page: Page) {
+  return tabRow(page).getByRole("link").allTextContents();
+}
+
+async function noSidewaysScroll(page: Page) {
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+  );
+  expect(overflow).toBe(0);
+}
+
+async function expectAccessible(page: Page) {
+  const { violations } = await new AxeBuilder({ page }).include(".cl-product").analyze();
+  const blocking = violations
+    .filter((v) => BLOCKING_IMPACTS.has(v.impact ?? ""))
+    .map((v) => ({ id: v.id, nodes: v.nodes.length }));
+  expect(blocking, JSON.stringify(blocking)).toEqual([]);
+}
+
+/** Collects errors the page throws, so a test can say none happened. */
+function pageErrors(page: Page) {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  return errors;
+}
+
+test.describe("the Pilot Preview", () => {
+  test("the Opening says what it is, that nothing in it is real, lists the six Stops and offers Start", async ({
+    page,
+  }) => {
+    await page.goto(OPENING);
+    await expectOpening(page);
+    await expect(
+      page.getByText(
+        "It shows how a ComLinked pilot could run for ECCP’s members, from the first day to two weeks in.",
+      ),
+    ).toBeVisible();
+    await expect(
+      page.getByText(
+        "ECCP has not joined ComLinked. Every company, person and figure here is invented.",
+      ),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("region", { name: "The 6 stops" }).getByRole("listitem"),
+    ).toHaveText(STOPS.map((s) => s.line));
+    await expect(page.getByRole("link", { name: "Start", exact: true })).toBeVisible();
+    await expect(banner(page)).toContainText("Example data");
+    await expect(guideButton(page)).toHaveCount(0);
+  });
+
+  for (const width of [1280, 390, 360, 1440]) {
+    test(`Next alone walks the Opening and the six Stops at ${width} pixels, with no sideways scroll`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width, height: 844 });
+      await page.goto(OPENING);
+      await expectOpening(page);
+      await noSidewaysScroll(page);
+      await page.getByRole("link", { name: "Start", exact: true }).click();
+      for (const s of STOPS) {
+        await expectStop(page, s);
+        await expect(banner(page)).toContainText("Example data");
+        await noSidewaysScroll(page);
+        await expect(nextLink(page)).toHaveText(s.n === 6 ? "Start again" : "Next");
+        await nextLink(page).click();
+      }
+      await expectOpening(page);
+    });
+  }
+
+  test("Back walks back one Stop at a time, and from Stop 1 opens the Opening", async ({
+    page,
+  }) => {
+    await openStop(page, stop(6));
+    for (const s of [...STOPS].reverse().slice(1)) {
+      await backLink(page).click();
+      await expectStop(page, s);
+    }
+    await backLink(page).click();
+    await expectOpening(page);
+  });
+
+  test("Stop 2 opens on the message from ECCP with Kalayaan Foods not yet claimed", async ({
+    page,
+  }) => {
+    await openStop(page, stop(1));
+    await nextLink(page).click();
+    await expectStop(page, stop(2));
+    await expect(
+      claimMessage(page).getByRole("button", { name: "Claim your profile" }),
+    ).toBeVisible();
+    await expect(page.getByRole("button", { name: "Open the account menu" })).toHaveCount(0);
+  });
+
+  test("Next from Stop 2 without claiming opens Stop 3 with the Morning Digest filled in", async ({
+    page,
+  }) => {
+    await openStop(page, stop(2));
+    await nextLink(page).click();
+    await expectStop(page, stop(3));
+    await expect(page.locator("#digest-sum")).toContainText(/new leads/);
+    await expect(page.getByText("Your first digest arrives tomorrow")).toHaveCount(0);
+  });
+
+  test("Stop 4 opens on the ComDash Overview with the Nordhavn deal confirmed by both", async ({
+    page,
+  }) => {
+    await openStop(page, stop(3));
+    await nextLink(page).click();
+    await expectStop(page, stop(4));
+    await expect(tabRow(page).getByRole("link", { name: "Overview" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+    await section(page, "ComMail").click();
+    await page.locator(".a-li", { hasText: "Nordhavn Freight Forwarders" }).click();
+    await expect(page.locator(".a-sys")).toHaveText([
+      "Both companies confirmed: We met.",
+      "Both companies confirmed: We did business.",
+    ]);
+    await expect(storyBar(page)).toContainText("4 of 6");
+  });
+
+  test("Stop 5 opens ECCP's view, read-only, with no tools", async ({ page }) => {
+    await openStop(page, stop(4));
+    await nextLink(page).click();
+    await expectStop(page, stop(5));
+    await expect(figure(page, "Claimed")).toHaveText("Claimed400 of 1,000");
+    for (const tool of [
+      "Member import",
+      "Make an introduction",
+      "Announcement to all members",
+      "Unusual points",
+    ]) {
+      await expect(page.getByRole("heading", { name: tool })).toHaveCount(0);
+    }
+    await expect(page.getByRole("button", { name: "Send introduction" })).toHaveCount(0);
+  });
+
+  test("inside Stop 4 the Story Bar stays across a tab and a screen, and Next still opens Stop 5", async ({
+    page,
+  }) => {
+    await openStop(page, stop(4));
+    await tabRow(page).getByRole("link", { name: "Interest Signals" }).click();
+    await expect(page).toHaveURL(/\/app\/dash\/signals$/);
+    await expect(storyBar(page)).toContainText("4 of 6");
+    await section(page, "Leads").click();
+    await expect(page).toHaveURL(/\/app\/leads$/);
+    await expect(storyBar(page)).toContainText("Day 14 · The member, two weeks in");
+    await nextLink(page).click();
+    await expectStop(page, stop(5));
+  });
+
+  test("a reload on Stop 4's Interest Signals tab reopens Stop 4 on ComDash", async ({ page }) => {
+    await openStop(page, stop(4));
+    await tabRow(page).getByRole("link", { name: "Interest Signals" }).click();
+    await expect(page).toHaveURL(/\/app\/dash\/signals$/);
+    await page.reload();
+    await expectStop(page, stop(4));
+    await expect(tabRow(page).getByRole("link", { name: "Overview" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+  });
+
+  test("Stop 5's address opened in a new tab shows ECCP's view on Day 14", async ({ context }) => {
+    const fresh = await context.newPage();
+    await fresh.goto(stop(5).path);
+    await expectStop(fresh, stop(5));
+    await expect(figure(fresh, "Claimed")).toHaveText("Claimed400 of 1,000");
+  });
+
+  test("Stop 4 shows four ComDash tabs, three Overview cards and no View as switcher", async ({
+    page,
+  }) => {
+    await openStop(page, stop(4));
+    expect(await tabLabels(page)).toEqual(FOUR_TABS);
+    await expect(panelTitles(page)).toHaveText([
+      "Next action",
+      "Interest Signals",
+      "Connections",
+      "Profile",
+    ]);
+    await expect(viewAs(page)).toHaveCount(0);
+  });
+
+  test("the top bar follows the Seat", async ({ page }) => {
+    const companyControls = ["Open the account menu", "Search", /^Notifications/];
+    const expectPlainBar = async (label: string | null) => {
+      if (label) await expect(banner(page)).toContainText(label);
+      await expect(banner(page)).toContainText("Example data");
+      for (const name of companyControls) {
+        await expect(banner(page).getByRole("button", { name })).toHaveCount(0);
+      }
+      await expect(page.getByRole("navigation", { name: "Product", exact: true })).toHaveCount(0);
+    };
+    await page.goto(OPENING);
+    await expectPlainBar(null);
+    await openStop(page, stop(1));
+    await expectPlainBar("Community manager for ECCP");
+    await openStop(page, stop(2));
+    // The Company's own bar, before it has claimed: its logo leads home, with no Seat label.
+    await expect(banner(page).getByRole("button", { name: "ComLinked home" })).toBeVisible();
+    await expect(banner(page)).not.toContainText(/Community manager|read-only/);
+    await openStop(page, stop(5));
+    await expectPlainBar("ECCP, read-only");
+    await openStop(page, stop(6));
+    await expectPlainBar(null);
+    await openStop(page, stop(4));
+    // Two weeks in, Kalayaan Foods has added its logo, which the mark shows in place of "KF".
+    await expect(
+      banner(page)
+        .getByRole("button", { name: "Open the account menu" })
+        .locator("img[src*='kalayaan-foods-logo']"),
+    ).toBeVisible();
+    await expect(banner(page)).not.toContainText("read-only");
+  });
+
+  test("the Presenter Guide has no button in the Preview, opens with G and jumps to any Stop", async ({
+    page,
+  }) => {
+    await page.goto(OPENING);
+    await expect(guideButton(page)).toHaveCount(0);
+    await openStop(page, stop(2));
+    await expect(guideButton(page)).toHaveCount(0);
+    await presenterGuide(page);
+    const jumps = guideDialog(page).getByRole("navigation", {
+      name: "Jump to a Pilot Preview stop",
+    });
+    await expect(jumps.getByRole("link")).toHaveCount(7);
+    await jumps.getByRole("link", { name: "5. Day 14 · ECCP’s view" }).click();
+    await expect(guideDialog(page)).toBeHidden();
+    await expectStop(page, stop(5));
+    await presenterGuide(page);
+    await jumps.getByRole("link", { name: "Opening", exact: true }).click();
+    await expectOpening(page);
+  });
+
+  test("the guide's Stop reopens the Stop afresh when the Stop's screen is already showing", async ({
+    page,
+  }) => {
+    await openStop(page, stop(4));
+    await flipSwitch(page, "After-MVP previews", true);
+    expect(await tabLabels(page)).toEqual(FIVE_TABS);
+    await presenterGuide(page);
+    await guideDialog(page)
+      .getByRole("link", { name: "4. Day 14 · The member, two weeks in" })
+      .click();
+    await expectStop(page, stop(4));
+    expect(await tabLabels(page)).toEqual(FOUR_TABS);
+  });
+
+  test("switching on possible future pricing shows the switcher with its note", async ({
+    page,
+  }) => {
+    await openStop(page, stop(4));
+    await flipSwitch(page, "Possible future pricing", true);
+    await expect(viewAs(page)).toBeVisible();
+    await expect(viewAs(page).getByRole("button")).toHaveText(["Free member", "Growth", "Pro"]);
+    await expect(page.getByText("Possible future pricing. Not in the MVP.")).toBeVisible();
+  });
+
+  test("Stop 4 names every interested company until pricing is on, then opens on Free member with names hidden", async ({
+    page,
+  }) => {
+    await openStop(page, stop(4));
+    await tabRow(page).getByRole("link", { name: "Interest Signals" }).click();
+    await expect(page).toHaveURL(/\/app\/dash\/signals$/);
+    const table = page.locator("table.cd-table");
+    await expect(table).toContainText("Hapag Kitchen Group");
+    await expect(table.getByRole("button", { name: "See who", exact: true })).toHaveCount(0);
+    await flipSwitch(page, "Possible future pricing", true);
+    await expect(viewAs(page).getByRole("button", { name: "Free member" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    await expect(table).not.toContainText("Hapag Kitchen Group");
+    await expect(table.getByRole("button", { name: "See who", exact: true })).toHaveCount(6);
+    await flipSwitch(page, "Possible future pricing", false);
+    await expect(table).toContainText("Hapag Kitchen Group");
+  });
+
+  test("switching on the after-MVP previews brings back the tab, the card and the screens", async ({
+    page,
+  }) => {
+    await openStop(page, stop(4));
+    await flipSwitch(page, "After-MVP previews", true);
+    expect(await tabLabels(page)).toEqual(FIVE_TABS);
+    await expect(page.getByRole("heading", { name: "AI Lead Agent" })).toBeVisible();
+    await guideAction(page, "ComLinked team dashboard");
+    await expect(page).toHaveURL(/\/app\/team$/);
+    await expect(page.getByText("ComLinked team")).toBeVisible();
+    await guideAction(page, "Engine");
+    await expect(page).toHaveURL(/\/app\/engine$/);
+    await guideAction(page, "AI Lead Agent preview");
+    await expect(page).toHaveURL(/\/app\/agent$/);
+  });
+
+  test("Two weeks in from the guide opens the full Demo, with pricing off", async ({ page }) => {
+    await openStop(page, stop(4));
+    await guideAction(page, "Two weeks in");
+    await expect(page).toHaveURL(/\/app\/dash$/);
+    await expect(storyBar(page)).toHaveCount(0);
+    await expect(guideButton(page)).toBeVisible();
+    expect(await tabLabels(page)).toEqual(FIVE_TABS);
+    await expect(viewAs(page)).toHaveCount(0);
+    await expect(panelTitles(page)).toHaveText([
+      "Next action",
+      "Interest Signals",
+      "AI Lead Agent",
+      "Connections",
+      "Profile",
+    ]);
+  });
+});
+
+test.describe("the Pilot Preview when something goes wrong", () => {
+  test("an address naming Stop 9 shows the Opening", async ({ page }) => {
+    await page.goto("/app/chamber?stop=9");
+    await expectOpening(page);
+  });
+
+  test("with the tab's memory blocked, a reload mid-Stop shows the Opening and no error", async ({
+    page,
+  }) => {
+    await page.addInitScript(() => {
+      Object.defineProperty(window, "sessionStorage", {
+        get() {
+          throw new DOMException("The tab's memory is blocked.", "SecurityError");
+        },
+      });
+    });
+    const errors = pageErrors(page);
+    await openStop(page, stop(4));
+    await tabRow(page).getByRole("link", { name: "Interest Signals" }).click();
+    await expect(page).toHaveURL(/\/app\/dash\/signals$/);
+    await page.reload();
+    await expectOpening(page);
+    expect(errors).toEqual([]);
+  });
+
+  test("a fresh visit to the claim address in a tab that ran the Preview opens the full Demo, and a reload keeps it", async ({
+    page,
+  }) => {
+    await openStop(page, stop(3));
+    await page.goto("/app/claim");
+    await expect(mainHeading(page)).toHaveText(FIRST_CLAIM_SCREEN);
+    await expect(claimMessage(page)).toHaveCount(0);
+    await expect(page.getByText(EXAMPLE_WORDING)).toHaveCount(0);
+    await expect(storyBar(page)).toHaveCount(0);
+    await expect(guideButton(page)).toBeVisible();
+    await page.reload();
+    await expect(mainHeading(page)).toHaveText(FIRST_CLAIM_SCREEN);
+    await expect(storyBar(page)).toHaveCount(0);
+  });
+
+  test("the browser's Back button opens the earlier Stop afresh in its own state", async ({
+    page,
+  }) => {
+    await openStop(page, stop(4));
+    await flipSwitch(page, "After-MVP previews", true);
+    expect(await tabLabels(page)).toEqual(FIVE_TABS);
+    await nextLink(page).click();
+    await expectStop(page, stop(5));
+    await page.goBack();
+    await expectStop(page, stop(4));
+    expect(await tabLabels(page)).toEqual(FOUR_TABS);
+  });
+
+  test("with the previews hidden, the after-MVP screens open the ComDash Overview", async ({
+    page,
+  }) => {
+    await openStop(page, stop(4));
+    for (const name of ["AI Lead Agent preview", "ComLinked team dashboard", "Engine"]) {
+      await guideAction(page, name);
+      await expect(page).toHaveURL(/\/app\/dash$/);
+      expect(await tabLabels(page)).toEqual(FOUR_TABS);
+    }
+    await flipSwitch(page, "After-MVP previews", true);
+    await tabRow(page).getByRole("link", { name: "AI Lead Agent" }).click();
+    await expect(page).toHaveURL(/\/app\/dash\/agent$/);
+    await flipSwitch(page, "After-MVP previews", false);
+    await expect(page).toHaveURL(/\/app\/dash$/);
+    await flipSwitch(page, "After-MVP previews", true);
+    await guideAction(page, "Engine");
+    await expect(page).toHaveURL(/\/app\/engine$/);
+    await flipSwitch(page, "After-MVP previews", false);
+    await expect(page).toHaveURL(/\/app\/dash$/);
+  });
+
+  test("with pricing hidden, ComDash stays on the Free view", async ({ page }) => {
+    await openStop(page, stop(4));
+    await flipSwitch(page, "Possible future pricing", true);
+    await viewAs(page).getByRole("button", { name: "Pro", exact: true }).click();
+    await expect(viewAs(page).getByRole("button", { name: "Pro" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    await flipSwitch(page, "Possible future pricing", false);
+    await expect(viewAs(page)).toHaveCount(0);
+    await flipSwitch(page, "Possible future pricing", true);
+    await expect(viewAs(page).getByRole("button", { name: "Free" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+  });
+
+  test("Stop 1 on Day 0 has nobody claimed, and a screen before the first claim does not fail", async ({
+    page,
+  }) => {
+    const errors = pageErrors(page);
+    await openStop(page, stop(1));
+    await expectDayZero(page);
+    await chip(page, "Not yet claimed").click();
+    await expect(groupHeadings(page)).toHaveText(["Not yet claimed"]);
+    await expect(memberRows(page)).toHaveCount(100);
+    await expect(membersPanel(page)).toContainText(EXAMPLE_LINE);
+    // A status with no members shows its one empty line.
+    await chip(page, "Active").click();
+    await expect(page.getByText("No members with this status.")).toBeVisible();
+    await presenterGuide(page);
+    await guideDialog(page)
+      .getByRole("button", { name: /^See who’s interested/ })
+      .click();
+    await expect(page).toHaveURL(/\/app\/dash$/);
+    await expect(mainHeading(page)).toHaveText("Kalayaan Foods Inc.");
+    await expect(storyBar(page)).toContainText("1 of 6");
+    expect(errors).toEqual([]);
+  });
+
+  test("on a 360 pixel phone the Story Bar wraps to two lines at most, and Next stays whole and 44 pixels tall", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 360, height: 740 });
+    for (const s of STOPS) {
+      await openStop(page, s);
+      const lines = await storyBar(page)
+        .locator("p")
+        .evaluateAll((els) =>
+          els.map(
+            (el) => el.getBoundingClientRect().height / parseFloat(getComputedStyle(el).lineHeight),
+          ),
+        );
+      expect(lines.length).toBeGreaterThan(0);
+      lines.forEach((n) => expect(Math.round(n)).toBeLessThanOrEqual(2));
+      const box = await nextLink(page).boundingBox();
+      expect(box).not.toBeNull();
+      if (!box) return;
+      expect(box.height).toBeGreaterThanOrEqual(44);
+      expect(box.x).toBeGreaterThanOrEqual(0);
+      expect(box.x + box.width).toBeLessThanOrEqual(360);
+    }
+  });
+
+  test("from the keyboard, Back and Next come in order with visible focus, and a Stop change moves focus to the main heading", async ({
+    page,
+  }) => {
+    await openStop(page, stop(2));
+    await backLink(page).focus();
+    await page.keyboard.press("Tab");
+    await expect(nextLink(page)).toBeFocused();
+    for (const link of [backLink(page), nextLink(page)]) {
+      await link.focus();
+      const outline = await link.evaluate((el) => getComputedStyle(el).outlineStyle);
+      expect(outline).not.toBe("none");
+    }
+    await page.keyboard.press("Enter");
+    await expectStop(page, stop(3));
+    await expect(mainHeading(page)).toBeFocused();
+    await page.keyboard.press("Shift+Tab");
+    await expect(nextLink(page)).toBeFocused();
+  });
+
+  test("a screen reader hears the day, the title and the Seat when the Stop changes", async ({
+    page,
+  }) => {
+    await openStop(page, stop(2));
+    await nextLink(page).click();
+    await expectStop(page, stop(3));
+    await expect(announcer(page)).toHaveText(`Day 2 · The next morning. ${COMPANY_SEAT}`);
+    await nextLink(page).click();
+    await expectStop(page, stop(4));
+    await expect(announcer(page)).toHaveText(`Day 14 · The member, two weeks in. ${COMPANY_SEAT}`);
+  });
+
+  test("with reduced motion, moving between Stops has no transition", async ({ page }) => {
+    await openStop(page, stop(1));
+    await nextLink(page).click();
+    await expectStop(page, stop(2));
+    const durations = await storyBar(page)
+      .locator("*")
+      .evaluateAll((els) => els.map((el) => getComputedStyle(el).transitionDuration));
+    expect(durations.every((d) => d.split(",").every((x) => parseFloat(x) === 0))).toBe(true);
+    const running = await page.evaluate(() => document.getAnimations().length);
+    expect(running).toBe(0);
+  });
+
+  test("Reset in the Presenter Guide starts the Demo over outside the Preview", async ({
+    page,
+  }) => {
+    await openStop(page, stop(4));
+    await guideAction(page, "Reset");
+    await expect(page).toHaveURL(/\/$/);
+    await page.getByRole("link", { name: "Try the product" }).click();
+    await expect(page).toHaveURL(/\/app\/claim$/);
+    await expect(mainHeading(page)).toHaveText(FIRST_CLAIM_SCREEN);
+    await expect(storyBar(page)).toHaveCount(0);
+    await expect(guideButton(page)).toBeVisible();
+  });
+});
+
+test.describe("starting the Demo over from inside the Pilot Preview", () => {
+  test("New company from the guide opens the first claim screen with nothing claimed", async ({
+    page,
+  }) => {
+    await openStop(page, stop(4));
+    await guideAction(page, "New company");
+    await expect(page).toHaveURL(/\/app\/claim$/);
+    await expect(mainHeading(page)).toHaveText(FIRST_CLAIM_SCREEN);
+    await expect(claimMessage(page)).toHaveCount(0);
+    await expect(storyBar(page)).toHaveCount(0);
+    await expect(guideButton(page)).toBeVisible();
+    await expect(page.getByRole("button", { name: "Open the account menu" })).toHaveCount(0);
+  });
+
+  test("New company from Stop 1, where nobody has claimed, also starts unclaimed", async ({
+    page,
+  }) => {
+    await openStop(page, stop(1));
+    await guideAction(page, "New company");
+    await expect(page).toHaveURL(/\/app\/claim$/);
+    await expect(mainHeading(page)).toHaveText(FIRST_CLAIM_SCREEN);
+    await expect(storyBar(page)).toHaveCount(0);
+  });
+});
+
+test.describe("the Pilot Preview's accessibility", () => {
+  test("the Opening and every Stop pass axe", async ({ page }) => {
+    await page.goto(OPENING);
+    await expectOpening(page);
+    await expectAccessible(page);
+    for (const s of STOPS) {
+      await openStop(page, s);
+      await expectAccessible(page);
+    }
+  });
+});
+
+test.describe("Stop 1, the Member List and its import", () => {
+  test("opens with the import finished and the claim links ready for ECCP to send", async ({
+    page,
+  }) => {
+    await openStop(page, stop(1));
+    await expect(memberImport(page).getByText(IMPORT_RESULT)).toBeVisible();
+    await expect(page.locator("main")).not.toContainText(/\bsent\b/i);
+  });
+
+  test("run again, the Member List finds 1,000, names the 100 examples by name and website, and the build ends the same", async ({
+    page,
+  }) => {
+    await openStop(page, stop(1));
+    await page.getByRole("button", { name: "Run the import again" }).click();
+    await expect(page.getByText("members-sample.csv: 1,000 companies found")).toBeVisible();
+    const rows = namedRows(page);
+    await expect(rows).toHaveCount(100);
+    await expect(memberListBox(page).getByText(REST_LINE, { exact: true })).toBeVisible();
+    const shown = await rows.evaluateAll((els) =>
+      els.map((el) => ({
+        whole: el.textContent ?? "",
+        name: el.querySelector("strong")?.textContent ?? "",
+        website: el.querySelector("small")?.textContent ?? "",
+      })),
+    );
+    expect(shown[0]).toEqual({
+      whole: "Kalayaan Foods Inc.kalayaanfoods.example",
+      name: "Kalayaan Foods Inc.",
+      website: "kalayaanfoods.example",
+    });
+    for (const row of shown) {
+      expect(row.name).not.toBe("");
+      expect(row.website).toMatch(/^[a-z0-9-]+\.example$/);
+      expect(row.whole).toBe(row.name + row.website);
+    }
+    await expectAccessible(page);
+
+    await page.getByRole("button", { name: "Build profiles", exact: true }).click();
+    await expect(
+      memberImport(page).getByText(/^Building profiles: (\d+|\d,\d{3}) of 1,000$/),
+    ).toBeVisible();
+    await expect(memberImport(page).getByText(IMPORT_RESULT)).toBeVisible({ timeout: 15_000 });
+    await expect(page.locator("main")).not.toContainText(/\bsent\b/i);
+    await expect(storyBar(page)).toContainText("1 of 6");
+  });
+
+  test("Cancel during the Member List preview returns to the finished result", async ({ page }) => {
+    await openStop(page, stop(1));
+    await page.getByRole("button", { name: "Run the import again" }).click();
+    await expect(memberListBox(page)).toBeVisible();
+    await page.getByRole("button", { name: "Cancel", exact: true }).click();
+    await expect(memberListBox(page)).toHaveCount(0);
+    await expect(memberImport(page).getByText(IMPORT_RESULT)).toBeVisible();
+  });
+
+  test("a built profile opens as a draft whose claim link is ready for ECCP to send", async ({
+    page,
+  }) => {
+    await openStop(page, stop(1));
+    await memberRow(page, "Maple Bay Grocers").getByRole("button").click();
+    await expect(mainHeading(page)).toHaveText("Draft profile");
+    await expect(page.getByText("AI drafted this from the company’s website.")).toBeVisible();
+    await expect(page.getByText("Claim link ready for ECCP to send")).toBeVisible();
+    await expect(page.locator("main")).not.toContainText(/\bsent\b/i);
+    await expect(storyBar(page)).toContainText("1 of 6");
+    await page.getByRole("button", { name: "Back to chamber tools" }).click();
+    await expect(mainHeading(page)).toHaveText("Day 0 of the pilot");
+  });
+
+  test("on Day 14, from the community manager's side, a claimed member's draft says so, and one not yet claimed has its link ready", async ({
+    page,
+  }) => {
+    const status = page.locator("section", {
+      has: page.getByRole("heading", { name: "Claim status" }),
+    });
+    await openStop(page, stop(5));
+    await sideStep(page).click();
+    await memberRow(page, "Maple Bay Grocers").getByRole("button").click();
+    await expect(mainHeading(page)).toHaveText("Draft profile");
+    await expect(status.getByText("Claimed", { exact: true })).toBeVisible();
+    await expect(status).not.toContainText("Claim link");
+    await page.getByRole("button", { name: "Back to chamber tools" }).click();
+    await memberRow(page, "Northline Logistics").getByRole("button").click();
+    await expect(status.getByText("Claim link ready for ECCP to send")).toBeVisible();
+    await expect(status.getByText("Claimed", { exact: true })).toHaveCount(0);
+  });
+
+  test("a profile opens as a draft from the Member List while the build is running", async ({
+    page,
+  }) => {
+    await openStop(page, stop(1));
+    await page.getByRole("button", { name: "Run the import again" }).click();
+    await page.getByRole("button", { name: "Build profiles", exact: true }).click();
+    await memberListBox(page)
+      .getByRole("button", { name: /^Kalayaan Foods Inc\./ })
+      .click();
+    await expect(mainHeading(page)).toHaveText("Draft profile");
+    await expect(page.getByText("Claim link ready for ECCP to send")).toBeVisible();
+    await page.getByRole("button", { name: "Back to chamber tools" }).click();
+    await expect(memberImport(page).getByText(IMPORT_RESULT)).toBeVisible({ timeout: 15_000 });
+  });
+
+  for (const width of [360, 390, 1280, 1440]) {
+    test(`the Member List preview and the build fit a ${width} pixel screen`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 844 });
+      await openStop(page, stop(1));
+      await page.getByRole("button", { name: "Run the import again" }).click();
+      await expect(namedRows(page)).toHaveCount(100);
+      await noSidewaysScroll(page);
+      await page.getByRole("button", { name: "Build profiles", exact: true }).click();
+      await expect(memberImport(page).getByText(/^Building profiles/)).toBeVisible();
+      await noSidewaysScroll(page);
+      await expect(memberImport(page).getByText(IMPORT_RESULT)).toBeVisible({ timeout: 15_000 });
+      await noSidewaysScroll(page);
+    });
+  }
+
+  test("from the keyboard, the import's buttons and the Member List are reachable with visible focus", async ({
+    page,
+  }) => {
+    await openStop(page, stop(1));
+    const again = page.getByRole("button", { name: "Run the import again" });
+    await again.focus();
+    await page.keyboard.press("Enter");
+    const build = page.getByRole("button", { name: "Build profiles", exact: true });
+    await expect(build).toBeVisible();
+    await build.focus();
+    await page.keyboard.press("Tab");
+    await expect(page.getByRole("button", { name: "Cancel", exact: true })).toBeFocused();
+    await page.keyboard.press("Tab");
+    await expect(memberListBox(page)).toBeFocused();
+    for (const target of [build, memberListBox(page)]) {
+      await target.focus();
+      const outline = await target.evaluate((el) => getComputedStyle(el).outlineStyle);
+      expect(outline).not.toBe("none");
+    }
+  });
+});
+
+test.describe("Stop 2, the message from ECCP", () => {
+  test("is from ECCP Membership to Ana Reyes, in the agreed wording, marked as an example", async ({
+    page,
+  }) => {
+    await openStop(page, stop(2));
+    const message = claimMessage(page);
+    await expect(message.locator("dt")).toHaveText(["From", "To"]);
+    await expect(message.locator("dd")).toHaveText([
+      "ECCP Membership",
+      "Ana Reyes, Kalayaan Foods Inc.",
+    ]);
+    await expect(message.locator(".cm-body p")).toHaveText([
+      "Dear Ana,",
+      "ECCP is piloting ComLinked, a network where member companies find leads among each other. It is free for members.",
+      "A profile for Kalayaan Foods Inc. has been drafted from your website. 3 ECCP members already match what you offer.",
+      "Other members see your description only after you have checked it.",
+    ]);
+    await expect(page.getByText(EXAMPLE_WORDING)).toBeVisible();
+    await expect(banner(page)).toContainText("Example data");
+  });
+
+  test("its button opens the first claim screen, and the Claim ends on three Matches with Nordhavn", async ({
+    page,
+  }) => {
+    await openStop(page, stop(2));
+    await claimMessage(page).getByRole("button", { name: "Claim your profile" }).click();
+    await expect(mainHeading(page)).toHaveText(FIRST_CLAIM_SCREEN);
+    await expect(claimMessage(page)).toHaveCount(0);
+    await expect(storyBar(page)).toContainText("2 of 6");
+    await claimFromFirstScreen(page);
+    await expect(page.locator(".a-leads [data-lead]")).toHaveCount(3);
+    await expect(page.locator('[data-lead="nordhavn"]')).toContainText(
+      "Nordhavn Freight Forwarders",
+    );
+    await expect(storyBar(page)).toContainText("2 of 6");
+  });
+
+  test("with the AI Assistant off, the first message after the Claim starts empty and still sends", async ({
+    page,
+  }) => {
+    await openStop(page, stop(2));
+    await claimMessage(page).getByRole("button", { name: "Claim your profile" }).click();
+    await claimFromFirstScreen(page);
+    await page.getByRole("button", { name: "Go to my ComDash" }).click();
+    await tabRow(page).getByRole("link", { name: "Profile", exact: true }).click();
+    await page.getByRole("switch", { name: "AI Assistant" }).click();
+    await section(page, "Leads").click();
+    await page.locator('[data-lead="nordhavn"] .a-pick').click();
+    await page
+      .locator("#lead-detail")
+      .getByRole("button", { name: "Message", exact: true })
+      .click();
+    const draft = page.locator("textarea[data-draft]");
+    await expect(draft).toHaveValue("");
+    await expect(page.locator('[data-chip="draft"]')).toHaveCount(0);
+    await draft.fill("Hello Nordhavn team. Could we talk about sea freight to Europe?");
+    await page.getByRole("button", { name: "Send", exact: true }).click();
+    await expect(page.locator(".a-msg.me")).toContainText("Could we talk about sea freight");
+    await expect(storyBar(page)).toContainText("2 of 6");
+  });
+
+  test("from the keyboard, the message's button is reachable with visible focus and opens the Claim", async ({
+    page,
+  }) => {
+    await openStop(page, stop(2));
+    await nextLink(page).focus();
+    await page.keyboard.press("Tab");
+    const button = claimMessage(page).getByRole("button", { name: "Claim your profile" });
+    await expect(button).toBeFocused();
+    const outline = await button.evaluate((el) => getComputedStyle(el).outlineStyle);
+    expect(outline).not.toBe("none");
+    await page.keyboard.press("Enter");
+    await expect(mainHeading(page)).toHaveText(FIRST_CLAIM_SCREEN);
+  });
+});
+
+test.describe("Stop 6, the ask", () => {
+  const items = (page: Page, name: string) =>
+    page.getByRole("region", { name, exact: true }).getByRole("listitem");
+
+  test("lists the two asks, what ComLinked does, what members get, and that the pilot is free", async ({
+    page,
+  }) => {
+    await openStop(page, stop(6));
+    await expect(items(page, "ECCP gives two things")).toHaveText([
+      "Your Member List. Company names and websites only.",
+      "One contact. They send each member its claim link from ECCP’s own address.",
+    ]);
+    await expect(items(page, "ComLinked does the rest")).toHaveText([
+      "Builds each company’s profile.",
+      "Supplies the community manager.",
+      "Makes introductions, so no member goes without a lead.",
+    ]);
+    await expect(items(page, "What your members get")).toHaveText([
+      "A profile built for them",
+      "Matches on the first day",
+      "New leads every morning",
+      "Interest shown by name",
+    ]);
+    await expect(page.getByText("The pilot is free for ECCP and its members.")).toBeVisible();
+    await expect(page.locator("main")).not.toContainText(/\bsent\b/i);
+    await expect(banner(page)).toContainText("Example data");
+  });
+
+  test("Email Richard is a link that opens a new message to the presenter with the subject filled in", async ({
+    page,
+  }) => {
+    await openStop(page, stop(6));
+    await expect(emailLink(page)).toHaveAttribute(
+      "href",
+      `mailto:${PRESENTER_ADDRESS}?subject=ECCP%20pilot%20on%20ComLinked`,
+    );
+    await expect(page.getByText(PRESENTER_ADDRESS, { exact: true })).toBeVisible();
+    await expect(page.getByText("Reply to the person who sent you this link.")).toHaveCount(0);
+  });
+
+  test("on a 360 pixel phone the ask has no sideways scroll and the address stays inside the screen", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 360, height: 740 });
+    await openStop(page, stop(6));
+    await noSidewaysScroll(page);
+    const box = await page.getByText(PRESENTER_ADDRESS, { exact: true }).boundingBox();
+    expect(box).not.toBeNull();
+    if (!box) return;
+    expect(box.x).toBeGreaterThanOrEqual(0);
+    expect(box.x + box.width).toBeLessThanOrEqual(360);
+    const wraps = await page
+      .getByText(PRESENTER_ADDRESS, { exact: true })
+      .evaluate((el) => getComputedStyle(el).overflowWrap);
+    expect(wraps).toBe("anywhere");
+  });
+
+  test("from the keyboard, the email link and Explore on your own come in order with visible focus", async ({
+    page,
+  }) => {
+    await openStop(page, stop(6));
+    await emailLink(page).focus();
+    await page.keyboard.press("Tab");
+    await expect(exploreLink(page)).toBeFocused();
+    for (const link of [emailLink(page), exploreLink(page)]) {
+      await link.focus();
+      const outline = await link.evaluate((el) => getComputedStyle(el).outlineStyle);
+      expect(outline).not.toBe("none");
+    }
+  });
+
+  test("with reduced motion, the message, the ask and the member import have no transition", async ({
+    page,
+  }) => {
+    // Read in one step inside the page: the build swaps rows while it runs, and a row already
+    // taken out of the page has no computed style.
+    const expectStill = async (within: string) => {
+      const found = await page.evaluate((selector) => {
+        const els = Array.from(document.querySelectorAll(selector));
+        const moving = els
+          .map((el) => ({
+            element: `${el.tagName.toLowerCase()}.${el.getAttribute("class") ?? ""}`,
+            transition: getComputedStyle(el).transitionDuration,
+          }))
+          .filter((x) => x.transition.split(",").some((part) => parseFloat(part) !== 0));
+        return { count: els.length, moving, running: document.getAnimations().length };
+      }, `${within} *`);
+      expect(found.count).toBeGreaterThan(0);
+      expect(found.moving).toEqual([]);
+      expect(found.running).toBe(0);
+    };
+    for (const s of [stop(2), stop(6)]) {
+      await openStop(page, s);
+      await expectStill("main");
+    }
+    await openStop(page, stop(1));
+    await page.getByRole("button", { name: "Run the import again" }).click();
+    await expect(memberListBox(page)).toBeVisible();
+    await expectStill(".mi");
+    await page.getByRole("button", { name: "Build profiles", exact: true }).click();
+    await expect(memberImport(page).getByText(/^Building profiles/)).toBeVisible();
+    await expectStill(".mi");
+  });
+});
+
+test.describe("exploring after Stop 6", () => {
+  async function explore(page: Page) {
+    await openStop(page, stop(6));
+    await exploreLink(page).click();
+    await expect(page).toHaveURL(/\/app\/dash$/);
+    await expect(mainHeading(page)).toHaveText("Kalayaan Foods Inc.");
+  }
+
+  test("Explore on your own opens the member's side on Day 14, with one line that leads back to Stop 6", async ({
+    page,
+  }) => {
+    await explore(page);
+    await expect(storyBar(page)).toContainText(EXPLORING);
+    await expect(storyBar(page)).not.toContainText("6 of 6");
+    await expect(nextLink(page)).toHaveCount(0);
+    await expect(
+      page
+        .locator(".cd-panel")
+        .filter({ has: page.getByRole("heading", { name: "Interest Signals" }) })
+        .getByRole("link", { name: "Hapag Kitchen Group", exact: true }),
+    ).toBeVisible();
+    // Two weeks in, Kalayaan Foods has added its logo, which the mark shows in place of "KF".
+    await expect(
+      banner(page)
+        .getByRole("button", { name: "Open the account menu" })
+        .locator("img[src*='kalayaan-foods-logo']"),
+    ).toBeVisible();
+    await expect(banner(page)).toContainText("Example data");
+    await wayBack(page).click();
+    await expectStop(page, stop(6));
+  });
+
+  test("while exploring, the later items stay hidden and the Presenter Guide's button stays away", async ({
+    page,
+  }) => {
+    await explore(page);
+    expect(await tabLabels(page)).toEqual(FOUR_TABS);
+    await expect(viewAs(page)).toHaveCount(0);
+    await expect(panelTitles(page)).toHaveText([
+      "Next action",
+      "Interest Signals",
+      "Connections",
+      "Profile",
+    ]);
+    await expect(guideButton(page)).toHaveCount(0);
+    await section(page, "Leads").click();
+    await expect(page).toHaveURL(/\/app\/leads$/);
+    await expect(storyBar(page)).toContainText(EXPLORING);
+    await expect(guideButton(page)).toHaveCount(0);
+    await guideAction(page, "ComLinked team dashboard");
+    await expect(page).toHaveURL(/\/app\/dash$/);
+    await expect(wayBack(page)).toBeVisible();
+  });
+
+  test("a reload while exploring reopens Stop 6", async ({ page }) => {
+    await explore(page);
+    await page.reload();
+    await expectStop(page, stop(6));
+  });
+
+  for (const width of [360, 390, 1280, 1440]) {
+    test(`while exploring at ${width} pixels the Story Bar is one line with no sideways scroll`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width, height: 844 });
+      await openStop(page, stop(6));
+      await exploreLink(page).scrollIntoViewIfNeeded();
+      await exploreLink(page).click();
+      await expect(page).toHaveURL(/\/app\/dash$/);
+      await expect(wayBack(page)).toBeInViewport();
+      await noSidewaysScroll(page);
+      const line = storyBar(page).locator("p");
+      await expect(line).toHaveCount(1);
+      const lines = await line.evaluate(
+        (el) => el.getBoundingClientRect().height / parseFloat(getComputedStyle(el).lineHeight),
+      );
+      expect(Math.round(lines)).toBe(1);
+      const text = await line.boundingBox();
+      const link = await wayBack(page).boundingBox();
+      expect(text).not.toBeNull();
+      expect(link).not.toBeNull();
+      if (!text || !link) return;
+      expect(link.x).toBeGreaterThanOrEqual(text.x + text.width);
+      expect(link.x + link.width).toBeLessThanOrEqual(width);
+      if (width < 900) expect(link.height).toBeGreaterThanOrEqual(44);
+    });
+  }
+
+  test("the exploring line passes axe and is announced", async ({ page }) => {
+    await explore(page);
+    await expect(announcer(page)).toHaveText(EXPLORING);
+    await expectAccessible(page);
+  });
+});
+
+/** Opens the full Demo's Two weeks in, then its chamber tools: the community manager's view. */
+async function demoChamberTools(page: Page) {
+  await page.goto("/app/claim");
+  await page.getByRole("button", { name: "Demo guide" }).click();
+  await guideDialog(page).getByRole("button", { name: "Two weeks in", exact: true }).click();
+  await expect(page).toHaveURL(/\/app\/dash$/);
+  await openChamberTools(page);
+}
+
+async function openChamberTools(page: Page) {
+  await page.getByRole("button", { name: "Demo guide" }).click();
+  await guideDialog(page)
+    .getByRole("button", { name: /^Open the chamber tools/ })
+    .click();
+  await expect(mainHeading(page)).toHaveText("Day 14 of the pilot");
+}
+
+test.describe("Stop 5, ECCP's Activity View", () => {
+  test("names ECCP and Day 14 of the pilot, and leads with 400 of 1,000 claimed beside 3 deals and 2 wins", async ({
+    page,
+  }) => {
+    await openStop(page, stop(5));
+    const head = page.locator("main header");
+    await expect(head).toContainText("ECCP on ComLinked");
+    await expect(head).toContainText("Read-only");
+    await expect(head).not.toContainText(/90|on track|behind|target/i);
+    // The claimed figure with its split is the screen's one Focus panel.
+    await expect(focusPanel(page)).toHaveCount(1);
+    await expect(figures(page)).toHaveAttribute("data-focus-panel", "");
+    // Each figure is read as its label, then what it says.
+    const asShown = { useInnerText: true };
+    await expect(figure(page, "Claimed")).toHaveText("Claimed 400 of 1,000", asShown);
+    await expect(figure(page, "Deals confirmed")).toHaveText("Deals confirmed 3", asShown);
+    await expect(figure(page, "Wins posted")).toHaveText("Wins posted 2", asShown);
+  });
+
+  test("the bar splits in proportion to 200, 160, 40 and 600, and is hidden from assistive technology", async ({
+    page,
+  }) => {
+    await openStop(page, stop(5));
+    const widths = await splitSegments(page).evaluateAll((els) =>
+      els.map((el) => el.getBoundingClientRect().width),
+    );
+    expect(widths).toHaveLength(4);
+    const whole = widths.reduce((sum, w) => sum + w, 0);
+    expect(widths.map((w) => Math.round((w / whole) * 100))).toEqual([20, 16, 4, 60]);
+    // The four colours differ, and each is repeated on its chip beside the status in words.
+    const colours = (els: Element[]) => els.map((el) => getComputedStyle(el).backgroundColor);
+    const segments = await splitSegments(page).evaluateAll(colours);
+    expect(new Set(segments).size).toBe(4);
+    const dots = await statusFilter(page).locator("button i").evaluateAll(colours);
+    expect(dots).toEqual(segments);
+    await expect(splitSegments(page).first().locator("..")).toHaveAttribute("aria-hidden", "true");
+  });
+
+  test("the status filter starts on All 1,000, where each status shows its chamber-wide count and six examples, and a chip shows its whole group of examples", async ({
+    page,
+  }) => {
+    await openStop(page, stop(5));
+    await expect(page.getByRole("heading", { name: "1,000 members" })).toBeVisible();
+    await expect(membersPanel(page)).toContainText(EXAMPLE_LINE);
+    await expect(statusFilter(page).getByRole("button")).toHaveText([
+      "All 1,000",
+      "Active 200",
+      "Quiet 160",
+      "Needs an intro 40",
+      "Not yet claimed 600",
+    ]);
+    await expect(statusFilter(page).getByRole("button", { name: "All 1,000" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    const held = [
+      ["Active", 200, 20, 6],
+      ["Quiet", 160, 16, 6],
+      ["Needs an intro", 40, 4, 4],
+      ["Not yet claimed", 600, 60, 6],
+    ] as const;
+    await expect(groupHeadings(page)).toHaveText(STATUSES);
+    for (const [status, count, examples, shown] of held) {
+      await expect(group(page, status).getByRole("listitem")).toHaveCount(shown);
+      await expect(group(page, status).getByText(String(count), { exact: true })).toBeVisible();
+      // "Show all" is offered only where a group holds more examples than it lists, and names them.
+      await expect(
+        group(page, status).getByRole("button", { name: `Show all ${examples} examples` }),
+      ).toHaveCount(examples > shown ? 1 : 0);
+    }
+    for (const [status, , examples] of held) {
+      await chip(page, status).click();
+      await expect(chip(page, status)).toHaveAttribute("aria-pressed", "true");
+      await expect(groupHeadings(page)).toHaveText([status]);
+      await expect(memberRows(page)).toHaveCount(examples);
+      await expect(membersPanel(page)).toContainText(EXAMPLE_LINE);
+      await expect(page.getByRole("button", { name: /^Show all/ })).toHaveCount(0);
+    }
+    await chip(page, "All").click();
+    await expect(groupHeadings(page)).toHaveText(STATUSES);
+    await expect(memberRows(page)).toHaveCount(22);
+  });
+
+  test("Show all 20 examples under Active chooses the Active chip, and moves focus to it", async ({
+    page,
+  }) => {
+    await openStop(page, stop(5));
+    await showAll(page, 20).click();
+    await expect(chip(page, "Active")).toHaveAttribute("aria-pressed", "true");
+    await expect(chip(page, "Active")).toBeFocused();
+    await expect(groupHeadings(page)).toHaveText(["Active"]);
+    await expect(memberRows(page)).toHaveCount(20);
+    await expect(group(page, "Active").getByText("200", { exact: true })).toBeVisible();
+    await expect(membersPanel(page)).toContainText(EXAMPLE_LINE);
+    await chip(page, "All").click();
+    await expect(showAll(page, 20)).toBeVisible();
+  });
+
+  test("each row shows the member under its status in words, and nothing else about it", async ({
+    page,
+  }) => {
+    await openStop(page, stop(5));
+    await expect(statusOf(page, "Kalayaan Foods Inc.")).toHaveText("Active");
+    await chip(page, "Active").click();
+    await expect(memberRow(page, "Nordhavn Freight Forwarders")).toHaveCount(1);
+    await chip(page, "Needs an intro").click();
+    await expect(groupHeadings(page)).toHaveText(["Needs an intro"]);
+    // A row is its mark's initials and its name: the heading above it says its status.
+    await expect(memberRows(page)).toHaveText([
+      "LHLakbay Hotels",
+      "BRBigasan Rice Mills",
+      "POPalengke Online",
+      "MPMedivant Pharma Distribution",
+    ]);
+    await chip(page, "All").click();
+    await expect(memberRows(page)).toHaveCount(22);
+    await expect(page.locator("main")).not.toContainText(/\blead(s)?\b|connection|points? this/i);
+  });
+
+  test("a member that has claimed and one that has not show different marks", async ({ page }) => {
+    await openStop(page, stop(5));
+    const mark = (name: string) =>
+      memberRow(page, name)
+        .locator("[aria-hidden='true']")
+        .evaluate((el) => {
+          const style = getComputedStyle(el);
+          return {
+            border: style.borderTopStyle,
+            filled: style.backgroundColor !== "rgba(0, 0, 0, 0)",
+          };
+        });
+    expect(await mark("Maple Bay Grocers")).toEqual({ border: "none", filled: true });
+    expect(await mark("Northline Logistics")).toEqual({ border: "dashed", filled: false });
+    // The shape is never the only cue: the member also sits under "Not yet claimed", in words.
+    await expect(statusOf(page, "Northline Logistics")).toHaveText("Not yet claimed");
+  });
+
+  test("Northline Logistics, with a message waiting, comes first among the not yet claimed, saying nothing of who is waiting", async ({
+    page,
+  }) => {
+    await openStop(page, stop(5));
+    await expect(page.getByText("A member is waiting")).toHaveCount(1);
+    await chip(page, "Not yet claimed").click();
+    const first = memberRows(page).first();
+    await expect(first).toContainText("Northline Logistics");
+    await expect(first).toContainText("A member is waiting");
+    await expect(first).not.toContainText("Kalayaan");
+  });
+
+  test("the side column shows the two wins, then the ten Monthly Top Companies under ECCP's name", async ({
+    page,
+  }) => {
+    await openStop(page, stop(5));
+    const wins = sideColumn(page).getByRole("article");
+    await expect(wins).toHaveCount(2);
+    await expect(wins.first()).toContainText(
+      "Kalayaan Foods Inc. with Nordhavn Freight Forwarders",
+    );
+    const top = sideColumn(page).locator(".cd-panel", {
+      has: page.getByRole("heading", { name: "Monthly top companies" }),
+    });
+    await expect(top).toContainText("ECCP, month 1.");
+    await expect(top.getByText(/^\d+\. /)).toHaveCount(10);
+    const order = await sideColumn(page).getByRole("heading").allTextContents();
+    expect(order).toEqual(["Success wall", "Monthly top companies"]);
+  });
+
+  test("Wins shows the same Success Wall and Monthly Top Companies as the side column", async ({
+    page,
+  }) => {
+    await openStop(page, stop(5));
+    await expect(sideColumn(page).getByRole("article")).toHaveCount(2);
+    const wall = await sideColumn(page).getByRole("article").allTextContents();
+    const top = await sideColumn(page)
+      .getByText(/^\d+\. /)
+      .allTextContents();
+    await openStop(page, stop(4));
+    await section(page, "Wins").click();
+    await expect(page).toHaveURL(/\/app\/wins$/);
+    await expect(page.getByRole("article")).toHaveText(wall);
+    await expect(page.locator("#monthly").getByText(/^\d+\. /)).toHaveText(top);
+  });
+
+  test("in the Chamber Contact's Seat the status filter and its Show all buttons are the only controls on the screen", async ({
+    page,
+  }) => {
+    await openStop(page, stop(5));
+    const controls = page
+      .locator("main")
+      .locator(
+        "button, a[href], input, select, textarea, [role='combobox'], [contenteditable], [tabindex]:not([tabindex='-1'])",
+      );
+    // "Show all" chooses its status's chip, so it is the filter by another name.
+    await expect(controls).toHaveText([
+      "All 1,000",
+      "Active 200",
+      "Quiet 160",
+      "Needs an intro 40",
+      "Not yet claimed 600",
+      "Show all 20 examples",
+      "Show all 16 examples",
+      "Show all 60 examples",
+    ]);
+    for (const tool of ["Send introduction", "Run the import again", "Flag it"]) {
+      await expect(page.getByRole("button", { name: tool })).toHaveCount(0);
+    }
+  });
+
+  test("on a phone the claimed figure leads, the members form one column and the side column moves below", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await openStop(page, stop(5));
+    const edges = await memberRows(page).evaluateAll((els) =>
+      els.map((el) => Math.round(el.getBoundingClientRect().x)),
+    );
+    expect(new Set(edges).size).toBe(1);
+    const lead = await figures(page).boundingBox();
+    const list = await membersPanel(page).boundingBox();
+    const side = await sideColumn(page).boundingBox();
+    expect(lead?.x).toBe(16);
+    expect((lead?.y ?? 0) + (lead?.height ?? 0)).toBeLessThanOrEqual(list?.y ?? 0);
+    expect(side?.y ?? 0).toBeGreaterThan((list?.y ?? 0) + (list?.height ?? 0) - 1);
+    await noSidewaysScroll(page);
+  });
+
+  test("on a laptop the figure spans the width, and the members sit in two columns beside the side column", async ({
+    page,
+  }) => {
+    await openStop(page, stop(5));
+    const lead = await figures(page).boundingBox();
+    const list = await membersPanel(page).boundingBox();
+    const side = await sideColumn(page).boundingBox();
+    expect(lead?.width).toBeGreaterThan((list?.width ?? 0) + (side?.width ?? 0));
+    expect(side?.x ?? 0).toBeGreaterThan((list?.x ?? 0) + (list?.width ?? 0) - 1);
+    expect(Math.abs((side?.y ?? 0) - (list?.y ?? 0))).toBeLessThanOrEqual(1);
+    const edges = await group(page, "Active")
+      .getByRole("listitem")
+      .evaluateAll((els) => els.map((el) => Math.round(el.getBoundingClientRect().x)));
+    expect(new Set(edges).size).toBe(2);
+  });
+
+  test("the longest company name fits its row at 360 pixels, and wraps inside it once it no longer fits", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 360, height: 740 });
+    await openStop(page, stop(5));
+    await chip(page, "Not yet claimed").click();
+    const name = memberRow(page, "Sterling Rivera Insurance Brokers").locator("strong");
+    await expect(name).toBeVisible();
+    const measure = () =>
+      name.evaluate((el) => {
+        const text = el.getBoundingClientRect();
+        const row = el.closest("li")?.getBoundingClientRect();
+        return {
+          lines: Math.round(text.height / parseFloat(getComputedStyle(el).lineHeight)),
+          inside: row !== undefined && text.right <= row.right && row.right <= window.innerWidth,
+        };
+      });
+    // A row carries no status tag now, so even the longest name has room on one line.
+    expect(await measure()).toEqual({ lines: 1, inside: true });
+    await noSidewaysScroll(page);
+    // Narrower than any phone the Demo is checked on, the name wraps and still stays inside.
+    await page.setViewportSize({ width: 320, height: 740 });
+    expect(await measure()).toEqual({ lines: 2, inside: true });
+    await noSidewaysScroll(page);
+  });
+});
+
+test.describe("the side step from Stop 5", () => {
+  test("opens the community manager's side on the same day, with an introduction ready", async ({
+    page,
+  }) => {
+    await openStop(page, stop(5));
+    await sideStep(page).click();
+    await expect(storyBar(page)).toContainText(MANAGER_SEAT);
+    await expect(storyBar(page)).toContainText("5 of 6");
+    await expect(banner(page)).toContainText("Community manager for ECCP");
+    await expect(mainHeading(page)).toHaveText("Day 14 of the pilot");
+    await expect(page.locator("main .cd-head")).not.toContainText("Read-only");
+    await expect(announcer(page)).toHaveText(`Day 14 · ECCP’s view. ${MANAGER_SEAT}`);
+    for (const tool of [
+      "Member import",
+      "Make an introduction",
+      "Announcement to all members",
+      "Unusual points",
+    ]) {
+      await expect(page.getByRole("heading", { name: tool })).toBeVisible();
+    }
+    await expect(page.locator("#f-a")).toHaveText("Lakbay Hotels");
+    await expect(page.locator("#f-b")).toHaveText("Maple Bay Grocers");
+    await expect(page.getByRole("button", { name: "Send to 400 claimed members" })).toBeVisible();
+  });
+
+  test("sending the introduction confirms, and ECCP's view then shows 39 needing an intro", async ({
+    page,
+  }) => {
+    await openStop(page, stop(5));
+    await sideStep(page).click();
+    await page.getByRole("button", { name: "Send introduction" }).click();
+    await expect(page.getByText("Introduction sent to both companies.")).toBeVisible();
+    await backToView(page).click();
+    await expect(storyBar(page)).toContainText("You’re seeing ECCP’s own view. It is read-only.");
+    await expect(banner(page)).toContainText("ECCP, read-only");
+    await expect(chip(page, "Needs an intro")).toHaveText("Needs an intro 39");
+    await expect(chip(page, "Active")).toHaveText("Active 201");
+    await expect(group(page, "Needs an intro").getByRole("listitem")).toHaveCount(3);
+    await chip(page, "Active").click();
+    await expect(statusOf(page, "Lakbay Hotels")).toHaveText("Active");
+    await nextLink(page).click();
+    await expectStop(page, stop(6));
+  });
+
+  test("a draft opened on the community manager's side closes on the way back to ECCP's view", async ({
+    page,
+  }) => {
+    await openStop(page, stop(5));
+    await sideStep(page).click();
+    await memberRow(page, "Maple Bay Grocers").getByRole("button").click();
+    await expect(mainHeading(page)).toHaveText("Draft profile");
+    await backToView(page).click();
+    await expect(mainHeading(page)).toHaveText("Day 14 of the pilot");
+    await expect(page.getByRole("button", { name: "Back to chamber tools" })).toHaveCount(0);
+  });
+
+  test("Next opens Stop 6 from the community manager's side too", async ({ page }) => {
+    await openStop(page, stop(5));
+    await sideStep(page).click();
+    await nextLink(page).click();
+    await expectStop(page, stop(6));
+    await backLink(page).click();
+    await expectStop(page, stop(5));
+    await expect(sideStep(page)).toBeVisible();
+  });
+
+  test("the pickers offer only members that have claimed, those needing an intro first", async ({
+    page,
+  }) => {
+    await openStop(page, stop(5));
+    await sideStep(page).click();
+    await page.locator("#f-a").click();
+    const options = page.getByRole("option");
+    await expect(options).toHaveCount(40);
+    await expect(options.first()).toHaveText("Lakbay Hotels");
+    await expect(options.nth(3)).toHaveText("Medivant Pharma Distribution");
+    await expect(page.getByRole("option", { name: "Northline Logistics" })).toHaveCount(0);
+    await expect(page.getByRole("group", { name: "Need an intro" })).toBeVisible();
+    await page.keyboard.press("Escape");
+  });
+
+  test("choosing the same member twice is refused", async ({ page }) => {
+    await openStop(page, stop(5));
+    await sideStep(page).click();
+    await page.locator("#f-b").click();
+    await page.getByRole("option", { name: "Lakbay Hotels" }).click();
+    await page.getByRole("button", { name: "Send introduction" }).click();
+    await expect(page.getByText("Choose two different companies.")).toBeVisible();
+    await backToView(page).click();
+    await expect(chip(page, "Needs an intro")).toHaveText("Needs an intro 40");
+  });
+
+  test("from the keyboard, the side step, the filters and the tools come in order with visible focus", async ({
+    page,
+  }) => {
+    await openStop(page, stop(5));
+    await sideStep(page).focus();
+    await expectVisibleFocus(page);
+    await page.keyboard.press("Tab");
+    await expect(backLink(page)).toBeFocused();
+    await page.keyboard.press("Tab");
+    await expect(nextLink(page)).toBeFocused();
+    await page.keyboard.press("Tab");
+    await expect(statusFilter(page).getByRole("button", { name: "All 1,000" })).toBeFocused();
+    await expectVisibleFocus(page);
+    await page.keyboard.press("Tab");
+    await expect(chip(page, "Active")).toBeFocused();
+    await page.keyboard.press("Enter");
+    await expect(chip(page, "Active")).toHaveAttribute("aria-pressed", "true");
+
+    await sideStep(page).focus();
+    await page.keyboard.press("Enter");
+    await expect(backToView(page)).toBeFocused();
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Tab");
+    // The tools come before the figures and the members.
+    await expect(page.getByRole("button", { name: "Run the import again" })).toBeFocused();
+    await expectVisibleFocus(page);
+    await page.locator("#f-a").focus();
+    await expectVisibleFocus(page);
+  });
+
+  test("with reduced motion, nothing moves when the Seat changes", async ({ page }) => {
+    await openStop(page, stop(5));
+    await sideStep(page).click();
+    await backToView(page).click();
+    const durations = await page
+      .locator("main .av *, .a-story *")
+      .evaluateAll((els) => els.map((el) => getComputedStyle(el).transitionDuration));
+    expect(durations.every((d) => d.split(",").every((x) => parseFloat(x) === 0))).toBe(true);
+    expect(await page.evaluate(() => document.getAnimations().length)).toBe(0);
+  });
+});
+
+test.describe("Stop 1, the community manager's Activity View on Day 0", () => {
+  test("puts the member import first, with nobody claimed and every member not yet claimed", async ({
+    page,
+  }) => {
+    await openStop(page, stop(1));
+    await expect(memberImport(page)).toBeInViewport();
+    await expectDayZero(page);
+    // With nobody claimed, the bar is all "not yet claimed": one segment, and no other is drawn.
+    await expect(splitSegments(page)).toHaveCount(1);
+    await expect(group(page, "Not yet claimed").getByRole("listitem")).toHaveCount(6);
+    await expect(showAll(page, 100)).toBeVisible();
+    await expect(sideColumn(page)).toContainText("No wins yet.");
+    await expect(
+      page.getByText("No member has claimed yet, so an announcement would reach nobody."),
+    ).toBeVisible();
+    await expect(page.getByRole("button", { name: "Back to company view" })).toHaveCount(0);
+  });
+
+  test("a filter with no members says so in one line", async ({ page }) => {
+    await openStop(page, stop(1));
+    await chip(page, "Active").click();
+    await expect(memberRows(page)).toHaveCount(0);
+    await expect(page.getByText("No members with this status.")).toHaveCount(1);
+  });
+
+  test("on a phone the tools come before the figures", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await openStop(page, stop(1));
+    const tools = await page
+      .getByRole("region", { name: "Community manager’s tools" })
+      .boundingBox();
+    const lead = await figures(page).boundingBox();
+    expect(tools?.y ?? 0).toBeLessThan(lead?.y ?? 0);
+    await expect(memberImport(page)).toBeInViewport();
+  });
+});
+
+test.describe("ECCP's view in the full Demo", () => {
+  test("connecting with a member as Kalayaan Foods does not change its status", async ({
+    page,
+  }) => {
+    await demoChamberTools(page);
+    await expect(statusOf(page, "Hapag Kitchen Group")).toHaveText("Quiet");
+    await page.getByRole("button", { name: "Back to company view" }).click();
+    await page.getByRole("button", { name: "Search" }).click();
+    await page.getByLabel("Industry, product or need").fill("Hapag Kitchen Group");
+    await page
+      .locator("#search-results")
+      .getByRole("button", { name: /Hapag Kitchen Group/ })
+      .click();
+    await page.getByRole("button", { name: "Connect", exact: true }).click();
+    await openChamberTools(page);
+    await expect(statusOf(page, "Hapag Kitchen Group")).toHaveText("Quiet");
+  });
+
+  test("a message to a member that has not claimed marks it as waiting, first among its group", async ({
+    page,
+  }) => {
+    await demoChamberTools(page);
+    await page.getByRole("button", { name: "Back to company view" }).click();
+    await page.getByRole("button", { name: "Search" }).click();
+    await page.getByLabel("Industry, product or need").fill("Kahon Corrugated");
+    await page
+      .locator("#search-results")
+      .getByRole("button", { name: /Kahon Corrugated/ })
+      .click();
+    await page.getByRole("button", { name: "Message", exact: true }).click();
+    await page.locator("textarea[data-draft]").fill("Hello, could we talk about shipping cartons?");
+    await page.getByRole("button", { name: "Send", exact: true }).click();
+    await openChamberTools(page);
+    await chip(page, "Not yet claimed").click();
+    await expect(memberRows(page).nth(0)).toContainText("Northline Logistics");
+    await expect(memberRows(page).nth(1)).toContainText("Kahon CorrugatedA member is waiting");
+    await expect(page.getByText("A member is waiting")).toHaveCount(2);
+  });
+
+  test("the Team Dashboard's weekly active figure and queue agree with ECCP's view", async ({
+    page,
+  }) => {
+    await demoChamberTools(page);
+    await expect(chip(page, "Active")).toHaveText("Active 200");
+    await chip(page, "Needs an intro").click();
+    await expect(memberRows(page)).toHaveCount(4);
+    // In the community manager's view each member's name is a button that opens its draft.
+    const needing = await memberRows(page).getByRole("button").allTextContents();
+    await page.getByRole("button", { name: "Demo guide" }).click();
+    await guideDialog(page)
+      .getByRole("button", { name: "ComLinked team dashboard", exact: true })
+      .click();
+    await expect(page.locator("#t-trend")).toHaveAttribute("aria-label", /now 200 of 1,000/);
+    await page.getByRole("tab", { name: "Companies needing help" }).click();
+    const queued = page.locator(".a-li.stack", { hasText: "No lead yet" }).locator("strong");
+    await expect(queued).toHaveText(needing);
+  });
+});
+
+test.describe("the Activity View's layout and accessibility", () => {
+  for (const width of [360, 390, 1280, 1440]) {
+    test(`Stops 1 and 5 and the side step have no sideways scroll at ${width} pixels`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width, height: 844 });
+      await openStop(page, stop(1));
+      await noSidewaysScroll(page);
+      await openStop(page, stop(5));
+      await noSidewaysScroll(page);
+      await sideStep(page).click();
+      await expect(storyBar(page)).toContainText(MANAGER_SEAT);
+      await noSidewaysScroll(page);
+    });
+  }
+
+  test("both Seats pass axe", async ({ page }) => {
+    await openStop(page, stop(5));
+    await expectAccessible(page);
+    await chip(page, "Not yet claimed").click();
+    await expectAccessible(page);
+    await sideStep(page).click();
+    await expectAccessible(page);
+    await openStop(page, stop(1));
+    await expectAccessible(page);
+  });
+});
+
+/** How far an element's content stops short of its foot: a card as tall as its content leaves
+ * only its own padding. */
+async function slackBelowContent(card: Locator) {
+  return card.evaluate((el) => {
+    const last = el.lastElementChild;
+    return last ? el.getBoundingClientRect().bottom - last.getBoundingClientRect().bottom : 0;
+  });
+}
+
+/** A panel on a screen, by its title. */
+const panelTitled = (page: Page, title: string) =>
+  page
+    .locator("main section")
+    .filter({ has: page.getByRole("heading", { name: title, exact: true, level: 2 }) });
+
+test.describe("the Opening and the ask, in two panels", () => {
+  /** The navy panel is the screen's Focus panel, and the white one follows it in the frame. */
+  const navy = (page: Page) => focusPanel(page);
+  const white = (page: Page) => page.locator("[data-focus-panel] + *");
+  const background = (panel: Locator) =>
+    panel.evaluate((el) => getComputedStyle(el).backgroundColor);
+
+  async function expectSideBySide(page: Page) {
+    const left = await navy(page).boundingBox();
+    const right = await white(page).boundingBox();
+    expect(Math.round(right?.y ?? 0)).toBe(Math.round(left?.y ?? -1));
+    expect(Math.round(right?.height ?? 0)).toBe(Math.round(left?.height ?? -1));
+    expect(Math.round(right?.x ?? 0)).toBe(Math.round((left?.x ?? 0) + (left?.width ?? 0)));
+  }
+
+  async function expectStacked(page: Page) {
+    const top = await navy(page).boundingBox();
+    const below = await white(page).boundingBox();
+    // One column, inset by the 16px gutter, navy above white.
+    expect(top?.x).toBe(16);
+    expect(below?.x).toBe(16);
+    expect(top?.width).toBe(below?.width);
+    expect(Math.round(below?.y ?? 0)).toBe(Math.round((top?.y ?? 0) + (top?.height ?? 0)));
+    await noSidewaysScroll(page);
+  }
+
+  test("the Opening is one frame on a laptop: navy with what it is, white with the six Stops by day and Start", async ({
+    page,
+  }) => {
+    await page.goto(OPENING);
+    await expectOpening(page);
+    await expect(focusPanel(page)).toHaveCount(1);
+    expect(await background(navy(page))).not.toBe(WHITE);
+    expect(await background(white(page))).toBe(WHITE);
+    await expectSideBySide(page);
+    await expect(navy(page).getByRole("heading", { level: 1 })).toHaveText("A preview for ECCP");
+    await expect(navy(page)).toContainText(
+      "It shows how a ComLinked pilot could run for ECCP’s members, from the first day to two weeks in.",
+    );
+    await expect(navy(page)).toContainText(
+      "ECCP has not joined ComLinked. Every company, person and figure here is invented.",
+    );
+    await expect(white(page).getByRole("heading", { name: "The 6 stops" })).toBeVisible();
+    const stops = white(page).getByRole("listitem");
+    await expect(stops).toHaveText(STOPS.map((s) => s.line));
+    // The day sits beside each Stop, to its left on the same line, and the last Stop has none.
+    const rows = await stops.evaluateAll((items) =>
+      items.map((item) => {
+        const day = item.firstElementChild;
+        const title = item.lastElementChild;
+        if (!day || !title) throw new Error("A Stop has no day or title.");
+        const [a, b] = [day.getBoundingClientRect(), title.getBoundingClientRect()];
+        return {
+          day: (day.textContent ?? "").replace(" · ", ""),
+          beside: a.right <= b.left && a.top < b.bottom && b.top < a.bottom,
+        };
+      }),
+    );
+    expect(rows.map((row) => row.day)).toEqual(["Day 0", "Day 1", "Day 2", "Day 14", "Day 14", ""]);
+    expect(rows.slice(0, 5).every((row) => row.beside)).toBe(true);
+    await expect(white(page).getByRole("link", { name: "Start", exact: true })).toBeVisible();
+  });
+
+  test("the ask closes the walk in the same two panels: navy with what ECCP gives and that it is free, white with the rest", async ({
+    page,
+  }) => {
+    await openStop(page, stop(6));
+    await expect(focusPanel(page)).toHaveCount(1);
+    expect(await background(navy(page))).not.toBe(WHITE);
+    expect(await background(white(page))).toBe(WHITE);
+    await expectSideBySide(page);
+    await expect(navy(page).getByRole("heading", { level: 1 })).toHaveText(
+      "What a pilot asks of ECCP",
+    );
+    await expect(
+      navy(page).getByRole("region", { name: "ECCP gives two things" }).getByRole("listitem"),
+    ).toHaveCount(2);
+    await expect(navy(page)).toContainText("The pilot is free for ECCP and its members.");
+    await expect(white(page).getByRole("heading", { level: 2 })).toHaveText([
+      "ComLinked does the rest",
+      "What your members get",
+    ]);
+    // Email Richard is the one solid button, Explore on your own is outlined, and the address
+    // is text.
+    await expect(white(page).getByRole("link")).toHaveText([
+      "Email Richard",
+      "Explore on your own",
+    ]);
+    expect(await background(emailLink(page))).not.toBe(WHITE);
+    expect(await background(exploreLink(page))).toBe(WHITE);
+    await expect(white(page).getByText(PRESENTER_ADDRESS, { exact: true })).toBeVisible();
+    await expect(white(page).getByRole("link", { name: PRESENTER_ADDRESS })).toHaveCount(0);
+  });
+
+  test("on a phone, navy stacks above white on both screens", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(OPENING);
+    await expectOpening(page);
+    await expectStacked(page);
+    await openStop(page, stop(6));
+    await expectStacked(page);
+  });
+});
+
+test.describe("the Story Bar, a slim second row of the header", () => {
+  const stepDots = (page: Page) => storyBar(page).locator("ol[aria-hidden='true'] > li");
+
+  test("on every Stop it sits under the top bar in white, marks the Stop on six step dots and keeps Next in one place", async ({
+    page,
+  }) => {
+    const nextEdges: number[] = [];
+    for (const s of STOPS) {
+      await openStop(page, s);
+      expect(await stepDots(page).evaluateAll((dots) => dots.map((d) => d.dataset.step))).toEqual(
+        STOPS.map((other) => (other.n < s.n ? "done" : other.n === s.n ? "now" : "next")),
+      );
+      const top = await banner(page).boundingBox();
+      const bar = await storyBar(page).boundingBox();
+      const next = await nextLink(page).boundingBox();
+      expect(Math.round(bar?.y ?? 0)).toBe(Math.round((top?.y ?? 0) + (top?.height ?? 0)));
+      // About 48px tall, closed by a hairline.
+      expect(bar?.height ?? 0).toBeLessThanOrEqual(50);
+      expect(await storyBar(page).evaluate((el) => getComputedStyle(el).backgroundColor)).toBe(
+        await banner(page).evaluate((el) => getComputedStyle(el).backgroundColor),
+      );
+      nextEdges.push(Math.round((next?.x ?? 0) + (next?.width ?? 0)), Math.round(next?.y ?? 0));
+    }
+    // The same right edge and the same line on all six Stops.
+    expect(new Set(nextEdges.filter((_, i) => i % 2 === 0)).size).toBe(1);
+    expect(new Set(nextEdges.filter((_, i) => i % 2 === 1)).size).toBe(1);
+  });
+
+  test("Next is outlined and Back is quiet, so neither competes with the screen's own button", async ({
+    page,
+  }) => {
+    await openStop(page, stop(4));
+    const look = (link: Locator) =>
+      link.evaluate((el) => {
+        const style = getComputedStyle(el);
+        return { fill: style.backgroundColor, line: style.borderTopColor };
+      });
+    const next = await look(nextLink(page));
+    const back = await look(backLink(page));
+    expect(next.fill).toBe("rgb(255, 255, 255)");
+    expect(next.line).not.toBe(next.fill);
+    expect(back.fill).toBe("rgba(0, 0, 0, 0)");
+    expect(back.line).toBe("rgba(0, 0, 0, 0)");
+  });
+
+  test("at 360 pixels it is no taller than the bar it replaces on a Stop with no side step, and Next is whole and 44px tall", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 360, height: 740 });
+    const lines = (text: Locator) =>
+      text.evaluate((el) =>
+        Math.round(el.getBoundingClientRect().height / parseFloat(getComputedStyle(el).lineHeight)),
+      );
+    for (const s of STOPS.filter((other) => other.n !== 5)) {
+      await openStop(page, s);
+      const titleLines = await lines(storyBar(page).getByText(s.line, { exact: true }));
+      const seatLines = s.seat ? await lines(storyBar(page).getByText(s.seat, { exact: true })) : 0;
+      // The bar this replaces: 24px of padding and a hairline, a 20px line for each line of the
+      // title and of the Seat with 2px between the two, then 10px and its 44px buttons. Its
+      // title was larger and bolder, so it wrapped at least as often as this one does.
+      const replaced = 25 + 20 * titleLines + (seatLines ? 2 + 20 * seatLines : 0) + 10 + 44;
+      const bar = await storyBar(page).boundingBox();
+      expect([s.n, (bar?.height ?? 0) <= replaced]).toEqual([s.n, true]);
+      const next = await nextLink(page).boundingBox();
+      expect(next?.height ?? 0).toBeGreaterThanOrEqual(44);
+      expect(next?.x ?? -1).toBeGreaterThanOrEqual(0);
+      expect((next?.x ?? 0) + (next?.width ?? 0)).toBeLessThanOrEqual(360);
+      await expect(nextLink(page)).toBeInViewport({ ratio: 1 });
+      await noSidewaysScroll(page);
+    }
+  });
+
+  test("on a phone the side step takes its own row under the Seat line", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await openStop(page, stop(5));
+    const seat = await storyBar(page)
+      .getByText("You’re seeing ECCP’s own view. It is read-only.", { exact: true })
+      .boundingBox();
+    const step = await sideStep(page).boundingBox();
+    expect(step?.y ?? 0).toBeGreaterThanOrEqual((seat?.y ?? 0) + (seat?.height ?? 0));
+    expect(step?.height ?? 0).toBeGreaterThanOrEqual(44);
+  });
+});
+
+test.describe("Stop 4, ComDash Overview", () => {
+  test("Next action is the one raised panel, across the width, with Interest Signals wide below it and Connections and Profile stacked beside", async ({
+    page,
+  }) => {
+    await openStop(page, stop(4));
+    await expect(focusPanel(page)).toHaveCount(1);
+    await expect(focusPanel(page).getByRole("heading", { name: "Next action" })).toBeVisible();
+    await expect(focusPanel(page)).toContainText("Finish today’s leads");
+    const shadow = (panel: Locator) => panel.evaluate((el) => getComputedStyle(el).boxShadow);
+    expect(await shadow(focusPanel(page))).not.toBe("none");
+    for (const title of ["Interest Signals", "Connections", "Profile"]) {
+      expect([title, await shadow(panelTitled(page, title))]).toEqual([title, "none"]);
+    }
+    const lead = await focusPanel(page).boundingBox();
+    const signals = await panelTitled(page, "Interest Signals").boundingBox();
+    const connections = await panelTitled(page, "Connections").boundingBox();
+    const profile = await panelTitled(page, "Profile").boundingBox();
+    const right = (box: typeof lead) => Math.round((box?.x ?? 0) + (box?.width ?? 0));
+    const foot = (box: typeof lead) => (box?.y ?? 0) + (box?.height ?? 0);
+    expect(Math.round(lead?.x ?? 0)).toBe(Math.round(signals?.x ?? -1));
+    expect(right(lead)).toBe(right(connections));
+    expect(foot(lead)).toBeLessThan(signals?.y ?? 0);
+    expect(signals?.width ?? 0).toBeGreaterThan((connections?.width ?? 0) * 1.5);
+    expect(Math.round(connections?.y ?? 0)).toBe(Math.round(signals?.y ?? -1));
+    expect(Math.round(profile?.x ?? 0)).toBe(Math.round(connections?.x ?? -1));
+    expect(profile?.y ?? 0).toBeGreaterThan(foot(connections));
+    // Each stacked card is as tall as its content, not stretched to the wide column's height.
+    expect(foot(profile)).toBeLessThan(foot(signals));
+    for (const title of ["Connections", "Profile"]) {
+      expect(await slackBelowContent(panelTitled(page, title))).toBeLessThanOrEqual(26);
+    }
+  });
+
+  test("Interest Signals holds its three figures, a bar or a tick for each of the 14 days, and the Hot Companies with their marks", async ({
+    page,
+  }) => {
+    await openStop(page, stop(4));
+    const signals = panelTitled(page, "Interest Signals");
+    for (const figure of ["Interested companies13", "Messages3", "Search appearances3"]) {
+      await expect(signals).toContainText(figure);
+    }
+    // One mark for each day: a bar where something happened, and a short tick where nothing did.
+    const heights = await signals
+      .locator("figure li > *")
+      .evaluateAll((marks) => marks.map((mark) => mark.getBoundingClientRect().height));
+    expect(heights).toHaveLength(14);
+    expect(heights.filter((h) => h > 4)).toHaveLength(5);
+    expect(heights.filter((h) => h <= 4).every((h) => h > 0)).toBe(true);
+    await expect(signals.locator("figure").getByText(/^Day \d+$/)).toHaveText(["Day 1", "Day 14"]);
+    await expect(signals.locator("figcaption")).toHaveText(
+      "7 search appearances and recommendations over 14 days since you claimed your profile, with at most 2 in a day.",
+    );
+    // The chart's labels are text at their own size, whatever the width.
+    const label = signals.locator("figure").getByText("Day 14", { exact: true });
+    expect(await label.evaluate((el) => getComputedStyle(el).fontSize)).toBe("12px");
+    await page.setViewportSize({ width: 390, height: 844 });
+    expect(await label.evaluate((el) => getComputedStyle(el).fontSize)).toBe("12px");
+    await page.setViewportSize({ width: 1280, height: 900 });
+
+    const title = signals.getByRole("heading", { name: "Hot companies" });
+    expect(await title.evaluate((el) => getComputedStyle(el).textTransform)).toBe("none");
+    const hot = signals.getByRole("listitem").filter({ has: page.getByRole("link") });
+    await expect(hot).toHaveText([
+      "HKHapag Kitchen GroupRestaurant group · Taguig CityHot",
+      "LFLuntian Foods Inc.Organic food distribution · Marikina CityHot",
+      "PPPacific Pack SolutionsPackaging · Pasig CityHot",
+      "NFNordhavn Freight ForwardersFreight forwarding · Quezon CityHot",
+    ]);
+    // A Hot Company's name is underlined only on hover or focus.
+    const name = signals.getByRole("link", { name: "Hapag Kitchen Group", exact: true });
+    const underline = () => name.evaluate((el) => getComputedStyle(el).textDecorationLine);
+    expect(await underline()).toBe("none");
+    await name.hover();
+    expect(await underline()).toBe("underline");
+    await page.mouse.move(0, 0);
+    await name.focus();
+    expect(await underline()).toBe("underline");
+  });
+
+  test("with the later items switched on, the AI Lead Agent card joins the narrow column and no card is left half empty", async ({
+    page,
+  }) => {
+    await openStop(page, stop(4));
+    await flipSwitch(page, "After-MVP previews", true);
+    await expect(panelTitles(page)).toHaveText([
+      "Next action",
+      "Interest Signals",
+      "AI Lead Agent",
+      "Connections",
+      "Profile",
+    ]);
+    const signals = await panelTitled(page, "Interest Signals").boundingBox();
+    const stack = ["AI Lead Agent", "Connections", "Profile"];
+    const boxes = await Promise.all(stack.map((title) => panelTitled(page, title).boundingBox()));
+    expect(Math.round(boxes[0]?.y ?? 0)).toBe(Math.round(signals?.y ?? -1));
+    expect(new Set(boxes.map((box) => Math.round(box?.x ?? 0))).size).toBe(1);
+    expect(boxes[0]?.x ?? 0).toBeGreaterThan((signals?.x ?? 0) + (signals?.width ?? 0));
+    for (const [i, title] of stack.entries()) {
+      if (i) {
+        const above = boxes[i - 1];
+        expect(boxes[i]?.y ?? 0).toBeGreaterThan((above?.y ?? 0) + (above?.height ?? 0));
+      }
+      expect([title, (await slackBelowContent(panelTitled(page, title))) <= 26]).toEqual([
+        title,
+        true,
+      ]);
+    }
+    await expect(focusPanel(page)).toHaveCount(1);
+    await noSidewaysScroll(page);
+  });
+
+  test("on a phone the panels form one column in the same order, inset by 16px", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await openStop(page, stop(4));
+    const titles = ["Next action", "Interest Signals", "Connections", "Profile"];
+    await expect(panelTitles(page)).toHaveText(titles);
+    const boxes = await Promise.all(titles.map((title) => panelTitled(page, title).boundingBox()));
+    expect(boxes.map((box) => box?.x)).toEqual([16, 16, 16, 16]);
+    expect(boxes.map((box) => box?.width)).toEqual([358, 358, 358, 358]);
+    const tops = boxes.map((box) => box?.y ?? 0);
+    expect(tops).toEqual([...tops].sort((a, b) => a - b));
+  });
+});
+
+test.describe("the four reference screens from the keyboard and with reduced motion", () => {
+  test("ComDash's tabs follow the Story Bar in order, each with a visible focus ring", async ({
+    page,
+  }) => {
+    await openStop(page, stop(4));
+    await backLink(page).focus();
+    await expectVisibleFocus(page);
+    await page.keyboard.press("Tab");
+    await expect(nextLink(page)).toBeFocused();
+    await expectVisibleFocus(page);
+    for (const tab of FOUR_TABS) {
+      await page.keyboard.press("Tab");
+      await expect(tabRow(page).getByRole("link", { name: tab, exact: true })).toBeFocused();
+      await expectVisibleFocus(page);
+    }
+    await page.keyboard.press("Tab");
+    await expect(page.getByRole("button", { name: "Open today’s leads" })).toBeFocused();
+    await expectVisibleFocus(page);
+  });
+
+  test("on the community manager's side the chips, Show all and the member rows come in order, and a row opens its draft", async ({
+    page,
+  }) => {
+    await openStop(page, stop(5));
+    await sideStep(page).focus();
+    await page.keyboard.press("Enter");
+    await expect(backToView(page)).toBeFocused();
+    await chip(page, "All").focus();
+    await expectVisibleFocus(page);
+    for (const status of STATUSES) {
+      await page.keyboard.press("Tab");
+      await expect(chip(page, status)).toBeFocused();
+    }
+    await page.keyboard.press("Tab");
+    await expect(showAll(page, 20)).toBeFocused();
+    await expectVisibleFocus(page);
+    await page.keyboard.press("Tab");
+    await expect(page.getByRole("button", { name: "Kalayaan Foods Inc." })).toBeFocused();
+    await expectVisibleFocus(page);
+    await page.keyboard.press("Tab");
+    await expect(page.getByRole("button", { name: "Maple Bay Grocers" })).toBeFocused();
+    await page.keyboard.press("Enter");
+    await expect(mainHeading(page)).toHaveText("Draft profile");
+  });
+
+  test("with reduced motion, nothing on the four reference screens transitions or animates", async ({
+    page,
+  }) => {
+    const still = () => expectStill(page);
+    await page.goto(OPENING);
+    await expectOpening(page);
+    await still();
+    for (const n of [1, 4, 6, 5] as const) {
+      await openStop(page, stop(n));
+      await still();
+    }
+    await chip(page, "Needs an intro").click();
+    await still();
+  });
+});
+
+const MATCHES_HEADING = "Meet your 3 matches today";
+const matchCards = (page: Page) => page.locator("[data-lead]");
+
+/** One arrival the page drew: which Match, whether it started or ended, and when. */
+interface Arrival {
+  lead: string;
+  type: string;
+  at: number;
+}
+
+declare global {
+  interface Window {
+    /** Where a test notes the arrivals it watches. */
+    arrivalsSeen?: Arrival[];
+  }
+}
+
+/** Notes every arrival the page draws from now on: which Match, when it started and when it
+ * ended. The Demo moves between its screens without a page load, so the notes survive the claim. */
+async function watchArrivals(page: Page) {
+  await page.evaluate(() => {
+    const seen: Arrival[] = [];
+    window.arrivalsSeen = seen;
+    for (const type of ["animationstart", "animationend"]) {
+      document.addEventListener(type, (event) => {
+        const lead = event.target instanceof HTMLElement ? event.target.dataset.lead : undefined;
+        if (lead) seen.push({ lead, type, at: performance.now() });
+      });
+    }
+  });
+}
+
+const arrivals = (page: Page) => page.evaluate(() => window.arrivalsSeen ?? []);
+
+/** How many Matches are still arriving. A button's transition, or a status fading in where a
+ * button was, is not an arrival. */
+const arriving = (page: Page) =>
+  page.evaluate(
+    () =>
+      document
+        .getAnimations()
+        .filter((motion) => motion instanceof CSSAnimation && motion.animationName === "a-arrive")
+        .length,
+  );
+
+/** Stop 2 from the message to the Matches, noting what arrives. */
+async function claimAtStopTwo(page: Page) {
+  await openStop(page, stop(2));
+  await claimMessage(page).getByRole("button", { name: "Claim your profile" }).click();
+  await expect(mainHeading(page)).toHaveText(FIRST_CLAIM_SCREEN);
+  await watchArrivals(page);
+  await claimFromFirstScreen(page);
+  await expect(mainHeading(page)).toHaveText(MATCHES_HEADING);
+}
+
+test.describe("Stop 2, the claim in two panels and the day-one Matches", () => {
+  const CLAIM_STEPS = [
+    { heading: FIRST_CLAIM_SCREEN, action: "Claim your profile" },
+    { heading: "Check your company profile", action: "Confirm and claim" },
+    { heading: "Sign in", action: "Email me a sign-in link" },
+  ];
+  /** The white action panel is each step's Focus panel, and the navy one comes before it. */
+  const action = (page: Page) => focusPanel(page);
+  const navy = (page: Page) => page.locator(":has(+ [data-focus-panel])");
+
+  /** Walks the three claim steps, calling `check` on each. */
+  async function eachClaimStep(
+    page: Page,
+    check: (step: (typeof CLAIM_STEPS)[number]) => Promise<void>,
+  ) {
+    await openStop(page, stop(2));
+    await claimMessage(page).getByRole("button", { name: "Claim your profile" }).click();
+    for (const step of CLAIM_STEPS) {
+      await expect(mainHeading(page)).toHaveText(step.heading);
+      await check(step);
+      if (step.heading === "Check your company profile") await page.locator("#claim-auth").check();
+      if (step !== CLAIM_STEPS[CLAIM_STEPS.length - 1]) {
+        await action(page).getByRole("button", { name: step.action, exact: true }).click();
+      }
+    }
+  }
+
+  test("the message from ECCP is the Focus panel, raised, with Claim your profile in it", async ({
+    page,
+  }) => {
+    await openStop(page, stop(2));
+    await expect(focusPanel(page)).toHaveCount(1);
+    await expect(claimMessage(page)).toHaveAttribute("data-focus-panel", "");
+    await expect(claimMessage(page)).not.toHaveCSS("box-shadow", "none");
+    await expect(
+      claimMessage(page).getByRole("button", { name: "Claim your profile" }),
+    ).toBeVisible();
+  });
+
+  test("each claim step is navy beside white in one frame, and the white action panel leads", async ({
+    page,
+  }) => {
+    await eachClaimStep(page, async (step) => {
+      await expect(action(page)).toHaveCount(1);
+      await expect(action(page)).toHaveCSS("background-color", WHITE);
+      await expect(navy(page)).not.toHaveCSS("background-color", WHITE);
+      await expect(navy(page).getByRole("heading", { level: 1 })).toHaveText(step.heading);
+      await expect(
+        action(page).getByRole("button", { name: step.action, exact: true }),
+      ).toBeVisible();
+      const left = await navy(page).boundingBox();
+      const right = await action(page).boundingBox();
+      expect(Math.round(right?.y ?? 0)).toBe(Math.round(left?.y ?? -1));
+      expect(Math.round(right?.height ?? 0)).toBe(Math.round(left?.height ?? -1));
+      expect(Math.round(right?.x ?? 0)).toBe(Math.round((left?.x ?? 0) + (left?.width ?? 0)));
+    });
+  });
+
+  test("on a phone each claim step stacks navy above white, inset by 16px", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await eachClaimStep(page, async () => {
+      const top = await navy(page).boundingBox();
+      const below = await action(page).boundingBox();
+      expect(top?.x).toBe(16);
+      expect(below?.x).toBe(16);
+      expect(top?.width).toBe(358);
+      expect(below?.width).toBe(358);
+      expect(Math.round(below?.y ?? 0)).toBe(Math.round((top?.y ?? 0) + (top?.height ?? 0)));
+      await noSidewaysScroll(page);
+    });
+  });
+
+  test("with reduced motion the three Matches are simply there after the claim, and nothing moves", async ({
+    page,
+  }) => {
+    await claimAtStopTwo(page);
+    await expect(matchCards(page)).toHaveCount(3);
+    for (const card of await matchCards(page).all()) {
+      await expect(card).toBeVisible();
+      await expect(card).toHaveCSS("opacity", "1");
+    }
+    expect(await moving(page)).toBe(0);
+    expect(await arrivals(page)).toEqual([]);
+    await expectStill(page);
+  });
+
+  test("with reduced motion nothing on Stop 2's message, the claim steps or Stop 3 moves", async ({
+    page,
+  }) => {
+    await openStop(page, stop(2));
+    await expectStill(page);
+    await eachClaimStep(page, () => expectStill(page));
+    await openStop(page, stop(3));
+    await expectStill(page);
+  });
+
+  test("the selected Match is the Focus panel, beside a flat list, with Connect as its main action", async ({
+    page,
+  }) => {
+    await claimAtStopTwo(page);
+    await expect(focusPanel(page)).toHaveCount(1);
+    await expect(focusPanel(page)).not.toHaveCSS("box-shadow", "none");
+    await expect(
+      focusPanel(page).getByRole("button", { name: /^Maple Bay Grocers/ }),
+    ).toBeVisible();
+    await expect(
+      focusPanel(page).getByRole("button", { name: "Connect", exact: true }),
+    ).toBeVisible();
+    // The list beside it is flat, with the selected Match marked in it.
+    const selected = page
+      .getByRole("button", { name: /^Maple Bay Grocers/ })
+      .and(page.locator("[aria-current='true']"));
+    await expect(selected).toBeVisible();
+    expect(await surfaceShadow(selected)).toBe("none");
+    // Choosing another Match moves the Focus panel to it.
+    await page.getByRole("button", { name: /^Pacific Pack Solutions/ }).click();
+    await expect(focusPanel(page)).toHaveCount(1);
+    await expect(
+      focusPanel(page).getByRole("button", { name: /^Pacific Pack Solutions/ }),
+    ).toBeVisible();
+  });
+
+  test("once all three are done the Focus panel still shows, holding That’s your first three", async ({
+    page,
+  }) => {
+    await claimAtStopTwo(page);
+    for (let done = 0; done < 3; done++) {
+      await focusPanel(page).getByRole("button", { name: "Skip", exact: true }).click();
+    }
+    await expect(focusPanel(page)).toHaveCount(1);
+    await expect(focusPanel(page).getByRole("heading")).toHaveText("That’s your first three");
+    await expect(focusPanel(page)).toContainText("New leads arrive tomorrow at 8:00 a.m.");
+    await expect(focusPanel(page).getByRole("button")).toHaveText(["Go to my ComDash"]);
+    await expect(page.getByRole("button", { name: "Go to my ComDash" })).toHaveCount(1);
+  });
+
+  test("on a phone the Matches are one column, inset by 16px, with the selected Match leading in place", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await claimAtStopTwo(page);
+    await expect(matchCards(page)).toHaveCount(3);
+    await expect(focusPanel(page)).toHaveCount(1);
+    await expect(focusPanel(page)).toHaveAttribute("data-lead", "maple");
+    const boxes = await Promise.all(
+      (await matchCards(page).all()).map((card) => card.boundingBox()),
+    );
+    const tops = boxes.map((box) => box?.y ?? 0);
+    expect(tops).toEqual([...tops].sort((a, b) => a - b));
+    for (const box of boxes) {
+      expect(box?.x).toBeGreaterThanOrEqual(16);
+      expect((box?.x ?? 0) + (box?.width ?? 0)).toBeLessThanOrEqual(374);
+    }
+    expect((await focusPanel(page).boundingBox())?.x).toBe(16);
+    // The second Match, chosen, takes the Focus panel where it stands in the list.
+    await page.getByRole("button", { name: /^Nordhavn Freight Forwarders/ }).click();
+    await expect(focusPanel(page)).toHaveAttribute("data-lead", "nordhavn");
+    await expect(matchCards(page).nth(1)).toHaveAttribute("data-lead", "nordhavn");
+    await expect(focusPanel(page)).toHaveCount(1);
+    await noSidewaysScroll(page);
+  });
+
+  test("from the keyboard the claim's and the Matches' main actions are reachable with a visible focus ring", async ({
+    page,
+  }) => {
+    await eachClaimStep(page, async (step) => {
+      await mainHeading(page).focus();
+      await tabTo(page, action(page).getByRole("button", { name: step.action, exact: true }));
+    });
+    await action(page).getByRole("button", { name: "Continue with Google" }).click();
+    await expect(mainHeading(page)).toHaveText(MATCHES_HEADING);
+    await tabTo(page, focusPanel(page).getByRole("button", { name: "Connect", exact: true }));
+    await page.keyboard.press("Enter");
+    await expect(matchCards(page).first()).toContainText("Connection Request sent");
+  });
+});
+
+test.describe("the one staged moment, with motion allowed", () => {
+  test.use({ contextOptions: { reducedMotion: "no-preference" } });
+
+  test("after the live claim the three Matches arrive one after another in about a second, once", async ({
+    page,
+  }) => {
+    await claimAtStopTwo(page);
+    // All three are in place from the start, whatever is still arriving.
+    await expect(matchCards(page)).toHaveCount(3);
+    await expect(matchCards(page)).toContainText([
+      "Maple Bay Grocers",
+      "Nordhavn Freight Forwarders",
+      "Pacific Pack Solutions",
+    ]);
+    await expect.poll(() => arrivals(page).then((seen) => seen.length)).toBe(6);
+    expect(await arriving(page)).toBe(0);
+    const seen = await arrivals(page);
+    const starts = seen.filter((a) => a.type === "animationstart");
+    const ends = seen.filter((a) => a.type === "animationend");
+    expect(starts.map((a) => a.lead)).toEqual(["maple", "nordhavn", "pack"]);
+    expect(ends.map((a) => a.lead)).toEqual(["maple", "nordhavn", "pack"]);
+    // Each starts after the one before, and the whole takes about a second.
+    const [first, second, third] = starts.map((a) => a.at);
+    expect((second ?? 0) - (first ?? 0)).toBeGreaterThan(150);
+    expect((third ?? 0) - (second ?? 0)).toBeGreaterThan(150);
+    const whole = (ends[2]?.at ?? 0) - (first ?? 0);
+    expect(whole).toBeGreaterThan(700);
+    expect(whole).toBeLessThan(1600);
+    for (const card of await matchCards(page).all()) {
+      await expect(card).toHaveCSS("opacity", "1");
+    }
+
+    // Left and come back to, the screen stages nothing.
+    await page.getByRole("button", { name: /^Notifications/ }).click();
+    await expect(mainHeading(page)).toHaveText("Notifications");
+    await page.goBack();
+    await expect(mainHeading(page)).toHaveText(MATCHES_HEADING);
+    await expect(matchCards(page)).toHaveCount(3);
+    expect(await arriving(page)).toBe(0);
+    expect(await arrivals(page)).toHaveLength(6);
+  });
+
+  test("a viewer who acts at once is not kept waiting: the Matches are all there", async ({
+    page,
+  }) => {
+    await claimAtStopTwo(page);
+    await focusPanel(page).getByRole("button", { name: "Connect", exact: true }).click();
+    await expect(matchCards(page).first()).toContainText("Connection Request sent");
+    expect(await arriving(page)).toBe(0);
+    for (const card of await matchCards(page).all()) {
+      await expect(card).toHaveCSS("opacity", "1");
+    }
+  });
+
+  test("opened at its own address, the Matches are there at once", async ({ page }) => {
+    await page.goto("/app/matches");
+    await expect(mainHeading(page)).toHaveText(MATCHES_HEADING);
+    await expect(matchCards(page)).toHaveCount(3);
+    expect(await arriving(page)).toBe(0);
+  });
+});
+
+test.describe("Stop 3, the Morning Digest", () => {
+  const viewers = (page: Page) => page.getByRole("heading", { name: "Who viewed you" });
+  const overnight = (page: Page) => page.getByRole("heading", { name: "Also overnight" });
+
+  test("the rank line and Open today’s lead list lead as the Focus panel, and the lists below are flat", async ({
+    page,
+  }) => {
+    await openStop(page, stop(3));
+    await expect(focusPanel(page)).toHaveCount(1);
+    await expect(focusPanel(page)).not.toHaveCSS("box-shadow", "none");
+    await expect(focusPanel(page)).toContainText("#7 of 12 in Food Suppliers");
+    await expect(focusPanel(page)).toContainText(
+      "5 new leads, 2 companies viewed you, you moved up 1 place.",
+    );
+    await expect(focusPanel(page).getByRole("button")).toHaveText(["Open today’s lead list"]);
+    // The rank line is the screen's one serif line under its title.
+    const faces = await page
+      .locator("main")
+      .getByText(/#7|Morning digest|Who viewed you/)
+      .evaluateAll((els) => els.map((el) => getComputedStyle(el).fontFamily.includes("Serif")));
+    expect(faces).toEqual([true, true, false]);
+    for (const heading of [viewers(page), overnight(page)]) {
+      await expect(focusPanel(page).filter({ has: heading })).toHaveCount(0);
+      expect(await surfaceShadow(heading)).toBe("none");
+    }
+    const lead = await focusPanel(page).boundingBox();
+    const list = await viewers(page).boundingBox();
+    expect(list?.y).toBeGreaterThan((lead?.y ?? 0) + (lead?.height ?? 0));
+  });
+
+  test("its button opens today’s leads, where the selected Company is the Focus panel", async ({
+    page,
+  }) => {
+    await openStop(page, stop(3));
+    await mainHeading(page).focus();
+    await tabTo(page, focusPanel(page).getByRole("button", { name: "Open today’s lead list" }));
+    await page.keyboard.press("Enter");
+    await expect(mainHeading(page)).toHaveText("Today’s leads");
+    await expect(focusPanel(page)).toHaveCount(1);
+    await expect(focusPanel(page).getByRole("button", { name: "Skip", exact: true })).toBeVisible();
+  });
+
+  test("on a phone it is one column inset by 16px, the Focus panel first", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await openStop(page, stop(3));
+    const lead = await focusPanel(page).boundingBox();
+    expect(lead?.x).toBe(16);
+    expect(lead?.width).toBe(358);
+    const list = await viewers(page).boundingBox();
+    expect(list?.y).toBeGreaterThan((lead?.y ?? 0) + (lead?.height ?? 0));
+    await noSidewaysScroll(page);
+  });
+});
+
+test.describe("the Run of Show", () => {
+  // docs/presentations/2026-11-17-pilot-preview-run-of-show.md: every click it names, in its order.
+  test("every click it names is on screen, Stop by Stop", async ({ page }) => {
+    await page.goto(OPENING);
+    await page.getByRole("link", { name: "Start", exact: true }).click();
+
+    await expectStop(page, stop(1));
+    await page.getByRole("button", { name: "Run the import again" }).click();
+    await page.getByRole("button", { name: "Build profiles", exact: true }).click();
+    await expect(memberImport(page).getByText(IMPORT_RESULT)).toBeVisible({ timeout: 15_000 });
+    await memberRow(page, "Maple Bay Grocers").getByRole("button").click();
+    await expect(mainHeading(page)).toHaveText("Draft profile");
+    await page.getByRole("button", { name: "Back to chamber tools" }).click();
+    await nextLink(page).click();
+
+    await expectStop(page, stop(2));
+    await claimMessage(page).getByRole("button", { name: "Claim your profile" }).click();
+    await claimFromFirstScreen(page);
+    await page.getByRole("button", { name: /^Nordhavn Freight Forwarders/ }).click();
+    await page.getByRole("button", { name: "Message", exact: true }).click();
+    await page.getByRole("button", { name: "Send", exact: true }).click();
+    // Sent: the conversation now leads with the message.
+    await expect(
+      page.getByRole("button", { name: /^Nordhavn Freight Forwarders Hello Nordhavn/ }),
+    ).toBeVisible();
+    await nextLink(page).click();
+
+    await expectStop(page, stop(3));
+    await nextLink(page).click();
+
+    await expectStop(page, stop(4));
+    await tabRow(page).getByRole("link", { name: "Interest Signals" }).click();
+    await section(page, "ComMail").click();
+    await page
+      .getByRole("button", { name: /^Nordhavn Freight Forwarders.*We did business/ })
+      .click();
+    await expect(page.getByRole("button", { name: "We did business", exact: true })).toBeVisible();
+    await section(page, "Wins").click();
+    await expect(page).toHaveURL(/\/app\/wins$/);
+    await nextLink(page).click();
+
+    await expectStop(page, stop(5));
+    await statusFilter(page).getByRole("button", { name: "Needs an intro 40" }).click();
+    await sideStep(page).click();
+    await page.getByRole("button", { name: "Send introduction" }).click();
+    await backToView(page).click();
+    await nextLink(page).click();
+
+    await expectStop(page, stop(6));
+    await expect(page.getByText("ECCP gives two things")).toBeVisible();
+    await expect(emailLink(page)).toBeVisible();
+
+    await presenterGuide(page);
+    await expect(
+      guideDialog(page).getByRole("button", { name: "Possible future pricing", exact: true }),
+    ).toBeVisible();
+    await closeGuide(page);
+  });
+});
+
+test.describe("the chamber of 1,000, with 100 named examples", () => {
+  for (const width of [360, 390]) {
+    test(`at ${width} pixels, 1,000 and the example line fit on Stop 1 and Stop 5 with no sideways scroll`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width, height: 844 });
+      for (const s of [stop(1), stop(5)]) {
+        await openStop(page, s);
+        const line = membersPanel(page).getByText(EXAMPLE_LINE, { exact: true });
+        await expect(line).toBeVisible();
+        const rightOf = (part: typeof line) =>
+          part.evaluate((el) => el.getBoundingClientRect().right);
+        expect(await rightOf(line)).toBeLessThanOrEqual(width);
+        expect(await rightOf(figure(page, "Claimed"))).toBeLessThanOrEqual(width);
+        await noSidewaysScroll(page);
+      }
+    });
+  }
+
+  test("no screen in a Company's Seat says the chamber has 100 companies", async ({ page }) => {
+    for (const s of [stop(2), stop(3), stop(4)]) {
+      await openStop(page, s);
+      await expect(page.locator("main")).not.toContainText(
+        /\b100 (member )?(companies|members)\b/i,
+      );
+    }
+  });
+
+  test("the Pilot Preview opens with both later items off, whatever the full Demo had on", async ({
+    page,
+  }) => {
+    await openStop(page, stop(4));
+    await guideAction(page, "Two weeks in");
+    await flipSwitch(page, "Possible future pricing", true);
+    await expect(viewAs(page)).toBeVisible();
+    await page.goto(stop(4).path);
+    await expectStop(page, stop(4));
+    await expect(viewAs(page)).toHaveCount(0);
+    await presenterGuide(page);
+    for (const name of ["Possible future pricing", "After-MVP previews"]) {
+      await expect(guideDialog(page).getByRole("button", { name, exact: true })).toHaveAttribute(
+        "aria-pressed",
+        "false",
+      );
+    }
+    await closeGuide(page);
+  });
+});
+
+test.describe("the account menu in the Pilot Preview", () => {
+  test("at Stop 4 the mark opens the account menu, the people page and the privacy page", async ({
+    page,
+  }) => {
+    await openStop(page, stop(4));
+    const openMenu = () => page.getByRole("button", { name: "Open the account menu" }).click();
+    await openMenu();
+    await page.getByRole("menuitem", { name: "Admins and authorized users" }).click();
+    await expect(
+      page.getByRole("heading", { name: "Admins and authorized users", level: 1 }),
+    ).toBeVisible();
+    await expect(page.locator("main li")).toHaveCount(4);
+    await openMenu();
+    await page.getByRole("menuitem", { name: "Privacy and contact details" }).click();
+    await expect(
+      page.getByRole("heading", { name: "Privacy and contact details", level: 1 }),
+    ).toBeVisible();
+    await expect(page.getByText("Nordhavn Freight Forwarders", { exact: true })).toBeVisible();
+    await expect(page.getByText("Example data")).toBeVisible();
+  });
+});

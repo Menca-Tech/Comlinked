@@ -1,0 +1,355 @@
+{
+  "nodes": [
+    {
+      "id": "readme",
+      "label": "README.md: Comlinked overview and quickstart",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_supabase_setup",
+      "label": "Connect Supabase (hosted project or local CLI)",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": "L33",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_make_superadmin",
+      "label": "Make a superadmin by setting raw_app_meta_data role via SQL",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": "L56",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_rbac",
+      "label": "RBAC: role guards enforced in middleware and components",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": "L10",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_architecture_layout",
+      "label": "src/ architecture layout (app, components, services, lib)",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": "L85",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_deploy",
+      "label": "Deploy: Vercel zero-config or Docker standalone",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": "L117",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_runtime_requirements",
+      "label": "Node 22 and pnpm 10 pinned via Volta and packageManager",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": "L30",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_coding_standards",
+      "label": "Coding standards spec (docs/specs/2026-07-31-coding-standards.md)",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L18",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "readme",
+      "target": "context_web_app_template",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "readme",
+      "target": "docs_adr_0001_shadcn_tailwind_over_mui_joy_shadcn_tailwind",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "readme",
+      "target": "docs_adr_0002_supabase_only_auth_supabase_auth",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "readme",
+      "target": "context_service_seam",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "readme",
+      "target": "readme_rbac",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "readme",
+      "target": "claude_mvp_build_plan",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "readme",
+      "target": "context",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "readme",
+      "target": "readme_coding_standards",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "readme",
+      "target": "readme_runtime_requirements",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "readme",
+      "target": "readme_supabase_setup",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L33",
+      "weight": 1.0
+    },
+    {
+      "source": "readme",
+      "target": "readme_make_superadmin",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L56",
+      "weight": 1.0
+    },
+    {
+      "source": "readme",
+      "target": "readme_architecture_layout",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L85",
+      "weight": 1.0
+    },
+    {
+      "source": "readme",
+      "target": "docs_adr_0004_rsc_server_actions_first_rsc_reads_server_action_writes",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L105",
+      "weight": 1.0
+    },
+    {
+      "source": "readme",
+      "target": "docs_adr_0003_mock_first_service_seam",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L108",
+      "weight": 1.0
+    },
+    {
+      "source": "readme",
+      "target": "docs_adr_0004_rsc_server_actions_first",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L109",
+      "weight": 1.0
+    },
+    {
+      "source": "readme",
+      "target": "agents_feature_scaffold_pattern",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L111",
+      "weight": 1.0
+    },
+    {
+      "source": "readme",
+      "target": "readme_deploy",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L117",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_rbac",
+      "target": "context_guard",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "README.md",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_supabase_setup",
+      "target": "docs_adr_0002_supabase_only_auth_supabase_auth",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "README.md",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_make_superadmin",
+      "target": "context_superadmin",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L63",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_make_superadmin",
+      "target": "docs_adr_0005_multi_tenancy_two_tier_roles",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "README.md",
+      "source_location": "L58",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_architecture_layout",
+      "target": "context_reference_feature",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L93",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_architecture_layout",
+      "target": "context_marketing_landing",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "README.md",
+      "source_location": "L90",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_architecture_layout",
+      "target": "context_service_seam",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L97",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_deploy",
+      "target": "docs_adr_0008_free_mvp_product_direction_hosted_services",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "README.md",
+      "source_location": "L119",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_runtime_requirements",
+      "target": "docs_adr_0007_analytics_posthog_node_engine_pin",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "README.md",
+      "source_location": "L30",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

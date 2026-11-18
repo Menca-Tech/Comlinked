@@ -1,0 +1,268 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_skills_supabase_auth_skill",
+      "label": "supabase-auth skill",
+      "file_type": "document",
+      "source_file": ".claude/skills/supabase-auth/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_skills_supabase_auth_skill_three_client_contexts",
+      "label": "Three @supabase/ssr client contexts (browser, server, middleware)",
+      "file_type": "concept",
+      "source_file": ".claude/skills/supabase-auth/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_skills_supabase_auth_skill_cookie_adapter_get_set_remove",
+      "label": "Cookie adapter in get/set/remove shape",
+      "file_type": "rationale",
+      "source_file": ".claude/skills/supabase-auth/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Current Supabase docs use getAll/setAll; this repo keeps get/set/remove (still supported in 0.6.x) - match the existing shape."
+    },
+    {
+      "id": "_claude_skills_supabase_auth_skill_getuser_not_getsession",
+      "label": "Authorize with getUser(), never getSession()",
+      "file_type": "rationale",
+      "source_file": ".claude/skills/supabase-auth/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "getSession() reads the cookie without contacting the Auth server; getUser() revalidates the token."
+    },
+    {
+      "id": "_claude_skills_supabase_auth_skill_middleware_session_refresh",
+      "label": "Session refresh in middleware (write cookies to request and response)",
+      "file_type": "rationale",
+      "source_file": ".claude/skills/supabase-auth/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Server Components cannot write cookies."
+    },
+    {
+      "id": "_claude_skills_supabase_auth_skill_app_metadata_roles",
+      "label": "Roles from server-set app_metadata.role",
+      "file_type": "rationale",
+      "source_file": ".claude/skills/supabase-auth/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "user_metadata is user-editable, so it must never be trusted for roles."
+    },
+    {
+      "id": "_claude_skills_supabase_auth_skill_configured_or_disabled",
+      "label": "Configured-or-disabled auth (authDisabled dev bypass, prod fails closed)",
+      "file_type": "rationale",
+      "source_file": ".claude/skills/supabase-auth/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_skills_supabase_auth_skill",
+      "target": "_claude_skills_supabase_auth_skill_three_client_contexts",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/supabase-auth/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_supabase_auth_skill",
+      "target": "_claude_skills_supabase_auth_skill_cookie_adapter_get_set_remove",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/supabase-auth/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_supabase_auth_skill",
+      "target": "_claude_skills_supabase_auth_skill_getuser_not_getsession",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/supabase-auth/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_supabase_auth_skill",
+      "target": "_claude_skills_supabase_auth_skill_middleware_session_refresh",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/supabase-auth/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_supabase_auth_skill",
+      "target": "_claude_skills_supabase_auth_skill_app_metadata_roles",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/supabase-auth/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_supabase_auth_skill",
+      "target": "_claude_skills_supabase_auth_skill_configured_or_disabled",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/supabase-auth/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_supabase_auth_skill",
+      "target": "_claude_skills_drizzle_data_skill",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/supabase-auth/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_supabase_auth_skill",
+      "target": "_claude_skills_nextjs_app_router_skill",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/supabase-auth/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_supabase_auth_skill_three_client_contexts",
+      "target": "src_lib_supabase_client",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/supabase-auth/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_supabase_auth_skill_three_client_contexts",
+      "target": "src_lib_supabase_server",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/supabase-auth/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_supabase_auth_skill_three_client_contexts",
+      "target": "src_lib_supabase_middleware",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/supabase-auth/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_supabase_auth_skill_cookie_adapter_get_set_remove",
+      "target": "src_lib_supabase_server",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/supabase-auth/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_supabase_auth_skill_getuser_not_getsession",
+      "target": "src_lib_auth_session",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/supabase-auth/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_supabase_auth_skill_app_metadata_roles",
+      "target": "src_lib_authz",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/supabase-auth/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_supabase_auth_skill_configured_or_disabled",
+      "target": "src_config",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/supabase-auth/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_supabase_auth_skill_middleware_session_refresh",
+      "target": "src_middleware",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/supabase-auth/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_supabase_auth_skill_three_client_contexts",
+      "target": "_claude_skills_supabase_auth_skill_cookie_adapter_get_set_remove",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/supabase-auth/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_supabase_auth_skill_middleware_session_refresh",
+      "target": "_claude_skills_nextjs_app_router_skill_edge_middleware_nonce",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/supabase-auth/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

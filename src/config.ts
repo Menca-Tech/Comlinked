@@ -17,8 +17,9 @@ export interface Config {
 
 export const config = {
   site: {
-    name: "Comlinked",
-    description: "A Next.js + Supabase + shadcn/ui starter template.",
+    name: "ComLinked",
+    description:
+      "ComLinked gets your company its first business leads within 24 hours: a free profile, 3 matched companies on day one, and connections that stay with your company.",
     url: getSiteURL(),
     version: env.NEXT_PUBLIC_SITE_VERSION,
   },

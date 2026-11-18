@@ -1,0 +1,523 @@
+{
+  "nodes": [
+    {
+      "id": "docs_specs_2026_11_08_mvp_feature_status",
+      "label": "ComLinked MVP feature status",
+      "file_type": "document",
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_08_mvp_feature_status_local_mockup",
+      "label": "Local HTML mockup (frozen backup)",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L28",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_08_mvp_feature_status_simulated_engine",
+      "label": "Simulated engine (company-centred, LinkedIn-like)",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L98",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_08_mvp_feature_status_fit_score",
+      "label": "Fit Score",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L106",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_08_mvp_feature_status_connection_request_thresholds",
+      "label": "Connection Request thresholds (80 / 50)",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L107",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_08_mvp_feature_status_overnight_attention_formula",
+      "label": "Overnight attention formula",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L109",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_08_mvp_feature_status_unlike_linkedin",
+      "label": "Deliberately unlike LinkedIn",
+      "file_type": "rationale",
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L114",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Connections belong to companies, messaging is free with no connection gate, degree never changes search order, others see only counts and mutual connections, and each Chamber Network is separate."
+    },
+    {
+      "id": "docs_specs_2026_11_08_mvp_feature_status_new_member_boost",
+      "label": "New Member Boost (30 days at 10%)",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L79",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_08_mvp_feature_status_ai_lead_agent_preview",
+      "label": "AI Lead Agent preview (after the MVP)",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L125",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_08_mvp_feature_status_team_dashboard_preview",
+      "label": "ComLinked Team Dashboard preview",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L145",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Staff see counts, statuses and company names, never conversations or confidential items; a custom console is postponed to Phase 2."
+    },
+    {
+      "id": "docs_specs_2026_11_08_mvp_feature_status_agreed_for_demo",
+      "label": "Decisions agreed for the demo",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L84",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_08_mvp_feature_status_nextjs_port",
+      "label": "Next.js port under /app (browser-held simulation)",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L204",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_08_mvp_feature_status_still_needed_before_launch",
+      "label": "Still needed before any launch",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L164",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_08_mvp_feature_status_next_decision_company_org",
+      "label": "Next decision: is a Company / Chamber an Organization",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L198",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_specs_2026_11_08_mvp_feature_status",
+      "target": "docs_specs_2026_10_11_mvp_build_plan",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_08_mvp_feature_status",
+      "target": "docs_specs_2026_11_09_comlinked_srs",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_08_mvp_feature_status",
+      "target": "docs_specs_2026_10_11_mvp_build_plan_eccp_first_pilot",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_08_mvp_feature_status",
+      "target": "docs_specs_2026_10_11_mvp_build_plan_adoption_notes",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L182",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_08_mvp_feature_status",
+      "target": "docs_specs_2026_11_08_mvp_feature_status_local_mockup",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_08_mvp_feature_status",
+      "target": "docs_specs_2026_11_08_mvp_feature_status_simulated_engine",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_08_mvp_feature_status",
+      "target": "docs_specs_2026_11_08_mvp_feature_status_ai_lead_agent_preview",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_08_mvp_feature_status",
+      "target": "docs_specs_2026_11_08_mvp_feature_status_team_dashboard_preview",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_08_mvp_feature_status",
+      "target": "docs_specs_2026_11_08_mvp_feature_status_agreed_for_demo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_08_mvp_feature_status",
+      "target": "docs_specs_2026_11_08_mvp_feature_status_nextjs_port",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_08_mvp_feature_status",
+      "target": "docs_specs_2026_11_08_mvp_feature_status_still_needed_before_launch",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_08_mvp_feature_status",
+      "target": "docs_specs_2026_11_08_mvp_feature_status_next_decision_company_org",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_08_mvp_feature_status_local_mockup",
+      "target": "docs_mockup_index",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L28",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_08_mvp_feature_status_simulated_engine",
+      "target": "docs_specs_2026_11_08_mvp_feature_status_fit_score",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L106",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_08_mvp_feature_status_simulated_engine",
+      "target": "docs_specs_2026_11_08_mvp_feature_status_connection_request_thresholds",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L107",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_08_mvp_feature_status_simulated_engine",
+      "target": "docs_specs_2026_11_08_mvp_feature_status_overnight_attention_formula",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L109",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_08_mvp_feature_status_simulated_engine",
+      "target": "docs_specs_2026_11_08_mvp_feature_status_unlike_linkedin",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L114",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_08_mvp_feature_status_simulated_engine",
+      "target": "docs_specs_2026_11_17_pilot_preview_kalayaan_foods",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L104",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_08_mvp_feature_status_connection_request_thresholds",
+      "target": "docs_specs_2026_11_08_mvp_feature_status_fit_score",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L107",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_08_mvp_feature_status_unlike_linkedin",
+      "target": "docs_specs_2026_10_11_mvp_build_plan_company_owned_relationships",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_08_mvp_feature_status_new_member_boost",
+      "target": "docs_specs_2026_10_11_mvp_build_plan_d3_activity_score_and_search_rank",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L79",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_08_mvp_feature_status_ai_lead_agent_preview",
+      "target": "docs_specs_2026_10_21_ai_lead_agent_simulator",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L130",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_08_mvp_feature_status_ai_lead_agent_preview",
+      "target": "docs_specs_2026_10_21_ai_lead_agent",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L129",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_08_mvp_feature_status_ai_lead_agent_preview",
+      "target": "docs_specs_2026_10_21_ai_lead_agent_simulator_match_score",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L137",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_08_mvp_feature_status_ai_lead_agent_preview",
+      "target": "docs_specs_2026_10_21_ai_lead_agent_simulator_handoff_package",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L141",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_08_mvp_feature_status_ai_lead_agent_preview",
+      "target": "docs_specs_2026_10_11_mvp_build_plan_full_ai_lead_generation_agent",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_08_mvp_feature_status_ai_lead_agent_preview",
+      "target": "docs_specs_2026_10_11_mvp_build_plan_c4_outcome_buttons",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L142",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_08_mvp_feature_status_team_dashboard_preview",
+      "target": "docs_specs_2026_10_11_mvp_build_plan_pilot_targets",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L154",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_08_mvp_feature_status_team_dashboard_preview",
+      "target": "docs_specs_2026_10_11_mvp_build_plan_staff_access_conflict",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L193",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_08_mvp_feature_status_nextjs_port",
+      "target": "docs_adr_0010_client_side_product_simulation",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L208",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_08_mvp_feature_status_nextjs_port",
+      "target": "docs_specs_2026_11_09_website_redesign",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L216",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_08_mvp_feature_status_nextjs_port",
+      "target": "docs_specs_2026_11_11_comdash_redesign",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L217",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_08_mvp_feature_status_next_decision_company_org",
+      "target": "docs_specs_2026_10_11_mvp_build_plan_company_profile_visibility_conflict",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L201",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_08_mvp_feature_status_still_needed_before_launch",
+      "target": "docs_specs_2026_10_11_mvp_build_plan_privacy_security_review",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L176",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_08_mvp_feature_status_still_needed_before_launch",
+      "target": "docs_specs_2026_10_11_mvp_build_plan_draft_function",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L174",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_08_mvp_feature_status_agreed_for_demo",
+      "target": "docs_specs_2026_11_17_pilot_preview_presenter_guide",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-08-mvp-feature-status.md",
+      "source_location": "L95",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

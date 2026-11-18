@@ -44,4 +44,22 @@ describe("parseEnv", () => {
     const env = parseEnv({ NEXT_PUBLIC_LOG_LEVEL: "" });
     expect(env.NEXT_PUBLIC_LOG_LEVEL).toBeUndefined();
   });
+
+  it("parses the Pilot Preview presenter's address", () => {
+    const env = parseEnv({ NEXT_PUBLIC_PREVIEW_PRESENTER_EMAIL: "presenter@comlinked.example" });
+    expect(env.NEXT_PUBLIC_PREVIEW_PRESENTER_EMAIL).toBe("presenter@comlinked.example");
+  });
+
+  it("leaves the presenter's address unset when none or an empty one is given", () => {
+    expect(parseEnv({}).NEXT_PUBLIC_PREVIEW_PRESENTER_EMAIL).toBeUndefined();
+    expect(
+      parseEnv({ NEXT_PUBLIC_PREVIEW_PRESENTER_EMAIL: "" }).NEXT_PUBLIC_PREVIEW_PRESENTER_EMAIL,
+    ).toBeUndefined();
+  });
+
+  it("throws on a presenter's address that is not an email address, naming the variable", () => {
+    expect(() => parseEnv({ NEXT_PUBLIC_PREVIEW_PRESENTER_EMAIL: "richard" })).toThrow(
+      /NEXT_PUBLIC_PREVIEW_PRESENTER_EMAIL/,
+    );
+  });
 });

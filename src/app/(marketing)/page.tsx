@@ -1,13 +1,11 @@
-import { CTA } from "@/components/marketing/cta";
-import { Features } from "@/components/marketing/features";
-import { Hero } from "@/components/marketing/hero";
+import type { Metadata } from "next";
+
+import { HomeContent } from "@/components/marketing/home-content";
+
+export const metadata: Metadata = {
+  title: { absolute: "ComLinked: business connections your company keeps" },
+};
 
 export default function MarketingPage() {
-  return (
-    <>
-      <Hero />
-      <Features />
-      <CTA />
-    </>
-  );
+  return <HomeContent />;
 }

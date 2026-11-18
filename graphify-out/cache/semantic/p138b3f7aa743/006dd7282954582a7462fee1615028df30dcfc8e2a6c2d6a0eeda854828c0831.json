@@ -1,0 +1,194 @@
+{
+  "nodes": [
+    {
+      "id": "_scratch_website_redesign_issues_07_for_chambers_page",
+      "label": "Website redesign 07: For chambers page",
+      "file_type": "document",
+      "source_file": ".scratch/website-redesign/issues/07-for-chambers-page.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_scratch_website_redesign_issues_07_for_chambers_page_pilot_form",
+      "label": "Pilot request form",
+      "file_type": "concept",
+      "source_file": ".scratch/website-redesign/issues/07-for-chambers-page.md",
+      "source_location": "L58",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "zod: trimmed required fields, email, optional numeric member count, text capped at 200 and message at 1000; on valid submit a toast says nothing was sent, then router.push to the chamber tools, guarded against double submission."
+    },
+    {
+      "id": "_scratch_website_redesign_issues_07_for_chambers_page_activity_view_panel",
+      "label": "Activity view panel (marketing example)",
+      "file_type": "rationale",
+      "source_file": ".scratch/website-redesign/issues/07-for-chambers-page.md",
+      "source_location": "L40",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Example of who has claimed, who is active and who needs an intro; must not be a Network Ring, because that term means one Company at the centre."
+    },
+    {
+      "id": "_scratch_website_redesign_issues_07_for_chambers_page_for_chambers_sections",
+      "label": "For chambers seven sections",
+      "file_type": "concept",
+      "source_file": ".scratch/website-redesign/issues/07-for-chambers-page.md",
+      "source_location": "L49",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Navy hero, What your members get, How it works for your chamber (#how), What a pilot asks of you, What we commit to, Questions (#faq), Request a pilot form (#pilot)."
+    }
+  ],
+  "edges": [
+    {
+      "source": "_scratch_website_redesign_issues_07_for_chambers_page",
+      "target": "_scratch_website_redesign_issues_07_for_chambers_page_pilot_form",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/07-for-chambers-page.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_07_for_chambers_page",
+      "target": "_scratch_website_redesign_issues_07_for_chambers_page_activity_view_panel",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/07-for-chambers-page.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_07_for_chambers_page",
+      "target": "_scratch_website_redesign_issues_07_for_chambers_page_for_chambers_sections",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/07-for-chambers-page.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_07_for_chambers_page",
+      "target": "_scratch_website_redesign_issues_06_homepage_review_with_richard",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/07-for-chambers-page.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_07_for_chambers_page",
+      "target": "docs_specs_2026_11_09_website_redesign",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/07-for-chambers-page.md",
+      "source_location": "L39",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_07_for_chambers_page",
+      "target": "docs_specs_2026_10_11_mvp_build_plan",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/07-for-chambers-page.md",
+      "source_location": "L39",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_07_for_chambers_page_for_chambers_sections",
+      "target": "_scratch_website_redesign_issues_07_for_chambers_page_pilot_form",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/07-for-chambers-page.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_07_for_chambers_page_for_chambers_sections",
+      "target": "_scratch_website_redesign_issues_07_for_chambers_page_activity_view_panel",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/07-for-chambers-page.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_07_for_chambers_page_for_chambers_sections",
+      "target": "_scratch_website_redesign_issues_04_homepage_sections_questions_component",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/07-for-chambers-page.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_07_for_chambers_page_activity_view_panel",
+      "target": "_scratch_website_redesign_issues_02_homepage_hero_network_ring_example_tag",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/07-for-chambers-page.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_07_for_chambers_page_pilot_form",
+      "target": "_scratch_website_redesign_issues_05_validated_join_form_form_field",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/07-for-chambers-page.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_07_for_chambers_page_pilot_form",
+      "target": "_scratch_website_redesign_issues_05_validated_join_form_join_form",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/07-for-chambers-page.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_07_for_chambers_page_pilot_form",
+      "target": "src_components_marketing_pilot_form",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/07-for-chambers-page.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_07_for_chambers_page_activity_view_panel",
+      "target": "src_components_marketing_activity_view_panel",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/07-for-chambers-page.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

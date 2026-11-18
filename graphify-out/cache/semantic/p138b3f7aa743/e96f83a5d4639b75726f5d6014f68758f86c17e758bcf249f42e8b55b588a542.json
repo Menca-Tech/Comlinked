@@ -1,0 +1,904 @@
+{
+  "nodes": [
+    {
+      "id": "docs_specs_2026_11_17_pilot_preview",
+      "label": "Pilot Preview for ECCP",
+      "file_type": "document",
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_17_pilot_preview_pilot_preview",
+      "label": "Pilot Preview",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L26",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "A guided ten-minute walk made for ECCP's Chamber Leader, presented by Richard and replayable from a private link, so it must make sense without a presenter."
+    },
+    {
+      "id": "docs_specs_2026_11_17_pilot_preview_stops",
+      "label": "Stops (Opening plus six, one declared list)",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L222",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_17_pilot_preview_story_bar",
+      "label": "Story Bar",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L239",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_17_pilot_preview_seats",
+      "label": "Seats (Community Manager, Kalayaan Foods, Chamber Contact)",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L241",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_17_pilot_preview_community_manager",
+      "label": "Community Manager",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L71",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_17_pilot_preview_chamber_contact",
+      "label": "Chamber Contact",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L77",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_17_pilot_preview_activity_view",
+      "label": "ECCP's Activity View",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L286",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Day 14 figures fixed at 40 claimed of 100, 20 active, 4 need an intro, 3 deals, 2 wins, matching where the Section 8.1 targets stand two weeks in; shows each member's status only."
+    },
+    {
+      "id": "docs_specs_2026_11_17_pilot_preview_member_status",
+      "label": "Member status (Not yet claimed / Needs an intro / Active / Quiet)",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L292",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_17_pilot_preview_chamber_setting",
+      "label": "Chamber setting (one place names the chamber)",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L246",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_17_pilot_preview_claim_day",
+      "label": "One claim day per Company",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L260",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Replaces the fixed unclaimed list and the staff/chamber formula so search, profiles, matches, the Activity View, Team Dashboard and agent preview never disagree."
+    },
+    {
+      "id": "docs_specs_2026_11_17_pilot_preview_not_yet_claimed_basics",
+      "label": "Basics only before a Claim",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L267",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_17_pilot_preview_claim_message",
+      "label": "Claim message from ECCP",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L275",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_17_pilot_preview_member_list",
+      "label": "Member List (names and websites only)",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L282",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_17_pilot_preview_kalayaan_foods",
+      "label": "Kalayaan Foods",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L16",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_17_pilot_preview_nordhavn_freight_forwarders",
+      "label": "Nordhavn Freight Forwarders",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L254",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Replaces Palengke Online among Kalayaan's day-one Matches (decided 2026-11-17) so the story crosses the Europe-Philippines line."
+    },
+    {
+      "id": "docs_specs_2026_11_17_pilot_preview_network_100_companies",
+      "label": "100-Company invented network",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L253",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_17_pilot_preview_prepared_states",
+      "label": "Deterministic prepared Stop states",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L223",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_17_pilot_preview_two_weeks_in_seed",
+      "label": "One seed for Two weeks in (Day 14)",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L231",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_17_pilot_preview_later_items_switches",
+      "label": "Later-items switches (pricing, after-MVP previews)",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L308",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_17_pilot_preview_presenter_guide",
+      "label": "Presenter Guide",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L320",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_17_pilot_preview_run_of_show",
+      "label": "Run of Show",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L325",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_17_pilot_preview_the_ask",
+      "label": "The ask (Stop 6, Email Richard)",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L315",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_17_pilot_preview_questions_for_richard",
+      "label": "Questions for Richard",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L387",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Questions 2 and 3 set a privacy stance hard to walk back once promised to a chamber; worth an ADR if Richard agrees."
+    },
+    {
+      "id": "docs_specs_2026_11_17_pilot_preview_dated_wins",
+      "label": "Dated wins on the Success Wall",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L302",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_specs_2026_11_17_pilot_preview_name_check",
+      "label": "Invented-name check against real companies",
+      "file_type": "concept",
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L326",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview",
+      "target": "context",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview",
+      "target": "docs_specs_2026_10_11_mvp_build_plan",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview",
+      "target": "docs_specs_2026_11_17_pilot_preview_pilot_preview",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_pilot_preview",
+      "target": "docs_specs_2026_10_11_mvp_build_plan_eccp_first_pilot",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_pilot_preview",
+      "target": "docs_specs_2026_11_09_website_redesign_chamber_leader",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L28",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_pilot_preview",
+      "target": "docs_specs_2026_10_11_mvp_build_plan_richard",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_pilot_preview",
+      "target": "docs_specs_2026_11_17_pilot_preview_stops",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_pilot_preview",
+      "target": "docs_specs_2026_11_09_website_redesign_validated_forms",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L321",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_stops",
+      "target": "docs_specs_2026_11_17_pilot_preview_story_bar",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L222",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_stops",
+      "target": "docs_specs_2026_11_17_pilot_preview_seats",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L222",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_stops",
+      "target": "docs_specs_2026_11_17_pilot_preview_prepared_states",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L223",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_stops",
+      "target": "docs_specs_2026_11_17_pilot_preview_presenter_guide",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L222",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_seats",
+      "target": "docs_specs_2026_11_17_pilot_preview_community_manager",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L241",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_seats",
+      "target": "docs_specs_2026_11_17_pilot_preview_chamber_contact",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L241",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_seats",
+      "target": "docs_specs_2026_11_17_pilot_preview_kalayaan_foods",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L241",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_two_weeks_in_seed",
+      "target": "docs_specs_2026_11_17_pilot_preview_presenter_guide",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L231",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_two_weeks_in_seed",
+      "target": "docs_specs_2026_11_17_pilot_preview_prepared_states",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L231",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_activity_view",
+      "target": "docs_specs_2026_10_11_mvp_build_plan_chamber_basics",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_activity_view",
+      "target": "docs_specs_2026_10_11_mvp_build_plan_pilot_targets",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L291",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_activity_view",
+      "target": "docs_specs_2026_11_11_comdash_redesign",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L288",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_activity_view",
+      "target": "docs_specs_2026_11_17_pilot_preview_member_status",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L292",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_activity_view",
+      "target": "docs_specs_2026_11_17_pilot_preview_chamber_contact",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L296",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_activity_view",
+      "target": "docs_specs_2026_11_17_pilot_preview_community_manager",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L296",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_activity_view",
+      "target": "docs_specs_2026_10_11_mvp_build_plan_d5_monthly_top_companies",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L295",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_member_status",
+      "target": "docs_specs_2026_11_17_pilot_preview_claim_day",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_community_manager",
+      "target": "docs_specs_2026_10_11_mvp_build_plan_l4_community_manager_intros",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L49",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_community_manager",
+      "target": "docs_specs_2026_11_17_pilot_preview_member_list",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L72",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_claim_day",
+      "target": "docs_specs_2026_11_17_pilot_preview_not_yet_claimed_basics",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L265",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_claim_day",
+      "target": "docs_specs_2026_11_08_mvp_feature_status_team_dashboard_preview",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L260",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_claim_day",
+      "target": "docs_specs_2026_11_08_mvp_feature_status_ai_lead_agent_preview",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L260",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_not_yet_claimed_basics",
+      "target": "docs_specs_2026_10_11_mvp_build_plan_a1_pre_built_company_profiles",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L393",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_not_yet_claimed_basics",
+      "target": "docs_specs_2026_11_08_mvp_feature_status_fit_score",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L268",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_claim_message",
+      "target": "docs_specs_2026_10_11_mvp_build_plan_a2_claim_your_profile",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L392",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_claim_message",
+      "target": "docs_specs_2026_11_17_pilot_preview_chamber_setting",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L246",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_member_list",
+      "target": "docs_specs_2026_11_17_pilot_preview_not_yet_claimed_basics",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_kalayaan_foods",
+      "target": "docs_specs_2026_11_17_pilot_preview_nordhavn_freight_forwarders",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L254",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_nordhavn_freight_forwarders",
+      "target": "docs_specs_2026_10_11_mvp_build_plan_l1_day_one_matches",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L254",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_network_100_companies",
+      "target": "docs_mockup_index",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L253",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_network_100_companies",
+      "target": "docs_specs_2026_11_08_mvp_feature_status_simulated_engine",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_network_100_companies",
+      "target": "docs_specs_2026_11_17_pilot_preview_name_check",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L326",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_later_items_switches",
+      "target": "docs_specs_2026_11_11_comdash_redesign_view_as_plan_switcher",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L308",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_later_items_switches",
+      "target": "docs_specs_2026_11_08_mvp_feature_status_ai_lead_agent_preview",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L308",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_later_items_switches",
+      "target": "docs_specs_2026_11_08_mvp_feature_status_team_dashboard_preview",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L308",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_later_items_switches",
+      "target": "docs_specs_2026_11_17_pilot_preview_presenter_guide",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L320",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_the_ask",
+      "target": "docs_specs_2026_11_09_website_redesign_for_chambers_page",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L315",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_the_ask",
+      "target": "docs_specs_2026_10_11_mvp_build_plan_richard",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L315",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_the_ask",
+      "target": "docs_specs_2026_10_11_mvp_build_plan_free_for_everyone",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_questions_for_richard",
+      "target": "docs_specs_2026_10_11_mvp_build_plan_adoption_notes",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L327",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_questions_for_richard",
+      "target": "docs_specs_2026_11_09_comlinked_srs",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L391",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_questions_for_richard",
+      "target": "docs_specs_2026_10_11_mvp_build_plan_privacy_security_review",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L396",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_questions_for_richard",
+      "target": "docs_specs_2026_11_17_pilot_preview_community_manager",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L391",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_questions_for_richard",
+      "target": "docs_specs_2026_11_17_pilot_preview_claim_message",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L392",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_questions_for_richard",
+      "target": "docs_specs_2026_11_17_pilot_preview_not_yet_claimed_basics",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L393",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_run_of_show",
+      "target": "docs_specs_2026_11_17_pilot_preview_stops",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L325",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_run_of_show",
+      "target": "docs_specs_2026_11_17_pilot_preview_name_check",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L325",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_dated_wins",
+      "target": "docs_specs_2026_10_11_mvp_build_plan_s2_success_wall",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": "L302",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_dated_wins",
+      "target": "docs_specs_2026_11_17_pilot_preview_claim_day",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_chamber_setting",
+      "target": "docs_specs_2026_11_09_website_redesign_reserved_chamber_spot",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_specs_2026_11_17_pilot_preview_story_bar",
+      "target": "docs_specs_2026_11_09_website_redesign_working_mockup_ribbon",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "pilot_preview_walk_mechanics",
+      "label": "Pilot Preview walk: Stops, Story Bar, Seats and prepared states",
+      "nodes": [
+        "docs_specs_2026_11_17_pilot_preview_stops",
+        "docs_specs_2026_11_17_pilot_preview_story_bar",
+        "docs_specs_2026_11_17_pilot_preview_seats",
+        "docs_specs_2026_11_17_pilot_preview_prepared_states",
+        "docs_specs_2026_11_17_pilot_preview_two_weeks_in_seed"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/specs/2026-11-17-pilot-preview.md"
+    }
+  ]
+}

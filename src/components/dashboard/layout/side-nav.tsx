@@ -1,8 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Boxes } from "lucide-react";
 
 import {
   Sidebar,
@@ -31,8 +31,13 @@ export function AppSidebar({ allowedHrefs }: { allowedHrefs: string[] }) {
           href={paths.dashboard.overview}
           className="flex items-center gap-2 px-2 py-1.5 font-semibold"
         >
-          <Boxes className="size-5 shrink-0" />
-          <span className="truncate">{config.site.name}</span>
+          <Image
+            src="/assets/comlinked-logo.png"
+            alt={config.site.name}
+            width={120}
+            height={24}
+            priority
+          />
         </Link>
       </SidebarHeader>
       <SidebarContent>

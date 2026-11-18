@@ -1,0 +1,227 @@
+{
+  "nodes": [
+    {
+      "id": "_scratch_comdash_redesign_issues_02_session_2_signals_connections_plans_final",
+      "label": "ComDash redesign 02: Session 2 Interest Signals, Connections, plan switcher and final check",
+      "file_type": "document",
+      "source_file": ".scratch/comdash-redesign/issues/02-session-2-signals-connections-plans-final.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_scratch_comdash_redesign_issues_02_session_2_signals_connections_plans_final_plan_switcher",
+      "label": "View as Free / Growth / Pro plan switcher",
+      "file_type": "rationale",
+      "source_file": ".scratch/comdash-redesign/issues/02-session-2-signals-connections-plans-final.md",
+      "source_location": "L49",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Demo of possible future pricing labelled 'Possible future pricing. Not in the MVP.' Free opens by default and hides nothing; Growth adds the intent score; Pro adds interest from other chambers. No upgrade prompts."
+    },
+    {
+      "id": "_scratch_comdash_redesign_issues_02_session_2_signals_connections_plans_final_intent_score",
+      "label": "Intent score",
+      "file_type": "rationale",
+      "source_file": ".scratch/comdash-redesign/issues/02-session-2-signals-connections-plans-final.md",
+      "source_location": "L62",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "search 1, recommended 2, view 3, save 5, message 10; one per kind per day; capped at 100; shown only on Growth and Pro."
+    },
+    {
+      "id": "_scratch_comdash_redesign_issues_02_session_2_signals_connections_plans_final_interest_signals_tab",
+      "label": "Interest Signals tab with dated timeline",
+      "file_type": "concept",
+      "source_file": ".scratch/comdash-redesign/issues/02-session-2-signals-connections-plans-final.md",
+      "source_location": "L60",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_scratch_comdash_redesign_issues_02_session_2_signals_connections_plans_final_connections_tab",
+      "label": "Connections tab panels",
+      "file_type": "concept",
+      "source_file": ".scratch/comdash-redesign/issues/02-session-2-signals-connections-plans-final.md",
+      "source_location": "L61",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Manage connections; Invitations with Accept and Ignore ('Request ignored. They won't be notified.'); Companies in your chamber; Buyers of what you sell; From your connections."
+    },
+    {
+      "id": "_scratch_comdash_redesign_issues_02_session_2_signals_connections_plans_final_from_your_connections",
+      "label": "From your connections feed",
+      "file_type": "rationale",
+      "source_file": ".scratch/comdash-redesign/issues/02-session-2-signals-connections-plans-final.md",
+      "source_location": "L49",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Built only from Connections' Asks, Success Wall wins and profile updates, never a general news feed; replies use the AI draft rules."
+    }
+  ],
+  "edges": [
+    {
+      "source": "_scratch_comdash_redesign_issues_02_session_2_signals_connections_plans_final",
+      "target": "_scratch_comdash_redesign_issues_02_session_2_signals_connections_plans_final_plan_switcher",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/02-session-2-signals-connections-plans-final.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_02_session_2_signals_connections_plans_final",
+      "target": "_scratch_comdash_redesign_issues_02_session_2_signals_connections_plans_final_intent_score",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/02-session-2-signals-connections-plans-final.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_02_session_2_signals_connections_plans_final",
+      "target": "_scratch_comdash_redesign_issues_02_session_2_signals_connections_plans_final_interest_signals_tab",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/02-session-2-signals-connections-plans-final.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_02_session_2_signals_connections_plans_final",
+      "target": "_scratch_comdash_redesign_issues_02_session_2_signals_connections_plans_final_connections_tab",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/02-session-2-signals-connections-plans-final.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_02_session_2_signals_connections_plans_final",
+      "target": "_scratch_comdash_redesign_issues_02_session_2_signals_connections_plans_final_from_your_connections",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/02-session-2-signals-connections-plans-final.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_02_session_2_signals_connections_plans_final",
+      "target": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/02-session-2-signals-connections-plans-final.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_02_session_2_signals_connections_plans_final",
+      "target": "docs_specs_2026_11_11_comdash_redesign",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/02-session-2-signals-connections-plans-final.md",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_02_session_2_signals_connections_plans_final",
+      "target": "docs_specs_2026_11_08_mvp_feature_status",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/02-session-2-signals-connections-plans-final.md",
+      "source_location": "L53",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_02_session_2_signals_connections_plans_final",
+      "target": "docs_design_system_readme",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/02-session-2-signals-connections-plans-final.md",
+      "source_location": "L53",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_02_session_2_signals_connections_plans_final",
+      "target": "src_components_product_demo_guide",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/02-session-2-signals-connections-plans-final.md",
+      "source_location": "L53",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_02_session_2_signals_connections_plans_final_plan_switcher",
+      "target": "_scratch_comdash_redesign_issues_02_session_2_signals_connections_plans_final_intent_score",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/02-session-2-signals-connections-plans-final.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_02_session_2_signals_connections_plans_final_interest_signals_tab",
+      "target": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_interest_level_rule",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/02-session-2-signals-connections-plans-final.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_02_session_2_signals_connections_plans_final_connections_tab",
+      "target": "_scratch_comdash_redesign_issues_02_session_2_signals_connections_plans_final_from_your_connections",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/02-session-2-signals-connections-plans-final.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_02_session_2_signals_connections_plans_final_from_your_connections",
+      "target": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_ai_drafts_person_decides",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/02-session-2-signals-connections-plans-final.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_02_session_2_signals_connections_plans_final",
+      "target": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_code_quality_points",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/02-session-2-signals-connections-plans-final.md",
+      "source_location": "L71",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

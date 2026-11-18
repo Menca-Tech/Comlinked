@@ -1,0 +1,793 @@
+{
+  "nodes": [
+    {
+      "id": "docs_design_system_readme",
+      "label": "ComLinked Design System README",
+      "file_type": "document",
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_system_readme_logo_palette",
+      "label": "Logo-derived palette: blue #55A2D4, grey #838587",
+      "file_type": "concept",
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L28",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_system_readme_accent_tokens",
+      "label": "Accent tokens cl-blue #286FA3 on paper, cl-sky #55A2D4 on dark via --accent-current",
+      "file_type": "concept",
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L64",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "cl-blue is the logo blue deepened to read as text (4.9:1 on paper); cl-sky is the pure logo blue (6.1:1 on dark)."
+    },
+    {
+      "id": "docs_design_system_readme_nunito_sans",
+      "label": "Nunito Sans (one family for headlines and text)",
+      "file_type": "concept",
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L73",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Rounded Nunito was tried for headlines and dropped: too soft at display sizes for a B2B audience."
+    },
+    {
+      "id": "docs_design_system_readme_source_serif_4",
+      "label": "Source Serif 4 for App Mode page titles and rank figure",
+      "file_type": "concept",
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L138",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_system_readme_logo_ring_motif",
+      "label": "Logo ring motif (.cl-ring, background rings)",
+      "file_type": "concept",
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L94",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_system_readme_arcbound_design_system",
+      "label": "Arcbound Design System (starting structure, replaced in Review 4)",
+      "file_type": "concept",
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L27",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Type, labels, markers, square shapes and glows were replaced so ComLinked does not look like Arcbound."
+    },
+    {
+      "id": "docs_design_system_readme_voice",
+      "label": "Voice: plain, company-first, sentence case, no emoji or exclamation",
+      "file_type": "rationale",
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L38",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_system_readme_initials_company_marks",
+      "label": "Initials-only company marks (squares mean companies, circles people)",
+      "file_type": "rationale",
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L110",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_system_readme_lucide_icons",
+      "label": "Lucide icons for App Mode controls (2px stroke)",
+      "file_type": "concept",
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L115",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_system_readme_app_navigation",
+      "label": "App Mode navigation: ComDash, Leads, ComMail, Asks, Wins",
+      "file_type": "concept",
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L132",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_system_readme_comdash_tabs",
+      "label": "ComDash tabs: Overview, Interest Signals, AI Lead Agent, Connections, Profile",
+      "file_type": "concept",
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L156",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_system_readme_view_as_switcher",
+      "label": "View as switcher: Free, Growth, Pro (possible future pricing, never blur)",
+      "file_type": "concept",
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L178",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_system_readme_comdash_redesign_spec",
+      "label": "ComDash redesign spec (docs/specs/2026-11-11-comdash-redesign.md)",
+      "file_type": "document",
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L157",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_system_readme_container_rules",
+      "label": "Containers: one raised panel per column, never a card per row",
+      "file_type": "rationale",
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L185",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_system_readme_colour_status_rules",
+      "label": "Colour and status: one accent, no new hues",
+      "file_type": "rationale",
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L190",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_system_readme_lead_row",
+      "label": "Lead row component (selected, waiting, done)",
+      "file_type": "concept",
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L211",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_system_readme_rank_line",
+      "label": "Rank line component (rank figure, category, Activity Score)",
+      "file_type": "concept",
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L208",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_system_readme_example_data_tag",
+      "label": "Example data tag on every mockup screen",
+      "file_type": "rationale",
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L226",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Ensures a screenshot is never mistaken for real activity."
+    },
+    {
+      "id": "docs_design_system_readme_element_job_test",
+      "label": "Element job test: remove any element whose removal loses nothing",
+      "file_type": "rationale",
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L231",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_system_readme_react_primitives",
+      "label": "React primitives on window.ComLinkedDesignSystem_55a2d4",
+      "file_type": "concept",
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L254",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_system_readme_tokens_json",
+      "label": "tokens.json design tokens",
+      "file_type": "concept",
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L276",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_design_system_readme",
+      "target": "context_comlinked_design_system",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme",
+      "target": "context_site_mode",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme",
+      "target": "context_app_mode",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme",
+      "target": "docs_adr_0010_client_side_product_simulation_html_mockup",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme",
+      "target": "docs_design_system_readme_logo_palette",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L28",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme",
+      "target": "docs_design_system_readme_accent_tokens",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L64",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme",
+      "target": "docs_design_system_readme_nunito_sans",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L73",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme",
+      "target": "docs_design_system_readme_source_serif_4",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L138",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme",
+      "target": "docs_design_system_readme_logo_ring_motif",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L94",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme",
+      "target": "docs_design_system_readme_arcbound_design_system",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme",
+      "target": "docs_design_system_readme_voice",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L38",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme",
+      "target": "docs_design_system_readme_initials_company_marks",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L110",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme",
+      "target": "docs_design_system_readme_lucide_icons",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L115",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme",
+      "target": "docs_design_system_readme_app_navigation",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L132",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme",
+      "target": "docs_design_system_readme_comdash_tabs",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L156",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme",
+      "target": "docs_design_system_readme_view_as_switcher",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L178",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme",
+      "target": "docs_design_system_readme_comdash_redesign_spec",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L157",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme",
+      "target": "docs_design_system_readme_container_rules",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L185",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme",
+      "target": "docs_design_system_readme_colour_status_rules",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L190",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme",
+      "target": "docs_design_system_readme_lead_row",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L211",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme",
+      "target": "docs_design_system_readme_rank_line",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L208",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme",
+      "target": "docs_design_system_readme_example_data_tag",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L226",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme",
+      "target": "docs_design_system_readme_element_job_test",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L231",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme",
+      "target": "docs_design_system_readme_react_primitives",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L254",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme",
+      "target": "docs_design_system_readme_tokens_json",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L276",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme_accent_tokens",
+      "target": "docs_design_system_readme_logo_palette",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L64",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme_logo_ring_motif",
+      "target": "docs_design_system_readme_logo_palette",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L94",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme_source_serif_4",
+      "target": "context_app_mode",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L138",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme_source_serif_4",
+      "target": "docs_design_system_readme_rank_line",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L145",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme_lucide_icons",
+      "target": "context_app_mode",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L115",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme_lucide_icons",
+      "target": "docs_adr_0001_shadcn_tailwind_over_mui_joy_retained_libraries",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L115",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme_app_navigation",
+      "target": "context_comdash",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L132",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme_app_navigation",
+      "target": "context_commail",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L132",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme_app_navigation",
+      "target": "context_ask",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L132",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme_app_navigation",
+      "target": "context_success_wall",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L132",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme_comdash_tabs",
+      "target": "context_comdash",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L156",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme_comdash_tabs",
+      "target": "docs_design_system_readme_comdash_redesign_spec",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L157",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme_comdash_tabs",
+      "target": "context_interest_signal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L166",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme_comdash_tabs",
+      "target": "context_ai_lead_agent",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L164",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme_comdash_tabs",
+      "target": "context_connection",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L174",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme_view_as_switcher",
+      "target": "docs_design_system_readme_comdash_tabs",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L178",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme_view_as_switcher",
+      "target": "docs_adr_0008_free_mvp_product_direction_free_launch",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L179",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme_lead_row",
+      "target": "context_fit_score",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L213",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme_lead_row",
+      "target": "context_lead",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L211",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme_rank_line",
+      "target": "context_activity_score",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L208",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme_initials_company_marks",
+      "target": "context_company",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L110",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme_example_data_tag",
+      "target": "docs_adr_0010_client_side_product_simulation_html_mockup",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L226",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme_react_primitives",
+      "target": "docs_design_system_readme_arcbound_design_system",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L267",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme_react_primitives",
+      "target": "docs_design_system_readme_tokens_json",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L255",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme_container_rules",
+      "target": "context_app_mode",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L185",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme_colour_status_rules",
+      "target": "context_app_mode",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L190",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme_voice",
+      "target": "context_authorized_representative",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L39",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme_nunito_sans",
+      "target": "context_site_mode",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L73",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_system_readme_example_data_tag",
+      "target": "context_demo",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "docs/design-system/README.md",
+      "source_location": "L226",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

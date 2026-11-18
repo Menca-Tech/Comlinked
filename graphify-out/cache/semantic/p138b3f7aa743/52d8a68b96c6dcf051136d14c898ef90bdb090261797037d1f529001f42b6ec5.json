@@ -1,0 +1,371 @@
+{
+  "nodes": [
+    {
+      "id": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask",
+      "label": "Pilot Preview 04: Stops 1, 2 and 6 - the Member List, ECCP's message and the ask",
+      "file_type": "document",
+      "source_file": ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_member_list_import",
+      "label": "Member List import (names and websites only)",
+      "file_type": "rationale",
+      "source_file": ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md",
+      "source_location": "L88",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "The list holds only company names and websites; the import ends '100 profiles built. 100 claim links ready for ECCP to send.' and never says a link was sent, because ECCP sends claim links from its own address."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_claim_message",
+      "label": "Claim message from ECCP Membership to Ana Reyes",
+      "file_type": "rationale",
+      "source_file": ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md",
+      "source_location": "L89",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Example wording that ECCP approves; the match count is computed and the sentence is dropped when fewer than three Matches exist; its button opens the first claim screen."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_the_ask",
+      "label": "Stop 6 ask: What a pilot asks of ECCP",
+      "file_type": "rationale",
+      "source_file": ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md",
+      "source_location": "L96",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Two asks (the Member List and one contact), what ComLinked does, the four member benefits, 'The pilot is free for ECCP and its members.', and a mailto 'Email Richard' link with the subject 'ECCP pilot on ComLinked'; the Demo sends and stores nothing."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_presenter_email_env",
+      "label": "NEXT_PUBLIC_PREVIEW_PRESENTER_EMAIL",
+      "file_type": "rationale",
+      "source_file": ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md",
+      "source_location": "L95",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Optional validated email in src/env.ts, a deployment setting never written into the repository; with no address Stop 6 shows no button and says 'Reply to the person who sent you this link.'"
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_explore_on_your_own",
+      "label": "Explore on your own",
+      "file_type": "concept",
+      "source_file": ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md",
+      "source_location": "L104",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Opens the ComDash Overview on Day 14 still inside the Pilot Preview with the later items hidden; the Story Bar shrinks to one line linking back to Stop 6."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_member_benefits_module",
+      "label": "Four member benefits module",
+      "file_type": "rationale",
+      "source_file": ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md",
+      "source_location": "L82",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "One module read by both the For Chambers page and the ask, so the benefits have one source."
+    },
+    {
+      "id": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_ana_reyes",
+      "label": "Ana Reyes (Kalayaan Foods representative)",
+      "file_type": "concept",
+      "source_file": ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md",
+      "source_location": "L90",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask",
+      "target": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_member_list_import",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask",
+      "target": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_claim_message",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask",
+      "target": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_the_ask",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask",
+      "target": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_presenter_email_env",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask",
+      "target": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_explore_on_your_own",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask",
+      "target": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_member_benefits_module",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask",
+      "target": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_ana_reyes",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask",
+      "target": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask",
+      "target": "docs_specs_2026_11_17_pilot_preview",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md",
+      "source_location": "L55",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_member_list_import",
+      "target": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_network_of_100",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_claim_message",
+      "target": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_chamber_setting",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_claim_message",
+      "target": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_ana_reyes",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_claim_message",
+      "target": "_scratch_pilot_preview_issues_01_claim_day_and_network_of_100_kalayaan_foods",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_the_ask",
+      "target": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_presenter_email_env",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_the_ask",
+      "target": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_member_benefits_module",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_the_ask",
+      "target": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_six_stops",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_explore_on_your_own",
+      "target": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_story_bar",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_explore_on_your_own",
+      "target": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_later_item_switches",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_member_list_import",
+      "target": "src_components_product_chamber_member_import",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_claim_message",
+      "target": "src_components_product_screens_claim_message",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_the_ask",
+      "target": "src_components_product_screens_preview_ask",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_presenter_email_env",
+      "target": "src_env",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_member_benefits_module",
+      "target": "src_components_marketing_for_chambers_members_section",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_the_ask",
+      "target": "_scratch_pilot_preview_issues_06_names_run_of_show_and_final_check_richard",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask",
+      "target": "_scratch_website_redesign_issues_07_for_chambers_page_pilot_form",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md",
+      "source_location": "L62",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_07_for_chambers_page_pilot_form",
+      "target": "_scratch_pilot_preview_issues_03_walk_the_preview_and_hide_later_items_opening",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_pilot_preview_issues_04_member_list_message_and_the_ask_member_benefits_module",
+      "target": "_scratch_website_redesign_issues_07_for_chambers_page_for_chambers_sections",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".scratch/pilot-preview/issues/04-member-list-message-and-the-ask.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

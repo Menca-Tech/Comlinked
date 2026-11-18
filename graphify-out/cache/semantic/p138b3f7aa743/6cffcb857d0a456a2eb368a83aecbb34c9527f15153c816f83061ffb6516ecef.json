@@ -1,0 +1,121 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_skills_tailwind_v4_references_theming",
+      "label": "Theming token architecture (reference)",
+      "file_type": "document",
+      "source_file": ".claude/skills/tailwind-v4/references/theming.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_skills_tailwind_v4_references_theming_two_layer_tokens",
+      "label": "Two token layers: raw oklch tokens on :root/.dark + @theme inline mapping",
+      "file_type": "rationale",
+      "source_file": ".claude/skills/tailwind-v4/references/theming.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": ".dark is the only place a color's light/dark value is defined."
+    },
+    {
+      "id": "_claude_skills_tailwind_v4_references_theming_add_semantic_color",
+      "label": "Procedure: add a semantic color (raw token in :root and .dark, then map)",
+      "file_type": "rationale",
+      "source_file": ".claude/skills/tailwind-v4/references/theming.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_skills_tailwind_v4_references_theming",
+      "target": "_claude_skills_tailwind_v4_references_theming_two_layer_tokens",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/tailwind-v4/references/theming.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_tailwind_v4_references_theming",
+      "target": "_claude_skills_tailwind_v4_references_theming_add_semantic_color",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/tailwind-v4/references/theming.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_tailwind_v4_references_theming",
+      "target": "_claude_skills_tailwind_v4_skill",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/tailwind-v4/references/theming.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_tailwind_v4_references_theming_add_semantic_color",
+      "target": "_claude_skills_shadcn_ui_skill",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/tailwind-v4/references/theming.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_tailwind_v4_references_theming",
+      "target": "src_app_layout",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/tailwind-v4/references/theming.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_tailwind_v4_references_theming_add_semantic_color",
+      "target": "_claude_skills_tailwind_v4_references_theming_two_layer_tokens",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/skills/tailwind-v4/references/theming.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_tailwind_v4_references_theming_two_layer_tokens",
+      "target": "_claude_skills_tailwind_v4_skill_theme_inline",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".claude/skills/tailwind-v4/references/theming.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_skills_tailwind_v4_references_theming",
+      "target": "_claude_skills_tailwind_v4_skill_class_based_dark_mode",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".claude/skills/tailwind-v4/references/theming.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

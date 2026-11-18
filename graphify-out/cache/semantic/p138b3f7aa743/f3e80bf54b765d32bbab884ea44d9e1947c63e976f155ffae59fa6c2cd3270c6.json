@@ -1,0 +1,269 @@
+{
+  "nodes": [
+    {
+      "id": "_scratch_comdash_redesign_issues_04_interest_signals_exact_prototype",
+      "label": "ComDash redesign 04: Interest Signals copies the prototype exactly with MVP data",
+      "file_type": "document",
+      "source_file": ".scratch/comdash-redesign/issues/04-interest-signals-exact-prototype.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_scratch_comdash_redesign_issues_04_interest_signals_exact_prototype_six_tiles",
+      "label": "Six tiles with Messages highlighted",
+      "file_type": "concept",
+      "source_file": ".scratch/comdash-redesign/issues/04-interest-signals-exact-prototype.md",
+      "source_location": "L72",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Search appearances, Recommendations, Messages, Introductions, Profile views, Profile saves; change lines hidden with no previous period; Connections removed from the row."
+    },
+    {
+      "id": "_scratch_comdash_redesign_issues_04_interest_signals_exact_prototype_funnel_suggestion_rule",
+      "label": "Interest funnel with suggestion rule",
+      "file_type": "rationale",
+      "source_file": ".scratch/comdash-redesign/issues/04-interest-signals-exact-prototype.md",
+      "source_location": "L74",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Counts distinct Companies over the last 14 days; whole-number percentage of previous (one decimal under 10%, none when the previous step is 0); one suggestion line picked by a fixed rule from the biggest drop."
+    },
+    {
+      "id": "_scratch_comdash_redesign_issues_04_interest_signals_exact_prototype_interested_companies_table",
+      "label": "Interested companies table",
+      "file_type": "concept",
+      "source_file": ".scratch/comdash-redesign/issues/04-interest-signals-exact-prototype.md",
+      "source_location": "L75",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Columns Company, Interest Level, Latest signal and Action ('Messaged' / 'Connected' status or a Message button opening the AI draft); the whole row opens the drawer; Pro rows add '\u00b7 other chamber'."
+    },
+    {
+      "id": "_scratch_comdash_redesign_issues_04_interest_signals_exact_prototype_light_activity_fold",
+      "label": "Light activity fold for search-only New companies",
+      "file_type": "concept",
+      "source_file": ".scratch/comdash-redesign/issues/04-interest-signals-exact-prototype.md",
+      "source_location": "L80",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_scratch_comdash_redesign_issues_04_interest_signals_exact_prototype_chart_note",
+      "label": "Visibility chart note (seam function)",
+      "file_type": "rationale",
+      "source_file": ".scratch/comdash-redesign/issues/04-interest-signals-exact-prototype.md",
+      "source_location": "L73",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "'Since you claimed your profile on Day N', plus 'Search appearances are rising.' when the latest day beats the first-week average; computed at the seam."
+    },
+    {
+      "id": "_scratch_comdash_redesign_issues_04_interest_signals_exact_prototype_prototype_measurements",
+      "label": "Prototype measurements in App Mode colours",
+      "file_type": "rationale",
+      "source_file": ".scratch/comdash-redesign/issues/04-interest-signals-exact-prototype.md",
+      "source_location": "L56",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Copy px sizes, gaps, radii, grid columns and breakpoints 1100/760/480 into product.css; never the prototype's colours, fonts, figures, blur, upsells or agent wording."
+    }
+  ],
+  "edges": [
+    {
+      "source": "_scratch_comdash_redesign_issues_04_interest_signals_exact_prototype",
+      "target": "_scratch_comdash_redesign_issues_04_interest_signals_exact_prototype_six_tiles",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/04-interest-signals-exact-prototype.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_04_interest_signals_exact_prototype",
+      "target": "_scratch_comdash_redesign_issues_04_interest_signals_exact_prototype_funnel_suggestion_rule",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/04-interest-signals-exact-prototype.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_04_interest_signals_exact_prototype",
+      "target": "_scratch_comdash_redesign_issues_04_interest_signals_exact_prototype_interested_companies_table",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/04-interest-signals-exact-prototype.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_04_interest_signals_exact_prototype",
+      "target": "_scratch_comdash_redesign_issues_04_interest_signals_exact_prototype_light_activity_fold",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/04-interest-signals-exact-prototype.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_04_interest_signals_exact_prototype",
+      "target": "_scratch_comdash_redesign_issues_04_interest_signals_exact_prototype_chart_note",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/04-interest-signals-exact-prototype.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_04_interest_signals_exact_prototype",
+      "target": "_scratch_comdash_redesign_issues_04_interest_signals_exact_prototype_prototype_measurements",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/04-interest-signals-exact-prototype.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_04_interest_signals_exact_prototype",
+      "target": "_scratch_comdash_redesign_issues_03_fix_interest_signals_layout",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/04-interest-signals-exact-prototype.md",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_04_interest_signals_exact_prototype",
+      "target": "docs_specs_2026_11_11_comdash_redesign",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/04-interest-signals-exact-prototype.md",
+      "source_location": "L55",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_04_interest_signals_exact_prototype_prototype_measurements",
+      "target": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_comdash_prototype",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/04-interest-signals-exact-prototype.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_04_interest_signals_exact_prototype_six_tiles",
+      "target": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_overview_panels",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".scratch/comdash-redesign/issues/04-interest-signals-exact-prototype.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_04_interest_signals_exact_prototype_six_tiles",
+      "target": "src_components_product_comdash_top_numbers",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/04-interest-signals-exact-prototype.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_04_interest_signals_exact_prototype_interested_companies_table",
+      "target": "_scratch_comdash_redesign_issues_03_fix_interest_signals_layout_level_filter",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/04-interest-signals-exact-prototype.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_04_interest_signals_exact_prototype_interested_companies_table",
+      "target": "_scratch_comdash_redesign_issues_03_fix_interest_signals_layout_signal_drawer",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/04-interest-signals-exact-prototype.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_04_interest_signals_exact_prototype_interested_companies_table",
+      "target": "src_components_product_comdash_interested_companies",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/04-interest-signals-exact-prototype.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_04_interest_signals_exact_prototype_interested_companies_table",
+      "target": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_ai_drafts_person_decides",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/04-interest-signals-exact-prototype.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_04_interest_signals_exact_prototype_light_activity_fold",
+      "target": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_interest_level_rule",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".scratch/comdash-redesign/issues/04-interest-signals-exact-prototype.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_03_fix_interest_signals_layout_signal_drawer",
+      "target": "_scratch_comdash_redesign_issues_02_session_2_signals_connections_plans_final_intent_score",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".scratch/comdash-redesign/issues/04-interest-signals-exact-prototype.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_comdash_redesign_issues_04_interest_signals_exact_prototype_chart_note",
+      "target": "_scratch_comdash_redesign_issues_01_session_1_shell_overview_next_action_service_seam",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/comdash-redesign/issues/04-interest-signals-exact-prototype.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

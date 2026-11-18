@@ -1,0 +1,174 @@
+{
+  "nodes": [
+    {
+      "id": "_scratch_website_redesign_issues_09_comdash_page",
+      "label": "Website redesign 09: ComDash page",
+      "file_type": "document",
+      "source_file": ".scratch/website-redesign/issues/09-comdash-page.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_scratch_website_redesign_issues_09_comdash_page_whos_interested_panel",
+      "label": "Who's interested panel",
+      "file_type": "concept",
+      "source_file": ".scratch/website-redesign/issues/09-comdash-page.md",
+      "source_location": "L49",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Server component listing named example companies and their signal with an Example tag and one aria-label; the only place a rank figure such as '#4 of 12 in Food Suppliers' may appear."
+    },
+    {
+      "id": "_scratch_website_redesign_issues_09_comdash_page_rank_relevance_first",
+      "label": "Rank: relevance first, activity up to 30%",
+      "file_type": "rationale",
+      "source_file": ".scratch/website-redesign/issues/09-comdash-page.md",
+      "source_location": "L35",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Search rank is relevance first, with activity raising a Company among relevant results by up to 30%; point values match plan Section 4 exactly."
+    },
+    {
+      "id": "_scratch_website_redesign_issues_09_comdash_page_four_interest_signals",
+      "label": "Four Interest Signals",
+      "file_type": "concept",
+      "source_file": ".scratch/website-redesign/issues/09-comdash-page.md",
+      "source_location": "L35",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Found you in search, viewed your profile, messaged you, was recommended your company; names are never hidden."
+    }
+  ],
+  "edges": [
+    {
+      "source": "_scratch_website_redesign_issues_09_comdash_page",
+      "target": "_scratch_website_redesign_issues_09_comdash_page_whos_interested_panel",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/09-comdash-page.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_09_comdash_page",
+      "target": "_scratch_website_redesign_issues_09_comdash_page_rank_relevance_first",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/09-comdash-page.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_09_comdash_page",
+      "target": "_scratch_website_redesign_issues_09_comdash_page_four_interest_signals",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/09-comdash-page.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_09_comdash_page",
+      "target": "_scratch_website_redesign_issues_06_homepage_review_with_richard",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/09-comdash-page.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_09_comdash_page",
+      "target": "docs_specs_2026_11_09_website_redesign",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/09-comdash-page.md",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_09_comdash_page",
+      "target": "docs_specs_2026_10_11_mvp_build_plan",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/09-comdash-page.md",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_09_comdash_page",
+      "target": "_scratch_website_redesign_issues_08_how_it_works_page_closing_cta",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/09-comdash-page.md",
+      "source_location": "L61",
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_09_comdash_page_whos_interested_panel",
+      "target": "_scratch_website_redesign_issues_02_homepage_hero_network_ring_example_tag",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/09-comdash-page.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_09_comdash_page_whos_interested_panel",
+      "target": "src_components_marketing_whos_interested_panel",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/09-comdash-page.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_09_comdash_page_rank_relevance_first",
+      "target": "docs_specs_2026_10_11_mvp_build_plan",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".scratch/website-redesign/issues/09-comdash-page.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_09_comdash_page_whos_interested_panel",
+      "target": "_scratch_comdash_redesign_issues_04_interest_signals_exact_prototype_interested_companies_table",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".scratch/website-redesign/issues/09-comdash-page.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_scratch_website_redesign_issues_09_comdash_page_four_interest_signals",
+      "target": "_scratch_comdash_redesign_issues_04_interest_signals_exact_prototype_six_tiles",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".scratch/website-redesign/issues/09-comdash-page.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}
