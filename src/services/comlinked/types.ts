@@ -193,6 +193,17 @@ export interface Person {
   phone: string;
 }
 
+/** One person on the people page: their role's label and plain line, whether they are the
+ * signed-in person, and what the signed-in person may do to them. */
+export interface PersonRow {
+  person: Person;
+  role: string;
+  line: string;
+  you: boolean;
+  canMakePrimary: boolean;
+  canRemove: boolean;
+}
+
 export type RuleKey =
   "list" | "profile" | "reply" | "ask" | "conn" | "meet" | "deal" | "testimonial" | "invite";
 

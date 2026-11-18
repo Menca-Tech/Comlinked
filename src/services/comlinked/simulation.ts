@@ -67,6 +67,8 @@ import type {
   PlanTerms,
   PlanUpsell,
   Person,
+  PersonRole,
+  PersonRow,
   PlanView,
   PreviewStop,
   ProfileField,
@@ -434,7 +436,36 @@ export function connected() {
   });
 }
 /* ---------- Kalayaan Foods' people ---------- */
-function personWith(role: Person["role"]) {
+/** Each role: its label, the plain line of what it can do, and whether it is an admin. Admins
+ * send and accept Connection Requests and manage people; Authorized Users only send. The limits
+ * are described, not enforced: the Demo stays signed in as Ana. Adding a role adds it here. */
+const ROLES: Record<PersonRole, { label: string; line: string; admin: boolean }> = {
+  primary: {
+    label: "Primary admin",
+    line: "Sends and accepts connection requests, and manages people. The only one who can remove the backup admin.",
+    admin: true,
+  },
+  backup: {
+    label: "Backup admin",
+    line: "Sends and accepts connection requests, and manages people. Covers for the primary admin.",
+    admin: true,
+  },
+  sales: {
+    label: "Authorized user · Sales",
+    line: "Sends connection requests to possible customers. An admin accepts requests.",
+    admin: false,
+  },
+  procurement: {
+    label: "Authorized user · Procurement",
+    line: "Sends connection requests to possible suppliers. An admin accepts requests.",
+    admin: false,
+  },
+};
+/** A role as people read it, such as "Primary admin". */
+export function roleLabel(role: PersonRole) {
+  return ROLES[role].label;
+}
+function personWith(role: PersonRole) {
   return S.me.people.find(function (p) {
     return p.role === role;
   });
@@ -457,6 +488,39 @@ export function signedIn(): Person {
   });
   if (!p) throw new Error("The signed-in person has no place in Kalayaan Foods");
   return p;
+}
+function person(id: string) {
+  return S.me.people.find(function (p) {
+    return p.id === id;
+  });
+}
+/** Whether the signed-in person may make someone the primary admin: an admin may, and only the
+ * backup admin can be made primary. */
+function mayMakePrimary(target: Person) {
+  return ROLES[signedIn().role].admin && target.role === "backup";
+}
+/** Whether the signed-in person may remove someone. No one removes themselves, no one removes
+ * the primary admin, and only the primary admin removes the backup admin. Either admin removes an
+ * Authorized User. */
+function mayRemove(target: Person) {
+  const me = signedIn();
+  if (target.id === me.id || target.role === "primary" || !ROLES[me.role].admin) return false;
+  return target.role !== "backup" || me.role === "primary";
+}
+/** Kalayaan Foods' people as the people page lists them, with what the signed-in person may do
+ * to each. */
+export function peopleRows(): PersonRow[] {
+  const me = signedIn();
+  return S.me.people.map(function (p) {
+    return {
+      person: p,
+      role: ROLES[p.role].label,
+      line: ROLES[p.role].line,
+      you: p.id === me.id,
+      canMakePrimary: mayMakePrimary(p),
+      canRemove: mayRemove(p),
+    };
+  });
 }
 /** How a message Kalayaan Foods sent is signed in ComMail. */
 export function signature() {
@@ -2865,14 +2929,23 @@ const ACT = {
     award("profile");
     emit();
   },
-  swapRep: function () {
-    const old = primaryAdmin(),
-      backup = backupAdmin();
-    if (!backup) return;
-    old.role = "backup";
-    backup.role = "primary";
+  /** Makes the backup admin the primary, and the primary the backup. */
+  makePrimary: function (id: string) {
+    const target = person(id);
+    if (!target || !mayMakePrimary(target)) return;
+    primaryAdmin().role = "backup";
+    target.role = "primary";
+    emit();
+  },
+  /** Takes a person's access away. Every Connection stays with the company. */
+  removePerson: function (id: string) {
+    const target = person(id);
+    if (!target || !mayRemove(target)) return;
+    S.me.people = S.me.people.filter(function (p) {
+      return p !== target;
+    });
     toast(
-      old.name +
+      target.name +
         " no longer has access. All " +
         connected().length +
         " connections stayed with your company.",

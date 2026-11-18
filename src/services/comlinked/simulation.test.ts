@@ -132,7 +132,9 @@ import {
   approver,
   backupAdmin,
   meetingAttendees,
+  peopleRows,
   primaryAdmin,
+  roleLabel,
   signature,
   signedIn,
 } from "@/services/comlinked";
@@ -304,6 +306,118 @@ describe("Kalayaan Foods' people", () => {
   });
 });
 
+describe("roles and what each can do", () => {
+  const row = (id: string) => peopleRows().find((r) => r.person.id === id);
+  const rights = () =>
+    peopleRows().map((r) => [r.person.id, r.canMakePrimary, r.canRemove] as const);
+
+  it("labels each role and says in one plain line what it can do", () => {
+    expect(peopleRows().map((r) => [r.person.name, r.role, r.line])).toEqual([
+      [
+        "Ana Reyes",
+        "Primary admin",
+        "Sends and accepts connection requests, and manages people. The only one who can remove the backup admin.",
+      ],
+      [
+        "Marco Dizon",
+        "Backup admin",
+        "Sends and accepts connection requests, and manages people. Covers for the primary admin.",
+      ],
+      [
+        "Liza Manalo",
+        "Authorized user · Sales",
+        "Sends connection requests to possible customers. An admin accepts requests.",
+      ],
+      [
+        "Paolo Villanueva",
+        "Authorized user · Procurement",
+        "Sends connection requests to possible suppliers. An admin accepts requests.",
+      ],
+    ]);
+    expect(row("ana")?.you).toBe(true);
+    expect(row("marco")?.you).toBe(false);
+  });
+
+  it("lets the primary admin make the backup primary and remove anyone but themselves", () => {
+    expect(rights()).toEqual([
+      ["ana", false, false],
+      ["marco", true, true],
+      ["liza", false, true],
+      ["paolo", false, true],
+    ]);
+  });
+
+  it("swaps the two admins when the backup is made primary, and Ana's role follows", () => {
+    act.makePrimary("marco");
+    expect(primaryAdmin().name).toBe("Marco Dizon");
+    expect(backupAdmin()?.name).toBe("Ana Reyes");
+    expect(roleLabel(signedIn().role)).toBe("Backup admin");
+    expect(row("ana")?.role).toBe("Backup admin");
+  });
+
+  it("makes only the backup primary", () => {
+    act.makePrimary("liza");
+    expect(primaryAdmin().name).toBe("Ana Reyes");
+    expect(row("liza")?.role).toBe("Authorized user · Sales");
+  });
+
+  it("lets only the primary admin remove the backup admin", () => {
+    act.makePrimary("marco");
+    // Ana is now the backup: she can still remove an Authorized User, but not Marco, the primary.
+    expect(rights()).toEqual([
+      ["ana", true, false],
+      ["marco", false, false],
+      ["liza", false, true],
+      ["paolo", false, true],
+    ]);
+    act.removePerson("marco");
+    expect(primaryAdmin().name).toBe("Marco Dizon");
+  });
+
+  it("lets no one remove themselves", () => {
+    act.removePerson("ana");
+    expect(signedIn().name).toBe("Ana Reyes");
+    expect(getState().me.people).toHaveLength(4);
+  });
+
+  it("removes a person and keeps every Connection with the company", () => {
+    act.demoActive();
+    const toast = vi.fn();
+    setHandlers({ toast });
+    const before = connectionList();
+    act.removePerson("liza");
+    expect(peopleRows().map((r) => r.person.name)).toEqual([
+      "Ana Reyes",
+      "Marco Dizon",
+      "Paolo Villanueva",
+    ]);
+    expect(connectionList()).toEqual(before);
+    expect(toast).toHaveBeenCalledWith(
+      "Liza Manalo no longer has access. All 4 connections stayed with your company.",
+      undefined,
+      undefined,
+    );
+  });
+
+  it("leaves the agent's meeting to the primary admin once the backup is removed", () => {
+    act.removePerson("marco");
+    expect(backupAdmin()).toBeNull();
+    expect(meetingAttendees()).toBe("Ana Reyes");
+  });
+
+  it("starts with the four people again after a fresh start", () => {
+    act.makePrimary("marco");
+    act.removePerson("liza");
+    act.demoNew();
+    expect(peopleRows().map((r) => [r.person.id, r.role])).toEqual([
+      ["ana", "Primary admin"],
+      ["marco", "Backup admin"],
+      ["liza", "Authorized user · Sales"],
+      ["paolo", "Authorized user · Procurement"],
+    ]);
+  });
+});
+
 describe("point limits", () => {
   it("awards the daily list points only once a day", () => {
     newCompany();
@@ -365,7 +479,7 @@ describe("a full demo", () => {
     setForm("project", "A project");
     act.addProject();
     act.addPhoto();
-    act.swapRep();
+    act.makePrimary("marco");
     setForm("invite", "Partner Co");
     act.invite("Link");
     vi.advanceTimersByTime(2100);

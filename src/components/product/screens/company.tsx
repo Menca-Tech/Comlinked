@@ -13,6 +13,7 @@ import type { ProfileField } from "@/services/comlinked";
 import {
   act,
   AI_LIMIT,
+  backupAdmin,
   co,
   connected,
   dayName,
@@ -199,7 +200,7 @@ export function CompanyProfile({ focus }: { focus?: ProfileField }) {
                 <span className="a-why">
                   Authorized rep: <b>{primaryAdmin().name}</b>
                 </span>
-                <Btn cls="o sm" onClick={() => act.swapRep()}>
+                <Btn cls="o sm" onClick={() => act.makePrimary(backupAdmin()?.id ?? "")}>
                   Assign new rep
                 </Btn>
               </div>
