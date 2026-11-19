@@ -14,7 +14,8 @@ integration stays off. The workflow is
 
 ## Set it up once
 
-1. **Create the Vercel project.** In the repo, run `pnpm dlx vercel@65.9.0 link` and sign in
+1. **Create the Vercel project.** In the repo, run `npx --yes vercel@65.9.0 link` in your own terminal and sign
+   in
    with your own Vercel account. Choose "create a new project" and name it. Don't connect a Git
    repository. This writes `.vercel/project.json`, which is git-ignored.
 2. **Copy the two IDs.** `.vercel/project.json` holds `orgId` and `projectId`.

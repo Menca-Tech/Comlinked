@@ -20,7 +20,6 @@ permissions:
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-  VERCEL_CLI: vercel@65.9.0
 
 jobs:
   deploy:
@@ -43,15 +42,19 @@ jobs:
       - run: pnpm type:check
       - run: pnpm test
 
+      # Installed with npm, as Vercel's guide does: pnpm 10 refuses the CLI's install scripts.
+      - name: Install the Vercel CLI
+        run: npm install --global vercel@65.9.0
+
       - name: Pull the Vercel project settings
-        run: pnpm dlx ${{ env.VERCEL_CLI }} pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
       # Supabase stays unset, so the app runs without auth and calls no outside host. The demo
       # flag turns on the notice and noindex.
       - name: Build
-        run: pnpm dlx ${{ env.VERCEL_CLI }} build --prod --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
           NEXT_PUBLIC_DEMO_DEPLOYMENT: "true"
 
       - name: Deploy
-        run: pnpm dlx ${{ env.VERCEL_CLI }} deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
