@@ -55,6 +55,8 @@ jobs:
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
           NEXT_PUBLIC_DEMO_DEPLOYMENT: "true"
+          # The demo's own address, for link previews and robots.txt.
+          NEXT_PUBLIC_SITE_URL: https://comlinked-demo.vercel.app
 
       - name: Deploy
         run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
