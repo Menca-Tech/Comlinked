@@ -28,13 +28,16 @@ export function buildSitemap(baseUrl: string, lastModified: Date): MetadataRoute
 }
 
 /** Pure: allow crawling everything except the private dashboard; link the sitemap. */
-export function buildRobots(baseUrl: string): MetadataRoute.Robots {
+export function buildRobots(baseUrl: string, { demo = false } = {}): MetadataRoute.Robots {
   return {
-    rules: {
-      userAgent: "*",
-      allow: "/",
-      disallow: "/dashboard/",
-    },
+    // The shared demo deployment is kept out of search engines entirely.
+    rules: demo
+      ? { userAgent: "*", disallow: "/" }
+      : {
+          userAgent: "*",
+          allow: "/",
+          disallow: "/dashboard/",
+        },
     sitemap: new URL("sitemap.xml", baseUrl).toString(),
     host: new URL(baseUrl).origin,
   };

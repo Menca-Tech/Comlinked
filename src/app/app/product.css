@@ -1816,6 +1816,15 @@
     gap: var(--space-3);
     min-width: 0;
   }
+  /* The demo deployment's notice: one quiet line above the top bar, shown only there. */
+  .a-demo-notice {
+    margin: 0;
+    padding: var(--space-1) var(--space-4);
+    background: var(--color-sunken);
+    color: var(--color-muted);
+    font: 400 var(--text-13) / var(--leading-tight) var(--font-text);
+    text-align: center;
+  }
   /* "Example data", beside the logo on every screen. */
   .a-demo-tag {
     flex: none;

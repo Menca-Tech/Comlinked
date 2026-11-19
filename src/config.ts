@@ -39,6 +39,11 @@ export const isSupabaseConfigured = Boolean(
   env.NEXT_PUBLIC_SUPABASE_URL && env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
 );
 
+// Fact: is this the shared demo deployment? Inlined at build time. On, every page carries the
+// demo notice and asks search engines not to index it; local development and a real launch
+// leave it unset.
+export const isDemoDeployment = env.NEXT_PUBLIC_DEMO_DEPLOYMENT === "true";
+
 // Fact: is PostHog analytics configured? The project token is publishable and
 // inlined at build time. Unset ⇒ the whole analytics integration is inert (no
 // init, no network) — mirrors isSupabaseConfigured / isDatabaseConfigured. See

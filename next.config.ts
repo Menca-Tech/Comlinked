@@ -27,6 +27,13 @@ const securityHeaders = [
     : []),
 ];
 
+// The shared demo deployment asks search engines not to index any page. The flag is the same one
+// src/config.ts reads as isDemoDeployment; next.config runs before the app's env module loads.
+const demoHeaders =
+  process.env.NEXT_PUBLIC_DEMO_DEPLOYMENT === "true"
+    ? [{ key: "X-Robots-Tag", value: "noindex, nofollow" }]
+    : [];
+
 const nextConfig: NextConfig = {
   output: "standalone",
   // Don't advertise the framework via the X-Powered-By header.
@@ -55,7 +62,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/:path*",
-        headers: securityHeaders,
+        headers: [...securityHeaders, ...demoHeaders],
       },
     ];
   },
